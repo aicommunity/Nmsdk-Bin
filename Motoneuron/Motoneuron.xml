@@ -1,0 +1,768 @@
+<Save>
+	<Model Class="NModel">
+		<Parameters>
+			<Activity Type="bool">1</Activity>
+			<AutoNumInputs Type="bool">1</AutoNumInputs>
+			<Coord Type="MVector">
+				<x Type="double">0</x>
+				<y Type="double">0</y>
+				<z Type="double">0</z>
+			</Coord>
+			<Id Type="int">0</Id>
+			<Name Type="std::string" Size="5">Model</Name>
+			<NumInputs Type="int">1</NumInputs>
+			<NumOutputs Type="int">1</NumOutputs>
+			<TimeStep Type="int">2000</TimeStep>
+		</Parameters>
+		<Links Type="ULinksList" Size="11">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="0" Index="0"/>
+				<Connector Type="ULinkSide" Size="10" Index="0">PGenerator</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="10" Index="0">PGenerator</Item>
+				<Connector Type="ULinkSide" Size="37" Index="0">Motoneuron.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="37" Index="0">Motoneuron.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="0">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="37" Index="0">Motoneuron.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="1">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane2.PosChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="2">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane2.NegChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="3">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane3.PosChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="4">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane3.NegChannel</Item>
+				<Connector Type="ULinkSide" Size="17" Index="5">Motoneuron.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="17" Index="0">Motoneuron.LTZone</Item>
+				<Connector Type="ULinkSide" Size="26" Index="0">Motoneuron.PNeuronMembrane</Connector>
+				<Connector Type="ULinkSide" Size="27" Index="0">Motoneuron.PNeuronMembrane2</Connector>
+				<Connector Type="ULinkSide" Size="27" Index="0">Motoneuron.PNeuronMembrane3</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="31" Index="0">Motoneuron.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Size="37" Index="0">Motoneuron.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane2.NegChannel</Connector>
+				<Connector Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane3.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Size="31" Index="0">Motoneuron.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane2.PosChannel</Connector>
+				<Connector Type="ULinkSide" Size="38" Index="0">Motoneuron.PNeuronMembrane3.PosChannel</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<PGenerator Class="NPGenerator">
+				<Parameters>
+					<ActionCounter Type="int">0</ActionCounter>
+					<ActionPeriod Type="int">0</ActionPeriod>
+					<Activity Type="bool">1</Activity>
+					<Amplitude Type="double">1</Amplitude>
+					<AutoNumInputs Type="bool">1</AutoNumInputs>
+					<Coord Type="MVector">
+						<x Type="double">0</x>
+						<y Type="double">0</y>
+						<z Type="double">0</z>
+					</Coord>
+					<Frequency Type="double">5</Frequency>
+					<FrequencyDeviation Type="double">0</FrequencyDeviation>
+					<Id Type="int">1</Id>
+					<Name Type="std::string" Size="10">PGenerator</Name>
+					<NumInputs Type="int">1</NumInputs>
+					<NumOutputs Type="int">2</NumOutputs>
+					<PulseLength Type="double">0.001</PulseLength>
+					<TimeStep Type="int">2000</TimeStep>
+				</Parameters>
+				<Components/>
+			</PGenerator>
+			<Motoneuron Class="NMotoneuron">
+				<Parameters>
+					<Activity Type="bool">1</Activity>
+					<AutoNumInputs Type="bool">1</AutoNumInputs>
+					<Coord Type="MVector">
+						<x Type="double">0</x>
+						<y Type="double">0</y>
+						<z Type="double">0</z>
+					</Coord>
+					<DefaultComponentClassId Type="int">0</DefaultComponentClassId>
+					<Id Type="int">2</Id>
+					<LayerHeight Type="unsigned int">1</LayerHeight>
+					<LayerWidth Type="unsigned int">1</LayerWidth>
+					<LinkDistance Type="double">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int">0</LinkOrganizationMode>
+					<Name Type="std::string" Size="10">Motoneuron</Name>
+					<NetType Type="int">0</NetType>
+					<NumInputs Type="int">1</NumInputs>
+					<NumLayers Type="unsigned int">1</NumLayers>
+					<NumOutputs Type="int">3</NumOutputs>
+					<ReceptorFieldHeight Type="unsigned int">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int">1</ReceptorFieldWidth>
+					<TimeStep Type="int">2000</TimeStep>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool">1</Activity>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<AvgInterval Type="double">1</AvgInterval>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<Id Type="int">1</Id>
+							<Name Type="std::string" Size="6">LTZone</Name>
+							<NumInputs Type="int">6</NumInputs>
+							<NumOutputs Type="int">3</NumOutputs>
+							<PulseAmplitude Type="double">1</PulseAmplitude>
+							<PulseLength Type="double">0.001</PulseLength>
+							<Threshold Type="double">1e-05</Threshold>
+							<TimeConstant Type="double">0.005</TimeConstant>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionCounter Type="int">0</ActionCounter>
+							<ActionPeriod Type="int">0</ActionPeriod>
+							<Activity Type="bool">1</Activity>
+							<Amplitude Type="double">1</Amplitude>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<Id Type="int">2</Id>
+							<Name Type="std::string" Size="20">PNeuronPosCGenerator</Name>
+							<NumInputs Type="int">1</NumInputs>
+							<NumOutputs Type="int">1</NumOutputs>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components/>
+					</PNeuronPosCGenerator>
+					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionCounter Type="int">0</ActionCounter>
+							<ActionPeriod Type="int">0</ActionPeriod>
+							<Activity Type="bool">1</Activity>
+							<Amplitude Type="double">-1</Amplitude>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<Id Type="int">3</Id>
+							<Name Type="std::string" Size="20">PNeuronNegCGenerator</Name>
+							<NumInputs Type="int">1</NumInputs>
+							<NumOutputs Type="int">1</NumOutputs>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components/>
+					</PNeuronNegCGenerator>
+					<PNeuronMembrane Class="NPNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool">1</Activity>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<FeedbackGain Type="double">2</FeedbackGain>
+							<Id Type="int">4</Id>
+							<Name Type="std::string" Size="15">PNeuronMembrane</Name>
+							<NumInputs Type="int">1</NumInputs>
+							<NumOutputs Type="int">1</NumOutputs>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">1</Id>
+									<Name Type="std::string" Size="10">PosChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">-1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</PosChannel>
+							<NegChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">2</Id>
+									<Name Type="std::string" Size="10">NegChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane>
+					<PNeuronMembrane2 Class="NPNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool">1</Activity>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<FeedbackGain Type="double">2</FeedbackGain>
+							<Id Type="int">5</Id>
+							<Name Type="std::string" Size="16">PNeuronMembrane2</Name>
+							<NumInputs Type="int">1</NumInputs>
+							<NumOutputs Type="int">1</NumOutputs>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">1</Id>
+									<Name Type="std::string" Size="10">PosChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">-1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</PosChannel>
+							<NegChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">2</Id>
+									<Name Type="std::string" Size="10">NegChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane2>
+					<PNeuronMembrane3 Class="NPNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool">1</Activity>
+							<AutoNumInputs Type="bool">1</AutoNumInputs>
+							<Coord Type="MVector">
+								<x Type="double">0</x>
+								<y Type="double">0</y>
+								<z Type="double">0</z>
+							</Coord>
+							<FeedbackGain Type="double">2</FeedbackGain>
+							<Id Type="int">6</Id>
+							<Name Type="std::string" Size="16">PNeuronMembrane3</Name>
+							<NumInputs Type="int">1</NumInputs>
+							<NumOutputs Type="int">1</NumOutputs>
+							<TimeStep Type="int">2000</TimeStep>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">1</Id>
+									<Name Type="std::string" Size="10">PosChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">-1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</PosChannel>
+							<NegChannel Class="NPNeuronChannel">
+								<Parameters>
+									<Activity Type="bool">1</Activity>
+									<AutoNumInputs Type="bool">1</AutoNumInputs>
+									<Capacity Type="double">1e-09</Capacity>
+									<Coord Type="MVector">
+										<x Type="double">0</x>
+										<y Type="double">0</y>
+										<z Type="double">0</z>
+									</Coord>
+									<FBResistance Type="double">1e+08</FBResistance>
+									<Id Type="int">2</Id>
+									<Name Type="std::string" Size="10">NegChannel</Name>
+									<NumInputs Type="int">1</NumInputs>
+									<NumOutputs Type="int">1</NumOutputs>
+									<Resistance Type="double">1e+07</Resistance>
+									<TimeStep Type="int">2000</TimeStep>
+									<Type Type="double">1</Type>
+								</Parameters>
+								<Components>
+									<Synapse Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">1</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="7">Synapse</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse>
+									<Synapse2 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">2</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse2</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse2>
+									<Synapse3 Class="NPSynapse">
+										<Parameters>
+											<Activity Type="bool">1</Activity>
+											<AutoNumInputs Type="bool">1</AutoNumInputs>
+											<Coord Type="MVector">
+												<x Type="double">0</x>
+												<y Type="double">0</y>
+												<z Type="double">0</z>
+											</Coord>
+											<DissociationTC Type="double">0.01</DissociationTC>
+											<Id Type="int">3</Id>
+											<InhibitionCoeff Type="double">1</InhibitionCoeff>
+											<Name Type="std::string" Size="8">Synapse3</Name>
+											<NumInputs Type="int">1</NumInputs>
+											<NumOutputs Type="int">1</NumOutputs>
+											<PulseAmplitude Type="double">1</PulseAmplitude>
+											<Resistance Type="double">1e+08</Resistance>
+											<SecretionTC Type="double">0.001</SecretionTC>
+											<TimeStep Type="int">2000</TimeStep>
+										</Parameters>
+										<Components/>
+									</Synapse3>
+								</Components>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane3>
+				</Components>
+			</Motoneuron>
+		</Components>
+	</Model>
+</Save>
