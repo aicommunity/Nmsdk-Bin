@@ -4,11 +4,7 @@
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0	0	0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="56">
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
-				<Connector Type="ULinkSide" Index="0">WPhysicalManipulator</Connector>
-			</elem>
+		<Links Type="ULinksList" Size="58">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTZone</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.PNeuronMembrane</Connector>
@@ -34,10 +30,6 @@
 				<Connector Type="ULinkSide" Index="2">WPhysicalManipulator</Connector>
 				<Connector Type="ULinkSide" Index="2">DCEngine</Connector>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PulseReceiver2</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">WPhysicalManipulator</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.PNeuronMembrane.PosChannel</Item>
@@ -192,6 +184,16 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IIPosAfferentGenerator</Item>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IINegAfferentGenerator</Item>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.LTZone</Connector>
 			</elem>
@@ -248,11 +250,15 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_II2.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="1">WPhysicalManipulator</Item>
+				<Item Type="ULinkSide" Index="0">DCEngine</Item>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="1">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="2">WPhysicalManipulator</Item>
+				<Item Type="ULinkSide" Index="2">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="2">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -279,6 +285,10 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Pac</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
+				<Connector Type="ULinkSide" Index="0">DCEngine</Connector>
 			</elem>
 		</Links>
 		<Components>
@@ -1394,8 +1404,9 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
-							<Frequency Type="double" PType="257">5</Frequency>
+							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1407,6 +1418,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
 							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
@@ -1450,6 +1462,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
 							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
@@ -1463,6 +1476,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
 							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
@@ -1476,6 +1490,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
 							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
@@ -1489,6 +1504,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
 							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
@@ -1536,7 +1552,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0	0	0</Coord>
-							<Voltage Type="double" PType="257">1.89327e-27</Voltage>
+							<Voltage Type="double" PType="257">1.33227e-13</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -1699,7 +1715,7 @@
 							<Coord PType="257">0	0	0</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">1222</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">2142</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
@@ -1710,7 +1726,7 @@
 							<Coord PType="257">0	0	0</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">2898</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">2162</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
