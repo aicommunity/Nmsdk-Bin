@@ -4,7 +4,7 @@
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0	0	0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="50">
+		<Links Type="ULinksList" Size="52">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
 				<Connector Type="ULinkSide" Index="0">DCEngine</Connector>
@@ -186,6 +186,16 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IIPosAfferentGenerator</Item>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IINegAfferentGenerator</Item>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.LTZone</Connector>
 			</elem>
@@ -340,7 +350,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0	0	0</Coord>
+											<Coord PType="257">19	4	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">1e-05</Threshold>
@@ -354,7 +364,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
-											<Coord PType="257">0	0	0</Coord>
+											<Coord PType="257">4.33333	13	1</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronPosCGenerator>
@@ -364,7 +374,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
-											<Coord PType="257">0	0	0</Coord>
+											<Coord PType="257">1.66667	8.33333	2</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronNegCGenerator>
@@ -1115,7 +1125,7 @@
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
-							<Frequency Type="double" PType="257">0</Frequency>
+							<Frequency Type="double" PType="257">2</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1261,7 +1271,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">28.6666	6.66667	13</Coord>
-							<Voltage Type="double" PType="257">1.62284</Voltage>
+							<Voltage Type="double" PType="257">-6.02177e-08</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -1424,7 +1434,7 @@
 							<Coord PType="257">17	1.66667	21</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">4423</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">592</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
@@ -1435,7 +1445,7 @@
 							<Coord PType="257">26.3333	1.33333	22</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">4516</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">535</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
