@@ -4,7 +4,7 @@
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0	0	0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="52">
+		<Links Type="ULinksList" Size="50">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
 				<Connector Type="ULinkSide" Index="0">DCEngine</Connector>
@@ -186,16 +186,6 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IIPosAfferentGenerator</Item>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.PosChannel</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.NegChannel</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.IINegAfferentGenerator</Item>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent14.PNeuronMembrane.NegChannel</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.PostAfferent24.LTZone</Connector>
 			</elem>
@@ -319,7 +309,7 @@
 					<MotionElement0 Class="NSimplestAfferentBranchedMotionElement">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">21.6667	5	0</Coord>
+							<Coord PType="257">22	4.33333	0</Coord>
 							<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 							<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 							<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1057,7 +1047,7 @@
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
 											<InputAdaptationMode Type="int" PType="257">0</InputAdaptationMode>
 											<MaxInputRange Type="double" PType="257">0.785</MaxInputRange>
-											<MaxOutputRange Type="double" PType="257">200</MaxOutputRange>
+											<MaxOutputRange Type="double" PType="257">100</MaxOutputRange>
 											<MinInputRange Type="double" PType="257">0</MinInputRange>
 											<MinOutputRange Type="double" PType="257">0</MinOutputRange>
 											<OutputAdaptationMode Type="int" PType="257">0</OutputAdaptationMode>
@@ -1105,7 +1095,7 @@
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
 											<InputAdaptationMode Type="int" PType="257">0</InputAdaptationMode>
 											<MaxInputRange Type="double" PType="257">0.785</MaxInputRange>
-											<MaxOutputRange Type="double" PType="257">200</MaxOutputRange>
+											<MaxOutputRange Type="double" PType="257">100</MaxOutputRange>
 											<MinInputRange Type="double" PType="257">0</MinInputRange>
 											<MinOutputRange Type="double" PType="257">0</MinOutputRange>
 											<OutputAdaptationMode Type="int" PType="257">0</OutputAdaptationMode>
@@ -1125,7 +1115,7 @@
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
-							<Frequency Type="double" PType="257">2</Frequency>
+							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1139,7 +1129,7 @@
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
-							<Frequency Type="double" PType="257">0</Frequency>
+							<Frequency Type="double" PType="257">8</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1271,7 +1261,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">28.6666	6.66667	13</Coord>
-							<Voltage Type="double" PType="257">-6.02177e-08</Voltage>
+							<Voltage Type="double" PType="257">1.76623e-21</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -1305,10 +1295,10 @@
 							</PulseAmplitude>
 							<SecretionTC Type="std::vector" Size="2" PType="257">
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">0.0177</elem>
+									<elem Type="double">0.001</elem>
 								</elem>
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">0.0177</elem>
+									<elem Type="double">0.001</elem>
 								</elem>
 							</SecretionTC>
 						</Parameters>
@@ -1434,7 +1424,7 @@
 							<Coord PType="257">17	1.66667	21</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">592</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">261</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
@@ -1445,7 +1435,7 @@
 							<Coord PType="257">26.3333	1.33333	22</Coord>
 							<FrequencyStep Type="double" PType="257">1</FrequencyStep>
 							<LeftRange Type="double" PType="257">0</LeftRange>
-							<PulseCounter Type="unsigned int" PType="257">535</PulseCounter>
+							<PulseCounter Type="unsigned int" PType="257">328</PulseCounter>
 							<RightRange Type="double" PType="257">500</RightRange>
 						</Parameters>
 						<Components/>
