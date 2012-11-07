@@ -1,0 +1,712 @@
+<SaveProperties ModelName="Model">
+	<Model Class="NModel">
+		<Parameters>
+			<Activity Type="bool" PType="257">1</Activity>
+			<Coord PType="257">0	0	0</Coord>
+		</Parameters>
+		<Components>
+			<PGenerator Class="NPGenerator">
+				<Parameters>
+					<ActionCounter Type="int" PType="257">0</ActionCounter>
+					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">1</Amplitude>
+					<AvgInterval Type="double" PType="257">5</AvgInterval>
+					<Coord PType="257">3.33333	7.66666	0</Coord>
+					<Frequency Type="double" PType="257">1</Frequency>
+					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+					<PulseLength Type="double" PType="257">0.001</PulseLength>
+				</Parameters>
+				<Components/>
+			</PGenerator>
+			<SPNeuron Class="NSynSPNeuron">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">13.6667	2.66667	4</Coord>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<Coord PType="257">23.3333	10.3333	0</Coord>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.001</PulseLength>
+							<Threshold Type="double" PType="257">1e-05</Threshold>
+							<TimeConstant Type="double" PType="257">0.005</TimeConstant>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">1</Amplitude>
+							<Coord PType="257">4.33333	8	1</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronPosCGenerator>
+					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<Coord PType="257">4.33333	13.3333	2</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronNegCGenerator>
+					<LTMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">17.6667	10.3333	3</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</LTMembrane>
+					<PNeuronMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">12	10.3333	4</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane>
+				</Components>
+			</SPNeuron>
+			<SPNeuron2 Class="NSynSPNeuron">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">13.6667	5.66667	2</Coord>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<Coord PType="257">0	0	0</Coord>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.001</PulseLength>
+							<Threshold Type="double" PType="257">1e-05</Threshold>
+							<TimeConstant Type="double" PType="257">0.005</TimeConstant>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronPosCGenerator>
+					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronNegCGenerator>
+					<LTMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</LTMembrane>
+					<PNeuronMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane>
+				</Components>
+			</SPNeuron2>
+			<Motoneuron Class="NSynMotoneuron">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">13.6667	9	3</Coord>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<Coord PType="257">0	0	0</Coord>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.001</PulseLength>
+							<Threshold Type="double" PType="257">1e-05</Threshold>
+							<TimeConstant Type="double" PType="257">0.005</TimeConstant>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronPosCGenerator>
+					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronNegCGenerator>
+					<LTMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</LTMembrane>
+					<PNeuronMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane>
+					<PNeuronMembrane2 Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane2>
+					<PNeuronMembrane3 Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-09</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane3>
+				</Components>
+			</Motoneuron>
+			<Motoneuron2 Class="NSynMotoneuron">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">13.6667	12.3333	4</Coord>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<Coord PType="257">0	0	0</Coord>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.001</PulseLength>
+							<Threshold Type="double" PType="257">1e-05</Threshold>
+							<TimeConstant Type="double" PType="257">0.005</TimeConstant>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronPosCGenerator>
+					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</PNeuronNegCGenerator>
+					<LTMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</LTMembrane>
+					<PNeuronMembrane Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane>
+					<PNeuronMembrane2 Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane2>
+					<PNeuronMembrane3 Class="NPSynNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">0	0	0</Coord>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">-1</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+							<NegChannel Class="NPSynNeuronChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Capacity Type="double" PType="257">1e-07</Capacity>
+									<Coord PType="257">0	0	0</Coord>
+									<DissociationTC Type="double" PType="257">0.01</DissociationTC>
+									<FBResistance Type="double" PType="257">1e+08</FBResistance>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">1e+07</Resistance>
+									<SecretionTC Type="double" PType="257">0.001</SecretionTC>
+									<SynapseResistance Type="double" PType="257">1e+08</SynapseResistance>
+									<Type Type="double" PType="257">1</Type>
+								</Parameters>
+								<Components/>
+							</NegChannel>
+						</Components>
+					</PNeuronMembrane3>
+				</Components>
+			</Motoneuron2>
+		</Components>
+	</Model>
+</SaveProperties>
