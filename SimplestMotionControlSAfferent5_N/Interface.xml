@@ -3,25 +3,35 @@
 		<FormPosition>
 			<Left>0</Left>
 			<Top>0</Top>
-			<Width>827</Width>
-			<Height>122</Height>
+			<Width>825</Width>
+			<Height>126</Height>
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
 	</UEngineControlForm>
-	<NManipulatorControlForm>
+	<NDCEngineControlForm>
 		<FormPosition>
 			<Left>0</Left>
 			<Top>0</Top>
-			<Width>709</Width>
-			<Height>492</Height>
+			<Width>738</Width>
+			<Height>486</Height>
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+	</NDCEngineControlForm>
+	<NManipulatorControlForm>
 		<Control>
-			<ManipulatorName></ManipulatorName>
-			<ControlSystemName></ControlSystemName>
+			<ManipulatorName>DCEngine</ManipulatorName>
+			<ControlSystemName>EngineControlRangeAfferent</ControlSystemName>
 		</Control>
+		<FormPosition>
+			<Left>73</Left>
+			<Top>141</Top>
+			<Width>709</Width>
+			<Height>504</Height>
+			<Visible>1</Visible>
+			<WindowState>0</WindowState>
+		</FormPosition>
 	</NManipulatorControlForm>
 	<UClassesListForm>
 		<ClassesListFrame/>
@@ -47,10 +57,10 @@
 	</UComponentsListForm>
 	<UComponentsPerformanceForm>
 		<UComponentsPerformanceFrame>
-			<Components/>
 			<AverageIterations>10</AverageIterations>
 			<ShowModeRadioGroup>0</ShowModeRadioGroup>
 			<AverageIntervalSpinEdit>10</AverageIntervalSpinEdit>
+			<Components/>
 		</UComponentsPerformanceFrame>
 		<FormPosition>
 			<Left>0</Left>
@@ -73,10 +83,12 @@
 		</FormPosition>
 	</UComponentsListForm_1>
 	<UEngineMonitorForm>
-		<EngineMonitorFrame/>
+		<EngineMonitorFrame>
+			<CalculateMode>1</CalculateMode>
+		</EngineMonitorFrame>
 		<FormPosition>
-			<Left>686</Left>
-			<Top>386</Top>
+			<Left>882</Left>
+			<Top>262</Top>
 			<Width>543</Width>
 			<Height>281</Height>
 			<Visible>1</Visible>
@@ -90,10 +102,10 @@
 	<UComponentsControlForm>
 		<ComponentsControlFrame/>
 		<FormPosition>
-			<Left>209</Left>
-			<Top>102</Top>
-			<Width>1025</Width>
-			<Height>474</Height>
+			<Left>39</Left>
+			<Top>291</Top>
+			<Width>1307</Width>
+			<Height>475</Height>
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
@@ -106,8 +118,8 @@
 	<UComponentLinksForm>
 		<UComponentLinksFrame/>
 		<FormPosition>
-			<Left>0</Left>
-			<Top>0</Top>
+			<Left>243</Left>
+			<Top>286</Top>
 			<Width>836</Width>
 			<Height>573</Height>
 			<Visible>0</Visible>
@@ -115,160 +127,176 @@
 		</FormPosition>
 	</UComponentLinksForm>
 	<UWatchForm>
-		<FormPosition>
-			<Left>34</Left>
-			<Top>356</Top>
-			<Width>1180</Width>
-			<Height>427</Height>
-			<Visible>1</Visible>
-			<WindowState>0</WindowState>
-		</FormPosition>
+		<PageCount>2</PageCount>
 		<Pages>
 			<Caption_1>Page1</Caption_1>
 			<Caption_2>Page2</Caption_2>
+			<Caption_3>Page3</Caption_3>
+			<Caption_4>Page4</Caption_4>
+			<Caption_5>Page5</Caption_5>
+			<Caption_6>Page6</Caption_6>
 		</Pages>
+		<FormPosition>
+			<Left>182</Left>
+			<Top>423</Top>
+			<Width>1292</Width>
+			<Height>473</Height>
+			<Visible>1</Visible>
+			<WindowState>0</WindowState>
+		</FormPosition>
 		<UWatchFrame_1>
 			<0>
-				<Legend>PGenerator[3:0]</Legend>
+				<Legend>DCEngine[1:0]</Legend>
 				<YShift>0</YShift>
 				<Color>10708548</Color>
 				<Style>0</Style>
 				<Visible>1</Visible>
 				<LineWidth>3</LineWidth>
-				<XDataSourceName>PGenerator</XDataSourceName>
-				<XOutputIndex>3</XOutputIndex>
+				<XDataSourceName></XDataSourceName>
+				<XOutputIndex>0</XOutputIndex>
 				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName></YDataSourceName>
-				<YOutputIndex>0</YOutputIndex>
+				<YDataSourceName>DCEngine</YDataSourceName>
+				<YOutputIndex>1</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>2</XYSize>
+				<XYSize>1</XYSize>
 			</0>
-			<1>
-				<Legend>SPNeuron.LTZone[3:0]</Legend>
-				<YShift>1</YShift>
-				<Color>3513587</Color>
-				<Style>0</Style>
-				<Visible>1</Visible>
-				<LineWidth>3</LineWidth>
-				<XDataSourceName>SPNeuron.LTZone</XDataSourceName>
-				<XOutputIndex>3</XOutputIndex>
-				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName></YDataSourceName>
-				<YOutputIndex>0</YOutputIndex>
-				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>5</XYSize>
-			</1>
-			<2>
-				<Legend>SPNeuron2.LTZone[3:0]</Legend>
-				<YShift>2</YShift>
-				<Color>1330417</Color>
-				<Style>0</Style>
-				<Visible>1</Visible>
-				<LineWidth>3</LineWidth>
-				<XDataSourceName>SPNeuron2.LTZone</XDataSourceName>
-				<XOutputIndex>3</XOutputIndex>
-				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName></YDataSourceName>
-				<YOutputIndex>0</YOutputIndex>
-				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>5</XYSize>
-			</2>
-			<3>
-				<Legend>Motoneuron.LTZone[3:0]</Legend>
-				<YShift>3</YShift>
-				<Color>11048782</Color>
-				<Style>0</Style>
-				<Visible>1</Visible>
-				<LineWidth>3</LineWidth>
-				<XDataSourceName>Motoneuron.LTZone</XDataSourceName>
-				<XOutputIndex>3</XOutputIndex>
-				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName></YDataSourceName>
-				<YOutputIndex>0</YOutputIndex>
-				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>5</XYSize>
-			</3>
-			<4>
-				<Legend>Motoneuron2.LTZone[3:0]</Legend>
-				<YShift>4</YShift>
-				<Color>7028779</Color>
-				<Style>0</Style>
-				<Visible>1</Visible>
-				<LineWidth>3</LineWidth>
-				<XDataSourceName>Motoneuron2.LTZone</XDataSourceName>
-				<XOutputIndex>3</XOutputIndex>
-				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName></YDataSourceName>
-				<YOutputIndex>0</YOutputIndex>
-				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>5</XYSize>
-			</4>
-			<WatchInterval>3</WatchInterval>
+			<WatchInterval>5</WatchInterval>
 		</UWatchFrame_1>
-		<PageCount>2</PageCount>
 		<UWatchFrame_2>
 			<0>
-				<Legend>SPNeuron.LTZone[2:0]</Legend>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTZone[3:0]</Legend>
 				<YShift>0</YShift>
 				<Color>10708548</Color>
 				<Style>0</Style>
 				<Visible>1</Visible>
 				<LineWidth>3</LineWidth>
-				<XDataSourceName></XDataSourceName>
-				<XOutputIndex>0</XOutputIndex>
+				<XDataSourceName>EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTZone</XDataSourceName>
+				<XOutputIndex>3</XOutputIndex>
 				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName>SPNeuron.LTZone</YDataSourceName>
-				<YOutputIndex>2</YOutputIndex>
+				<YDataSourceName></YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>1</XYSize>
+				<XYSize>29</XYSize>
 			</0>
 			<1>
-				<Legend>SPNeuron2.LTZone[2:0]</Legend>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTZone[3:0]</Legend>
 				<YShift>0</YShift>
 				<Color>3513587</Color>
 				<Style>0</Style>
 				<Visible>1</Visible>
 				<LineWidth>3</LineWidth>
-				<XDataSourceName></XDataSourceName>
+				<XDataSourceName>EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTZone</XDataSourceName>
+				<XOutputIndex>3</XOutputIndex>
+				<XOutputElementIndex>0</XOutputElementIndex>
+				<YDataSourceName></YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
+				<YOutputElementIndex>0</YOutputElementIndex>
+				<XYSize>140</XYSize>
+			</1>
+			<WatchInterval>-1</WatchInterval>
+		</UWatchFrame_2>
+		<UWatchFrame_3>
+			<0>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Afferent_II1.LTZone[3:0]</Legend>
+				<YShift>0</YShift>
+				<Color>10708548</Color>
+				<Style>0</Style>
+				<Visible>1</Visible>
+				<LineWidth>3</LineWidth>
+				<XDataSourceName>EngineControlRangeAfferent.MotionElement0.Afferent_II1.LTZone</XDataSourceName>
+				<XOutputIndex>3</XOutputIndex>
+				<XOutputElementIndex>0</XOutputElementIndex>
+				<YDataSourceName/>
+				<YOutputIndex>0</YOutputIndex>
+				<YOutputElementIndex>0</YOutputElementIndex>
+				<XYSize>17</XYSize>
+			</0>
+			<1>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Afferent_II2.LTZone[3:0]</Legend>
+				<YShift>0</YShift>
+				<Color>3513587</Color>
+				<Style>0</Style>
+				<Visible>1</Visible>
+				<LineWidth>3</LineWidth>
+				<XDataSourceName>EngineControlRangeAfferent.MotionElement0.Afferent_II2.LTZone</XDataSourceName>
+				<XOutputIndex>3</XOutputIndex>
+				<XOutputElementIndex>0</XOutputElementIndex>
+				<YDataSourceName/>
+				<YOutputIndex>0</YOutputIndex>
+				<YOutputElementIndex>0</YOutputElementIndex>
+				<XYSize>17</XYSize>
+			</1>
+			<WatchInterval>5</WatchInterval>
+		</UWatchFrame_3>
+		<UWatchFrame_4>
+			<0>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Afferent_II1.Receptor[0:0]</Legend>
+				<YShift>0</YShift>
+				<Color>10708548</Color>
+				<Style>0</Style>
+				<Visible>1</Visible>
+				<LineWidth>3</LineWidth>
+				<XDataSourceName/>
 				<XOutputIndex>0</XOutputIndex>
 				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName>SPNeuron2.LTZone</YDataSourceName>
-				<YOutputIndex>2</YOutputIndex>
+				<YDataSourceName>EngineControlRangeAfferent.MotionElement0.Afferent_II1.Receptor</YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
+				<YOutputElementIndex>0</YOutputElementIndex>
+				<XYSize>1</XYSize>
+			</0>
+			<1>
+				<Legend>EngineControlRangeAfferent.MotionElement0.Afferent_II2.Receptor[0:0]</Legend>
+				<YShift>0</YShift>
+				<Color>3513587</Color>
+				<Style>0</Style>
+				<Visible>1</Visible>
+				<LineWidth>3</LineWidth>
+				<XDataSourceName/>
+				<XOutputIndex>0</XOutputIndex>
+				<XOutputElementIndex>0</XOutputElementIndex>
+				<YDataSourceName>EngineControlRangeAfferent.MotionElement0.Afferent_II2.Receptor</YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
 				<XYSize>1</XYSize>
 			</1>
-			<2>
-				<Legend>Motoneuron.LTZone[2:0]</Legend>
+			<WatchInterval>5</WatchInterval>
+		</UWatchFrame_4>
+		<UWatchFrame_5>
+			<0>
+				<Legend>EngineControlRangeAfferent.Pac[0:0]</Legend>
 				<YShift>0</YShift>
-				<Color>1330417</Color>
+				<Color>10708548</Color>
 				<Style>0</Style>
 				<Visible>1</Visible>
 				<LineWidth>3</LineWidth>
-				<XDataSourceName></XDataSourceName>
+				<XDataSourceName/>
 				<XOutputIndex>0</XOutputIndex>
 				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName>Motoneuron.LTZone</YDataSourceName>
-				<YOutputIndex>2</YOutputIndex>
+				<YDataSourceName>EngineControlRangeAfferent.Pac</YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
 				<XYSize>1</XYSize>
-			</2>
-			<3>
-				<Legend>Motoneuron2.LTZone[2:0]</Legend>
+			</0>
+			<WatchInterval>5</WatchInterval>
+		</UWatchFrame_5>
+		<UWatchFrame_6>
+			<0>
+				<Legend>EngineControlRangeAfferent.NManipulatorInput1[0:0]</Legend>
 				<YShift>0</YShift>
-				<Color>11048782</Color>
+				<Color>10708548</Color>
 				<Style>0</Style>
 				<Visible>1</Visible>
 				<LineWidth>3</LineWidth>
-				<XDataSourceName></XDataSourceName>
+				<XDataSourceName/>
 				<XOutputIndex>0</XOutputIndex>
 				<XOutputElementIndex>0</XOutputElementIndex>
-				<YDataSourceName>Motoneuron2.LTZone</YDataSourceName>
-				<YOutputIndex>2</YOutputIndex>
+				<YDataSourceName>EngineControlRangeAfferent.NManipulatorInput1</YDataSourceName>
+				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
 				<XYSize>1</XYSize>
-			</3>
-			<WatchInterval>-1</WatchInterval>
-		</UWatchFrame_2>
+			</0>
+			<WatchInterval>5</WatchInterval>
+		</UWatchFrame_6>
 	</UWatchForm>
 	<UVisualControllerForm>
 		<FormPosition>
@@ -292,19 +320,23 @@
 	</UCRPerseptronForm>
 	<UDrawEngineForm>
 		<UClassesListFrame/>
+		<FontFileName></FontFileName>
+		<CanvasWidth>1219</CanvasWidth>
+		<CanvasHeight>872</CanvasHeight>
 		<FormPosition>
-			<Left>131</Left>
-			<Top>105</Top>
-			<Width>1214</Width>
-			<Height>518</Height>
+			<Left>205</Left>
+			<Top>166</Top>
+			<Width>1390</Width>
+			<Height>841</Height>
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
-		<FontFileName></FontFileName>
-		<CanvasWidth>1222</CanvasWidth>
-		<CanvasHeight>872</CanvasHeight>
 	</UDrawEngineForm>
 	<UFavoriteComponentInfoForm>
+		<PageCount>1</PageCount>
+		<Pages>
+			<Caption_1>Page1</Caption_1>
+		</Pages>
 		<FormPosition>
 			<Left>0</Left>
 			<Top>0</Top>
@@ -313,15 +345,11 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
-		<Pages>
-			<Caption_1>Page1</Caption_1>
-		</Pages>
 		<UFavoriteComponentInfoFrame_1>
-			<Info/>
 			<ColWidth>64</ColWidth>
 			<InfoSize>0</InfoSize>
+			<Info/>
 		</UFavoriteComponentInfoFrame_1>
-		<PageCount>1</PageCount>
 	</UFavoriteComponentInfoForm>
 	<ULinkSelectionForm>
 		<FormPosition>
