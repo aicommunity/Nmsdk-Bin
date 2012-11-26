@@ -20,6 +20,7 @@
 					<Activity Type="bool" PType="257">1</Activity>
 					<CartMass Type="double" PType="257">1</CartMass>
 					<Coord PType="257">10	2	1</Coord>
+					<OutXMovement Type="double" PType="257">0</OutXMovement>
 					<RodLength Type="double" PType="257">1</RodLength>
 					<RodMass Type="double" PType="257">0.1</RodMass>
 				</Parameters>
@@ -1206,7 +1207,7 @@
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
 							<Coord PType="257">0	0	0</Coord>
-							<Frequency Type="double" PType="257">0</Frequency>
+							<Frequency Type="double" PType="257">6</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1226,6 +1227,16 @@
 						</Parameters>
 						<Components/>
 					</IINegAfferentGenerator>
+					<AfferentSource1 Class="NCGenerator">
+						<Parameters>
+							<ActionCounter Type="int" PType="257">0</ActionCounter>
+							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">0</Amplitude>
+							<Coord PType="257">0	0	0</Coord>
+						</Parameters>
+						<Components/>
+					</AfferentSource1>
 					<NManipulatorSource1 Class="NManipulatorSource">
 						<Parameters>
 							<ActionCounter Type="int" PType="257">0</ActionCounter>
@@ -1244,7 +1255,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0	0	0</Coord>
-							<Voltage Type="double" PType="257">0.636222</Voltage>
+							<Voltage Type="double" PType="257">8.81621e-36</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -1254,18 +1265,18 @@
 							<Coord PType="257">0	0	0</Coord>
 							<DissociationTC Type="std::vector" Size="2" PType="257">
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">0.01</elem>
+									<elem Type="double">0.001</elem>
 								</elem>
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">0.01</elem>
+									<elem Type="double">0.001</elem>
 								</elem>
 							</DissociationTC>
 							<Gain Type="std::vector" Size="2" PType="257">
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">100</elem>
+									<elem Type="double">-100</elem>
 								</elem>
 								<elem Type="std::vector" Size="1">
-									<elem Type="double">-100</elem>
+									<elem Type="double">100</elem>
 								</elem>
 							</Gain>
 							<PulseAmplitude Type="std::vector" Size="2" PType="257">
