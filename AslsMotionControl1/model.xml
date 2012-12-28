@@ -4,20 +4,20 @@
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0	0	0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="78">
+		<Links Type="ULinksList" Size="76">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTZone</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTMembrane</Connector>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Pac</Connector>
-				<Connector Type="ULinkSide" Index="1">PendulumAndCart</Connector>
 				<Connector Type="ULinkSide" Index="1">DCEngine</Connector>
+				<Connector Type="ULinkSide" Index="1">PendulumAndCart</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTZone</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTMembrane</Connector>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Pac</Connector>
-				<Connector Type="ULinkSide" Index="2">PendulumAndCart</Connector>
 				<Connector Type="ULinkSide" Index="2">DCEngine</Connector>
+				<Connector Type="ULinkSide" Index="2">PendulumAndCart</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
@@ -292,32 +292,23 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib1.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_PosIntervalSeparator1</Item>
+				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.AfferentSource1</Item>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic2.Receptor</Connector>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic1.Receptor</Connector>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib1.Receptor</Connector>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.Receptor</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_NegIntervalSeparator1</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.Receptor</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic1.Receptor</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic1.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ic_PosIntervalSeparator1</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic1.Receptor</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic2.Receptor</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic2.LTZone</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ic_NegIntervalSeparator1</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ic2.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="3">PendulumAndCart</Item>
@@ -330,6 +321,10 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="2">PendulumAndCart</Item>
 				<Connector Type="ULinkSide" Index="2">EngineControlRangeAfferent.NManipulatorSource1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="4">PendulumAndCart</Item>
+				<Connector Type="ULinkSide" Index="3">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Item>
@@ -425,10 +420,10 @@
 					<IIMin Type="double" PType="257">-1.5708</IIMin>
 					<IaMax Type="double" PType="257">6.28319</IaMax>
 					<IaMin Type="double" PType="257">-6.28319</IaMin>
-					<IbMax Type="double" PType="257">10</IbMax>
-					<IbMin Type="double" PType="257">-10</IbMin>
-					<IcMax Type="double" PType="257">10</IcMax>
-					<IcMin Type="double" PType="257">-10</IcMin>
+					<IbMax Type="double" PType="257">2</IbMax>
+					<IbMin Type="double" PType="257">-2</IbMin>
+					<IcMax Type="double" PType="257">2</IcMax>
+					<IcMin Type="double" PType="257">-2</IcMin>
 					<MotionElementClassName Type="std::string" PType="257">NAslsNewSimplestAfferentBranchedMotionElement</MotionElementClassName>
 					<NumMotionElements Type="unsigned int" PType="257">1</NumMotionElements>
 				</Parameters>
@@ -1694,7 +1689,7 @@
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
 							<Coord PType="257">19	3	1</Coord>
-							<Frequency Type="double" PType="257">12</Frequency>
+							<Frequency Type="double" PType="257">5</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1732,6 +1727,7 @@
 							<Angle Type="double" PType="257">0</Angle>
 							<Coord PType="257">6.33333	21.6667	4</Coord>
 							<Force Type="double" PType="257">0</Force>
+							<Movement Type="double" PType="257">0</Movement>
 							<Speed Type="double" PType="257">0</Speed>
 						</Parameters>
 						<Components/>
@@ -1742,7 +1738,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0	0	0</Coord>
-							<Voltage Type="double" PType="257">-1.27055e-18</Voltage>
+							<Voltage Type="double" PType="257">-1.26506e-77</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>

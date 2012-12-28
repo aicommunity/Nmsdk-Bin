@@ -8,6 +8,7 @@
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UEngineControlForm>
 	<NDCEngineControlForm>
 		<FormPosition>
@@ -21,7 +22,7 @@
 	</NDCEngineControlForm>
 	<NManipulatorControlForm>
 		<Control>
-			<ManipulatorName>WPhysicalManipulator</ManipulatorName>
+			<ManipulatorName>DCEngine</ManipulatorName>
 			<ControlSystemName>EngineControlRangeAfferent</ControlSystemName>
 		</Control>
 		<FormPosition>
@@ -32,9 +33,13 @@
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</NManipulatorControlForm>
 	<UClassesListForm>
-		<ClassesListFrame/>
+		<ClassesListFrame>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ClassesListFrame>
 		<FormPosition>
 			<Left>0</Left>
 			<Top>321</Top>
@@ -43,17 +48,22 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UClassesListForm>
 	<UComponentsListForm>
-		<ComponentsListFrame1/>
+		<ComponentsListFrame1>
+			<UpdateInterval>-1</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ComponentsListFrame1>
 		<FormPosition>
-			<Left>385</Left>
+			<Left>388</Left>
 			<Top>221</Top>
 			<Width>698</Width>
 			<Height>458</Height>
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UComponentsListForm>
 	<UComponentsPerformanceForm>
 		<UComponentsPerformanceFrame>
@@ -61,6 +71,8 @@
 			<ShowModeRadioGroup>0</ShowModeRadioGroup>
 			<AverageIntervalSpinEdit>10</AverageIntervalSpinEdit>
 			<Components/>
+			<UpdateInterval>100</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
 		</UComponentsPerformanceFrame>
 		<FormPosition>
 			<Left>0</Left>
@@ -70,9 +82,13 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UComponentsPerformanceForm>
 	<UComponentsListForm_1>
-		<ComponentsListFrame1/>
+		<ComponentsListFrame1>
+			<UpdateInterval>-1</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ComponentsListFrame1>
 		<FormPosition>
 			<Left>857</Left>
 			<Top>64</Top>
@@ -81,10 +97,13 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UComponentsListForm_1>
 	<UEngineMonitorForm>
 		<EngineMonitorFrame>
 			<CalculateMode>1</CalculateMode>
+			<UpdateInterval>100</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
 		</EngineMonitorFrame>
 		<FormPosition>
 			<Left>463</Left>
@@ -94,29 +113,52 @@
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UEngineMonitorForm>
 	<ComponentsControlFrame>
-		<ComponentsListFrame/>
-		<ClassesListFrame/>
+		<ComponentsListFrame>
+			<UpdateInterval>-1</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ComponentsListFrame>
+		<ClassesListFrame>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ClassesListFrame>
 	</ComponentsControlFrame>
 	<UComponentsControlForm>
-		<ComponentsControlFrame/>
+		<ComponentsControlFrame>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</ComponentsControlFrame>
 		<FormPosition>
-			<Left>15</Left>
-			<Top>185</Top>
+			<Left>7</Left>
+			<Top>302</Top>
 			<Width>1307</Width>
 			<Height>475</Height>
 			<Visible>1</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UComponentsControlForm>
 	<UComponentLinksFrame>
-		<NANetFrameInputs/>
-		<NANetFrameOutputs/>
-		<NANetFrameLinks/>
+		<NANetFrameInputs>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</NANetFrameInputs>
+		<NANetFrameOutputs>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</NANetFrameOutputs>
+		<NANetFrameLinks>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</NANetFrameLinks>
 	</UComponentLinksFrame>
 	<UComponentLinksForm>
-		<UComponentLinksFrame/>
+		<UComponentLinksFrame>
+			<UpdateInterval>-1</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</UComponentLinksFrame>
 		<FormPosition>
 			<Left>243</Left>
 			<Top>286</Top>
@@ -125,6 +167,7 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UComponentLinksForm>
 	<UWatchForm>
 		<PageCount>2</PageCount>
@@ -159,8 +202,11 @@
 				<YOutputIndex>1</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
 				<XYSize>1</XYSize>
+				<WatchInterval>10</WatchInterval>
 			</0>
-			<WatchInterval>5</WatchInterval>
+			<WatchInterval>10</WatchInterval>
+			<UpdateInterval>200</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
 		</UWatchFrame_1>
 		<UWatchFrame_2>
 			<0>
@@ -177,6 +223,7 @@
 				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
 				<XYSize>5</XYSize>
+				<WatchInterval>5</WatchInterval>
 			</0>
 			<1>
 				<Legend>EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTZone[3:0]</Legend>
@@ -191,9 +238,12 @@
 				<YDataSourceName></YDataSourceName>
 				<YOutputIndex>0</YOutputIndex>
 				<YOutputElementIndex>0</YOutputElementIndex>
-				<XYSize>50</XYSize>
+				<XYSize>26</XYSize>
+				<WatchInterval>5</WatchInterval>
 			</1>
 			<WatchInterval>-1</WatchInterval>
+			<UpdateInterval>200</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
 		</UWatchFrame_2>
 		<UWatchFrame_3>
 			<0>
@@ -297,6 +347,7 @@
 			</0>
 			<WatchInterval>5</WatchInterval>
 		</UWatchFrame_6>
+		<ComponentControlName></ComponentControlName>
 	</UWatchForm>
 	<UVisualControllerForm>
 		<FormPosition>
@@ -307,6 +358,7 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UVisualControllerForm>
 	<UCRPerseptronForm>
 		<FormPosition>
@@ -317,24 +369,29 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</UCRPerseptronForm>
 	<UDrawEngineForm>
-		<UClassesListFrame/>
+		<UClassesListFrame>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</UClassesListFrame>
 		<FontFileName></FontFileName>
 		<CanvasWidth>1219</CanvasWidth>
 		<CanvasHeight>872</CanvasHeight>
 		<FormPosition>
-			<Left>205</Left>
-			<Top>166</Top>
+			<Left>-123</Left>
+			<Top>196</Top>
 			<Width>1390</Width>
 			<Height>841</Height>
-			<Visible>1</Visible>
+			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
 		<FontType>Times New Roman</FontType>
 		<FontSize>15</FontSize>
 		<RectWidth>80</RectWidth>
 		<RectHeight>25</RectHeight>
+		<ComponentControlName></ComponentControlName>
 	</UDrawEngineForm>
 	<UFavoriteComponentInfoForm>
 		<PageCount>1</PageCount>
@@ -353,7 +410,10 @@
 			<ColWidth>64</ColWidth>
 			<InfoSize>0</InfoSize>
 			<Info/>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
 		</UFavoriteComponentInfoFrame_1>
+		<ComponentControlName></ComponentControlName>
 	</UFavoriteComponentInfoForm>
 	<ULinkSelectionForm>
 		<FormPosition>
@@ -364,8 +424,45 @@
 			<Visible>0</Visible>
 			<WindowState>0</WindowState>
 		</FormPosition>
+		<ComponentControlName></ComponentControlName>
 	</ULinkSelectionForm>
 	<UCreateProjectWizardForm>
-		<UClassesListFrame1/>
+		<UClassesListFrame1>
+			<UpdateInterval>1000</UpdateInterval>
+			<ComponentControlName></ComponentControlName>
+		</UClassesListFrame1>
 	</UCreateProjectWizardForm>
+	<UCRSampleForm>
+		<FormPosition>
+			<Left>0</Left>
+			<Top>0</Top>
+			<Width>543</Width>
+			<Height>458</Height>
+			<Visible>0</Visible>
+			<WindowState>0</WindowState>
+		</FormPosition>
+		<ComponentControlName></ComponentControlName>
+	</UCRSampleForm>
+	<UCRTeacherPerseptronBPForm>
+		<FormPosition>
+			<Left>0</Left>
+			<Top>0</Top>
+			<Width>361</Width>
+			<Height>420</Height>
+			<Visible>0</Visible>
+			<WindowState>0</WindowState>
+		</FormPosition>
+		<ComponentControlName></ComponentControlName>
+	</UCRTeacherPerseptronBPForm>
+	<UCRTeacherPerseptronDLForm>
+		<FormPosition>
+			<Left>0</Left>
+			<Top>0</Top>
+			<Width>361</Width>
+			<Height>420</Height>
+			<Visible>0</Visible>
+			<WindowState>0</WindowState>
+		</FormPosition>
+		<ComponentControlName></ComponentControlName>
+	</UCRTeacherPerseptronDLForm>
 </Interfaces>
