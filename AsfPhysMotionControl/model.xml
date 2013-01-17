@@ -2,29 +2,31 @@
 	<Model Class="NModel">
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
-			<Coord PType="257">0 0 0</Coord>
+			<Coord PType="257">0	0	0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="71">
+		<Links Type="ULinksList" Size="69">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
-				<Connector Type="ULinkSide" Index="0">PendulumAndCart</Connector>
+				<Connector Type="ULinkSide" Index="0">DCEngine</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTZone</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron1.LTMembrane</Connector>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Pac</Connector>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent</Connector>
-				<Connector Type="ULinkSide" Index="1">PendulumAndCart</Connector>
+				<Connector Type="ULinkSide" Index="1">DCEngine</Connector>
+				<Connector Type="ULinkSide" Index="1">WPhysicalManipulator</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTZone</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Motoneuron2.LTMembrane</Connector>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Pac</Connector>
 				<Connector Type="ULinkSide" Index="2">EngineControlRangeAfferent</Connector>
-				<Connector Type="ULinkSide" Index="2">PendulumAndCart</Connector>
+				<Connector Type="ULinkSide" Index="2">DCEngine</Connector>
+				<Connector Type="ULinkSide" Index="2">WPhysicalManipulator</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">PendulumAndCart</Item>
+				<Item Type="ULinkSide" Index="0">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -291,20 +293,12 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="3">PendulumAndCart</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="1">PendulumAndCart</Item>
+				<Item Type="ULinkSide" Index="1">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="2">PendulumAndCart</Item>
+				<Item Type="ULinkSide" Index="2">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="2">EngineControlRangeAfferent.NManipulatorSource1</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="4">PendulumAndCart</Item>
-				<Connector Type="ULinkSide" Index="3">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Item>
@@ -341,7 +335,7 @@
 					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
 					<Amplitude Type="double" PType="257">0</Amplitude>
-					<Coord PType="257">5.33333 5.33333 0</Coord>
+					<Coord PType="257">11.3333	7.66666	0</Coord>
 				</Parameters>
 				<Components/>
 			</CGenerator>
@@ -349,25 +343,62 @@
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CartMass Type="double" PType="257">1</CartMass>
-					<Coord PType="257">10 2 1</Coord>
-					<OutXMovement Type="double" PType="257">0.01</OutXMovement>
+					<Coord PType="257">18.6667	4	1</Coord>
+					<OutXMovement Type="double" PType="257">0</OutXMovement>
 					<RodLength Type="double" PType="257">1</RodLength>
 					<RodMass Type="double" PType="257">0.1</RodMass>
 				</Parameters>
 				<Components/>
 			</PendulumAndCart>
+			<DCEngine Class="NDCEngine">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">4.66667	7.66667	3</Coord>
+					<EMFactor Type="double" PType="257">2</EMFactor>
+					<Inductance Type="double" PType="257">0.1</Inductance>
+					<OutMoment Type="double" PType="257">0</OutMoment>
+					<ReductionRate Type="double" PType="257">1</ReductionRate>
+					<Resistance Type="double" PType="257">1</Resistance>
+					<Tm Type="double" PType="257">0.1</Tm>
+				</Parameters>
+				<Components/>
+			</DCEngine>
+			<WPhysicalManipulator Class="NWPhysicalManipulator">
+				<Parameters>
+					<AccumulationStep Type="int" PType="257">100</AccumulationStep>
+					<Activity Type="bool" PType="257">1</Activity>
+					<ComPort Type="unsigned char" PType="257"></ComPort>
+					<Coord PType="257">5	4	4</Coord>
+					<DissociationStep Type="int" PType="257">5</DissociationStep>
+					<DllManipulatorMode Type="int" PType="257">2</DllManipulatorMode>
+					<EmulatorMode Type="bool" PType="257">0</EmulatorMode>
+					<MaxAngle Type="double" PType="257">190</MaxAngle>
+					<MaxMoment Type="double" PType="257">0.554287</MaxMoment>
+					<MaxReadCounter Type="int" PType="257">10</MaxReadCounter>
+					<MaxSendCounter Type="int" PType="257">10</MaxSendCounter>
+					<MaxVoltage Type="double" PType="257">5</MaxVoltage>
+					<MinAngle Type="double" PType="257">0</MinAngle>
+					<MinControlVoltage Type="double" PType="257">0</MinControlVoltage>
+					<MinMoment Type="double" PType="257">-0.554287</MinMoment>
+					<MinVoltage Type="double" PType="257">-5</MinVoltage>
+					<OutputMul Type="double" PType="257">2</OutputMul>
+					<ServoNumber Type="unsigned char" PType="257"></ServoNumber>
+					<TimeDuration Type="double" PType="257">1</TimeDuration>
+				</Parameters>
+				<Components/>
+			</WPhysicalManipulator>
 			<EngineControlRangeAfferent Class="NAsfNewSimplestAfferentBranchedEngineControl">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<AfferentRangeMode Type="int" PType="257">0</AfferentRangeMode>
-					<Coord PType="257">2 2 2</Coord>
+					<Coord PType="257">12	4	4</Coord>
 					<CreationMode Type="int" PType="257">12</CreationMode>
 					<IIMax Type="double" PType="257">1.5708</IIMax>
 					<IIMin Type="double" PType="257">-1.5708</IIMin>
 					<IaMax Type="double" PType="257">6.28319</IaMax>
 					<IaMin Type="double" PType="257">-6.28319</IaMin>
-					<IbMax Type="double" PType="257">0.5</IbMax>
-					<IbMin Type="double" PType="257">-0.5</IbMin>
+					<IbMax Type="double" PType="257">6</IbMax>
+					<IbMin Type="double" PType="257">-6</IbMin>
 					<IcMax Type="double" PType="257">10</IcMax>
 					<IcMin Type="double" PType="257">-10</IcMin>
 					<MotionElementClassName Type="std::string" PType="257">NAsfNewSimplestAfferentBranchedMotionElement</MotionElementClassName>
@@ -377,7 +408,7 @@
 					<MotionElement0 Class="NAsfNewSimplestAfferentBranchedMotionElement">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
+							<Coord PType="257">0	0	0</Coord>
 							<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 							<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 							<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -392,7 +423,7 @@
 							<Motoneuron1 Class="NNewSynSPNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -408,7 +439,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">1e-05</Threshold>
@@ -422,7 +453,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronPosCGenerator>
@@ -432,14 +463,14 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronNegCGenerator>
 									<LTMembrane Class="NPLTZoneSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -447,7 +478,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -463,7 +494,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -480,7 +511,7 @@
 									<PNeuronMembrane Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -488,7 +519,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -504,7 +535,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -521,7 +552,7 @@
 									<PNeuronMembrane2 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -529,7 +560,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -545,7 +576,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -562,7 +593,7 @@
 									<PNeuronMembrane3 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -570,7 +601,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -586,7 +617,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -603,7 +634,7 @@
 									<PNeuronMembrane4 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -611,7 +642,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -627,7 +658,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -644,7 +675,7 @@
 									<PNeuronMembrane5 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -652,7 +683,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -668,7 +699,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -687,7 +718,7 @@
 							<Motoneuron2 Class="NNewSynSPNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -703,7 +734,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">1e-05</Threshold>
@@ -717,7 +748,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronPosCGenerator>
@@ -727,14 +758,14 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronNegCGenerator>
 									<LTMembrane Class="NPLTZoneSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -742,7 +773,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -758,7 +789,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -775,7 +806,7 @@
 									<PNeuronMembrane Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -783,7 +814,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -799,7 +830,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -816,7 +847,7 @@
 									<PNeuronMembrane2 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -824,7 +855,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -840,7 +871,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -857,7 +888,7 @@
 									<PNeuronMembrane3 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -865,7 +896,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -881,7 +912,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -898,7 +929,7 @@
 									<PNeuronMembrane4 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -906,7 +937,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -922,7 +953,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -939,7 +970,7 @@
 									<PNeuronMembrane5 Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -947,7 +978,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -963,7 +994,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -982,7 +1013,7 @@
 							<PostAfferent14 Class="NNewSynSPNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -998,7 +1029,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">1e-05</Threshold>
@@ -1012,7 +1043,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronPosCGenerator>
@@ -1022,14 +1053,14 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronNegCGenerator>
 									<LTMembrane Class="NPLTZoneSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -1037,7 +1068,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1053,7 +1084,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1070,7 +1101,7 @@
 									<PNeuronMembrane Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -1078,7 +1109,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1094,7 +1125,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1113,7 +1144,7 @@
 							<PostAfferent24 Class="NNewSynSPNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1129,7 +1160,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">1e-05</Threshold>
@@ -1143,7 +1174,7 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronPosCGenerator>
@@ -1153,14 +1184,14 @@
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 										</Parameters>
 										<Components/>
 									</PNeuronNegCGenerator>
 									<LTMembrane Class="NPLTZoneSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -1168,7 +1199,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1184,7 +1215,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-07</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1201,7 +1232,7 @@
 									<PNeuronMembrane Class="NPSynNeuronMembrane">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 										</Parameters>
 										<Components>
@@ -1209,7 +1240,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1225,7 +1256,7 @@
 												<Parameters>
 													<Activity Type="bool" PType="257">1</Activity>
 													<Capacity Type="double" PType="257">1e-09</Capacity>
-													<Coord PType="257">0 0 0</Coord>
+													<Coord PType="257">0	0	0</Coord>
 													<DissociationTC Type="double" PType="257">0.01</DissociationTC>
 													<FBResistance Type="double" PType="257">1e+08</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
@@ -1244,7 +1275,7 @@
 							<Afferent_II1 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1260,7 +1291,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1273,7 +1304,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1292,7 +1323,7 @@
 							<Afferent_II2 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1308,7 +1339,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1321,7 +1352,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1340,7 +1371,7 @@
 							<Afferent_Ia1 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1356,7 +1387,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1369,7 +1400,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1388,7 +1419,7 @@
 							<Afferent_Ia2 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1404,7 +1435,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1417,7 +1448,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1436,7 +1467,7 @@
 							<Afferent_Ib1 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1452,7 +1483,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1465,7 +1496,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1484,7 +1515,7 @@
 							<Afferent_Ib2 Class="NSimpleAfferentNeuron">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
-									<Coord PType="257">0 0 0</Coord>
+									<Coord PType="257">0	0	0</Coord>
 									<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 									<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 									<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -1500,7 +1531,7 @@
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
 											<AvgInterval Type="double" PType="257">1</AvgInterval>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 											<PulseLength Type="double" PType="257">0.001</PulseLength>
 											<Threshold Type="double" PType="257">0</Threshold>
@@ -1513,7 +1544,7 @@
 											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
-											<Coord PType="257">0 0 0</Coord>
+											<Coord PType="257">0	0	0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
 											<Gain Type="double" PType="257">1</Gain>
 											<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -1538,8 +1569,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
-							<Coord PType="257">0 0 0</Coord>
-							<Frequency Type="double" PType="257">112</Frequency>
+							<Coord PType="257">0	0	0</Coord>
+							<Frequency Type="double" PType="257">0</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1552,8 +1583,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
-							<Coord PType="257">0 0 0</Coord>
-							<Frequency Type="double" PType="257">0</Frequency>
+							<Coord PType="257">0	0	0</Coord>
+							<Frequency Type="double" PType="257">34</Frequency>
 							<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 							<PulseLength Type="double" PType="257">0.001</PulseLength>
 						</Parameters>
@@ -1565,7 +1596,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">0</Amplitude>
-							<Coord PType="257">0 0 0</Coord>
+							<Coord PType="257">0	0	0</Coord>
 						</Parameters>
 						<Components/>
 					</AfferentSource1>
@@ -1575,7 +1606,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Angle Type="double" PType="257">0</Angle>
-							<Coord PType="257">0 0 0</Coord>
+							<Coord PType="257">0	0	0</Coord>
 							<Force Type="double" PType="257">0</Force>
 							<Movement Type="double" PType="257">0</Movement>
 							<Speed Type="double" PType="257">0</Speed>
@@ -1587,30 +1618,46 @@
 							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Voltage Type="double" PType="257">2.23517e-05</Voltage>
+							<Coord PType="257">0	0	0</Coord>
+							<Voltage Type="double" PType="257">-5.51909e-07</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
 					<Pac Class="NPac">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
+							<Coord PType="257">0	0	0</Coord>
 							<DissociationTC Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">0.001</elem>
-								<elem Type="simplevector" Size="1">0.001</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">0.0045</elem>
+								</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">0.0045</elem>
+								</elem>
 							</DissociationTC>
 							<Gain Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">-100</elem>
-								<elem Type="simplevector" Size="1">100</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">-100</elem>
+								</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">100</elem>
+								</elem>
 							</Gain>
 							<PulseAmplitude Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">1</elem>
-								<elem Type="simplevector" Size="1">1</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">1</elem>
+								</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">1</elem>
+								</elem>
 							</PulseAmplitude>
 							<SecretionTC Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">0.001</elem>
-								<elem Type="simplevector" Size="1">0.001</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">0.001</elem>
+								</elem>
+								<elem Type="std::vector" Size="1">
+									<elem Type="double">0.001</elem>
+								</elem>
 							</SecretionTC>
 						</Parameters>
 						<Components/>
@@ -1618,10 +1665,16 @@
 					<Ib_NegIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.5</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-10</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -1631,10 +1684,16 @@
 					<Ib_PosIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.5</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">10</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -1644,10 +1703,16 @@
 					<II_NegIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-1.5708</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-1.5708</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -1657,10 +1722,16 @@
 					<II_PosIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">1.5708</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">1.5708</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -1670,10 +1741,16 @@
 					<Ia_NegIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-6.28319</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">-6.28319</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -1683,10 +1760,16 @@
 					<Ia_PosIntervalSeparator1 Class="NIntervalSeparator">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
-							<Coord PType="257">0 0 0</Coord>
-							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">6.28319</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
+							<Coord PType="257">0	0	0</Coord>
+							<Gain Type="std::vector" Size="1" PType="257">
+								<elem Type="double">1</elem>
+							</Gain>
+							<MaxRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">6.28319</elem>
+							</MaxRange>
+							<MinRange Type="std::vector" Size="1" PType="257">
+								<elem Type="double">0</elem>
+							</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
