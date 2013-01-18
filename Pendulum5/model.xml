@@ -1502,7 +1502,7 @@
 					<Activity Type="bool" PType="257">1</Activity>
 					<CartMass Type="double" PType="257">1</CartMass>
 					<Coord PType="257">10 2 1</Coord>
-					<OutXMovement Type="double" PType="257">1.526</OutXMovement>
+					<OutXMovement Type="double" PType="257">0</OutXMovement>
 					<RodLength Type="double" PType="257">1</RodLength>
 					<RodMass Type="double" PType="257">0.1</RodMass>
 				</Parameters>
@@ -1511,7 +1511,7 @@
 			<EngineControlRangeAfferent Class="NAsfNewSimplestAfferentBranchedEngineControl5">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
-					<AfferentRangeMode Type="int" PType="257">2</AfferentRangeMode>
+					<AfferentRangeMode Type="int" PType="257">1</AfferentRangeMode>
 					<Coord PType="257">0 0 0</Coord>
 					<CreationMode Type="int" PType="257">12</CreationMode>
 					<IIMax Type="double" PType="257">1.5708</IIMax>
@@ -1524,6 +1524,8 @@
 					<IcMin Type="double" PType="257">-10</IcMin>
 					<MotionElementClassName Type="std::string" PType="257">NAsfNewSimplestAfferentBranchedMotionElement</MotionElementClassName>
 					<NumMotionElements Type="unsigned int" PType="257">5</NumMotionElements>
+					<PacGain Type="double" PType="257">300</PacGain>
+					<PacRangeMode Type="int" PType="257">0</PacRangeMode>
 				</Parameters>
 				<Components>
 					<MotionElement0 Class="NAsfNewSimplestAfferentBranchedMotionElement">
@@ -7368,7 +7370,7 @@
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
-							<Voltage Type="double" PType="257">-0.0320435</Voltage>
+							<Voltage Type="double" PType="257">1.29839e-126</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -7389,15 +7391,15 @@
 								<elem Type="simplevector" Size="1">0.001</elem>
 							</DissociationTC>
 							<Gain Type="std::vector" Size="10" PType="257">
-								<elem Type="simplevector" Size="1">-18.75</elem>
-								<elem Type="simplevector" Size="1">-37.5</elem>
-								<elem Type="simplevector" Size="1">-75</elem>
-								<elem Type="simplevector" Size="1">-150</elem>
+								<elem Type="simplevector" Size="1">-60</elem>
+								<elem Type="simplevector" Size="1">-120</elem>
+								<elem Type="simplevector" Size="1">-180</elem>
+								<elem Type="simplevector" Size="1">-240</elem>
 								<elem Type="simplevector" Size="1">-300</elem>
-								<elem Type="simplevector" Size="1">18.75</elem>
-								<elem Type="simplevector" Size="1">37.5</elem>
-								<elem Type="simplevector" Size="1">75</elem>
-								<elem Type="simplevector" Size="1">150</elem>
+								<elem Type="simplevector" Size="1">60</elem>
+								<elem Type="simplevector" Size="1">120</elem>
+								<elem Type="simplevector" Size="1">180</elem>
+								<elem Type="simplevector" Size="1">240</elem>
 								<elem Type="simplevector" Size="1">300</elem>
 							</Gain>
 							<PulseAmplitude Type="std::vector" Size="10" PType="257">
@@ -7433,7 +7435,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.625</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-0.4</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7445,8 +7447,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.625</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-1.25</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-0.4</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-1.6</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7458,8 +7460,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-1.25</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-2.5</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-1.6</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-3.6</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7471,8 +7473,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-2.5</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-5</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-3.6</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-6.4</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7484,7 +7486,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-5</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-6.4</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">-10</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7497,7 +7499,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.625</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">0.4</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7510,8 +7512,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">1.25</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.625</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">1.6</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">0.4</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7523,8 +7525,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">2.5</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">1.25</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">3.6</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">1.6</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7536,8 +7538,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">5</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">2.5</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">6.4</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">3.6</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7550,7 +7552,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">10</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">5</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">6.4</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7563,7 +7565,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.098175</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-0.062832</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7575,8 +7577,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.098175</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.19635</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-0.062832</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-0.251328</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7588,8 +7590,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.19635</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.3927</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-0.251328</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-0.565488</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7601,8 +7603,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.3927</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.7854</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-0.565488</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-1.00531</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7614,7 +7616,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.7854</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-1.00531</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">-1.5708</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7627,7 +7629,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.098175</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">0.062832</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7640,8 +7642,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.19635</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.098175</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">0.251328</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">0.062832</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7653,8 +7655,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.3927</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.19635</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">0.565488</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">0.251328</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7666,8 +7668,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.7854</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.3927</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">1.00531</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">0.565488</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7680,7 +7682,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">1.5708</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.7854</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">1.00531</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7693,7 +7695,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">0</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.392699</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-0.251328</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7705,8 +7707,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.392699</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-0.785399</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-0.251328</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-1.00531</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7718,8 +7720,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-0.785399</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-1.5708</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-1.00531</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-2.26195</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7731,8 +7733,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-1.5708</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">-3.1416</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-2.26195</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">-4.02124</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7744,7 +7746,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">-1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">-3.1416</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">-4.02124</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">-6.28319</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7757,7 +7759,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.392699</MaxRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">0.251328</MaxRange>
 							<MinRange Type="simplevector" Size="1" PType="257">0</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
@@ -7770,8 +7772,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">0.785399</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.392699</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">1.00531</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">0.251328</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7783,8 +7785,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">1.5708</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">0.785399</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">2.26195</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">1.00531</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7796,8 +7798,8 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
-							<MaxRange Type="simplevector" Size="1" PType="257">3.1416</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">1.5708</MinRange>
+							<MaxRange Type="simplevector" Size="1" PType="257">4.02124</MaxRange>
+							<MinRange Type="simplevector" Size="1" PType="257">2.26195</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
@@ -7810,7 +7812,7 @@
 							<Coord PType="257">0 0 0</Coord>
 							<Gain Type="simplevector" Size="1" PType="257">1</Gain>
 							<MaxRange Type="simplevector" Size="1" PType="257">6.28319</MaxRange>
-							<MinRange Type="simplevector" Size="1" PType="257">3.1416</MinRange>
+							<MinRange Type="simplevector" Size="1" PType="257">4.02124</MinRange>
 							<Mode Type="std::vector" Size="1" PType="257">
 								<elem Type="int">5</elem>
 							</Mode>
