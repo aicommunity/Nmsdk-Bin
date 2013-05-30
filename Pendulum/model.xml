@@ -4,7 +4,7 @@
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0 0 0</Coord>
 		</Parameters>
-		<Links Type="ULinksList" Size="71">
+		<Links Type="ULinksList" Size="70">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Item>
 				<Connector Type="ULinkSide" Index="0">PendulumAndCart</Connector>
@@ -24,7 +24,7 @@
 				<Connector Type="ULinkSide" Index="2">PendulumAndCart</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">PendulumAndCart</Item>
+				<Item Type="ULinkSide" Index="3">PendulumAndCart</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -291,10 +291,6 @@
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.MotionElement0.Afferent_Ib2.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="3">PendulumAndCart</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="1">PendulumAndCart</Item>
 				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.NManipulatorSource1</Connector>
 			</elem>
@@ -308,37 +304,29 @@
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorSource1</Item>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_NegIntervalSeparator1</Connector>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_PosIntervalSeparator1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="1">EngineControlRangeAfferent.NManipulatorSource1</Item>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.II_NegIntervalSeparator1</Connector>
+				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.II_PosIntervalSeparator1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="2">EngineControlRangeAfferent.NManipulatorSource1</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ia_NegIntervalSeparator1</Connector>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ia_PosIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Ib_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ib_PosIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Ib_PosIntervalSeparator1</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0">EngineControlRangeAfferent.Pac</Item>
 				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.NManipulatorInput1</Connector>
 			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="1">EngineControlRangeAfferent.NManipulatorSource1</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.II_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.II_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.II_PosIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.II_PosIntervalSeparator1</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="2">EngineControlRangeAfferent.NManipulatorSource1</Item>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ia_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Ia_NegIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="0">EngineControlRangeAfferent.Ia_PosIntervalSeparator1</Connector>
-				<Connector Type="ULinkSide" Index="1">EngineControlRangeAfferent.Ia_PosIntervalSeparator1</Connector>
-			</elem>
 		</Links>
 		<Components>
 			<CGenerator Class="NCGenerator">
 				<Parameters>
-					<ActionCounter Type="int" PType="257">0</ActionCounter>
 					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+					<ActionPeriod Type="int">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
 					<Amplitude Type="double" PType="257">0</Amplitude>
 					<Coord PType="257">5.33333 5.33333 0</Coord>
@@ -348,8 +336,17 @@
 			<PendulumAndCart Class="NPendulumAndCart">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
+					<AngleWeight Type="double" PType="257">1</AngleWeight>
 					<CartMass Type="double" PType="257">1</CartMass>
 					<Coord PType="257">10 2 1</Coord>
+					<Kd Type="double" PType="257">0</Kd>
+					<Ki Type="double" PType="257">0</Ki>
+					<Kp Type="double" PType="257">0</Kp>
+					<Mode Type="double" PType="257">0</Mode>
+					<MovementKd Type="double" PType="257">0</MovementKd>
+					<MovementKi Type="double" PType="257">0</MovementKi>
+					<MovementKp Type="double" PType="257">0</MovementKp>
+					<MovementWeight Type="double" PType="257">1</MovementWeight>
 					<OutXMovement Type="double" PType="257">0</OutXMovement>
 					<RodLength Type="double" PType="257">1</RodLength>
 					<RodMass Type="double" PType="257">0.1</RodMass>
@@ -420,8 +417,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -430,8 +427,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -715,8 +712,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -725,8 +722,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1010,8 +1007,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1020,8 +1017,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1141,8 +1138,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1151,8 +1148,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-1</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1272,8 +1269,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1320,8 +1317,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1368,8 +1365,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1416,8 +1413,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1464,8 +1461,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1512,8 +1509,8 @@
 									</LTZone>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionCounter Type="int" PType="257">0</ActionCounter>
 											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">0.0001</ExpCoeff>
@@ -1535,8 +1532,8 @@
 					</MotionElement0>
 					<IIPosAfferentGenerator Class="NPGenerator">
 						<Parameters>
-							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
@@ -1549,8 +1546,8 @@
 					</IIPosAfferentGenerator>
 					<IINegAfferentGenerator Class="NPGenerator">
 						<Parameters>
-							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
@@ -1563,8 +1560,8 @@
 					</IINegAfferentGenerator>
 					<AfferentSource1 Class="NCGenerator">
 						<Parameters>
-							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">0</Amplitude>
 							<Coord PType="257">0 0 0</Coord>
@@ -1573,8 +1570,8 @@
 					</AfferentSource1>
 					<NManipulatorSource1 Class="NManipulatorSource">
 						<Parameters>
-							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Angle Type="double" PType="257">0</Angle>
 							<Coord PType="257">0 0 0</Coord>
@@ -1586,11 +1583,11 @@
 					</NManipulatorSource1>
 					<NManipulatorInput1 Class="NManipulatorInput">
 						<Parameters>
-							<ActionCounter Type="int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
-							<Voltage Type="double" PType="257">2.43945e-16</Voltage>
+							<Voltage Type="double" PType="257">-2.05738e-96</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
