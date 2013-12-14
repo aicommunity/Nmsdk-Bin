@@ -6,13 +6,6 @@
 		</Parameters>
 		<Links Type="ULinksList" Size="38">
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">PGenerator</Item>
-				<Connector Type="ULinkSide" Index="1" Name="">SPNeuron.PNeuronMembrane.PosChannel</Connector>
-				<Connector Type="ULinkSide" Index="1" Name="">Motoneuron.PNeuronMembrane.PosChannel</Connector>
-				<Connector Type="ULinkSide" Index="2" Name="">SPNeuron2.PNeuronMembrane.PosChannel</Connector>
-				<Connector Type="ULinkSide" Index="1" Name="">Motoneuron2.PNeuronMembrane.PosChannel</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">SPNeuron.LTMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">SPNeuron.LTZone</Connector>
 			</elem>
@@ -39,6 +32,13 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">SPNeuron.PNeuronMembrane.NegChannel</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">SPNeuron.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">PGenerator</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">SPNeuron.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">Motoneuron.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">SPNeuron2.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">Motoneuron2.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">PGenerator2</Item>
@@ -173,24 +173,10 @@
 			</elem>
 		</Links>
 		<Components>
-			<PGenerator Class="NPGenerator">
-				<Parameters>
-					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-					<ActionPeriod Type="int">0</ActionPeriod>
-					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
-					<AvgInterval Type="double" PType="257">5</AvgInterval>
-					<Coord PType="257">3.66666 7.66666 0</Coord>
-					<Frequency Type="double" PType="257">0.5</Frequency>
-					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
-					<PulseLength Type="double" PType="257">0.001</PulseLength>
-				</Parameters>
-				<Components/>
-			</PGenerator>
 			<SPNeuron Class="NSynSPNeuron">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
-					<Coord PType="257">13.6667 2.66667 4</Coord>
+					<Coord PType="257">13 2.66667 4</Coord>
 					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -239,6 +225,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">17.6667 10.3333 3</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -280,6 +267,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">12 10.3333 4</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -370,6 +358,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">16.6667 6.66667 3</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -411,6 +400,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -452,6 +442,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">4 6.66667 5</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -493,6 +484,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">4 9 6</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -583,6 +575,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">14.3333 5 3</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -624,6 +617,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">8.33333 5 4</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -714,6 +708,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">16.3333 5.33333 3</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -755,6 +750,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">9 3.66667 4</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -796,6 +792,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">9.33333 8.66667 5</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -837,6 +834,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">9.33333 6 6</Coord>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
 						</Parameters>
 						<Components>
 							<PosChannel Class="NPSynNeuronChannel">
@@ -875,6 +873,20 @@
 					</PNeuronMembrane3>
 				</Components>
 			</Motoneuron2>
+			<PGenerator Class="NPGenerator">
+				<Parameters>
+					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+					<ActionPeriod Type="int">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">1</Amplitude>
+					<AvgInterval Type="double" PType="257">5</AvgInterval>
+					<Coord PType="257">3.66666 7.66666 0</Coord>
+					<Frequency Type="double" PType="257">0</Frequency>
+					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+					<PulseLength Type="double" PType="257">0.001</PulseLength>
+				</Parameters>
+				<Components/>
+			</PGenerator>
 			<PGenerator2 Class="NPGenerator">
 				<Parameters>
 					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
