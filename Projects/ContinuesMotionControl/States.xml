@@ -5,7 +5,7 @@
 			<WPhysicalManipulator Class="NWPhysicalManipulator">
 				<State>
 					<AngleSpeed Type="double" PType="258">128</AngleSpeed>
-					<AnglesHistoryTime Type="double" PType="258">0.3</AnglesHistoryTime>
+					<AnglesHistoryTime Type="double" PType="258">0.3000000000000001554</AnglesHistoryTime>
 					<AnglesTimes Type="std::vector" Size="0" PType="258"/>
 					<FoundMaxForce Type="double" PType="258">-10000</FoundMaxForce>
 					<FoundMaxSpeed Type="double" PType="258">-10000</FoundMaxSpeed>
@@ -14,1453 +14,273 @@
 					<InputVoltage Type="double" PType="258">130</InputVoltage>
 					<NumAnglesHistory Type="unsigned int" PType="258">2</NumAnglesHistory>
 					<OutputVoltage Type="double" PType="258">129</OutputVoltage>
-					<PreviousAngles Type="std::vector" Size="0" PType="258"/>
+					<PreviousAngles Type="simplevector" Size="0" PType="258"/>
 					<PulseState Type="std::vector" Size="0" PType="258"/>
 				</State>
 				<Components/>
 			</WPhysicalManipulator>
-			<EngineControlRangeAfferent Class="NContinuesIndRangeBranchedCrosslinksEngineControlRangeAfferent">
-				<State/>
+			<DCEngine Class="NDCEngine">
+				<State>
+					<Angle Type="double" PType="258">0</Angle>
+				</State>
+				<Components/>
+			</DCEngine>
+			<EngineControlRangeAfferent Class="N2AsfNewSimplestAfferentBranchedEngineControl">
+				<State>
+					<CurrentContourAmplitude Type="simplevector" Size="4" PType="258">0 0 0 0</CurrentContourAmplitude>
+					<CurrentContourAverage Type="simplevector" Size="4" PType="258">0 0 0 0</CurrentContourAverage>
+					<CurrentTransientState Type="bool" PType="258">0</CurrentTransientState>
+					<CurrentTransientTime Type="double" PType="258">0</CurrentTransientTime>
+					<MinAfferentRange Type="double" PType="258">0.10000000000000000555</MinAfferentRange>
+				</State>
 				<Components>
-					<MotionElement0 Class="NContinuesBranchedMotionElement">
+					<IIPosAfferentGenerator Class="NPGenerator">
 						<State>
-							<NetStructure Type="std::vector" Size="0" PType="258"/>
+							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+							<PulseCounter Type="int" PType="258">0</PulseCounter>
+							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
 						</State>
-						<Components>
-							<Renshow1 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</Renshow1>
-							<Renshow2 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</Renshow2>
-							<Motoneuron1 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-									<PNeuronMembrane3 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane3>
-									<PNeuronMembrane4 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane4>
-									<PNeuronMembrane5 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane5>
-									<PNeuronMembrane6 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane6>
-									<PNeuronMembrane7 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane7>
-									<PNeuronMembrane8 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane8>
-								</Components>
-							</Motoneuron1>
-							<Motoneuron2 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-									<PNeuronMembrane3 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane3>
-									<PNeuronMembrane4 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane4>
-									<PNeuronMembrane5 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane5>
-									<PNeuronMembrane6 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane6>
-									<PNeuronMembrane7 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane7>
-									<PNeuronMembrane8 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane8>
-								</Components>
-							</Motoneuron2>
-							<PostAfferent11 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-									<PNeuronMembrane3 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane3>
-								</Components>
-							</PostAfferent11>
-							<PostAfferent12 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</PostAfferent12>
-							<PostAfferent13 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-								</Components>
-							</PostAfferent13>
-							<PostAfferent14 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</PostAfferent14>
-							<PostAfferent21 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-									<PNeuronMembrane3 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane3>
-								</Components>
-							</PostAfferent21>
-							<PostAfferent22 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</PostAfferent22>
-							<PostAfferent23 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-								</Components>
-							</PostAfferent23>
-							<PostAfferent24 Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<PNeuronMembrane2 Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane2>
-								</Components>
-							</PostAfferent24>
-							<Afferent_Ia1 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_Ia1>
-							<Afferent_Ia2 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_Ia2>
-							<Afferent_Ib1 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_Ib1>
-							<Afferent_Ib2 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_Ib2>
-							<Afferent_II1 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_II1>
-							<Afferent_II2 Class="NContinuesSAfferentNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
-											<PrePotential Type="double" PType="258">0</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">0</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">0</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="std::vector" Size="0" PType="258"/>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-									<Receptor Class="NReceptor">
-										<State/>
-										<Components/>
-									</Receptor>
-								</Components>
-							</Afferent_II2>
-						</Components>
-					</MotionElement0>
+						<Components/>
+					</IIPosAfferentGenerator>
+					<IINegAfferentGenerator Class="NPGenerator">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+							<PulseCounter Type="int" PType="258">0</PulseCounter>
+							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+						</State>
+						<Components/>
+					</IINegAfferentGenerator>
 					<AfferentSource1 Class="NCGenerator">
 						<State/>
 						<Components/>
 					</AfferentSource1>
-					<AfferentSource2 Class="NCGenerator">
-						<State/>
-						<Components/>
-					</AfferentSource2>
-					<LengthSource1 Class="NCGenerator">
-						<State/>
-						<Components/>
-					</LengthSource1>
-					<Renshow1ActivatorGenerator Class="NPGenerator">
-						<State>
-							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-							<PulseCounter Type="int" PType="258">2</PulseCounter>
-							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
-						</State>
-						<Components/>
-					</Renshow1ActivatorGenerator>
-					<Renshow2ActivatorGenerator Class="NPGenerator">
-						<State>
-							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-							<PulseCounter Type="int" PType="258">2</PulseCounter>
-							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
-						</State>
-						<Components/>
-					</Renshow2ActivatorGenerator>
-					<Renshow1DeactivatorGenerator Class="NPGenerator">
-						<State>
-							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-							<PulseCounter Type="int" PType="258">2</PulseCounter>
-							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
-						</State>
-						<Components/>
-					</Renshow1DeactivatorGenerator>
-					<Renshow2DeactivatorGenerator Class="NPGenerator">
-						<State>
-							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-							<PulseCounter Type="int" PType="258">2</PulseCounter>
-							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
-						</State>
-						<Components/>
-					</Renshow2DeactivatorGenerator>
-					<Motoneuron1FrequencyReceiver Class="NFrequencyReceiver">
-						<State/>
-						<Components/>
-					</Motoneuron1FrequencyReceiver>
-					<Motoneuron2FrequencyReceiver Class="NFrequencyReceiver">
-						<State/>
-						<Components/>
-					</Motoneuron2FrequencyReceiver>
-					<EngineMoment Class="NCGenerator">
-						<State/>
-						<Components/>
-					</EngineMoment>
 					<NManipulatorSource1 Class="NManipulatorSource">
 						<State/>
 						<Components/>
 					</NManipulatorSource1>
-					<NManipulatorSourceEmulator1 Class="NManipulatorSourceEmulator">
-						<State/>
-						<Components/>
-					</NManipulatorSourceEmulator1>
 					<NManipulatorInput1 Class="NManipulatorInput">
 						<State/>
 						<Components/>
 					</NManipulatorInput1>
-					<NManipulatorInputEmulator1 Class="NManipulatorInputEmulator">
+					<MotionElement0 Class="NNewMotionElement">
+						<State/>
+						<Components>
+							<MotoneuronL Class="NContinuesSynSPNeuron">
+								<State>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+								</State>
+								<Components>
+									<LTZone Class="NCLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+										</State>
+										<Components/>
+									</LTZone>
+									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronPosCGenerator>
+									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronNegCGenerator>
+									<PNeuronMembrane Class="NCSynNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+										</State>
+										<Components>
+											<PosChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
+												</State>
+												<Components/>
+											</PosChannel>
+											<NegChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
+												</State>
+												<Components/>
+											</NegChannel>
+										</Components>
+									</PNeuronMembrane>
+								</Components>
+							</MotoneuronL>
+							<MotoneuronR Class="NContinuesSynSPNeuron">
+								<State>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+								</State>
+								<Components>
+									<LTZone Class="NCLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+										</State>
+										<Components/>
+									</LTZone>
+									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronPosCGenerator>
+									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronNegCGenerator>
+									<PNeuronMembrane Class="NCSynNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+										</State>
+										<Components>
+											<PosChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
+												</State>
+												<Components/>
+											</PosChannel>
+											<NegChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
+												</State>
+												<Components/>
+											</NegChannel>
+										</Components>
+									</PNeuronMembrane>
+								</Components>
+							</MotoneuronR>
+							<AfferentR1 Class="NContinuesSAfferentNeuron">
+								<State>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+								</State>
+								<Components>
+									<LTZone Class="NCLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+										</State>
+										<Components/>
+									</LTZone>
+									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronPosCGenerator>
+									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronNegCGenerator>
+									<PNeuronMembrane Class="NCSynNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+										</State>
+										<Components>
+											<PosChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="0" PType="258"/>
+												</State>
+												<Components/>
+											</PosChannel>
+											<NegChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="0" PType="258"/>
+												</State>
+												<Components/>
+											</NegChannel>
+										</Components>
+									</PNeuronMembrane>
+									<Receptor Class="NReceptor">
+										<State/>
+										<Components/>
+									</Receptor>
+								</Components>
+							</AfferentR1>
+							<AfferentL1 Class="NContinuesSAfferentNeuron">
+								<State>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+								</State>
+								<Components>
+									<LTZone Class="NCLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+										</State>
+										<Components/>
+									</LTZone>
+									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronPosCGenerator>
+									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronNegCGenerator>
+									<PNeuronMembrane Class="NCSynNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+										</State>
+										<Components>
+											<PosChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
+												</State>
+												<Components/>
+											</PosChannel>
+											<NegChannel Class="NCSynNeuronChannel">
+												<State>
+													<PreOutput Type="simplevector" Size="0" PType="258"/>
+												</State>
+												<Components/>
+											</NegChannel>
+										</Components>
+									</PNeuronMembrane>
+									<Receptor Class="NReceptor">
+										<State/>
+										<Components/>
+									</Receptor>
+								</Components>
+							</AfferentL1>
+						</Components>
+					</MotionElement0>
+					<NManipulatorSource12 Class="NManipulatorSource">
 						<State/>
 						<Components/>
-					</NManipulatorInputEmulator1>
-					<Engine Class="NDCEngine">
+					</NManipulatorSource12>
+					<Pac Class="NCPac">
 						<State>
-							<Angle Type="double" PType="258">0</Angle>
+							<PreOutput Type="std::vector" Size="0" PType="258"/>
 						</State>
 						<Components/>
-					</Engine>
-					<Sum Class="NSum">
+					</Pac>
+					<NegIntervalSeparator11 Class="NIntervalSeparator">
 						<State/>
 						<Components/>
-					</Sum>
-					<Ib_NegIntervalSeparator1 Class="NIntervalSeparator">
+					</NegIntervalSeparator11>
+					<PosIntervalSeparator11 Class="NIntervalSeparator">
 						<State/>
 						<Components/>
-					</Ib_NegIntervalSeparator1>
-					<Ib_PosIntervalSeparator1 Class="NIntervalSeparator">
-						<State/>
-						<Components/>
-					</Ib_PosIntervalSeparator1>
-					<II_NegIntervalSeparator1 Class="NIntervalSeparator">
-						<State/>
-						<Components/>
-					</II_NegIntervalSeparator1>
-					<II_PosIntervalSeparator1 Class="NIntervalSeparator">
-						<State/>
-						<Components/>
-					</II_PosIntervalSeparator1>
-					<Ia_NegIntervalSeparator1 Class="NIntervalSeparator">
-						<State/>
-						<Components/>
-					</Ia_NegIntervalSeparator1>
-					<Ia_PosIntervalSeparator1 Class="NIntervalSeparator">
-						<State/>
-						<Components/>
-					</Ia_PosIntervalSeparator1>
+					</PosIntervalSeparator11>
 				</Components>
 			</EngineControlRangeAfferent>
 		</Components>
