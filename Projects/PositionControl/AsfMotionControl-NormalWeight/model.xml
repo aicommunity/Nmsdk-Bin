@@ -1,10 +1,745 @@
-<SaveProperties ModelName="Model">
+<Save ModelName="Model">
 	<Model Class="NModel">
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
 			<Coord PType="257">0 0 0</Coord>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 		</Parameters>
+		<Links Type="ULinksList" Size="173">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorInput1</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">DCEngine</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">DCEngine</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorSource1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent</Item>
+				<Connector Type="ULinkSide" Index="0" Name="MotionControl">NPositionControlElement</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="1" Name="">DCEngine</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.NManipulatorSource1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="2" Name="">DCEngine</Item>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.NManipulatorSource1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorSource1</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator11</Connector>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator11</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.NManipulatorSource1</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator12</Connector>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator12</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.NManipulatorSource1</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator13</Connector>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator13</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.Pac</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorInput1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.Pac</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="3" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="3" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="3" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronL.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="3" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.Pac</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.MotoneuronR.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator11</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator11</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR2.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator12</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR2.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL2.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator12</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL2.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator13</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.Receptor</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.LTZone</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator13</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL1.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR1.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL2.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR2.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTMembrane</Connector>
+				<Connector Type="ULinkSide" Index="2" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentL3.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.PostAfferentR3.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL11.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR11.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL12.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR12.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronL13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronL13.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.InputNeuronR13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTZone</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTMembrane</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.InputNeuronR13.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL11.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorR11</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR11.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR11.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorL11</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR11.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL12.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorR12</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR12.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR12.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorL12</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR12.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronL13.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorR13</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronL13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR13.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTMembrane.PosChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">NPositionControlElement.ControlNeuronR13.LTMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">NPositionControlElement.NPGeneratorL13</Item>
+				<Connector Type="ULinkSide" Index="1" Name="">NPositionControlElement.ControlNeuronR13.PNeuronMembrane.PosChannel</Connector>
+			</elem>
+		</Links>
 		<Components>
 			<CGenerator Class="NCGenerator">
 				<Parameters>
@@ -176,7 +911,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">0 0 0</Coord>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<Voltage Type="double" PType="257">-2.343750002182787284</Voltage>
+							<Voltage Type="double" PType="257">1.153199862825466278e-141</Voltage>
 						</Parameters>
 						<Components/>
 					</NManipulatorInput1>
@@ -1708,8 +2443,8 @@
 								<elem Type="simplevector" Size="1">0.001</elem>
 							</DissociationTC>
 							<Gain Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">-10</elem>
-								<elem Type="simplevector" Size="1">10</elem>
+								<elem Type="simplevector" Size="1">-300</elem>
+								<elem Type="simplevector" Size="1">300</elem>
 							</Gain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<Mode Type="int" PType="257">0</Mode>
@@ -3682,4 +4417,4 @@
 			</NPositionControlElement>
 		</Components>
 	</Model>
-</SaveProperties>
+</Save>
