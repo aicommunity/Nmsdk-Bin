@@ -21,16 +21,16 @@
 			</WPhysicalManipulator>
 			<DCEngine Class="NDCEngine">
 				<State>
-					<Angle Type="double" PType="258">0.000686405467318226283</Angle>
+					<Angle Type="double" PType="258">0</Angle>
 				</State>
 				<Components/>
 			</DCEngine>
 			<EngineControlRangeAfferent Class="N2AsfNewSimplestAfferentBranchedEngineControl">
 				<State>
-					<CurrentContourAmplitude Type="simplevector" Size="4" PType="258">0.396737 0.0211024 0.188045 0</CurrentContourAmplitude>
-					<CurrentContourAverage Type="simplevector" Size="4" PType="258">-0.0556792 0.000953786 0.0133187 0</CurrentContourAverage>
-					<CurrentTransientState Type="bool" PType="258">1</CurrentTransientState>
-					<CurrentTransientTime Type="double" PType="258">0.3350000000000008526</CurrentTransientTime>
+					<CurrentContourAmplitude Type="simplevector" Size="4" PType="258">0 0 0 0</CurrentContourAmplitude>
+					<CurrentContourAverage Type="simplevector" Size="4" PType="258">0 0 0 0</CurrentContourAverage>
+					<CurrentTransientState Type="bool" PType="258">0</CurrentTransientState>
+					<CurrentTransientTime Type="double" PType="258">0</CurrentTransientTime>
 					<MinAfferentRange Type="double" PType="258">0.10000000000000000555</MinAfferentRange>
 				</State>
 				<Components>
@@ -76,55 +76,8 @@
 									<LTZone Class="NCLTZone">
 										<State>
 											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">3.656250190564591662e-05</NeuralPotential>
-											<PrePotential Type="double" PType="258">3.65625018893534615e-05</PrePotential>
-											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
-										</State>
-										<Components/>
-									</LTZone>
-									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronPosCGenerator>
-									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
-										<State/>
-										<Components/>
-									</PNeuronNegCGenerator>
-									<PNeuronMembrane Class="NCSynNeuronMembrane">
-										<State>
-											<Feedback Type="double" PType="258">7.3125003778706923e-05</Feedback>
-										</State>
-										<Components>
-											<PosChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="simplevector" Size="3" PType="258">0 0.000200495 0</PreOutput>
-												</State>
-												<Components/>
-											</PosChannel>
-											<NegChannel Class="NCSynNeuronChannel">
-												<State>
-													<PreOutput Type="simplevector" Size="3" PType="258">0 2.89718e-09 0</PreOutput>
-												</State>
-												<Components/>
-											</NegChannel>
-										</Components>
-									</PNeuronMembrane>
-								</Components>
-							</MotoneuronL>
-							<MotoneuronR Class="NContinuesSynSPNeuron">
-								<State>
-									<NetStructure Type="std::vector" Size="0" PType="258"/>
-									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
-									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
-									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
-								</State>
-								<Components>
-									<LTZone Class="NCLTZone">
-										<State>
-											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">-3.656250190564591662e-05</NeuralPotential>
-											<PrePotential Type="double" PType="258">-3.65625018893534615e-05</PrePotential>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
 											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
@@ -145,13 +98,64 @@
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
-													<PreOutput Type="simplevector" Size="3" PType="258">0 2.89718e-09 0</PreOutput>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<PreOutput Type="simplevector" Size="3" PType="258">0 0 0</PreOutput>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
-													<PreOutput Type="simplevector" Size="3" PType="258">0 0.000200495 0</PreOutput>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<PreOutput Type="simplevector" Size="3" PType="258">0 0 0</PreOutput>
+												</State>
+												<Components/>
+											</NegChannel>
+										</Components>
+									</PNeuronMembrane>
+								</Components>
+							</MotoneuronL>
+							<MotoneuronR Class="NContinuesSynSPNeuron">
+								<State>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+								</State>
+								<Components>
+									<LTZone Class="NCLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+										</State>
+										<Components/>
+									</LTZone>
+									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronPosCGenerator>
+									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
+										<State/>
+										<Components/>
+									</PNeuronNegCGenerator>
+									<PNeuronMembrane Class="NCSynNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+										</State>
+										<Components>
+											<PosChannel Class="NCSynNeuronChannel">
+												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<PreOutput Type="simplevector" Size="3" PType="258">0 0 0</PreOutput>
+												</State>
+												<Components/>
+											</PosChannel>
+											<NegChannel Class="NCSynNeuronChannel">
+												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<PreOutput Type="simplevector" Size="3" PType="258">0 0 0</PreOutput>
 												</State>
 												<Components/>
 											</NegChannel>
@@ -173,7 +177,7 @@
 											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
 											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -192,12 +196,14 @@
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -224,7 +230,7 @@
 											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
 											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -243,12 +249,14 @@
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="1" PType="258">0</PreOutput>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -272,10 +280,10 @@
 									<LTZone Class="NCLTZone">
 										<State>
 											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">2.607465798831754e-09</NeuralPotential>
-											<PrePotential Type="double" PType="258">2.607465798831754e-09</PrePotential>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -289,17 +297,19 @@
 									</PNeuronNegCGenerator>
 									<PNeuronMembrane Class="NCSynNeuronMembrane">
 										<State>
-											<Feedback Type="double" PType="258">5.214931597663508e-09</Feedback>
+											<Feedback Type="double" PType="258">0</Feedback>
 										</State>
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -323,10 +333,10 @@
 									<LTZone Class="NCLTZone">
 										<State>
 											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
-											<NeuralPotential Type="double" PType="258">0.0002020342690309817613</NeuralPotential>
-											<PrePotential Type="double" PType="258">0.0002020342662821139233</PrePotential>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -340,17 +350,19 @@
 									</PNeuronNegCGenerator>
 									<PNeuronMembrane Class="NCSynNeuronMembrane">
 										<State>
-											<Feedback Type="double" PType="258">0.0004040685325642278465</Feedback>
+											<Feedback Type="double" PType="258">0</Feedback>
 										</State>
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -377,7 +389,7 @@
 											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
 											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -396,12 +408,14 @@
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -428,7 +442,7 @@
 											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
 											<PrePotential Type="double" PType="258">0</PrePotential>
 											<PulseCounter Type="int" PType="258">0</PulseCounter>
-											<PulseFlag Type="bool" PType="258">1</PulseFlag>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
 										</State>
 										<Components/>
 									</LTZone>
@@ -447,12 +461,14 @@
 										<Components>
 											<PosChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
 											</PosChannel>
 											<NegChannel Class="NCSynNeuronChannel">
 												<State>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
 													<PreOutput Type="simplevector" Size="0" PType="258"/>
 												</State>
 												<Components/>
@@ -467,16 +483,9 @@
 							</AfferentL3>
 						</Components>
 					</MotionElement0>
-					<NManipulatorSource12 Class="NManipulatorSource">
-						<State/>
-						<Components/>
-					</NManipulatorSource12>
 					<Pac Class="NCPac">
 						<State>
-							<PreOutput Type="std::vector" Size="2" PType="258">
-								<elem Type="simplevector" Size="1">3.65625e-05</elem>
-								<elem Type="simplevector" Size="1">0</elem>
-							</PreOutput>
+							<PreOutput Type="std::vector" Size="0" PType="258"/>
 						</State>
 						<Components/>
 					</Pac>

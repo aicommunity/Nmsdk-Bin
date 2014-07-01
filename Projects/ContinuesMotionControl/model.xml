@@ -5,7 +5,7 @@
 			<Coord PType="257">0 0 0</Coord>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 		</Parameters>
-		<Links Type="ULinksList" Size="51">
+		<Links Type="ULinksList" Size="54">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorInput1</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">DCEngine</Connector>
@@ -13,13 +13,6 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">DCEngine</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NManipulatorSource1</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.AfferentSource1</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.Receptor</Connector>
-				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.Receptor</Connector>
-				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.Receptor</Connector>
-				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="1" Name="">DCEngine</Item>
@@ -143,6 +136,10 @@
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.PNeuronMembrane.NegChannel</Connector>
 			</elem>
 			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator11</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR1.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.LTZone</Connector>
 			</elem>
@@ -157,6 +154,10 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.Receptor</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator11</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL1.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR2.PNeuronMembrane.PosChannel</Item>
@@ -215,6 +216,10 @@
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.PNeuronMembrane.NegChannel</Connector>
 			</elem>
 			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.NegIntervalSeparator13</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentR3.Receptor</Connector>
+			</elem>
+			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.LTZone</Connector>
 			</elem>
@@ -229,6 +234,10 @@
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.Receptor</Item>
 				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.PNeuronMembrane.NegChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.PosIntervalSeparator13</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EngineControlRangeAfferent.MotionElement0.AfferentL3.Receptor</Connector>
 			</elem>
 		</Links>
 		<Components>
@@ -273,6 +282,7 @@
 			</DCEngine>
 			<EngineControlRangeAfferent Class="N2AsfNewSimplestAfferentBranchedEngineControl">
 				<Parameters>
+					<ActiveContours Type="simplevector" Size="3" PType="257">0 0 0</ActiveContours>
 					<Activity Type="bool" PType="257">1</Activity>
 					<AdaptiveStructureMode Type="int" PType="257">1</AdaptiveStructureMode>
 					<AfferentMax Type="simplevector" Size="3" PType="257">6.28319 3.14 10</AfferentMax>
@@ -291,12 +301,14 @@
 					<IbMin Type="double" PType="257">-1</IbMin>
 					<IcMax Type="double" PType="257">10</IcMax>
 					<IcMin Type="double" PType="257">-10</IcMin>
+					<InterneuronPresentMode Type="int" PType="257">0</InterneuronPresentMode>
 					<MCAfferentObjectName Type="std::string" PType="257">NContinuesSAfferentNeuron</MCAfferentObjectName>
 					<MCNeuroObjectName Type="std::string" PType="257">NContinuesSynSPNeuron</MCNeuroObjectName>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 					<MotionElementClassName Type="std::string" PType="257">NNewMotionElement</MotionElementClassName>
 					<NumControlLoops Type="int" PType="257">3</NumControlLoops>
-					<NumMotionElements Type="unsigned int" PType="257">1</NumMotionElements>
+					<NumMotionElements Type="int" PType="257">1</NumMotionElements>
+					<ObjectControlInterfaceClassName Type="std::string" PType="257">NManipulatorSource</ObjectControlInterfaceClassName>
 					<PacGain Type="double" PType="257">300</PacGain>
 					<PacObjectName Type="std::string" PType="257">NCPac</PacObjectName>
 					<PacRangeMode Type="int" PType="257">2</PacRangeMode>
@@ -308,8 +320,8 @@
 				<Components>
 					<IIPosAfferentGenerator Class="NPGenerator">
 						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
@@ -323,8 +335,8 @@
 					</IIPosAfferentGenerator>
 					<IINegAfferentGenerator Class="NPGenerator">
 						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<AvgInterval Type="double" PType="257">5</AvgInterval>
@@ -338,8 +350,8 @@
 					</IINegAfferentGenerator>
 					<AfferentSource1 Class="NCGenerator">
 						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">0</Amplitude>
 							<Coord PType="257">0 0 0</Coord>
@@ -349,8 +361,8 @@
 					</AfferentSource1>
 					<NManipulatorSource1 Class="NManipulatorSource">
 						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Angle Type="double" PType="257">0</Angle>
 							<Coord PType="257">14.6667 12.3333 3</Coord>
@@ -363,8 +375,8 @@
 					</NManipulatorSource1>
 					<NManipulatorInput1 Class="NManipulatorInput">
 						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Coord PType="257">15.3333 7 4</Coord>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -424,8 +436,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -435,8 +447,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -462,6 +474,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -479,6 +492,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -522,8 +536,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -533,8 +547,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -560,6 +574,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -577,6 +592,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -620,8 +636,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -631,8 +647,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -658,6 +674,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -675,6 +692,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -687,8 +705,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -738,8 +756,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -749,8 +767,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -776,6 +794,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -793,6 +812,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -805,8 +825,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -856,8 +876,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -867,8 +887,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -894,6 +914,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -911,6 +932,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -923,8 +945,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -974,8 +996,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -985,8 +1007,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1012,6 +1034,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1029,6 +1052,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1041,8 +1065,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -1092,8 +1116,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1103,8 +1127,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1130,6 +1154,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1147,6 +1172,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1159,8 +1185,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -1210,8 +1236,8 @@
 									</LTZone>
 									<PNeuronPosCGenerator Class="NCNeuronPosCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1221,8 +1247,8 @@
 									</PNeuronPosCGenerator>
 									<PNeuronNegCGenerator Class="NCNeuronNegCGenerator">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Amplitude Type="double" PType="257">-2</Amplitude>
 											<Coord PType="257">0 0 0</Coord>
@@ -1248,6 +1274,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1265,6 +1292,7 @@
 													<FBResistance Type="double" PType="257">100000000</FBResistance>
 													<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 													<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+													<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
 													<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 													<Resistance Type="double" PType="257">10000000</Resistance>
 													<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
@@ -1277,8 +1305,8 @@
 									</PNeuronMembrane>
 									<Receptor Class="NReceptor">
 										<Parameters>
-											<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-											<ActionPeriod Type="int">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+											<ActionPeriod Type="unsigned int">0</ActionPeriod>
 											<Activity Type="bool" PType="257">1</Activity>
 											<Coord PType="257">0 0 0</Coord>
 											<ExpCoeff Type="double" PType="257">100</ExpCoeff>
@@ -1299,20 +1327,6 @@
 							</AfferentL3>
 						</Components>
 					</MotionElement0>
-					<NManipulatorSource12 Class="NManipulatorSource">
-						<Parameters>
-							<ActionPeriod Type="int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="int">0</ActionPeriod>
-							<Activity Type="bool" PType="257">1</Activity>
-							<Angle Type="double" PType="257">0</Angle>
-							<Coord PType="257">0 0 0</Coord>
-							<Force Type="double" PType="257">0</Force>
-							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<Movement Type="double" PType="257">0</Movement>
-							<Speed Type="double" PType="257">0</Speed>
-						</Parameters>
-						<Components/>
-					</NManipulatorSource12>
 					<Pac Class="NCPac">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
@@ -1322,8 +1336,8 @@
 								<elem Type="simplevector" Size="1">0.001</elem>
 							</DissociationTC>
 							<Gain Type="std::vector" Size="2" PType="257">
-								<elem Type="simplevector" Size="1">-93</elem>
-								<elem Type="simplevector" Size="1">93</elem>
+								<elem Type="simplevector" Size="1">-300</elem>
+								<elem Type="simplevector" Size="1">300</elem>
 							</Gain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<Mode Type="int" PType="257">0</Mode>
