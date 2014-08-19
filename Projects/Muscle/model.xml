@@ -2,44 +2,39 @@
 	<Model Class="NModel">
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
-			<Coord PType="257">0	0	0</Coord>
+			<Coord PType="257">0 0 0</Coord>
+			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 		</Parameters>
 		<Links Type="ULinksList" Size="1">
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0">PGenerator</Item>
-				<Connector Type="ULinkSide" Index="0">EyeMuscle</Connector>
+				<Item Type="ULinkSide" Index="0" Name="">PGenerator</Item>
+				<Connector Type="ULinkSide" Index="0" Name="">EyeMuscle</Connector>
 			</elem>
 		</Links>
 		<Components>
 			<EyeMuscle Class="NEyeMuscle">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
-					<Coord PType="257">13.6666	6	1</Coord>
-					<K Type="double" PType="257">0.2</K>
-					<MulCoeffs Type="std::vector" Size="3" PType="257">
-						<elem Type="double">0.74</elem>
-						<elem Type="double">0.75</elem>
-						<elem Type="double">0.5</elem>
-					</MulCoeffs>
-					<TC Type="std::vector" Size="3" PType="257">
-						<elem Type="double">0.003</elem>
-						<elem Type="double">0.0092</elem>
-						<elem Type="double">0.0327</elem>
-					</TC>
+					<Coord PType="257">13.6666 6 1</Coord>
+					<K Type="double" PType="257">0.2000000000000000111</K>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MulCoeffs Type="simplevector" Size="3" PType="257">0.74 0.75 0.5</MulCoeffs>
+					<TC Type="simplevector" Size="3" PType="257">0.003 0.0092 0.0327</TC>
 				</Parameters>
 				<Components/>
 			</EyeMuscle>
 			<PGenerator Class="NPGenerator">
 				<Parameters>
-					<ActionCounter Type="int" PType="257">0</ActionCounter>
-					<ActionPeriod Type="int" PType="257">0</ActionPeriod>
+					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+					<ActionPeriod Type="unsigned int">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
 					<Amplitude Type="double" PType="257">1</Amplitude>
 					<AvgInterval Type="double" PType="257">5</AvgInterval>
-					<Coord PType="257">4.66666	6	2</Coord>
+					<Coord PType="257">4.66666 6 2</Coord>
 					<Frequency Type="double" PType="257">8</Frequency>
 					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
-					<PulseLength Type="double" PType="257">0.001</PulseLength>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 				</Parameters>
 				<Components/>
 			</PGenerator>
