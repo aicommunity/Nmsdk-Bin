@@ -1,0 +1,89 @@
+<SaveProperties ModelName="Model">
+	<Model Class="NModel">
+		<Parameters>
+			<Activity Type="bool" PType="257">1</Activity>
+			<Coord PType="257">0 0 0</Coord>
+			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+		</Parameters>
+		<Components>
+			<PGenerator Class="NPGenerator">
+				<Parameters>
+					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
+					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">100</Amplitude>
+					<AvgInterval Type="double" PType="257">5</AvgInterval>
+					<Coord PType="257">5 3 0</Coord>
+					<Frequency Type="double" PType="257">0</Frequency>
+					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+				</Parameters>
+				<Components/>
+			</PGenerator>
+			<CGenerator Class="NCGenerator">
+				<Parameters>
+					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
+					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">30</Amplitude>
+					<Coord PType="257">5 6.66667 1</Coord>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+				</Parameters>
+				<Components/>
+			</CGenerator>
+			<PulseNeuron Class="NPulseNeuronIzhikevich">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Coord PType="257">13.6666 4.66667 2</Coord>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+				</Parameters>
+				<Components>
+					<PulseMembrane Class="NPulseMembraneIzhikevich">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Coord PType="257">4.33333 2.66667 0</Coord>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+						</Parameters>
+						<Components>
+							<PosChannel Class="NPulseSynChannelIzhikevich">
+								<Parameters>
+									<A Type="double" PType="257">0.02000000000000000042</A>
+									<Activity Type="bool" PType="257">1</Activity>
+									<B Type="double" PType="257">0.2000000000000000111</B>
+									<C Type="double" PType="257">-65</C>
+									<Coord PType="257">4.66667 3 0</Coord>
+									<D Type="double" PType="257">2</D>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<Type Type="double" PType="257">0</Type>
+								</Parameters>
+								<Components/>
+							</PosChannel>
+						</Components>
+					</PulseMembrane>
+					<LTZone Class="NPulseLTZoneIzhikevich">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">0</AvgInterval>
+							<Coord PType="257">12.6667 2.66667 1</Coord>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+							<Threshold Type="double" PType="257">30</Threshold>
+						</Parameters>
+						<Components/>
+					</LTZone>
+				</Components>
+			</PulseNeuron>
+		</Components>
+	</Model>
+</SaveProperties>
