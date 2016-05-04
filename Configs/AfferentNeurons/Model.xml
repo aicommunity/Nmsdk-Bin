@@ -2,48 +2,52 @@
 	<Model Class="NModel">
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
+			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 			<Coord PType="257">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 		</Parameters>
 		<Links Type="ULinksList" Size="7">
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">CGenerator</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron2.Receptor</Connector>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron.Receptor</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">CGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron2.Receptor</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronMembrane.PosChannel</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronMembrane.NegChannel</Item>
-				<Connector Type="ULinkSide" Index="1" Name="">AfferentNeuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">AfferentNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron.LTZone</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronMembrane</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronNegCGenerator</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronMembrane.PosChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron.Receptor</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron.PNeuronMembrane.NegChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.Receptor</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.NegChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="0" Name="">AfferentNeuron2.Receptor</Item>
-				<Connector Type="ULinkSide" Index="0" Name="">AfferentNeuron2.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron2.Receptor</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron2.LTZone</Connector>
 			</elem>
 		</Links>
 		<Components>
 			<CGenerator Class="NCGenerator">
 				<Parameters>
+					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-					<ActionPeriod Type="unsigned int">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
+					<Amplitude Type="double" PType="257">0.10000000000000000555</Amplitude>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 					<Coord PType="257">6.66667 7.33333 0</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 				</Parameters>
 				<Components/>
@@ -51,7 +55,9 @@
 			<AfferentNeuron Class="NSAfferentNeuron">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 					<Coord PType="257">17 3.66667 1</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -68,7 +74,9 @@
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">26.3333 3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
@@ -79,22 +87,26 @@
 					</LTZone>
 					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 						<Parameters>
+							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">4 10.3333 1</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
 						<Components/>
 					</PNeuronPosCGenerator>
 					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 						<Parameters>
+							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">8 3.66667 2</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
 						<Components/>
@@ -102,7 +114,9 @@
 					<PNeuronMembrane Class="NPNeuronMembrane">
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">18 3 3</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
@@ -111,8 +125,10 @@
 							<PosChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
 									<Coord PType="257">0 0 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 									<FBResistance Type="double" PType="257">100000000</FBResistance>
 									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 									<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
@@ -123,7 +139,9 @@
 									<Synapse Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -136,7 +154,9 @@
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -149,7 +169,9 @@
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -164,8 +186,10 @@
 							<NegChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
 									<Coord PType="257">0 0 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 									<FBResistance Type="double" PType="257">100000000</FBResistance>
 									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 									<PotentialSummaryMode Type="int" PType="257">0</PotentialSummaryMode>
@@ -176,7 +200,9 @@
 									<Synapse Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -189,7 +215,9 @@
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -202,7 +230,9 @@
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
 											<Activity Type="bool" PType="257">1</Activity>
+											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 											<Coord PType="257">0 0 0</Coord>
+											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
 											<InhibitionCoeff Type="double" PType="257">1</InhibitionCoeff>
 											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -218,10 +248,12 @@
 					</PNeuronMembrane>
 					<Receptor Class="NReceptor">
 						<Parameters>
+							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">12 7.66667 4</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<ExpCoeff Type="double" PType="257">0.010000000000000000208</ExpCoeff>
 							<Gain Type="double" PType="257">1</Gain>
 							<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
@@ -241,7 +273,9 @@
 			<AfferentNeuron2 Class="NSimpleAfferentNeuron">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 					<Coord PType="257">16.6667 11 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
 					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
@@ -258,7 +292,9 @@
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">15.3333 5 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
@@ -269,17 +305,19 @@
 					</LTZone>
 					<Receptor Class="NReceptor">
 						<Parameters>
+							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<ActionPeriod Type="unsigned int">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
 							<Coord PType="257">6.33333 5 1</Coord>
-							<ExpCoeff Type="double" PType="257">1</ExpCoeff>
+							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+							<ExpCoeff Type="double" PType="257">0.00010000000000000000479</ExpCoeff>
 							<Gain Type="double" PType="257">1</Gain>
 							<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
 							<InputAdaptationMode Type="int" PType="257">0</InputAdaptationMode>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<MaxInputRange Type="double" PType="257">3.140000000000000124</MaxInputRange>
-							<MaxOutputRange Type="double" PType="257">200</MaxOutputRange>
+							<MaxInputRange Type="double" PType="257">1.570000000000000062</MaxInputRange>
+							<MaxOutputRange Type="double" PType="257">100</MaxOutputRange>
 							<MinInputRange Type="double" PType="257">0</MinInputRange>
 							<MinOutputRange Type="double" PType="257">0</MinOutputRange>
 							<OutputAdaptationMode Type="int" PType="257">0</OutputAdaptationMode>
