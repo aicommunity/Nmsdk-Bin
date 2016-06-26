@@ -1,0 +1,1 @@
+List of all regulators with two control loop (angle and speed sensor).

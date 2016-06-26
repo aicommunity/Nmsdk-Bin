@@ -1,0 +1,1 @@
+List of all regulators with one control loop (one sensor).
