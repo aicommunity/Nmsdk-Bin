@@ -7,7 +7,17 @@
 			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 		</Parameters>
-		<Links Type="ULinksList" Size="9">
+		<Links Type="ULinksList" Size="13">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">PosPGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.PNeuronMembrane.PosChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NegPGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.PNeuronMembrane.NegChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">LPNeuron.PNeuronMembrane.PosChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.LTZone</Connector>
@@ -37,6 +47,15 @@
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.PNeuronMembrane</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.PNeuronMembrane2</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">LPNeuron.PNeuronMembrane3</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput1">LPNeuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput2">LPNeuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">LPNeuron.PNeuronPosCGenerator</Item>
@@ -86,37 +105,6 @@
 				</Parameters>
 				<Components/>
 			</NegPGenerator>
-			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
-				<Parameters>
-					<Activity Type="bool" PType="257">1</Activity>
-					<AverageInput Type="std::pair" PType="257">
-						<first Type="std::string"></first>
-						<second Type="std::string"></second>
-					</AverageInput>
-					<AverageMode Type="int" PType="257">0</AverageMode>
-					<AverageNumber Type="int" PType="257">5</AverageNumber>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">17.3333 5 3</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<ExcludeModelFileName Type="bool" PType="257">1</ExcludeModelFileName>
-					<ManualModeEnabled Type="bool" PType="257">0</ManualModeEnabled>
-					<ManualModeSwitch Type="bool" PType="257">0</ManualModeSwitch>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<NumSkipSteps Type="int" PType="257">0</NumSkipSteps>
-					<OrderIndexToFileNameFlag Type="bool" PType="257">1</OrderIndexToFileNameFlag>
-					<PrefixName Type="std::string" PType="257"></PrefixName>
-					<SaveMode Type="int" PType="257">0</SaveMode>
-					<SavePath Type="std::string" PType="257">StatisticLog</SavePath>
-					<SubFolderAfterResetFlag Type="bool" PType="257">1</SubFolderAfterResetFlag>
-					<TimeInterval Type="double" PType="257">0</TimeInterval>
-					<TimeToFileNameFlag Type="bool" PType="257">0</TimeToFileNameFlag>
-					<WriteIndexFlag Type="bool" PType="257">1</WriteIndexFlag>
-					<WriteModelTimeStampFlag Type="bool" PType="257">1</WriteModelTimeStampFlag>
-					<WriteSourceTimeStampFlag Type="bool" PType="257">0</WriteSourceTimeStampFlag>
-					<WriteTimeStampFlag Type="bool" PType="257">0</WriteTimeStampFlag>
-				</Parameters>
-				<Components/>
-			</StatisticDoubleMatrix>
 			<LPNeuron Class="NLPNeuron">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
@@ -142,7 +130,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">24 6 0</Coord>
+							<Coord PType="257">20.6667 5.33333 0</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
@@ -160,7 +148,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">1</Amplitude>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">6.66667 4.33333 1</Coord>
+							<Coord PType="257">4.33334 4 1</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
@@ -173,7 +161,7 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<Amplitude Type="double" PType="257">-1</Amplitude>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">12.3333 3 2</Coord>
+							<Coord PType="257">4.3333 6.66667 2</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
@@ -183,7 +171,7 @@
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">11.6667 5 3</Coord>
+							<Coord PType="257">12.3334 2.66667 3</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -321,7 +309,7 @@
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">14 7 4</Coord>
+							<Coord PType="257">12.3333 5.33333 4</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -459,7 +447,7 @@
 						<Parameters>
 							<Activity Type="bool" PType="257">1</Activity>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">7.66667 10 5</Coord>
+							<Coord PType="257">12.3333 8.33333 5</Coord>
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -595,6 +583,38 @@
 					</PNeuronMembrane3>
 				</Components>
 			</LPNeuron>
+			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<AverageInput Type="std::pair" PType="257">
+						<first Type="std::string"></first>
+						<second Type="std::string"></second>
+					</AverageInput>
+					<AverageMode Type="int" PType="257">0</AverageMode>
+					<AverageNumber Type="int" PType="257">5</AverageNumber>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord PType="257">18 5 3</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<ExcludeModelFileName Type="bool" PType="257">1</ExcludeModelFileName>
+					<ForceCreateSavePath Type="bool" PType="257">1</ForceCreateSavePath>
+					<ManualModeEnabled Type="bool" PType="257">0</ManualModeEnabled>
+					<ManualModeSwitch Type="bool" PType="257">0</ManualModeSwitch>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<NumSkipSteps Type="int" PType="257">0</NumSkipSteps>
+					<OrderIndexToFileNameFlag Type="bool" PType="257">1</OrderIndexToFileNameFlag>
+					<PrefixName Type="std::string" PType="257"></PrefixName>
+					<SaveMode Type="int" PType="257">0</SaveMode>
+					<SavePath Type="std::string" PType="257">StatisticLog</SavePath>
+					<SubFolderAfterResetFlag Type="bool" PType="257">1</SubFolderAfterResetFlag>
+					<TimeInterval Type="double" PType="257">0</TimeInterval>
+					<TimeToFileNameFlag Type="bool" PType="257">0</TimeToFileNameFlag>
+					<WriteIndexFlag Type="bool" PType="257">1</WriteIndexFlag>
+					<WriteModelTimeStampFlag Type="bool" PType="257">1</WriteModelTimeStampFlag>
+					<WriteSourceTimeStampFlag Type="bool" PType="257">0</WriteSourceTimeStampFlag>
+					<WriteTimeStampFlag Type="bool" PType="257">0</WriteTimeStampFlag>
+				</Parameters>
+				<Components/>
+			</StatisticDoubleMatrix>
 		</Components>
 	</Model>
 </Save>
