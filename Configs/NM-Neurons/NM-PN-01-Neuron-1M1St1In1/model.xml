@@ -10,42 +10,42 @@
 		<Links Type="ULinksList" Size="9">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">PosPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.PNeuronMembrane.PosChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NegPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.PNeuronMembrane.NegChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">SPNeuron.PNeuronMembrane.PosChannel</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.PosChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">SPNeuron.PNeuronMembrane.NegChannel</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">SPNeuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.NegChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">Neuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">SPNeuron.LTZone</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.PNeuronMembrane</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput1">SPNeuron.LTZone</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput1">Neuron.LTZone</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput2">SPNeuron.LTZone</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput2">Neuron.LTZone</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">SPNeuron.PNeuronPosCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.PNeuronMembrane.NegChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronPosCGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">SPNeuron.PNeuronNegCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">SPNeuron.PNeuronMembrane.PosChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronNegCGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel</Connector>
 			</elem>
 		</Links>
 		<Components>
@@ -83,7 +83,7 @@
 				</Parameters>
 				<Components/>
 			</NegPGenerator>
-			<SPNeuron Class="NSPMinNeuron">
+			<Neuron Class="NSPMinNeuron">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
@@ -224,7 +224,7 @@
 						</Components>
 					</PNeuronMembrane>
 				</Components>
-			</SPNeuron>
+			</Neuron>
 			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
