@@ -1,0 +1,126 @@
+<Save ModelName="Model">
+	<Model Class="UModel">
+		<Parameters>
+			<Activity Type="bool" PType="257">1</Activity>
+			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+		</Parameters>
+		<Links Type="ULinksList" Size="5">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="OutputImage">Capture</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">Reduce</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">Reduce</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ColorConvert</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ColorConvert</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">Background</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input1">DifferenceFrameSimple</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Background">Background</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input2">DifferenceFrameSimple</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">DifferenceFrameSimple</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">Binarization</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<Capture Class="TCaptureImageSequence">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<CaptureDelay Type="int" PType="257">30</CaptureDelay>
+					<CaptureTimeout Type="int" PType="257">10000</CaptureTimeout>
+					<CloseTimeout Type="int" PType="257">60000</CloseTimeout>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">4.33333 3 0</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<DesiredFps Type="double" PType="257">0</DesiredFps>
+					<DesiredHeight Type="int" PType="257">576</DesiredHeight>
+					<DesiredResolutionFlag Type="bool" PType="257">0</DesiredResolutionFlag>
+					<DesiredWidth Type="int" PType="257">720</DesiredWidth>
+					<EnableCapture Type="bool" PType="257">1</EnableCapture>
+					<FixedRotation Type="int" PType="257">0</FixedRotation>
+					<FlipX Type="bool" PType="257">0</FlipX>
+					<FlipY Type="bool" PType="257">0</FlipY>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+					<Path Type="std::string" PType="257">Images/</Path>
+					<Paused Type="bool" PType="257">0</Paused>
+					<ReconnectTimeout Type="int" PType="257">30000</ReconnectTimeout>
+					<RelevData Type="bool" PType="257">1</RelevData>
+					<RepeatFlag Type="bool" PType="257">1</RepeatFlag>
+					<RestartMode Type="int" PType="257">1</RestartMode>
+					<RotationAngle Type="double" PType="257">0</RotationAngle>
+				</Parameters>
+				<Components/>
+			</Capture>
+			<Reduce Class="Reduce">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">10.6667 3 3</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+					<NumCols Type="int" PType="257">1</NumCols>
+					<NumRows Type="int" PType="257">1</NumRows>
+				</Parameters>
+				<Components/>
+			</Reduce>
+			<ColorConvert Class="ColorConvert">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">17.3333 3 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+					<NewColorModel Type="RDK::UBMColorModel" PType="257">400</NewColorModel>
+				</Parameters>
+				<Components/>
+			</ColorConvert>
+			<Background Class="BackgroundAvg">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">24 3 4</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<HistorySize Type="int" PType="257">30</HistorySize>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+				</Parameters>
+				<Components/>
+			</Background>
+			<DifferenceFrameSimple Class="DifferenceFrameSimple">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">24 7 5</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+				</Parameters>
+				<Components/>
+			</DifferenceFrameSimple>
+			<Binarization Class="TBinarizationSimple">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257">32.6667 7.00003 6</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="257">0</MemoryMonitor>
+					<Threshold Type="RDK::UColorT" PType="257">808080</Threshold>
+				</Parameters>
+				<Components/>
+			</Binarization>
+		</Components>
+	</Model>
+</Save>
