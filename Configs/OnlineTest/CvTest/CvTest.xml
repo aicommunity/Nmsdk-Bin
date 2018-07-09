@@ -1,0 +1,66 @@
+<Save ModelName="Model">
+	<Model Class="Model">
+		<Parameters>
+			<Activity Type = 'b' PType = '257'>0</Activity>
+			<CalculationDurationThreshold Type = 'x' PType = '257'>-1</CalculationDurationThreshold>
+			<MaxCalculationDuration Type = 'x' PType = '257'>-1</MaxCalculationDuration>
+			<WorkHeight Type = 'i' PType = '258'>0</WorkHeight>
+			<WorkWidth Type = 'i' PType = '258'>0</WorkWidth>
+		</Parameters>
+		<Links Type="ULinksList" Size="1">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="OutputImage">TCaptureImageSequence</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">Reduce</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<TCaptureImageSequence Class=TCaptureImageSequence>
+				<Parameters>
+					<Activity Type='b' PType='257'>0</Activity>
+					<CalculationDurationThreshold Type='x' PType='257'>-1</CalculationDurationThreshold>
+					<CameraType Type='i' PType='258'>0</CameraType>
+					<CaptureDelay Type='i' PType='257'>30</CaptureDelay>
+					<CaptureFps Type='d' PType='258'>0</CaptureFps>
+					<CaptureState Type='i' PType='258'>0</CaptureState>
+					<CaptureTimeout Type='i' PType='257'>10000</CaptureTimeout>
+					<CloseTimeout Type='i' PType='257'>60000</CloseTimeout>
+					<CurrentImageFileName Type='std::string' PType='258'></CurrentImageFileName>
+					<CurrentImageIndex Type='i' PType='258'>0</CurrentImageIndex>
+					<DesiredFps Type='d' PType='257'>0</DesiredFps>
+					<DesiredHeight Type='i' PType='257'>576</DesiredHeight>
+					<DesiredResolutionFlag Type='b' PType='257'>0</DesiredResolutionFlag>
+					<DesiredWidth Type='i' PType='257'>720</DesiredWidth>
+					<EnableCapture Type='b' PType='257'>1</EnableCapture>
+					<FixedRotation Type='i' PType='257'>0</FixedRotation>
+					<FlipX Type='b' PType='257'>0</FlipX>
+					<FlipY Type='b' PType='257'>0</FlipY>
+					<FramePosition Type='y' PType='258'>0</FramePosition>
+					<FrameTime Type='d' PType='258'>0</FrameTime>
+					<IsPathRelativeFromConfig Type='b' PType='257'>0</IsPathRelativeFromConfig>
+					<MaxCalculationDuration Type='x' PType='257'>-1</MaxCalculationDuration>
+					<NumFrames Type='y' PType='258'>0</NumFrames>
+					<NumImages Type='i' PType='258'>0</NumImages>
+					<Path Type='std::string' PType='257'></Path>
+					<Paused Type='b' PType='257'>0</Paused>
+					<RealFps Type='d' PType='258'>0</RealFps>
+					<ReconnectTimeout Type='i' PType='257'>30000</ReconnectTimeout>
+					<RelevData Type='b' PType='257'>0</RelevData>
+					<RepeatFlag Type='b' PType='257'>1</RepeatFlag>
+					<RestartMode Type='i' PType='257'>1</RestartMode>
+					<RotationAngle Type='d' PType='257'>0</RotationAngle>
+				</Parameters>
+				<Components/>
+			</TCaptureImageSequence>
+			<Reduce Class=Reduce>
+				<Parameters>
+					<Activity Type='b' PType='257'>0</Activity>
+					<CalculationDurationThreshold Type='x' PType='257'>-1</CalculationDurationThreshold>
+					<MaxCalculationDuration Type='x' PType='257'>-1</MaxCalculationDuration>
+					<NumCols Type='i' PType='257'>3</NumCols>
+					<NumRows Type='i' PType='257'>3</NumRows>
+				</Parameters>
+				<Components/>
+			</Reduce>
+		</Components>
+	</Model>
+</Save>
