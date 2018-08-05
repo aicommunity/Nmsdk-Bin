@@ -1,0 +1,81 @@
+<Save ModelName="Model">
+	<Model Class="UModel">
+		<Parameters>
+			<Activity Type = 'b' PType = '257'>0</Activity>
+			<CalculationDurationThreshold Type = 'x' PType = '257'>-1</CalculationDurationThreshold>
+			<MaxCalculationDuration Type = 'x' PType = '257'>-1</MaxCalculationDuration>
+		</Parameters>
+		<Links Type="ULinksList" Size="2">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NPGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">NEyeMuscle</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NEyeMuscle</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">UStatisticDoubleMatrix</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<NPGenerator Class=NPGenerator>
+				<Parameters>
+					<ActionCounter Type='j' PType='257'>0</ActionCounter>
+					<ActionPeriod Type='j' PType='257'>0</ActionPeriod>
+					<Activity Type='b' PType='257'>0</Activity>
+					<Amplitude Type='d' PType='257'>1</Amplitude>
+					<AvgFrequencyCounter Type='std::list' PType='258'></AvgFrequencyCounter>
+					<AvgInterval Type='d' PType='257'>5</AvgInterval>
+					<CalculationDurationThreshold Type='x' PType='257'>-1</CalculationDurationThreshold>
+					<Frequency Type='d' PType='257'>0</Frequency>
+					<FrequencyDeviation Type='d' PType='257'>0</FrequencyDeviation>
+					<MaxCalculationDuration Type='x' PType='257'>-1</MaxCalculationDuration>
+					<PulseCounter Type='i' PType='258'>0</PulseCounter>
+					<PulseLength Type='d' PType='257'>0.001000000000000000020816681711721685132943</PulseLength>
+					<RandomFrequency Type='d' PType='258'>0</RandomFrequency>
+				</Parameters>
+				<Components/>
+			</NPGenerator>
+			<NEyeMuscle Class=NEyeMuscle>
+				<Parameters>
+					<Activity Type='b' PType='257'>0</Activity>
+					<CalculationDurationThreshold Type='x' PType='257'>-1</CalculationDurationThreshold>
+					<K Type='d' PType='257'>0.2000000000000000111022302462515654042363</K>
+					<MaxCalculationDuration Type='x' PType='257'>-1</MaxCalculationDuration>
+					<MulCoeffs Type='simplevector' PType='257'>0.74 0.75 0.5</MulCoeffs>
+					<TC Type='simplevector' PType='257'>0.003 0.0092 0.0327</TC>
+				</Parameters>
+				<Components/>
+			</NEyeMuscle>
+			<UStatisticDoubleMatrix Class=UStatisticDoubleMatrix>
+				<Parameters>
+					<Activity Type='b' PType='257'>0</Activity>
+					<AverageInput Type='std::pair' PType='257'>
+			<first Type="std::string"/>
+			<second Type="std::string"/>
+		</AverageInput>
+					<AverageMode Type='i' PType='257'>0</AverageMode>
+					<AverageNumber Type='i' PType='257'>5</AverageNumber>
+					<CalculationDurationThreshold Type='x' PType='257'>-1</CalculationDurationThreshold>
+					<CurrentAverageNumber Type='i' PType='258'>0</CurrentAverageNumber>
+					<ExcludeModelFileName Type='b' PType='257'>1</ExcludeModelFileName>
+					<ForceCreateSavePath Type='b' PType='257'>0</ForceCreateSavePath>
+					<ManualModeEnabled Type='b' PType='257'>0</ManualModeEnabled>
+					<ManualModeSwitch Type='b' PType='257'>0</ManualModeSwitch>
+					<MaxCalculationDuration Type='x' PType='257'>-1</MaxCalculationDuration>
+					<NumSkipSteps Type='i' PType='257'>0</NumSkipSteps>
+					<OrderIndexToFileNameFlag Type='b' PType='257'>1</OrderIndexToFileNameFlag>
+					<PrefixName Type='std::string' PType='257'></PrefixName>
+					<SaveMode Type='i' PType='257'>0</SaveMode>
+					<SavePath Type='std::string' PType='257'>StatisticLog</SavePath>
+					<SubFolderAfterResetFlag Type='b' PType='257'>1</SubFolderAfterResetFlag>
+					<TimeInterval Type='d' PType='257'>0</TimeInterval>
+					<TimeToFileNameFlag Type='b' PType='257'>0</TimeToFileNameFlag>
+					<WriteIndexFlag Type='b' PType='257'>1</WriteIndexFlag>
+					<WriteModelTimeStampFlag Type='b' PType='257'>0</WriteModelTimeStampFlag>
+					<WriteSourceTimeStampFlag Type='b' PType='257'>0</WriteSourceTimeStampFlag>
+					<WriteTimeStampFlag Type='b' PType='257'>0</WriteTimeStampFlag>
+				</Parameters>
+				<Components/>
+			</UStatisticDoubleMatrix>
+		</Components>
+	</Model>
+</Save>
