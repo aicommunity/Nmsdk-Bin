@@ -1,0 +1,1 @@
+robocopy %1\bin .\..\..\ Qt5Core.dll Qt5Core.dll Qt5Cored.dll Qt5Gui.dll Qt5Guid.dll Qt5PrintSupport.dll Qt5PrintSupportd.dll Qt5Svg.dll Qt5Svgd.dll Qt5Widgets.dll Qt5Widgetsd.dll libEGL.dll libEGLd.dll libGLESv2.dll libGLESv2d.dll
