@@ -8,9 +8,13 @@
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 		</Parameters>
-		<Links Type="ULinksList" Size="1">
+		<Links Type="ULinksList" Size="2">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="OutputImage">Capture</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">VideoSimulatorSimple</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">VideoSimulatorSimple</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="CaptureImage">EyeRetina</Connector>
 			</elem>
 		</Links>
@@ -22,7 +26,7 @@
 					<CaptureDelay Type="int" PType="257">30</CaptureDelay>
 					<CaptureTimeout Type="int" PType="257">10000</CaptureTimeout>
 					<CloseTimeout Type="int" PType="257">60000</CloseTimeout>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">4 4 2</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">3.33333 4 2</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<DesiredFps Type="double" PType="257">0</DesiredFps>
 					<DesiredHeight Type="int" PType="257">576</DesiredHeight>
@@ -45,11 +49,68 @@
 				</Parameters>
 				<Components/>
 			</Capture>
+			<VideoSimulatorSimple Class="VideoSimulatorSimple">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<BgColor Type="UColorT" PType="257">0</BgColor>
+					<BgMode Type="int" PType="257">0</BgMode>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">7.66666 1.66667 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<HideAllFlag Type="bool" PType="257">0</HideAllFlag>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+					<NumObjects Type="int" PType="257">2</NumObjects>
+					<Objects Type="std::vector" Size="2" PType="257">
+						<elem Type="UBVSObject">
+							<ObjectX Type="int">212</ObjectX>
+							<ObjectY Type="int">104</ObjectY>
+							<ObjectWidth Type="int">30</ObjectWidth>
+							<ObjectHeight Type="int">15</ObjectHeight>
+							<XShift Type="int">2</XShift>
+							<YShift Type="int">1</YShift>
+							<Color Type="UColorT">FF00FF</Color>
+							<Color2 Type="UColorT">19EF74</Color2>
+							<Color3 Type="UColorT">19EF74</Color3>
+							<Color4 Type="UColorT">19EF74</Color4>
+							<Mode Type="int">0</Mode>
+							<Visible Type="bool">1</Visible>
+							<MovingDirection Type="int">1</MovingDirection>
+						</elem>
+						<elem Type="UBVSObject">
+							<ObjectX Type="int">296</ObjectX>
+							<ObjectY Type="int">168</ObjectY>
+							<ObjectWidth Type="int">20</ObjectWidth>
+							<ObjectHeight Type="int">40</ObjectHeight>
+							<XShift Type="int">-4</XShift>
+							<YShift Type="int">-3</YShift>
+							<Color Type="UColorT">FF00</Color>
+							<Color2 Type="UColorT">19EF74</Color2>
+							<Color3 Type="UColorT">19EF74</Color3>
+							<Color4 Type="UColorT">19EF74</Color4>
+							<Mode Type="int">0</Mode>
+							<Visible Type="bool">1</Visible>
+							<MovingDirection Type="int">-1</MovingDirection>
+						</elem>
+					</Objects>
+					<PixelGridColor Type="UColorT" PType="257">FFFFFF</PixelGridColor>
+					<PixelGridStep Type="int" PType="257">30</PixelGridStep>
+					<PixelGridWidth Type="int" PType="257">2</PixelGridWidth>
+					<ShowGrid Type="bool" PType="257">0</ShowGrid>
+					<WorkArea Type="UBRect" PType="257">
+						<X Type="int">0</X>
+						<Y Type="int">0</Y>
+						<Width Type="int">360</Width>
+						<Height Type="int">240</Height>
+					</WorkArea>
+				</Parameters>
+				<Components/>
+			</VideoSimulatorSimple>
 			<EyeRetina Class="NEyeRetina">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">12.3333 4 0</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">14 4.33333 0</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
