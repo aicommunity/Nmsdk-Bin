@@ -3,31 +3,32 @@
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
 			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-			<Coord PType="257">0 0 0</Coord>
-			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 		</Parameters>
 		<Links Type="ULinksList" Size="2">
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">CGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.Receptor</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">CGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">AfferentNeuron.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.Receptor</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">AfferentNeuron.Receptor</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">AfferentNeuron.LTZone</Connector>
 			</elem>
 		</Links>
 		<Components>
 			<CGenerator Class="NCGenerator">
 				<Parameters>
-					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
+					<Amplitude Type="double" PType="257">0</Amplitude>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">6.66667 7.33333 0</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">6.66667 7.33333 0</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 				</Parameters>
 				<Components/>
 			</CGenerator>
@@ -35,18 +36,26 @@
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">16.6667 7.33333 2</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">16.6667 7.33333 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<InhGeneratorClassName Type="std::string" PType="257">NPNeuronPosCGenerator</InhGeneratorClassName>
+					<LTZoneClassName Type="std::string" PType="257">NPSimpleLTZone</LTZoneClassName>
 					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
 					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
 					<LinkDistance Type="double" PType="257">1</LinkDistance>
 					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MaxReceptorOutput Type="double" PType="257">100</MaxReceptorOutput>
+					<MembraneClassName Type="std::string" PType="257">NPMembrane</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 					<NetType Type="int" PType="257">0</NetType>
 					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257">1</NumSomaMembraneParts>
+					<ReceptorClassName Type="std::string" PType="257">NReceptor</ReceptorClassName>
 					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
 					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257">2</StructureBuildMode>
 					<UseAverageDendritesPotential Type="bool" PType="257">1</UseAverageDendritesPotential>
 					<UseAverageLTZonePotential Type="bool" PType="257">1</UseAverageLTZonePotential>
 				</Parameters>
@@ -56,32 +65,51 @@
 							<Activity Type="bool" PType="257">1</Activity>
 							<AvgInterval Type="double" PType="257">1</AvgInterval>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">15.3333 5 0</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">13 3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
 							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 							<Threshold Type="double" PType="257">0</Threshold>
 							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
-						<Components/>
+						<Components>
+							<PGenerator Class="NPGenerator">
+								<Parameters>
+									<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+									<Activity Type="bool" PType="257">1</Activity>
+									<Amplitude Type="double" PType="257">1</Amplitude>
+									<AvgInterval Type="double" PType="257">1</AvgInterval>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">0 0 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<Frequency Type="double" PType="257">0</Frequency>
+									<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+								</Parameters>
+								<Components/>
+							</PGenerator>
+						</Components>
 					</LTZone>
 					<Receptor Class="NReceptor">
 						<Parameters>
-							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
 							<Activity Type="bool" PType="257">1</Activity>
 							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">6.33333 5 1</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-							<ExpCoeff Type="double" PType="257">9.999999999999999124e-05</ExpCoeff>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<ExpCoeff Type="double" PType="257">1</ExpCoeff>
 							<Gain Type="double" PType="257">1</Gain>
 							<InputAdaptationArrestingTC Type="double" PType="257">1</InputAdaptationArrestingTC>
 							<InputAdaptationMode Type="int" PType="257">0</InputAdaptationMode>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<MaxInputRange Type="double" PType="257">1.570000000000000062</MaxInputRange>
+							<MaxInputRange Type="double" PType="257">10</MaxInputRange>
 							<MaxOutputRange Type="double" PType="257">100</MaxOutputRange>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 							<MinInputRange Type="double" PType="257">0</MinInputRange>
 							<MinOutputRange Type="double" PType="257">0</MinOutputRange>
 							<OutputAdaptationMode Type="int" PType="257">0</OutputAdaptationMode>
