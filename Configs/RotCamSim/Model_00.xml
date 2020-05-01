@@ -9,17 +9,33 @@
 			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 			<TimeStep Type="unsigned int" PType="769">2000</TimeStep>
 		</Parameters>
-		<Links Type="ULinksList" Size="15">
+		<Links Type="ULinksList" Size="19">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="OutputImage">Capture</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="Input">Reduce</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">Reduce</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="Input">VideoSimulatorSimple</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">RotCameraSimulator</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="Output">VideoSimulatorSimple</Item>
+				<Item Type="ULinkSide" Index="-1" Name="OutputLength">BottomEyeMuscle</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="MoveBottomSignal">RotCameraSimulator</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="OutputLength">LeftEyeMuscle</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="MoveLeftSignal">RotCameraSimulator</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="OutputLength">RightEyeMuscle</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="MoveRightSignal">RotCameraSimulator</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="OutputLength">TopEyeMuscle</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="MoveTopSignal">RotCameraSimulator</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="ViewOutput">RotCameraSimulator</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="CaptureImage">EyeRetina</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -117,13 +133,13 @@
 				</Parameters>
 				<Components/>
 			</Reduce>
-			<VideoSimulatorSimple Class="VideoSimulatorSimple">
+			<RotCameraSimulator Class="RotCameraSimulator">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<BgColor Type="UColorT" PType="257">0</BgColor>
 					<BgMode Type="int" PType="257">0</BgMode>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">18 7.66667 2</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">18 8 12</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<HideAllFlag Type="bool" PType="257">0</HideAllFlag>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -131,31 +147,31 @@
 					<NumObjects Type="int" PType="257">2</NumObjects>
 					<Objects Type="std::vector" Size="2" PType="257">
 						<elem Type="UBVSObject">
-							<ObjectX Type="int">214</ObjectX>
-							<ObjectY Type="int">227</ObjectY>
+							<ObjectX Type="int">278</ObjectX>
+							<ObjectY Type="int">223</ObjectY>
 							<ObjectWidth Type="int">30</ObjectWidth>
 							<ObjectHeight Type="int">15</ObjectHeight>
 							<XShift Type="int">-2</XShift>
-							<YShift Type="int">-1</YShift>
-							<Color Type="UColorT">FF00FF</Color>
-							<Color2 Type="UColorT">19EF74</Color2>
-							<Color3 Type="UColorT">19EF74</Color3>
-							<Color4 Type="UColorT">19EF74</Color4>
+							<YShift Type="int">1</YShift>
+							<Color Type="UColorT">2FF00FF</Color>
+							<Color2 Type="UColorT">8</Color2>
+							<Color3 Type="UColorT">8</Color3>
+							<Color4 Type="UColorT">8</Color4>
 							<Mode Type="int">0</Mode>
 							<Visible Type="bool">1</Visible>
 							<MovingDirection Type="int">1</MovingDirection>
 						</elem>
 						<elem Type="UBVSObject">
-							<ObjectX Type="int">252</ObjectX>
-							<ObjectY Type="int">237</ObjectY>
+							<ObjectX Type="int">92</ObjectX>
+							<ObjectY Type="int">111</ObjectY>
 							<ObjectWidth Type="int">20</ObjectWidth>
 							<ObjectHeight Type="int">40</ObjectHeight>
 							<XShift Type="int">4</XShift>
 							<YShift Type="int">3</YShift>
 							<Color Type="UColorT">FF00</Color>
-							<Color2 Type="UColorT">19EF74</Color2>
-							<Color3 Type="UColorT">19EF74</Color3>
-							<Color4 Type="UColorT">19EF74</Color4>
+							<Color2 Type="UColorT">8</Color2>
+							<Color3 Type="UColorT">8</Color3>
+							<Color4 Type="UColorT">8</Color4>
 							<Mode Type="int">0</Mode>
 							<Visible Type="bool">1</Visible>
 							<MovingDirection Type="int">-1</MovingDirection>
@@ -166,15 +182,18 @@
 					<PixelGridWidth Type="int" PType="257">2</PixelGridWidth>
 					<ShowGrid Type="bool" PType="257">0</ShowGrid>
 					<TimeStep Type="unsigned int" PType="769">10</TimeStep>
+					<ViewResizeCoef Type="double" PType="257">2</ViewResizeCoef>
 					<WorkArea Type="UBRect" PType="257">
 						<X Type="int">0</X>
 						<Y Type="int">0</Y>
 						<Width Type="int">360</Width>
 						<Height Type="int">240</Height>
 					</WorkArea>
+					<XSpeedCoef Type="double" PType="257">1</XSpeedCoef>
+					<YSpeedCoef Type="double" PType="257">1</YSpeedCoef>
 				</Parameters>
 				<Components/>
-			</VideoSimulatorSimple>
+			</RotCameraSimulator>
 			<EyeRetina Class="NEyeRetina">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
@@ -283,7 +302,7 @@
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">3.99997 10.6667 5</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">3.99997 8.00003 5</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<K Type="double" PType="257">0.2000000000000000111</K>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
@@ -603,7 +622,7 @@
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">32 10.6667 11</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">32.3333 8.00003 11</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<K Type="double" PType="257">0.2000000000000000111</K>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
