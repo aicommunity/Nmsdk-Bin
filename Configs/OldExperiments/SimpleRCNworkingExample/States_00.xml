@@ -1,0 +1,717 @@
+<SaveProperties ModelName="Model">
+	<Model Class="NModel">
+		<State>
+			<StepDuration Type="unsigned __int64" PType="770">3</StepDuration>
+		</State>
+		<Components>
+			<DCEngine Class="NDCEngine">
+				<State>
+					<Angle Type="double" PType="258">0.05315203092371310195</Angle>
+					<InputMomentum Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</InputMomentum>
+					<InputVoltage Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+1.31792e-180	</InputVoltage>
+					<OutputAngle Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.053152	</OutputAngle>
+					<OutputAngleSpeed Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.151238	</OutputAngleSpeed>
+					<OutputMomentum Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-0.731668	</OutputMomentum>
+					<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+				</State>
+				<Components/>
+			</DCEngine>
+			<WPhysicalManipulator Class="NWPhysicalManipulator">
+				<State>
+					<AngleSpeed Type="double" PType="258">0</AngleSpeed>
+					<AnglesHistoryTime Type="double" PType="258">0.3000000000000001554</AnglesHistoryTime>
+					<AnglesTimes Type="std::vector" Size="0" PType="258"/>
+					<FoundMaxForce Type="double" PType="258">-10000</FoundMaxForce>
+					<FoundMaxSpeed Type="double" PType="258">-10000</FoundMaxSpeed>
+					<FoundMinForce Type="double" PType="258">10000</FoundMinForce>
+					<FoundMinSpeed Type="double" PType="258">10000</FoundMinSpeed>
+					<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</Input>
+					<InputVoltage Type="double" PType="258">0</InputVoltage>
+					<NumAnglesHistory Type="unsigned int" PType="258">2</NumAnglesHistory>
+					<Output1 Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output1>
+					<Output2 Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output2>
+					<Output3 Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output3>
+					<OutputVoltage Type="double" PType="258">0</OutputVoltage>
+					<PreviousAngles Type="simplevector" Size="0" PType="258"/>
+					<PulseState Type="simplevector" Size="0" PType="258"/>
+					<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+				</State>
+				<Components/>
+			</WPhysicalManipulator>
+			<EngineControlRangeAfferent Class="N2AsfNewSimplestAfferentBranchedEngineControl">
+				<State>
+					<CurrentContourAmplitude Type="simplevector" Size="1" PType="258">0</CurrentContourAmplitude>
+					<CurrentContourAverage Type="simplevector" Size="1" PType="258">0</CurrentContourAverage>
+					<CurrentTransientState Type="bool" PType="258">0</CurrentTransientState>
+					<CurrentTransientTime Type="double" PType="258">0</CurrentTransientTime>
+					<InstantAvgSpeed Type="double" PType="258">0</InstantAvgSpeed>
+					<MaxContourAmplitude Type="simplevector" Size="1" PType="258">0</MaxContourAmplitude>
+					<MinAfferentRange Type="double" PType="258">0.10000000000000000555</MinAfferentRange>
+					<StepDuration Type="unsigned __int64" PType="770">3</StepDuration>
+				</State>
+				<Components>
+					<IIPosAfferentGenerator Class="NPGenerator">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPulseTimes>
+							<PulseCounter Type="int" PType="258">0</PulseCounter>
+							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</IIPosAfferentGenerator>
+					<IINegAfferentGenerator Class="NPGenerator">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPulseTimes>
+							<PulseCounter Type="int" PType="258">0</PulseCounter>
+							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</IINegAfferentGenerator>
+					<AfferentSource1 Class="NCGenerator">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</AfferentSource1>
+					<NManipulatorInput1 Class="NManipulatorInput">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+6.58962e-181	</Input>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+1.31792e-180	</Output>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</NManipulatorInput1>
+					<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
+						<State>
+							<CurrentAverageNumber Type="int" PType="258">0</CurrentAverageNumber>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</StatisticDoubleMatrix>
+					<NManipulatorSource1 Class="NControlObjectSource">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.053152	</Output>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</NManipulatorSource1>
+					<InternalGenerator Class="NPGenerator">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+							<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPulseTimes>
+							<PulseCounter Type="int" PType="258">0</PulseCounter>
+							<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</InternalGenerator>
+					<MotionElement0 Class="NNewMotionElement">
+						<State>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components>
+							<MotoneuronL Class="NNewSPNeuron">
+								<State>
+									<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveNegInputs>
+									<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveOutputs>
+									<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+2	</ActivePosInputs>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+									<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+								</State>
+								<Components>
+									<LTZone Class="NPLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="1" PType="258">
+												<elem Type="double">25.16600000000000037</elem>
+											</AvgFrequencyCounter>
+											<Inputs Type="std::vector" Size="2" PType="266">
+												<elem Type="pointer">c01792c</elem>
+												<elem Type="pointer">bc0112c</elem>
+											</Inputs>
+											<NeuralPotential Type="double" PType="258">-0.0003144012001639606702</NeuralPotential>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+											<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+											<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-0.000329282	</OutputPotential>
+											<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+25.166	</OutputPulseTimes>
+											<Potential Type="double" PType="258">-0.0003292822775956934711</Potential>
+											<PrePotential Type="double" PType="258">-0.0003292822775956934711</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</LTZone>
+									<PosGenerator Class="NPNeuronPosCGenerator">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+1	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</PosGenerator>
+									<NegGenerator Class="NPNeuronNegCGenerator">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</NegGenerator>
+									<LTMembrane Class="NPLTZoneNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+											<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</InputFeedbackSignal>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<ExcSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<PreOutput Type="double" PType="258">0</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</ExcSynapse1>
+											<InhSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<PreOutput Type="double" PType="258">0</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</InhSynapse1>
+											<ExcChannel Class="NPLTExcChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">c01835c</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">b0da7dc</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</ExcChannel>
+											<InhChannel Class="NPLTInhChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">c018d8c</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.998749	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">8cf5bfc</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</InhChannel>
+										</Components>
+									</LTMembrane>
+									<Soma1 Class="NPMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+											<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</InputFeedbackSignal>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<ExcChannel Class="NPExcChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bb4af84</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedd6fc</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</ExcChannel>
+											<ExcSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+3.49695e-17	</Output>
+													<PreOutput Type="double" PType="258">3.496951760859533289e-09</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</ExcSynapse1>
+											<InhChannel Class="NPInhChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bb4b564</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedcf3c</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</InhChannel>
+											<InhSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+4.59961e-23	</Output>
+													<PreOutput Type="double" PType="258">4.59961453480170382e-15</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</InhSynapse1>
+										</Components>
+									</Soma1>
+								</Components>
+							</MotoneuronL>
+							<MotoneuronR Class="NNewSPNeuron">
+								<State>
+									<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveNegInputs>
+									<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveOutputs>
+									<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+2	</ActivePosInputs>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+									<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+								</State>
+								<Components>
+									<LTZone Class="NPLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="3" PType="258">
+												<elem Type="double">24.97500000000000142</elem>
+												<elem Type="double">24.99399999999999977</elem>
+												<elem Type="double">25.40299999999999869</elem>
+											</AvgFrequencyCounter>
+											<Inputs Type="std::vector" Size="2" PType="266">
+												<elem Type="pointer">13a300c</elem>
+												<elem Type="pointer">13a117c</elem>
+											</Inputs>
+											<NeuralPotential Type="double" PType="258">-0.001186318553612980553</NeuralPotential>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+											<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+7.00935	</OutputFrequency>
+											<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-0.00124251	</OutputPotential>
+											<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="3" PType="274">
+24.975	24.994	25.403	</OutputPulseTimes>
+											<Potential Type="double" PType="258">-0.001242512428321283476</Potential>
+											<PrePotential Type="double" PType="258">-0.001242512428321283476</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</LTZone>
+									<PosGenerator Class="NPNeuronPosCGenerator">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+1	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</PosGenerator>
+									<NegGenerator Class="NPNeuronNegCGenerator">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</NegGenerator>
+									<LTMembrane Class="NPLTZoneNeuronMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+											<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</InputFeedbackSignal>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<ExcSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<PreOutput Type="double" PType="258">0</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</ExcSynapse1>
+											<InhSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<PreOutput Type="double" PType="258">0</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</InhSynapse1>
+											<ExcChannel Class="NPLTExcChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bc006fc</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedc77c</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</ExcChannel>
+											<InhChannel Class="NPLTInhChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bbff29c</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.995278	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedbfbc</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</InhChannel>
+										</Components>
+									</LTMembrane>
+									<Soma1 Class="NPMembrane">
+										<State>
+											<Feedback Type="double" PType="258">0</Feedback>
+											<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266">
+</InputFeedbackSignal>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<ExcChannel Class="NPExcChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bb4c124</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedb7fc</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</ExcChannel>
+											<ExcSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+4.59961e-23	</Output>
+													<PreOutput Type="double" PType="258">4.59961453480170382e-15</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</ExcSynapse1>
+											<InhChannel Class="NPInhChannel">
+												<State>
+													<ChannelInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bb4d2c4</elem>
+													</ChannelInputs>
+													<IsNeuronActivated Type="bool" PType="258">0</IsNeuronActivated>
+													<NumConnectedSynapsis Type="int" PType="258">0</NumConnectedSynapsis>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+1	</Output>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+													<SynapticInputs Type="std::vector" Size="1" PType="266">
+														<elem Type="pointer">bedb03c</elem>
+													</SynapticInputs>
+												</State>
+												<Components/>
+											</InhChannel>
+											<InhSynapse1 Class="NPSynapse">
+												<State>
+													<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0	</Input>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+3.49695e-17	</Output>
+													<PreOutput Type="double" PType="258">3.496951760859533289e-09</PreOutput>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</InhSynapse1>
+										</Components>
+									</Soma1>
+								</Components>
+							</MotoneuronR>
+							<AfferentR1 Class="NSimpleAfferentNeuron">
+								<State>
+									<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveNegInputs>
+									<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveOutputs>
+									<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActivePosInputs>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+									<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+								</State>
+								<Components>
+									<Receptor Class="NReceptor">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+-0	</Input>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</Receptor>
+									<LTZone Class="NPSimpleLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<Inputs Type="std::vector" Size="1" PType="266">
+												<elem Type="pointer">bbffa24</elem>
+											</Inputs>
+											<NeuralPotential Type="double" PType="258">0</NeuralPotential>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+											<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+											<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+											<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPulseTimes>
+											<Potential Type="double" PType="258">0</Potential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<PGenerator Class="NPGenerator">
+												<State>
+													<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+													<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputFrequency>
+													<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+													<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPulseTimes>
+													<PulseCounter Type="int" PType="258">0</PulseCounter>
+													<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</PGenerator>
+										</Components>
+									</LTZone>
+								</Components>
+							</AfferentR1>
+							<AfferentL1 Class="NSimpleAfferentNeuron">
+								<State>
+									<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveNegInputs>
+									<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActiveOutputs>
+									<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</ActivePosInputs>
+									<NetStructure Type="std::vector" Size="0" PType="258"/>
+									<NumActiveNegInputs Type="double" PType="258">0</NumActiveNegInputs>
+									<NumActiveOutputs Type="double" PType="258">0</NumActiveOutputs>
+									<NumActivePosInputs Type="double" PType="258">0</NumActivePosInputs>
+									<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+								</State>
+								<Components>
+									<Receptor Class="NReceptor">
+										<State>
+											<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+											<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0.053152	</Input>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.844737	</Output>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components/>
+									</Receptor>
+									<LTZone Class="NPSimpleLTZone">
+										<State>
+											<AvgFrequencyCounter Type="std::list" Size="0" PType="258"/>
+											<Inputs Type="std::vector" Size="1" PType="266">
+												<elem Type="pointer">b47e3e4</elem>
+											</Inputs>
+											<NeuralPotential Type="double" PType="258">0.8447373287961446042</NeuralPotential>
+											<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+											<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.844737	</OutputFrequency>
+											<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+											<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+25.5185	</OutputPulseTimes>
+											<Potential Type="double" PType="258">0.8447373287961446042</Potential>
+											<PrePotential Type="double" PType="258">0</PrePotential>
+											<PulseCounter Type="int" PType="258">0</PulseCounter>
+											<PulseFlag Type="bool" PType="258">0</PulseFlag>
+											<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+										</State>
+										<Components>
+											<PGenerator Class="NPGenerator">
+												<State>
+													<ActionCounter Type="unsigned int" PType="258">0</ActionCounter>
+													<AvgFrequencyCounter Type="std::list" Size="1" PType="258">
+														<elem Type="double">25.51849999999999952</elem>
+													</AvgFrequencyCounter>
+													<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</Output>
+													<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.844737	</OutputFrequency>
+													<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0	</OutputPotential>
+													<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+25.5185	</OutputPulseTimes>
+													<PulseCounter Type="int" PType="258">-2366</PulseCounter>
+													<RandomFrequency Type="double" PType="258">0</RandomFrequency>
+													<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+												</State>
+												<Components/>
+											</PGenerator>
+										</Components>
+									</LTZone>
+								</Components>
+							</AfferentL1>
+						</Components>
+					</MotionElement0>
+					<Pac Class="NPac">
+						<State>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+6.58962e-181	</Output>
+							<PreOutput Type="std::vector" Size="2" PType="258">
+								<elem Type="simplevector" Size="1">4.94066e-324</elem>
+								<elem Type="simplevector" Size="1">6.58962e-183</elem>
+							</PreOutput>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</Pac>
+					<NegIntervalSeparator11 Class="NIntervalSeparator">
+						<State>
+							<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0.053152	</Input>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+-0	</Output>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</NegIntervalSeparator11>
+					<PosIntervalSeparator11 Class="NIntervalSeparator">
+						<State>
+							<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266">
+0.053152	</Input>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274">
+0.053152	</Output>
+							<StepDuration Type="unsigned __int64" PType="770">0</StepDuration>
+						</State>
+						<Components/>
+					</PosIntervalSeparator11>
+				</Components>
+			</EngineControlRangeAfferent>
+		</Components>
+	</Model>
+</SaveProperties>
