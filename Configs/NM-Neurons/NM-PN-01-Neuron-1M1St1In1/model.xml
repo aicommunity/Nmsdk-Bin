@@ -3,228 +3,100 @@
 		<Parameters>
 			<Activity Type="bool" PType="257">1</Activity>
 			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-			<Coord PType="257">0 0 0</Coord>
-			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 		</Parameters>
-		<Links Type="ULinksList" Size="9">
+		<Links Type="ULinksList" Size="13">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">PosPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PosPGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">PNeuron.Soma1.ExcSynapse</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NegPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.PosChannel</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">NegPGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">PNeuron.Soma1.InhSynapse</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.NegChannel</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">Neuron.LTZone</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.LTMembrane.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">PNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.LTZone</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane</Connector>
-				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.LTMembrane.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">PNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput1">Neuron.LTZone</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">PNeuron.LTMembrane</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput2">Neuron.LTZone</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">PNeuron.Soma1.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronPosCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">PNeuron.Soma1.ExcChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronNegCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">PNeuron.LTMembrane.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">PNeuron.LTMembrane.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.Soma1.ExcSynapse</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">PNeuron.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PNeuron.Soma1.InhSynapse</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">PNeuron.Soma1.InhChannel</Connector>
 			</elem>
 		</Links>
 		<Components>
 			<PosPGenerator Class="NPGenerator">
 				<Parameters>
-					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
 					<Amplitude Type="double" PType="257">1</Amplitude>
 					<AvgInterval Type="double" PType="257">5</AvgInterval>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">4 1.66666 1</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<Frequency Type="double" PType="257">10</Frequency>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">4 1.66666 1</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<Frequency Type="double" PType="257">2</Frequency>
 					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 				</Parameters>
 				<Components/>
 			</PosPGenerator>
 			<NegPGenerator Class="NPGenerator">
 				<Parameters>
-					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
 					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
 					<Activity Type="bool" PType="257">1</Activity>
 					<Amplitude Type="double" PType="257">1</Amplitude>
 					<AvgInterval Type="double" PType="257">5</AvgInterval>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">4 8.33333 2</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<Frequency Type="double" PType="257">0</Frequency>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">4 8.33333 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<Frequency Type="double" PType="257">1</Frequency>
 					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 				</Parameters>
 				<Components/>
 			</NegPGenerator>
-			<Neuron Class="NSPMinNeuron">
-				<Parameters>
-					<Activity Type="bool" PType="257">1</Activity>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">12.3334 5 3</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
-					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
-					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
-					<LinkDistance Type="double" PType="257">1</LinkDistance>
-					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<NetType Type="int" PType="257">0</NetType>
-					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
-					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
-					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
-					<UseAverageDendritesPotential Type="bool" PType="257">1</UseAverageDendritesPotential>
-					<UseAverageLTZonePotential Type="bool" PType="257">1</UseAverageLTZonePotential>
-				</Parameters>
-				<Components>
-					<LTZone Class="NPLTZone">
-						<Parameters>
-							<Activity Type="bool" PType="257">1</Activity>
-							<AvgInterval Type="double" PType="257">1</AvgInterval>
-							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">12.6667 4.33333 0</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
-							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
-							<Threshold Type="double" PType="257">1.0000000000000000818e-05</Threshold>
-							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
-							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
-						</Parameters>
-						<Components/>
-					</LTZone>
-					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
-						<Parameters>
-							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
-							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<Activity Type="bool" PType="257">1</Activity>
-							<Amplitude Type="double" PType="257">1</Amplitude>
-							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">4.33334 7 1</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-						</Parameters>
-						<Components/>
-					</PNeuronPosCGenerator>
-					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
-						<Parameters>
-							<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
-							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-							<Activity Type="bool" PType="257">1</Activity>
-							<Amplitude Type="double" PType="257">-1</Amplitude>
-							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">4.33337 1.66667 2</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-						</Parameters>
-						<Components/>
-					</PNeuronNegCGenerator>
-					<PNeuronMembrane Class="NPNeuronMembrane">
-						<Parameters>
-							<Activity Type="bool" PType="257">1</Activity>
-							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-							<Coord PType="257">5 4.33333 3</Coord>
-							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
-							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
-							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
-						</Parameters>
-						<Components>
-							<PosChannel Class="NPNeuronChannel">
-								<Parameters>
-									<Activity Type="bool" PType="257">1</Activity>
-									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
-									<Coord PType="257">4.33333 1.66667 0</Coord>
-									<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-									<FBResistance Type="double" PType="257">100000000</FBResistance>
-									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-									<Resistance Type="double" PType="257">10000000</Resistance>
-									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
-									<Type Type="double" PType="257">-1</Type>
-									<UseAveragePotential Type="bool" PType="257">0</UseAveragePotential>
-								</Parameters>
-								<Components>
-									<Synapse Class="NPSynapse">
-										<Parameters>
-											<Activity Type="bool" PType="257">1</Activity>
-											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-											<Coord PType="257">4.33334 1.66667 0</Coord>
-											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
-											<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
-											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
-											<Resistance Type="double" PType="257">100000000</Resistance>
-											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
-										</Parameters>
-										<Components/>
-									</Synapse>
-								</Components>
-							</PosChannel>
-							<NegChannel Class="NPNeuronChannel">
-								<Parameters>
-									<Activity Type="bool" PType="257">1</Activity>
-									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
-									<Coord PType="257">4.33333 4 1</Coord>
-									<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-									<FBResistance Type="double" PType="257">100000000</FBResistance>
-									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-									<Resistance Type="double" PType="257">10000000</Resistance>
-									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
-									<Type Type="double" PType="257">1</Type>
-									<UseAveragePotential Type="bool" PType="257">0</UseAveragePotential>
-								</Parameters>
-								<Components>
-									<Synapse Class="NPSynapse">
-										<Parameters>
-											<Activity Type="bool" PType="257">1</Activity>
-											<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-											<Coord PType="257">4.33334 1.66667 0</Coord>
-											<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-											<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
-											<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
-											<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-											<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
-											<Resistance Type="double" PType="257">100000000</Resistance>
-											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
-										</Parameters>
-										<Components/>
-									</Synapse>
-								</Components>
-							</NegChannel>
-						</Components>
-					</PNeuronMembrane>
-				</Components>
-			</Neuron>
 			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
@@ -235,13 +107,14 @@
 					<AverageMode Type="int" PType="257">0</AverageMode>
 					<AverageNumber Type="int" PType="257">5</AverageNumber>
 					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">20.6666 5 3</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">20.6666 5 3</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
 					<ExcludeModelFileName Type="bool" PType="257">1</ExcludeModelFileName>
 					<ForceCreateSavePath Type="bool" PType="257">1</ForceCreateSavePath>
 					<ManualModeEnabled Type="bool" PType="257">0</ManualModeEnabled>
 					<ManualModeSwitch Type="bool" PType="257">0</ManualModeSwitch>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
 					<NumSkipSteps Type="int" PType="257">0</NumSkipSteps>
 					<OrderIndexToFileNameFlag Type="bool" PType="257">1</OrderIndexToFileNameFlag>
 					<PrefixName Type="std::string" PType="257"></PrefixName>
@@ -253,10 +126,225 @@
 					<WriteIndexFlag Type="bool" PType="257">1</WriteIndexFlag>
 					<WriteModelTimeStampFlag Type="bool" PType="257">1</WriteModelTimeStampFlag>
 					<WriteSourceTimeStampFlag Type="bool" PType="257">0</WriteSourceTimeStampFlag>
+					<WriteTimeFromResetFlag Type="bool" PType="257">0</WriteTimeFromResetFlag>
 					<WriteTimeStampFlag Type="bool" PType="257">0</WriteTimeStampFlag>
 				</Parameters>
 				<Components/>
 			</StatisticDoubleMatrix>
+			<PNeuron Class="NPNeuron">
+				<Parameters>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">12.3333 5 3</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257">NPLTZoneNeuronMembrane</LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257">NPLTZone</LTZoneClassName>
+					<LayerHeight Type="unsigned int" PType="257">1</LayerHeight>
+					<LayerWidth Type="unsigned int" PType="257">1</LayerWidth>
+					<LinkDistance Type="double" PType="257">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned int" PType="257">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257">NPMembrane</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+					<NetType Type="int" PType="257">0</NetType>
+					<NumDendriteMembraneParts Type="int" PType="257">0</NumDendriteMembraneParts>
+					<NumLayers Type="unsigned int" PType="257">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257">1</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned int" PType="257">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned int" PType="257">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257">1</StructureBuildMode>
+					<UseAverageDendritesPotential Type="bool" PType="257">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<LTZone Class="NPLTZone">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<AvgInterval Type="double" PType="257">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+							<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+							<Threshold Type="double" PType="257">1.0000000000000000818e-05</Threshold>
+							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
+							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+							<Activity Type="bool" PType="257">1</Activity>
+							<Amplitude Type="double" PType="257">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">4 7.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+					<LTMembrane Class="NPLTZoneNeuronMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">20 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257">NPLTExcChannel</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257">NPLTInhChannel</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257">NPSynapse</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcChannel Class="NPExcChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257">100000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<Resistance Type="double" PType="257">10000000</Resistance>
+									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
+									<Type Type="double" PType="257">-1</Type>
+									<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257">100000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<Resistance Type="double" PType="257">10000000</Resistance>
+									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
+									<Type Type="double" PType="257">1</Type>
+									<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</LTMembrane>
+					<Soma1 Class="NPMembrane">
+						<Parameters>
+							<Activity Type="bool" PType="257">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257">NPExcChannel</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257">NPInhChannel</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257">NPSynapse</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcChannel Class="NPExcChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257">100000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<Resistance Type="double" PType="257">10000000</Resistance>
+									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
+									<Type Type="double" PType="257">-1</Type>
+									<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannel">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257">9.999999999999998555e-10</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257">100000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<Resistance Type="double" PType="257">10000000</Resistance>
+									<RestingResistance Type="double" PType="257">10000000</RestingResistance>
+									<Type Type="double" PType="257">1</Type>
+									<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+							<ExcSynapse Class="NPSynapse">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">100000000</Resistance>
+									<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
+								</Parameters>
+								<Components/>
+							</ExcSynapse>
+							<InhSynapse Class="NPSynapse">
+								<Parameters>
+									<Activity Type="bool" PType="257">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257">0.010000000000000000208</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+									<Resistance Type="double" PType="257">100000000</Resistance>
+									<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
+								</Parameters>
+								<Components/>
+							</InhSynapse>
+						</Components>
+					</Soma1>
+				</Components>
+			</PNeuron>
 		</Components>
 	</Model>
 </Save>

@@ -1,80 +1,87 @@
 <Save ModelName="Model">
 	<Model Class="NModel">
 		<Parameters>
-			<Activity Type="bool" PType="257">1</Activity>
-			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-			<Coord PType="257">0 0 0</Coord>
-			<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+			<Activity Type="bool" PType="257" IoType="17">1</Activity>
+			<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 		</Parameters>
 		<Links Type="ULinksList" Size="2">
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">PGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">EyeMuscle</Connector>
+				<Item Type="ULinkSide" Index="-1" Name="Output">PGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">EyeMuscle</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput1">EyeMuscle</Item>
+				<Item Type="ULinkSide" Index="-1" Name="OutputLength">EyeMuscle</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 		</Links>
 		<Components>
 			<EyeMuscle Class="NEyeMuscle">
 				<Parameters>
-					<Activity Type="bool" PType="257">1</Activity>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">13.6666 6 1</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<K Type="double" PType="257">0.2000000000000000111</K>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<MulCoeffs Type="simplevector" Size="3" PType="257">0.74 0.75 0.5</MulCoeffs>
-					<TC Type="simplevector" Size="3" PType="257">0.003 0.0092 0.0327</TC>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">13.6666 6 1</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<K Type="double" PType="257" IoType="17">0.2000000000000000111</K>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<MulCoeffs Type="simplevector" Size="3" elemType="double" PType="257" IoType="17">0.74 0.75 0.5</MulCoeffs>
+					<TC Type="simplevector" Size="3" elemType="double" PType="257" IoType="17">0.003 0.0092 0.0327</TC>
 				</Parameters>
 				<Components/>
 			</EyeMuscle>
 			<PGenerator Class="NPGenerator">
 				<Parameters>
-					<ActionCounter Type="unsigned int" PType="257">0</ActionCounter>
-					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
-					<AvgInterval Type="double" PType="257">5</AvgInterval>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">4.66666 6 2</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<Frequency Type="double" PType="257">8</Frequency>
-					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5.33333 6 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">8</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PulseLength Type="double" PType="257" IoType="17">0.0010000000000000000208</PulseLength>
 				</Parameters>
 				<Components/>
 			</PGenerator>
 			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
 				<Parameters>
-					<Activity Type="bool" PType="257">1</Activity>
-					<AverageInput Type="std::pair" PType="257">
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<AverageInput Type="std::pair" PType="257" IoType="17">
 						<first Type="std::string"></first>
 						<second Type="std::string"></second>
 					</AverageInput>
-					<AverageMode Type="int" PType="257">0</AverageMode>
-					<AverageNumber Type="int" PType="257">5</AverageNumber>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord PType="257">22 6 2</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
-					<ExcludeModelFileName Type="bool" PType="257">1</ExcludeModelFileName>
-					<ManualModeEnabled Type="bool" PType="257">0</ManualModeEnabled>
-					<ManualModeSwitch Type="bool" PType="257">0</ManualModeSwitch>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<NumSkipSteps Type="int" PType="257">0</NumSkipSteps>
-					<OrderIndexToFileNameFlag Type="bool" PType="257">1</OrderIndexToFileNameFlag>
-					<PrefixName Type="std::string" PType="257"></PrefixName>
-					<SaveMode Type="int" PType="257">0</SaveMode>
-					<SavePath Type="std::string" PType="257">StatisticLog</SavePath>
-					<SubFolderAfterResetFlag Type="bool" PType="257">1</SubFolderAfterResetFlag>
-					<TimeInterval Type="double" PType="257">0</TimeInterval>
-					<TimeToFileNameFlag Type="bool" PType="257">1</TimeToFileNameFlag>
-					<WriteIndexFlag Type="bool" PType="257">1</WriteIndexFlag>
-					<WriteSourceTimeStampFlag Type="bool" PType="257">0</WriteSourceTimeStampFlag>
-					<WriteTimeStampFlag Type="bool" PType="257">0</WriteTimeStampFlag>
+					<AverageMode Type="int" PType="257" IoType="17">0</AverageMode>
+					<AverageNumber Type="int" PType="257" IoType="17">5</AverageNumber>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">22.3333 6 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<ExcludeModelFileName Type="bool" PType="257" IoType="17">1</ExcludeModelFileName>
+					<ForceCreateSavePath Type="bool" PType="257" IoType="17">0</ForceCreateSavePath>
+					<ManualModeEnabled Type="bool" PType="257" IoType="17">0</ManualModeEnabled>
+					<ManualModeSwitch Type="bool" PType="257" IoType="17">0</ManualModeSwitch>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NumSkipSteps Type="int" PType="257" IoType="17">0</NumSkipSteps>
+					<OrderIndexToFileNameFlag Type="bool" PType="257" IoType="17">1</OrderIndexToFileNameFlag>
+					<PrefixName Type="std::string" PType="257" IoType="17"></PrefixName>
+					<SaveMode Type="int" PType="257" IoType="17">0</SaveMode>
+					<SavePath Type="std::string" PType="257" IoType="17">StatisticLog</SavePath>
+					<SubFolderAfterResetFlag Type="bool" PType="257" IoType="17">1</SubFolderAfterResetFlag>
+					<TimeInterval Type="double" PType="257" IoType="17">0</TimeInterval>
+					<TimeToFileNameFlag Type="bool" PType="257" IoType="17">1</TimeToFileNameFlag>
+					<WriteIndexFlag Type="bool" PType="257" IoType="17">1</WriteIndexFlag>
+					<WriteModelTimeStampFlag Type="bool" PType="257" IoType="17">0</WriteModelTimeStampFlag>
+					<WriteSourceTimeStampFlag Type="bool" PType="257" IoType="17">0</WriteSourceTimeStampFlag>
+					<WriteTimeFromResetFlag Type="bool" PType="257" IoType="17">0</WriteTimeFromResetFlag>
+					<WriteTimeStampFlag Type="bool" PType="257" IoType="17">0</WriteTimeStampFlag>
 				</Parameters>
 				<Components/>
 			</StatisticDoubleMatrix>

@@ -1,0 +1,77 @@
+<Save ModelName="Model">
+	<Model Class="NModel">
+		<Parameters>
+			<Activity Type="bool" PType="257">1</Activity>
+			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+		</Parameters>
+		<Links Type="ULinksList" Size="2">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PresynActivity</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">SynapseStdp</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PossynActivity</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="PsActivityInput">SynapseStdp</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<PresynActivity Class="NPGenerator">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">1</Amplitude>
+					<AvgInterval Type="double" PType="257">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5.66667 6.99993 0</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<Frequency Type="double" PType="257">0</Frequency>
+					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+				</Parameters>
+				<Components/>
+			</PresynActivity>
+			<PossynActivity Class="NPGenerator">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
+					<Activity Type="bool" PType="257">1</Activity>
+					<Amplitude Type="double" PType="257">1</Amplitude>
+					<AvgInterval Type="double" PType="257">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5.66667 9.99997 5</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<Frequency Type="double" PType="257">100</Frequency>
+					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+				</Parameters>
+				<Components/>
+			</PossynActivity>
+			<SynapseStdp Class="NSynapseStdp">
+				<Parameters>
+					<AMinus Type="double" PType="257">1</AMinus>
+					<APlus Type="double" PType="257">1</APlus>
+					<Activity Type="bool" PType="257">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">14 8.66667 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+					<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
+					<Resistance Type="double" PType="257">1</Resistance>
+					<XModCoeff Type="double" PType="257">1</XModCoeff>
+					<XTau Type="double" PType="257">0.010000000000000000208</XTau>
+					<YModCoeff Type="double" PType="257">1</YModCoeff>
+					<YTau Type="double" PType="257">0.0010000000000000000208</YTau>
+				</Parameters>
+				<Components/>
+			</SynapseStdp>
+		</Components>
+	</Model>
+</Save>

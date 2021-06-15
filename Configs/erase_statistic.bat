@@ -1,0 +1,1 @@
+FOR /d /r . %%d IN (StatisticLog) DO @IF EXIST "%%d" rd /s /q "%%d"
