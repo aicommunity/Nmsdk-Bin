@@ -1,0 +1,57 @@
+<Save ModelName="Model">
+	<Model Class="UModel">
+		<Parameters>
+			<Activity Type="b" PType="257" IoType="17">1</Activity>
+			<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<Coord Type="MVector&lt;d&gt;" Size="3" PType="769" IoType="17">0 0 0</Coord>
+			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="b" PType="769" IoType="17">0</MemoryMonitor>
+			<TimeStep Type="j" PType="769" IoType="17">2000</TimeStep>
+		</Parameters>
+		<Links Type="ULinksList" Size="1">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="FullMatrix">UMatrixSourceDataFile</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputComponents">CRBarnesHutTSNE</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<UMatrixSourceDataFile Class="UMatrixSourceDataFile">
+				<Parameters>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="769" IoType="17">9.6667 6.66666 1</Coord>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<FileName Type="std::string" PType="257" IoType="17">tsne_input.txt</FileName>
+					<IsCheckDateTime Type="b" PType="257" IoType="17">1</IsCheckDateTime>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="b" PType="769" IoType="17">0</MemoryMonitor>
+					<ReloadFile Type="b" PType="257" IoType="17">1</ReloadFile>
+					<SkipCalcIfNoNewData Type="b" PType="257" IoType="17">1</SkipCalcIfNoNewData>
+					<TimeStep Type="j" PType="769" IoType="17">2000</TimeStep>
+					<UseRelativePathFromConfig Type="b" PType="257" IoType="17">1</UseRelativePathFromConfig>
+					<UseRelativePathFromWorkDir Type="b" PType="257" IoType="17">0</UseRelativePathFromWorkDir>
+				</Parameters>
+				<Components/>
+			</UMatrixSourceDataFile>
+			<CRBarnesHutTSNE Class="UCRBarnesHutTSNE">
+				<Parameters>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="769" IoType="17">18.6667 6.66667 1</Coord>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MaxIterations Type="i" PType="257" IoType="17">1000</MaxIterations>
+					<MemoryMonitor Type="b" PType="769" IoType="17">0</MemoryMonitor>
+					<NumOutCoords Type="i" PType="257" IoType="17">2</NumOutCoords>
+					<Perplexity Type="d" PType="257" IoType="17">50</Perplexity>
+					<RandomSeed Type="i" PType="257" IoType="17">-1</RandomSeed>
+					<RetrainFlag Type="b" PType="257" IoType="17">1</RetrainFlag>
+					<Theta Type="d" PType="257" IoType="17">0.5</Theta>
+					<TimeStep Type="j" PType="769" IoType="17">2000</TimeStep>
+				</Parameters>
+				<Components/>
+			</CRBarnesHutTSNE>
+		</Components>
+	</Model>
+</Save>
