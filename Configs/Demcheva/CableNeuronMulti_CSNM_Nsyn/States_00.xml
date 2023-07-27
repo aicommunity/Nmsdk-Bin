@@ -1,0 +1,1314 @@
+<SaveProperties ModelName="Model">
+	<Model Class="Model">
+		<State>
+			<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+			<WorkHeight Type="int" PType="258" IoType="17">0</WorkHeight>
+			<WorkWidth Type="int" PType="258" IoType="17">0</WorkWidth>
+		</State>
+		<Components>
+			<PGenerator Class="NPGenerator">
+				<State>
+					<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+					<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+					<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+					<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+					<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+					<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="14" PType="274" IoType="17">
+0	0	0	0	0	0	0	0	0	0	0	0	0	0	</OutputPulseTimes>
+					<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+					<RandomFrequency Type="double" PType="258" IoType="17">5</RandomFrequency>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components/>
+			</PGenerator>
+			<PNeuron Class="NSPNeuronBio2">
+				<State>
+					<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveNegInputs>
+					<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveOutputs>
+					<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActivePosInputs>
+					<DendriticSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</DendriticSumPotential>
+					<NetStructure Type="NetStructure" Size="0" elemType="std::vector" elemSize="0" elemVecType="std::vector" PType="258" IoType="17"/>
+					<NumActiveNegInputs Type="double" PType="258" IoType="17">0</NumActiveNegInputs>
+					<NumActiveOutputs Type="double" PType="258" IoType="17">0</NumActiveOutputs>
+					<NumActivePosInputs Type="double" PType="258" IoType="17">0</NumActivePosInputs>
+					<SomaSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SomaSumPotential>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components>
+					<LTZone Class="NPulseLTZoneThresholdBio2">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+							<Inputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+								<elem Type="pointer">00000000</elem>
+								<elem Type="pointer">00000000</elem>
+							</Inputs>
+							<NeuralPotential Type="double" PType="258" IoType="17">0</NeuralPotential>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPulseTimes>
+							<Potential Type="double" PType="258" IoType="17">0</Potential>
+							<PrePotential Type="double" PType="258" IoType="17">0</PrePotential>
+							<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+							<PulseFlag Type="bool" PType="258" IoType="17">0</PulseFlag>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0.93	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</NegGenerator>
+					<Soma1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Soma1>
+					<Dendrite1_1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266" IoType="17">
+</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Dendrite1_1>
+				</Components>
+			</PNeuron>
+			<PNeuron2 Class="NSPNeuronBio2">
+				<State>
+					<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveNegInputs>
+					<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveOutputs>
+					<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActivePosInputs>
+					<DendriticSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</DendriticSumPotential>
+					<NetStructure Type="NetStructure" Size="0" elemType="std::vector" elemSize="0" elemVecType="std::vector" PType="258" IoType="17"/>
+					<NumActiveNegInputs Type="double" PType="258" IoType="17">0</NumActiveNegInputs>
+					<NumActiveOutputs Type="double" PType="258" IoType="17">0</NumActiveOutputs>
+					<NumActivePosInputs Type="double" PType="258" IoType="17">0</NumActivePosInputs>
+					<SomaSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SomaSumPotential>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components>
+					<LTZone Class="NPulseLTZoneThresholdBio2">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+							<Inputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+								<elem Type="pointer">00000000</elem>
+								<elem Type="pointer">00000000</elem>
+							</Inputs>
+							<NeuralPotential Type="double" PType="258" IoType="17">0</NeuralPotential>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPulseTimes>
+							<Potential Type="double" PType="258" IoType="17">0</Potential>
+							<PrePotential Type="double" PType="258" IoType="17">0</PrePotential>
+							<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+							<PulseFlag Type="bool" PType="258" IoType="17">0</PulseFlag>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0.93	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</NegGenerator>
+					<Soma1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Soma1>
+					<Dendrite1_1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266" IoType="17">
+</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse2>
+						</Components>
+					</Dendrite1_1>
+				</Components>
+			</PNeuron2>
+			<PNeuron3 Class="NSPNeuronBio2">
+				<State>
+					<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveNegInputs>
+					<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveOutputs>
+					<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActivePosInputs>
+					<DendriticSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</DendriticSumPotential>
+					<NetStructure Type="NetStructure" Size="0" elemType="std::vector" elemSize="0" elemVecType="std::vector" PType="258" IoType="17"/>
+					<NumActiveNegInputs Type="double" PType="258" IoType="17">0</NumActiveNegInputs>
+					<NumActiveOutputs Type="double" PType="258" IoType="17">0</NumActiveOutputs>
+					<NumActivePosInputs Type="double" PType="258" IoType="17">0</NumActivePosInputs>
+					<SomaSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SomaSumPotential>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components>
+					<LTZone Class="NPulseLTZoneThresholdBio2">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+							<Inputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+								<elem Type="pointer">00000000</elem>
+								<elem Type="pointer">00000000</elem>
+							</Inputs>
+							<NeuralPotential Type="double" PType="258" IoType="17">0</NeuralPotential>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPulseTimes>
+							<Potential Type="double" PType="258" IoType="17">0</Potential>
+							<PrePotential Type="double" PType="258" IoType="17">0</PrePotential>
+							<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+							<PulseFlag Type="bool" PType="258" IoType="17">0</PulseFlag>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0.93	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</NegGenerator>
+					<Soma1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Soma1>
+					<Dendrite1_1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266" IoType="17">
+</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="3" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse2>
+							<ExcSynapse3 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse3>
+						</Components>
+					</Dendrite1_1>
+				</Components>
+			</PNeuron3>
+			<PNeuron4 Class="NSPNeuronBio2">
+				<State>
+					<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveNegInputs>
+					<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveOutputs>
+					<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActivePosInputs>
+					<DendriticSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</DendriticSumPotential>
+					<NetStructure Type="NetStructure" Size="0" elemType="std::vector" elemSize="0" elemVecType="std::vector" PType="258" IoType="17"/>
+					<NumActiveNegInputs Type="double" PType="258" IoType="17">0</NumActiveNegInputs>
+					<NumActiveOutputs Type="double" PType="258" IoType="17">0</NumActiveOutputs>
+					<NumActivePosInputs Type="double" PType="258" IoType="17">0</NumActivePosInputs>
+					<SomaSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SomaSumPotential>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components>
+					<LTZone Class="NPulseLTZoneThresholdBio2">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+							<Inputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+								<elem Type="pointer">00000000</elem>
+								<elem Type="pointer">00000000</elem>
+							</Inputs>
+							<NeuralPotential Type="double" PType="258" IoType="17">0</NeuralPotential>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPulseTimes>
+							<Potential Type="double" PType="258" IoType="17">0</Potential>
+							<PrePotential Type="double" PType="258" IoType="17">0</PrePotential>
+							<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+							<PulseFlag Type="bool" PType="258" IoType="17">0</PulseFlag>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0.93	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</NegGenerator>
+					<Soma1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Soma1>
+					<Dendrite1_1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266" IoType="17">
+</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="4" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse2>
+							<ExcSynapse3 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse3>
+							<ExcSynapse4 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse4>
+						</Components>
+					</Dendrite1_1>
+				</Components>
+			</PNeuron4>
+			<PNeuron5 Class="NSPNeuronBio2">
+				<State>
+					<ActiveNegInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveNegInputs>
+					<ActiveOutputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActiveOutputs>
+					<ActivePosInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</ActivePosInputs>
+					<DendriticSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</DendriticSumPotential>
+					<NetStructure Type="NetStructure" Size="0" elemType="std::vector" elemSize="0" elemVecType="std::vector" PType="258" IoType="17"/>
+					<NumActiveNegInputs Type="double" PType="258" IoType="17">0</NumActiveNegInputs>
+					<NumActiveOutputs Type="double" PType="258" IoType="17">0</NumActiveOutputs>
+					<NumActivePosInputs Type="double" PType="258" IoType="17">0</NumActivePosInputs>
+					<SomaSumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SomaSumPotential>
+					<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+				</State>
+				<Components>
+					<LTZone Class="NPulseLTZoneThresholdBio2">
+						<State>
+							<AvgFrequencyCounter Type="std::list" Size="0" elemType="double" PType="258" IoType="17"/>
+							<Inputs Type="std::vector" Size="2" elemType="pointer" PType="266" IoType="33">
+								<elem Type="pointer">00000000</elem>
+								<elem Type="pointer">00000000</elem>
+							</Inputs>
+							<NeuralPotential Type="double" PType="258" IoType="17">0</NeuralPotential>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+							<OutputFrequency Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputFrequency>
+							<OutputPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPotential>
+							<OutputPulseTimes Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutputPulseTimes>
+							<Potential Type="double" PType="258" IoType="17">0</Potential>
+							<PrePotential Type="double" PType="258" IoType="17">0</PrePotential>
+							<PulseCounter Type="int" PType="258" IoType="17">0</PulseCounter>
+							<PulseFlag Type="bool" PType="258" IoType="17">0</PulseFlag>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0.93	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGeneratorBio">
+						<State>
+							<ActionCounter Type="unsigned int" PType="258" IoType="17">0</ActionCounter>
+							<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+						</State>
+						<Components/>
+					</NegGenerator>
+					<Soma1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+						</Components>
+					</Soma1>
+					<Dendrite1_1 Class="NPMembraneBio2">
+						<State>
+							<Feedback Type="double" PType="258" IoType="17">0</Feedback>
+							<InputFeedbackSignal Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="266" IoType="17">
+</InputFeedbackSignal>
+							<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+							<SumPotential Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="258" IoType="17">
+0	</SumPotential>
+						</State>
+						<Components>
+							<ExcChannel Class="NPExcChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+-1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="5" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</ExcChannel>
+							<ExcSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse1>
+							<InhChannel Class="NPInhChannelBio2">
+								<State>
+									<ChannelInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</ChannelInputs>
+									<IsNeuronActivated Type="bool" PType="258" IoType="17">0</IsNeuronActivated>
+									<NumConnectedSynapsis Type="int" PType="258" IoType="17">0</NumConnectedSynapsis>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+1	</Output>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<SumChannelInputs Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</SumChannelInputs>
+									<SynapticInputs Type="std::vector" Size="1" elemType="pointer" PType="266" IoType="33">
+										<elem Type="pointer">00000000</elem>
+									</SynapticInputs>
+								</State>
+								<Components/>
+							</InhChannel>
+							<InhSynapse1 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</InhSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse2>
+							<ExcSynapse3 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse3>
+							<ExcSynapse4 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse4>
+							<ExcSynapse5 Class="NPSynapseBio2">
+								<State>
+									<Input Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</Input>
+									<InputPulseSignal Type="bool" PType="258" IoType="17">0</InputPulseSignal>
+									<OutInCopy Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+0	</OutInCopy>
+									<Output Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="274" IoType="17">
+5.06075e-17	</Output>
+									<PreOutput Type="double" PType="258" IoType="17">0</PreOutput>
+									<StepDuration Type="unsigned __int64" PType="770" IoType="17">0</StepDuration>
+									<WeightInput Type="MDMatrix&lt;double&gt;" Rows="1" Cols="1" PType="266" IoType="17">
+0	</WeightInput>
+								</State>
+								<Components/>
+							</ExcSynapse5>
+						</Components>
+					</Dendrite1_1>
+				</Components>
+			</PNeuron5>
+		</Components>
+	</Model>
+</SaveProperties>
