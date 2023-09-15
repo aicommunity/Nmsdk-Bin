@@ -1,0 +1,2457 @@
+<Save ModelName="Model">
+	<Model Class="Model">
+		<Parameters>
+			<Activity Type="bool" PType="257" IoType="17">1</Activity>
+			<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">0 0 0</Coord>
+			<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+		</Parameters>
+		<Links Type="ULinksList" Size="83">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">Person</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NOTNeuron1.Soma1.InhSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">Backpack</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron1.Soma2.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">KF1InZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ORNeuron1.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">KF2InZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ORNeuron1.Soma1.ExcSynapse2</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PartOfKF3InZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron4.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PersonInKF3</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NOTNeuron2.Soma1.InhSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">BackpackInKF3</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron2.Soma2.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTGenerator1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NOTNeuron1.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTGenerator2</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NOTNeuron2.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">NOTNeuron1.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron1.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NOTNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NOTNeuron1.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NOTNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">NOTNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NOTNeuron1.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron1.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">NOTNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ORNeuron1.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron3.Soma2.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ORNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.Soma1.ExcSynapse2</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ORNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ORNeuron1.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ORNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ORNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ORNeuron1.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ORNeuron1.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ORNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">NOTNeuron2.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron2.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NOTNeuron2.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NOTNeuron2.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NOTNeuron2.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">NOTNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NOTNeuron2.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NOTNeuron2.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">NOTNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron1.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron1.Soma2</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron3.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron1.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron1.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron1.Soma1.ExcChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron1.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron1.Soma1.InhChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron1.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma2.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron1.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma2.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron1.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma2.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron1.Soma2.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron1.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron2.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron2.Soma2</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">ANDNeuron4.Soma2.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron2.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron2.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron2.Soma1.ExcChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron2.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron2.Soma1.InhChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron2.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma2.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron2.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma2.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron2.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma2.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron2.Soma2.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron2.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron4.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron4.Soma2</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">EventTrigger.Soma1.ExcSynapse2</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron4.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron4.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron4.Soma1.ExcChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron4.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron4.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron4.Soma1.InhChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron4.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron4.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma2.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron4.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma2.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron4.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma2.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron4.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron4.Soma2.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron4.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron3.Soma1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">ANDNeuron3.Soma2</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">EventTrigger.Soma1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron3.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron3.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron3.Soma1.ExcChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron3.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron3.Soma1.InhChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">ANDNeuron3.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma2.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron3.Soma2.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma2.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">ANDNeuron3.Soma2.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma2.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">ANDNeuron3.Soma2.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">ANDNeuron3.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="InputFeedbackSignal">EventTrigger.Soma1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.Soma1.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">EventTrigger.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.Soma1.ExcSynapse2</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">EventTrigger.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.Soma1.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">EventTrigger.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">EventTrigger.Soma1.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.Soma1.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">EventTrigger.LTZone</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">EventTrigger.Soma1.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">EventTrigger.Soma1.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Inputs">EventTrigger.LTZone</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<Person Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 2 0</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">0</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</Person>
+			<Backpack Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 5 1</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</Backpack>
+			<KF1InZone Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 7 2</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</KF1InZone>
+			<KF2InZone Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 8.99997 3</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</KF2InZone>
+			<PartOfKF3InZone Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 12 16</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</PartOfKF3InZone>
+			<PersonInKF3 Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 14 5</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</PersonInKF3>
+			<BackpackInKF3 Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">3.66667 17 6</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</BackpackInKF3>
+			<NOTGenerator1 Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11.3333 4 7</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</NOTGenerator1>
+			<NOTGenerator2 Class="NPulseGeneratorTransit">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11.3333 16 8</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">2</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PatternDuration Type="double" PType="257" IoType="17">0</PatternDuration>
+					<PatternFrequency Type="double" PType="257" IoType="17">0</PatternFrequency>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
+					<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
+				</Parameters>
+				<Components/>
+			</NOTGenerator2>
+			<NOTNeuron1 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11.3333 2 9</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">1</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.01170000000000000033029134982598407077603</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 7.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</NOTNeuron1>
+			<ORNeuron1 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11.3333 8 10</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">1</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">2</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse2>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.01170000000000000033029134982598407077603</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 7.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</ORNeuron1>
+			<NOTNeuron2 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11.3333 14 11</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">1</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.01170000000000000033029134982598407077603</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 7.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</NOTNeuron2>
+			<ANDNeuron1 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">19 5 16</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="2" elemType="int" PType="257" IoType="17">0 0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">2</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<Soma2 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 6.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma2>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.0129999999999999994032551242639783595223</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 9.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</ANDNeuron1>
+			<ANDNeuron2 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">19 14 12</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="2" elemType="int" PType="257" IoType="17">0 0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">2</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<Soma2 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 6.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma2>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.0129999999999999994032551242639783595223</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 9.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</ANDNeuron2>
+			<ANDNeuron4 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">26.6667 12 14</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="2" elemType="int" PType="257" IoType="17">0 0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">2</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<Soma2 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 6.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma2>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.0129999999999999994032551242639783595223</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 9.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</ANDNeuron4>
+			<ANDNeuron3 Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">26.6667 7 15</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="2" elemType="int" PType="257" IoType="17">0 0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">2</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<Soma2 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 6.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">1</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma2>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.0129999999999999994032551242639783595223</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 9.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</ANDNeuron3>
+			<EventTrigger Class="NSPNeuronGen">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">34 9.33333 16</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
+					<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
+					<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
+					<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+					<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
+					<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
+					<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
+					<LinkDistance Type="double" PType="257" IoType="17">1</LinkDistance>
+					<LinkOrganizationMode Type="unsigned __int64" PType="257" IoType="17">0</LinkOrganizationMode>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MembraneClassName Type="std::string" PType="257" IoType="17">NPMembraneBio</MembraneClassName>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<NetType Type="int" PType="257" IoType="17">0</NetType>
+					<NumDendriteMembranePartsVec Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">0</NumDendriteMembranePartsVec>
+					<NumLayers Type="unsigned __int64" PType="257" IoType="17">1</NumLayers>
+					<NumSomaMembraneParts Type="int" PType="257" IoType="17">1</NumSomaMembraneParts>
+					<ReceptorFieldHeight Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldHeight>
+					<ReceptorFieldWidth Type="unsigned __int64" PType="257" IoType="17">1</ReceptorFieldWidth>
+					<StructureBuildMode Type="int" PType="257" IoType="17">2</StructureBuildMode>
+					<TrainingDendIndexes Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingDendIndexes>
+					<TrainingPattern Type="MDMatrix&lt;double&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingPattern>
+					<TrainingSynapsisNum Type="MDMatrix&lt;int&gt;" Rows="0" Cols="0" PType="257" IoType="17">
+</TrainingSynapsisNum>
+					<UseAverageDendritesPotential Type="bool" PType="257" IoType="17">1</UseAverageDendritesPotential>
+					<UseAverageLTZonePotential Type="bool" PType="257" IoType="17">1</UseAverageLTZonePotential>
+				</Parameters>
+				<Components>
+					<Soma1 Class="NPMembraneBio">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.7 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<ExcChannelClassName Type="std::string" PType="257" IoType="17">NPExcChannelBio</ExcChannelClassName>
+							<FeedbackGain Type="double" PType="257" IoType="17">2</FeedbackGain>
+							<InhChannelClassName Type="std::string" PType="257" IoType="17">NPInhChannelBio</InhChannelClassName>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumExcitatorySynapses Type="int" PType="257" IoType="17">2</NumExcitatorySynapses>
+							<NumInhibitorySynapses Type="int" PType="257" IoType="17">1</NumInhibitorySynapses>
+							<ResetAvailable Type="bool" PType="257" IoType="17">1</ResetAvailable>
+							<SynapseClassName Type="std::string" PType="257" IoType="17">NPSynapseBio</SynapseClassName>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components>
+							<ExcSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse1>
+							<ExcSynapse2 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11 1.7 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</ExcSynapse2>
+							<InhSynapse1 Class="NPSynapseBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 10.6 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<DissociationTC Type="double" PType="257" IoType="17">0.005000000000000000104083408558608425664715</DissociationTC>
+									<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+									<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
+									<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+									<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
+									<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
+									<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
+									<Weight Type="double" PType="257" IoType="17">1</Weight>
+								</Parameters>
+								<Components/>
+							</InhSynapse1>
+							<ExcChannel Class="NPExcChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 4 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">-1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</ExcChannel>
+							<InhChannel Class="NPInhChannelBio">
+								<Parameters>
+									<Activity Type="bool" PType="257" IoType="17">1</Activity>
+									<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+									<Capacity Type="double" PType="257" IoType="17">1.000000000000000062281591457779856418897e-09</Capacity>
+									<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">5 8 0</Coord>
+									<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+									<FBResistance Type="double" PType="257" IoType="17">10000000</FBResistance>
+									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+									<Resistance Type="double" PType="257" IoType="17">10000000</Resistance>
+									<RestingResistance Type="double" PType="257" IoType="17">10000000</RestingResistance>
+									<Type Type="double" PType="257" IoType="17">1</Type>
+									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+									<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
+								</Parameters>
+								<Components/>
+							</InhChannel>
+						</Components>
+					</Soma1>
+					<LTZone Class="NPulseLTZoneThreshold">
+						<Parameters>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<AvgInterval Type="double" PType="257" IoType="17">1</AvgInterval>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.3 4.67 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+							<NumChannelsInGroup Type="int" PType="257" IoType="17">2</NumChannelsInGroup>
+							<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
+							<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+							<Threshold Type="double" PType="257" IoType="17">0.01170000000000000033029134982598407077603</Threshold>
+							<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
+							<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
+						</Parameters>
+						<Components/>
+					</LTZone>
+					<PosGenerator Class="NPNeuronPosCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 2 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</PosGenerator>
+					<NegGenerator Class="NPNeuronNegCGenerator">
+						<Parameters>
+							<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+							<Activity Type="bool" PType="257" IoType="17">1</Activity>
+							<Amplitude Type="double" PType="257" IoType="17">-1</Amplitude>
+							<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+							<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4 7.3 0</Coord>
+							<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+							<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+							<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+						</Parameters>
+						<Components/>
+					</NegGenerator>
+				</Components>
+			</EventTrigger>
+		</Components>
+	</Model>
+</Save>
