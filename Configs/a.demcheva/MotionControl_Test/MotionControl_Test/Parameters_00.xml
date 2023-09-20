@@ -733,10 +733,10 @@
 									<InputAdaptationMode Type="int" PType="257" IoType="17">0</InputAdaptationMode>
 									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 									<MaxInputRange Type="double" PType="257" IoType="17">0</MaxInputRange>
-									<MaxOutputRange Type="double" PType="257" IoType="17">100</MaxOutputRange>
+									<MaxOutputRange Type="double" PType="257" IoType="17">0</MaxOutputRange>
 									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 									<MinInputRange Type="double" PType="257" IoType="17">-1.570000000000000062172489379008766263723</MinInputRange>
-									<MinOutputRange Type="double" PType="257" IoType="17">0</MinOutputRange>
+									<MinOutputRange Type="double" PType="257" IoType="17">100</MinOutputRange>
 									<OutputAdaptationMode Type="int" PType="257" IoType="17">0</OutputAdaptationMode>
 									<SumCoeff Type="double" PType="257" IoType="17">2</SumCoeff>
 								</Parameters>
@@ -773,7 +773,7 @@
 											<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">0 0 0</Coord>
 											<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Delay Type="double" PType="257" IoType="17">0</Delay>
-											<Frequency Type="double" PType="257" IoType="17">100</Frequency>
+											<Frequency Type="double" PType="257" IoType="17">0</Frequency>
 											<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
 											<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 											<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
@@ -1361,7 +1361,7 @@
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
 					<Angle Type="double" PType="257" IoType="17">0</Angle>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">9.66666 8.66671 2</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">4.99999 8.66671 2</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 					<Force Type="double" PType="257" IoType="17">0</Force>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
@@ -1375,14 +1375,14 @@
 				<Parameters>
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">16.3333 9.66667 4</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11 10.3333 4</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 					<Gain Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">1</Gain>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 					<MaxRange Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">0</MaxRange>
 					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 					<MinRange Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">-1.57</MinRange>
-					<Mode Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">3</Mode>
+					<Mode Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">6</Mode>
 				</Parameters>
 				<Components/>
 			</IntervalSeparator>
@@ -1390,34 +1390,26 @@
 				<Parameters>
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">28.6666 9 5</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">27.9999 9 5</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-					<DissociationTC Type="std::vector" Size="4" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
-						<elem Type="simplevector" Size="2" elemType="double">0.5 0.5</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.5 0.5</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.5 0.5</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.5 0.5</elem>
+					<DissociationTC Type="std::vector" Size="2" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
+						<elem Type="simplevector" Size="1" elemType="double">0.5</elem>
+						<elem Type="simplevector" Size="1" elemType="double">0.5</elem>
 					</DissociationTC>
-					<Gain Type="std::vector" Size="4" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
-						<elem Type="simplevector" Size="2" elemType="double">30 30</elem>
-						<elem Type="simplevector" Size="2" elemType="double">30 30</elem>
-						<elem Type="simplevector" Size="2" elemType="double">-30 -30</elem>
-						<elem Type="simplevector" Size="2" elemType="double">-30 -30</elem>
+					<Gain Type="std::vector" Size="2" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
+						<elem Type="simplevector" Size="1" elemType="double">100</elem>
+						<elem Type="simplevector" Size="1" elemType="double">-100</elem>
 					</Gain>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 					<Mode Type="int" PType="257" IoType="17">0</Mode>
-					<PulseAmplitude Type="std::vector" Size="4" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
-						<elem Type="simplevector" Size="2" elemType="double">1 1</elem>
-						<elem Type="simplevector" Size="2" elemType="double">1 1</elem>
-						<elem Type="simplevector" Size="2" elemType="double">1 1</elem>
-						<elem Type="simplevector" Size="2" elemType="double">1 1</elem>
+					<PulseAmplitude Type="std::vector" Size="2" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
+						<elem Type="simplevector" Size="1" elemType="double">1</elem>
+						<elem Type="simplevector" Size="1" elemType="double">1</elem>
 					</PulseAmplitude>
-					<SecretionTC Type="std::vector" Size="4" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
-						<elem Type="simplevector" Size="2" elemType="double">0.05 0.05</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.05 0.05</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.05 0.05</elem>
-						<elem Type="simplevector" Size="2" elemType="double">0.05 0.05</elem>
+					<SecretionTC Type="std::vector" Size="2" elemType="simplevector" elemSize="0" elemSVType="double" PType="257" IoType="17">
+						<elem Type="simplevector" Size="1" elemType="double">0.05</elem>
+						<elem Type="simplevector" Size="1" elemType="double">0.05</elem>
 					</SecretionTC>
 					<TCMode Type="int" PType="257" IoType="17">1</TCMode>
 				</Parameters>
@@ -1432,7 +1424,7 @@
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
-					<Voltage Type="double" PType="257" IoType="17">5.849087124898401768291478219907730817795</Voltage>
+					<Voltage Type="double" PType="257" IoType="17">-2.866376659170660090580895484890788793564</Voltage>
 				</Parameters>
 				<Components/>
 			</ManipulatorInput>
@@ -1440,14 +1432,14 @@
 				<Parameters>
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">16.3333 7.33327 7</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">11 6.6666 7</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 					<Gain Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">1</Gain>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 					<MaxRange Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">1.57</MaxRange>
 					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 					<MinRange Type="simplevector" Size="1" elemType="double" PType="257" IoType="17">0</MinRange>
-					<Mode Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">2</Mode>
+					<Mode Type="simplevector" Size="1" elemType="int" PType="257" IoType="17">6</Mode>
 				</Parameters>
 				<Components/>
 			</IntervalSeparator2>
@@ -1455,7 +1447,7 @@
 				<Parameters>
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">13.3334 14.0001 11</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">21.0001 15.6668 11</Coord>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 					<EMFactor Type="double" PType="257" IoType="17">2</EMFactor>
 					<Inductance Type="double" PType="257" IoType="17">0.1000000000000000055511151231257827021182</Inductance>
@@ -1494,6 +1486,24 @@
 				</Parameters>
 				<Components/>
 			</VoltageGen>
+			<PGenerator Class="NPGenerator">
+				<Parameters>
+					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
+					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
+					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769" IoType="17">12.3333 2.66667 9</Coord>
+					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Delay Type="double" PType="257" IoType="17">0</Delay>
+					<Frequency Type="double" PType="257" IoType="17">0</Frequency>
+					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
+					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+				</Parameters>
+				<Components/>
+			</PGenerator>
 		</Components>
 	</Model>
 </SaveProperties>
