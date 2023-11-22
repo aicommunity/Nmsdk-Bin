@@ -1,0 +1,433 @@
+<ClassDescription>
+	<ClassName>NCounterNeuron</ClassName>
+	<Header>Счетчик</Header>
+	<Description>Нейрон, срабатывающий только  после получения MaxCount импульсов на вход</Description>
+	<Properties>
+		<ActiveNegInputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</ActiveNegInputs>
+		<ActiveOutputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</ActiveOutputs>
+		<ActivePosInputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</ActivePosInputs>
+		<Activity>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalculationDurationThreshold>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</Coord>
+		<CurCount>
+			<Header>Текущий счёт импульсов</Header>
+			<Description>Сколько импульсов уже получил нейрон</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CurCount>
+		<DebugSysEventsMask>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<DefaultComponentClassId>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DefaultComponentClassId>
+		<DendriticSumPotential>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</DendriticSumPotential>
+		<ExcGeneratorClassName>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ExcGeneratorClassName>
+		<Id>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<InhGeneratorClassName>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InhGeneratorClassName>
+		<Input>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>266</PropertyType>
+		</Input>
+		<LTZoneClassName>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LTZoneClassName>
+		<LayerHeight>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LayerHeight>
+		<LayerWidth>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LayerWidth>
+		<LinkDistance>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LinkDistance>
+		<LinkOrganizationMode>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LinkOrganizationMode>
+		<MaxCalculationDuration>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<MaxCount>
+			<Header>Максимальное число импульсов</Header>
+			<Description>Число импульсов, до которого считает нейрон</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCount>
+		<MembraneClassName>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MembraneClassName>
+		<MemoryMonitor>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</MemoryMonitor>
+		<Name>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NetStructure>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NetStructure>
+		<NetType>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NetType>
+		<NumActiveNegInputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NumActiveNegInputs>
+		<NumActiveOutputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NumActiveOutputs>
+		<NumActivePosInputs>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NumActivePosInputs>
+		<NumLayers>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumLayers>
+		<Output>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Output>
+		<ReceptorFieldHeight>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ReceptorFieldHeight>
+		<ReceptorFieldWidth>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ReceptorFieldWidth>
+		<SomaSumPotential>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</SomaSumPotential>
+		<StepDuration>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<TimeStep>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+		<UseAverageDendritesPotential>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseAverageDendritesPotential>
+		<UseAverageLTZonePotential>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseAverageLTZonePotential>
+	</Properties>
+	<Favorites>
+		<CurCount>
+			<Path>{CompName}:CurCount</Path>
+		</CurCount>
+		<MaxCount>
+			<Path>{CompName}:MaxCount</Path>
+		</MaxCount>
+	</Favorites>
+</ClassDescription>
