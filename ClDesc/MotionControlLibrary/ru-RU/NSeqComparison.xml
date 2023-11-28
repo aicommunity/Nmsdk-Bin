@@ -1,0 +1,258 @@
+<ClassDescription>
+	<ClassName>NSeqComparison</ClassName>
+	<Header>Сравниватель последовательностей</Header>
+	<Description>Компонент сравнивает тестовые (Fr_ClsX_Spikes) и проверенные (KF_ClsX_Spikes) последовательности. Если в проверенной последовательности есть спайк, аналогичного которому нет в тестовой последовательности, то нейрон среагирует и выпустит импульс. В обратном случае ничего не произойдёт</Description>
+	<Properties>
+		<Activity>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<Amplitude>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Amplitude>
+		<CalculationDurationThreshold>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<DelaysFrCls>
+			<Header>Задержки последовательности импульсов</Header>
+			<Description>Задержки, задающие тестовые спайковые образы классов</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DelaysFrCls>
+		<DelaysKFCls>
+			<Header>Задержки последовательности импульсов</Header>
+			<Description>Задержки, задающие проверенные спайковые образы классов</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DelaysKFCls>
+		<Frequency>
+			<Header>Частота</Header>
+			<Description>Частота генерации (Гц) всех компонентов</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Frequency>
+		<Id>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<LTZThreshold>
+			<Header>Порог нейрона</Header>
+			<Description>Используемый порог низкопороговой зоны нейрона</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LTZThreshold>
+		<MaxCalculationDuration>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<MemoryMonitor>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</MemoryMonitor>
+		<MultiGeneratorClassName>
+			<Header></Header>
+			<Description>Имя класса генератора последовательности импульсов</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MultiGeneratorClassName>
+		<Name>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NeuronClassName>
+			<Header></Header>
+			<Description>Имя класса нейрона</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronClassName>
+		<NumClasses>
+			<Header></Header>
+			<Description>Количество объектов для сравнения</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumClasses>
+		<Output>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Output>
+		<PulseCount>
+			<Header>Размерность спайковых образов</Header>
+			<Description>Размерность спайковых образов в одномерном случае</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseCount>
+		<PulseLength>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseLength>
+		<StepDuration>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<TimeStep>
+			<Header></Header>
+			<Description></Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+	</Properties>
+	<Favorites>
+		<DelaysFrCls>
+			<Path>{CompName}:DelaysFrCls</Path>
+		</DelaysFrCls>
+		<DelaysKFCls>
+			<Path>{CompName}:DelaysKFCls</Path>
+		</DelaysKFCls>
+		<Frequency>
+			<Path>{CompName}:Frequency</Path>
+		</Frequency>
+		<LTZThreshold>
+			<Path>{CompName}:LTZThreshold</Path>
+		</LTZThreshold>
+		<NumClasses>
+			<Path>{CompName}:NumClasses</Path>
+		</NumClasses>
+		<PulseCount>
+			<Path>{CompName}:PulseCount</Path>
+		</PulseCount>
+	</Favorites>
+</ClassDescription>
