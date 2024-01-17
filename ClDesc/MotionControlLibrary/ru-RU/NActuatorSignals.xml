@@ -1,7 +1,7 @@
 <ClassDescription>
-	<ClassName>NObjInArea</ClassName>
-	<Header>Объект в области</Header>
-	<Description>Детектор объектов в ограниченной области кадра</Description>
+	<ClassName>NActuatorSignals</ClassName>
+	<Header>Блок определения поворота</Header>
+	<Description>По импульсам с левого и праваго двигателей определяет, в каком направлении происходит движение объекта: стоит, назад, вперед, поворот налево, поворот направо </Description>
 	<Properties>
 		<Activity>
 			<Header></Header>
@@ -25,6 +25,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Amplitude>
+		<Back>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Back>
 		<CalculationDurationThreshold>
 			<Header></Header>
 			<Description></Description>
@@ -36,6 +47,39 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
+		<ClassNameDelay>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ClassNameDelay>
+		<ClassNameGenerator>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ClassNameGenerator>
+		<ClassNameNeuron>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ClassNameNeuron>
 		<Coord>
 			<Header></Header>
 			<Description></Description>
@@ -58,9 +102,9 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
-		<Delay11>
-			<Header>Задержка t0</Header>
-			<Description>Момент времени t=t0, с которого начинается подавление области кадра с левой стороны</Description>
+		<DelayLeft>
+			<Header>Задержка</Header>
+			<Description>Задержка импульса для левого двигателя</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -68,10 +112,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay11>
-		<Delay12>
-			<Header>Задержка t1</Header>
-			<Description>Момент времени t=t1, до которого происходит подавление области кадра с левой стороны</Description>
+		</DelayLeft>
+		<DelayRight>
+			<Header>Задержка</Header>
+			<Description>Задержка импульса для правого двигателя</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -79,10 +123,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay12>
-		<Delay21>
-			<Header>Задержка t2</Header>
-			<Description>Момент времени t=t2, с которого начинается подавление области кадра с правой стороны</Description>
+		</DelayRight>
+		<DelaySinchro1>
+			<Header>Задержка</Header>
+			<Description>Задержка синхронизирующего импульса, должен быть аналогом вращения назад</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -90,10 +134,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay21>
-		<Delay22>
-			<Header>Задержка T</Header>
-			<Description>Момент времени t=T, до которого происходит подавление области кадра с правой стороны</Description>
+		</DelaySinchro1>
+		<DelaySinchro2>
+			<Header>Задержка</Header>
+			<Description>Задержка синхронизирующего импульса, должен быть аналогом вращения вперед</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -101,21 +145,21 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay22>
-		<DelaysClsSpikeFr>
+		</DelaySinchro2>
+		<Forward>
 			<Header></Header>
 			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>257</PropertyType>
-		</DelaysClsSpikeFr>
+			<PropertyType>274</PropertyType>
+		</Forward>
 		<Frequency>
 			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) всех компонентов кроме генераторов, работающих в режиме генрации с повышенной частотой</Description>
+			<Description>Частота генерации (Гц) всех компонентов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -124,17 +168,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Frequency>
-		<HighFreq>
-			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) блоков подавления сигнала и возбуждающего генератора</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</HighFreq>
 		<Id>
 			<Header></Header>
 			<Description></Description>
@@ -146,6 +179,17 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<Left>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Left>
 		<MaxCalculationDuration>
 			<Header></Header>
 			<Description></Description>
@@ -168,17 +212,6 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</MemoryMonitor>
-		<MultiGeneratorClassName>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MultiGeneratorClassName>
 		<Name>
 			<Header></Header>
 			<Description></Description>
@@ -190,50 +223,6 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Name>
-		<NeuronClassName>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</NeuronClassName>
-		<NumObj>
-			<Header>Количество объектов</Header>
-			<Description>Количество объектов для распознавания. Для каждого объекта будет создан свой компонент ClsXSpikeFr</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</NumObj>
-		<Output>
-			<Header>Выход</Header>
-			<Description>Выход компонента, на который передаётся сигнал с нейрона И</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>274</PropertyType>
-		</Output>
-		<PulseCount>
-			<Header>Количество импульсов</Header>
-			<Description>Размерность спайковых образов объектов. Влияет на соответсвующее свойство у компонентов ClsXSpikeFr</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</PulseCount>
 		<PulseLength>
 			<Header></Header>
 			<Description></Description>
@@ -245,6 +234,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</PulseLength>
+		<Right>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Right>
+		<Stay>
+			<Header></Header>
+			<Description></Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Stay>
 		<StepDuration>
 			<Header></Header>
 			<Description></Description>
@@ -267,28 +278,50 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
+		<UseTransitEngineSignal>
+			<Header>Использовать внешние сигналы двигателей</Header>
+			<Description>Признак необходимости транзита сигнала на двигатели от внешнего источника</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseTransitEngineSignal>
+		<UseTransitSinchroSignal>
+			<Header>Использовать внешние синхронизирующие сигналы</Header>
+			<Description>Признак необходимости транзита сигнала на синхронизирующие генераторы от внешнего источника</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseTransitSinchroSignal>
 	</Properties>
 	<Favorites>
+		<DelayLeft>
+			<Path>{CompName}:DelayLeft</Path>
+		</DelayLeft>
+		<DelayRight>
+			<Path>{CompName}:DelayRight</Path>
+		</DelayRight>
+		<DelaySinchro1>
+			<Path>{CompName}:DelaySinchro1</Path>
+		</DelaySinchro1>
+		<DelaySinchro2>
+			<Path>{CompName}:DelaySinchro2</Path>
+		</DelaySinchro2>
 		<Frequency>
 			<Path>{CompName}:Frequency</Path>
 		</Frequency>
-		<NumObj>
-			<Path>{CompName}:NumObj</Path>
-		</NumObj>
-		<PulseCount>
-			<Path>{CompName}:PulseCount</Path>
-		</PulseCount>
-		<T>
-			<Path>{CompName}:Delay22</Path>
-		</T>
-		<t0>
-			<Path>{CompName}:Delay11</Path>
-		</t0>
-		<t1>
-			<Path>{CompName}:Delay12</Path>
-		</t1>
-		<t2>
-			<Path>{CompName}:Delay21</Path>
-		</t2>
+		<UseTransitEngineSignal>
+			<Path>{CompName}:UseTransitEngineSignal</Path>
+		</UseTransitEngineSignal>
+		<UseTransitSinchroSignal>
+			<Path>{CompName}:UseTransitSinchroSignal</Path>
+		</UseTransitSinchroSignal>
 	</Favorites>
 </ClassDescription>

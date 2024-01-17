@@ -1,7 +1,7 @@
 <ClassDescription>
-	<ClassName>NObjInArea</ClassName>
-	<Header>Объект в области</Header>
-	<Description>Детектор объектов в ограниченной области кадра</Description>
+	<ClassName>NSignalEstimation</ClassName>
+	<Header>Зонирование сигнала</Header>
+	<Description>Временной диапазон разделяется на NumZones зон, каждая из которых соответсвует интервалу, ограниченному значениями, указанными в UpperLimitsOfZones. Каждой зоне соответствует нейрон, который среагирует, если сигнал попал в его зону</Description>
 	<Properties>
 		<Activity>
 			<Header></Header>
@@ -15,7 +15,7 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<Amplitude>
-			<Header></Header>
+			<Header>Амплитуда импульсов</Header>
 			<Description></Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
@@ -58,9 +58,9 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
-		<Delay11>
-			<Header>Задержка t0</Header>
-			<Description>Момент времени t=t0, с которого начинается подавление области кадра с левой стороны</Description>
+		<DelaysSignal>
+			<Header>Задержка</Header>
+			<Description>Задержка сигнала, который будет зонироваться</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -68,10 +68,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay11>
-		<Delay12>
-			<Header>Задержка t1</Header>
-			<Description>Момент времени t=t1, до которого происходит подавление области кадра с левой стороны</Description>
+		</DelaysSignal>
+		<DelaysSinchro>
+			<Header>Задержка</Header>
+			<Description>Задержка синхронизирующего импульса</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -79,10 +79,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay12>
-		<Delay21>
-			<Header>Задержка t2</Header>
-			<Description>Момент времени t=t2, с которого начинается подавление области кадра с правой стороны</Description>
+		</DelaysSinchro>
+		<Frequency>
+			<Header>Частота</Header>
+			<Description>Частота генерации (Гц) всех компонентов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -90,19 +90,8 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay21>
-		<Delay22>
-			<Header>Задержка T</Header>
-			<Description>Момент времени t=T, до которого происходит подавление области кадра с правой стороны</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Delay22>
-		<DelaysClsSpikeFr>
+		</Frequency>
+		<GeneratorClassName>
 			<Header></Header>
 			<Description></Description>
 			<Type>| ptPubParameter | </Type>
@@ -112,29 +101,7 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</DelaysClsSpikeFr>
-		<Frequency>
-			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) всех компонентов кроме генераторов, работающих в режиме генрации с повышенной частотой</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Frequency>
-		<HighFreq>
-			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) блоков подавления сигнала и возбуждающего генератора</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</HighFreq>
+		</GeneratorClassName>
 		<Id>
 			<Header></Header>
 			<Description></Description>
@@ -146,6 +113,28 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<Input>
+			<Header>Входной сигнал</Header>
+			<Description>Вход для зонируемого сигнала с внешнего источника. Чтобы использовать импульс от внешнего источника, необходимо построить связь к этому входу компонента и поднять флаг UseTransitSignal</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>266</PropertyType>
+		</Input>
+		<LTZThreshold>
+			<Header>Порог LTZone</Header>
+			<Description>Используемый порог низкопороговой зоны нейронов</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LTZThreshold>
 		<MaxCalculationDuration>
 			<Header></Header>
 			<Description></Description>
@@ -168,17 +157,6 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</MemoryMonitor>
-		<MultiGeneratorClassName>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MultiGeneratorClassName>
 		<Name>
 			<Header></Header>
 			<Description></Description>
@@ -191,8 +169,8 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<NeuronClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Имя класса нейронов</Header>
+			<Description>Имя класса нейронов, которые зонируют сигнал</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -201,9 +179,9 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</NeuronClassName>
-		<NumObj>
-			<Header>Количество объектов</Header>
-			<Description>Количество объектов для распознавания. Для каждого объекта будет создан свой компонент ClsXSpikeFr</Description>
+		<NumZones>
+			<Header>Количество зон</Header>
+			<Description>Количество интервалов, на которые будет зонироваться сигнал</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -211,32 +189,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</NumObj>
-		<Output>
-			<Header>Выход</Header>
-			<Description>Выход компонента, на который передаётся сигнал с нейрона И</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>274</PropertyType>
-		</Output>
-		<PulseCount>
-			<Header>Количество импульсов</Header>
-			<Description>Размерность спайковых образов объектов. Влияет на соответсвующее свойство у компонентов ClsXSpikeFr</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</PulseCount>
+		</NumZones>
 		<PulseLength>
-			<Header></Header>
-			<Description></Description>
+			<Header>Длительность импульсов (с)</Header>
+			<Description>Длительность импульсов (с)</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -245,6 +201,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</PulseLength>
+		<Sinchro>
+			<Header>Синхронизирующий импульс</Header>
+			<Description>Вход для синхронизирующего импульса с внешнего источника. Чтобы использовать этот вход, необходимо построить связь к этому нему и поднять флаг UseTransitSinchro</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>266</PropertyType>
+		</Sinchro>
 		<StepDuration>
 			<Header></Header>
 			<Description></Description>
@@ -267,28 +234,61 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
+		<UpperLimitsOfZones>
+			<Header>Ограничения зон (с)</Header>
+			<Description>Верхние ограничения для каждой из областей зонирования. Верхнее ограничение зоны является нижним ограничением другой. Для самой первой зоны нижней границей считается 0.0 с</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UpperLimitsOfZones>
+		<UseTransitSignal>
+			<Header>Внешний зонируемый сигнал</Header>
+			<Description>Признак необходимости транзита зонируемого сигнала от внешнего источника</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseTransitSignal>
+		<UseTransitSinchro>
+			<Header>Внешний синхронизирующий импульс</Header>
+			<Description>Признак необходимости транзита сигнала на синхронизирующий генератор от внешнего источника</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseTransitSinchro>
 	</Properties>
 	<Favorites>
+		<DelaysSignal>
+			<Path>{CompName}:DelaysSignal</Path>
+		</DelaysSignal>
+		<DelaysSinchro>
+			<Path>{CompName}:DelaysSinchro</Path>
+		</DelaysSinchro>
 		<Frequency>
 			<Path>{CompName}:Frequency</Path>
 		</Frequency>
-		<NumObj>
-			<Path>{CompName}:NumObj</Path>
-		</NumObj>
-		<PulseCount>
-			<Path>{CompName}:PulseCount</Path>
-		</PulseCount>
-		<T>
-			<Path>{CompName}:Delay22</Path>
-		</T>
-		<t0>
-			<Path>{CompName}:Delay11</Path>
-		</t0>
-		<t1>
-			<Path>{CompName}:Delay12</Path>
-		</t1>
-		<t2>
-			<Path>{CompName}:Delay21</Path>
-		</t2>
+		<NumZones>
+			<Path>{CompName}:NumZones</Path>
+		</NumZones>
+		<UpperLimitsOfZones>
+			<Path>{CompName}:UpperLimitsOfZones</Path>
+		</UpperLimitsOfZones>
+		<UseTransitSignal>
+			<Path>{CompName}:UseTransitSignal</Path>
+		</UseTransitSignal>
+		<UseTransitSinchro>
+			<Path>{CompName}:UseTransitSinchro</Path>
+		</UseTransitSinchro>
 	</Favorites>
 </ClassDescription>

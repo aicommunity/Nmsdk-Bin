@@ -1,7 +1,7 @@
 <ClassDescription>
-	<ClassName>NObjInArea</ClassName>
-	<Header>Объект в области</Header>
-	<Description>Детектор объектов в ограниченной области кадра</Description>
+	<ClassName>NSeqComparison</ClassName>
+	<Header>Сравниватель последовательностей</Header>
+	<Description>Компонент сравнивает тестовые (Fr_ClsX_Spikes) и проверенные (KF_ClsX_Spikes) последовательности. Если в проверенной последовательности есть спайк, аналогичного которому нет в тестовой последовательности, то нейрон среагирует и выпустит импульс. В обратном случае ничего не произойдёт</Description>
 	<Properties>
 		<Activity>
 			<Header></Header>
@@ -58,9 +58,9 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
-		<Delay11>
-			<Header>Задержка t0</Header>
-			<Description>Момент времени t=t0, с которого начинается подавление области кадра с левой стороны</Description>
+		<DelaysFrCls>
+			<Header>Задержки последовательности импульсов</Header>
+			<Description>Задержки, задающие тестовые спайковые образы классов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -68,10 +68,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay11>
-		<Delay12>
-			<Header>Задержка t1</Header>
-			<Description>Момент времени t=t1, до которого происходит подавление области кадра с левой стороны</Description>
+		</DelaysFrCls>
+		<DelaysKFCls>
+			<Header>Задержки последовательности импульсов</Header>
+			<Description>Задержки, задающие проверенные спайковые образы классов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -79,43 +79,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</Delay12>
-		<Delay21>
-			<Header>Задержка t2</Header>
-			<Description>Момент времени t=t2, с которого начинается подавление области кадра с правой стороны</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Delay21>
-		<Delay22>
-			<Header>Задержка T</Header>
-			<Description>Момент времени t=T, до которого происходит подавление области кадра с правой стороны</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Delay22>
-		<DelaysClsSpikeFr>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</DelaysClsSpikeFr>
+		</DelaysKFCls>
 		<Frequency>
 			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) всех компонентов кроме генераторов, работающих в режиме генрации с повышенной частотой</Description>
+			<Description>Частота генерации (Гц) всех компонентов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -124,17 +91,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Frequency>
-		<HighFreq>
-			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) блоков подавления сигнала и возбуждающего генератора</Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</HighFreq>
 		<Id>
 			<Header></Header>
 			<Description></Description>
@@ -146,6 +102,17 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<LTZThreshold>
+			<Header>Порог нейрона</Header>
+			<Description>Используемый порог низкопороговой зоны нейрона</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LTZThreshold>
 		<MaxCalculationDuration>
 			<Header></Header>
 			<Description></Description>
@@ -170,7 +137,7 @@
 		</MemoryMonitor>
 		<MultiGeneratorClassName>
 			<Header></Header>
-			<Description></Description>
+			<Description>Имя класса генератора последовательности импульсов</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -192,7 +159,7 @@
 		</Name>
 		<NeuronClassName>
 			<Header></Header>
-			<Description></Description>
+			<Description>Имя класса нейрона</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -201,9 +168,9 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</NeuronClassName>
-		<NumObj>
-			<Header>Количество объектов</Header>
-			<Description>Количество объектов для распознавания. Для каждого объекта будет создан свой компонент ClsXSpikeFr</Description>
+		<NumClasses>
+			<Header></Header>
+			<Description>Количество объектов для сравнения</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -211,10 +178,10 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</NumObj>
+		</NumClasses>
 		<Output>
-			<Header>Выход</Header>
-			<Description>Выход компонента, на который передаётся сигнал с нейрона И</Description>
+			<Header></Header>
+			<Description></Description>
 			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -224,8 +191,8 @@
 			<PropertyType>274</PropertyType>
 		</Output>
 		<PulseCount>
-			<Header>Количество импульсов</Header>
-			<Description>Размерность спайковых образов объектов. Влияет на соответсвующее свойство у компонентов ClsXSpikeFr</Description>
+			<Header>Размерность спайковых образов</Header>
+			<Description>Размерность спайковых образов в одномерном случае</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -269,26 +236,23 @@
 		</TimeStep>
 	</Properties>
 	<Favorites>
+		<DelaysFrCls>
+			<Path>{CompName}:DelaysFrCls</Path>
+		</DelaysFrCls>
+		<DelaysKFCls>
+			<Path>{CompName}:DelaysKFCls</Path>
+		</DelaysKFCls>
 		<Frequency>
 			<Path>{CompName}:Frequency</Path>
 		</Frequency>
-		<NumObj>
-			<Path>{CompName}:NumObj</Path>
-		</NumObj>
+		<LTZThreshold>
+			<Path>{CompName}:LTZThreshold</Path>
+		</LTZThreshold>
+		<NumClasses>
+			<Path>{CompName}:NumClasses</Path>
+		</NumClasses>
 		<PulseCount>
 			<Path>{CompName}:PulseCount</Path>
 		</PulseCount>
-		<T>
-			<Path>{CompName}:Delay22</Path>
-		</T>
-		<t0>
-			<Path>{CompName}:Delay11</Path>
-		</t0>
-		<t1>
-			<Path>{CompName}:Delay12</Path>
-		</t1>
-		<t2>
-			<Path>{CompName}:Delay21</Path>
-		</t2>
 	</Favorites>
 </ClassDescription>
