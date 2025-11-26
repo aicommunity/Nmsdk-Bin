@@ -1,0 +1,206 @@
+<ClassDescription>
+	<ClassName>UCRBarnesHutTSNE</ClassName>
+	<Header>Barnes-Hut t-SNE</Header>
+	<Description>Визуализирует высокоразмерные данные методом t-SNE.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalcActive>
+			<Header>Calc active</Header>
+			<Description>Calc active — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</CalcActive>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<InputComponents>
+			<Header>Input components</Header>
+			<Description>Input components — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</InputComponents>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<MaxIterations>
+			<Header>Max iterations</Header>
+			<Description>Max iterations — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxIterations>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NumOutCoords>
+			<Header>Num out coords</Header>
+			<Description>Num out coords — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumOutCoords>
+		<OutputComponents>
+			<Header>Output components</Header>
+			<Description>Output components — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubOutput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>272</PropertyType>
+		</OutputComponents>
+		<Perplexity>
+			<Header>Perplexity</Header>
+			<Description>Perplexity — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Perplexity>
+		<RandomSeed>
+			<Header>Random seed</Header>
+			<Description>Random seed — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</RandomSeed>
+		<RetrainFlag>
+			<Header>Retrain flag</Header>
+			<Description>Retrain flag — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</RetrainFlag>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<Theta>
+			<Header>Theta</Header>
+			<Description>Theta — параметр компонента Barnes-Hut t-SNE.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Theta>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+	</Properties>
+	<Favorites/>
+</ClassDescription>

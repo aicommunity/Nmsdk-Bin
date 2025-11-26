@@ -1,0 +1,217 @@
+<ClassDescription>
+	<ClassName>ShowObjectsSimple</ClassName>
+	<Header>Отображение объектов</Header>
+	<Description>Накладывает контуры или прямоугольники найденных объектов на изображение.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<EnableShowFlag>
+			<Header>Enable show flag</Header>
+			<Description>Enable show flag — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</EnableShowFlag>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<Input>
+			<Header>Вход</Header>
+			<Description>Матрица или bitmap, который поступает на обработку.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Input>
+		<MatrixPoints>
+			<Header>Матрица points</Header>
+			<Description>Матрица points — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MatrixPoints>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<ObjectsColor>
+			<Header>Objects color</Header>
+			<Description>Objects color — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ObjectsColor>
+		<ObjectsId>
+			<Header>Objects id</Header>
+			<Description>Objects id — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ObjectsId>
+		<ObjectsName>
+			<Header>Objects name</Header>
+			<Description>Objects name — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ObjectsName>
+		<Output>
+			<Header>Выход</Header>
+			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Output>
+		<PenColor>
+			<Header>Pen color</Header>
+			<Description>Pen color — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PenColor>
+		<PenWidth>
+			<Header>Pen width</Header>
+			<Description>Pen width — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PenWidth>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+		<Zones>
+			<Header>Zones</Header>
+			<Description>Zones — параметр компонента Отображение объектов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Zones>
+	</Properties>
+	<Favorites/>
+</ClassDescription>
