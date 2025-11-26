@@ -1,0 +1,327 @@
+<ClassDescription>
+	<ClassName>NPulseChannelIaF</ClassName>
+	<Header>Канал IaF</Header>
+	<Description>Канал модели Integrate‑and‑Fire. Интегрирует входной ток, обновляет мембранный потенциал и учитывает параметры ёмкости, утечки и рефрактерного периода.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<ChannelInputCoeff>
+			<Header>Коэффициент входного тока</Header>
+			<Description>Вес, с которым входные сигналы канала участвуют в расчёте мембранного тока.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ChannelInputCoeff>
+		<ChannelInputs>
+			<Header>Входы канала</Header>
+			<Description>Массив входных матриц, содержащих синаптические токи для данного канала.</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>266</PropertyType>
+		</ChannelInputs>
+		<Cm>
+			<Header>Мембранная ёмкость Cm</Header>
+			<Description>Эффективная ёмкость мембраны (используется при интегрировании уравнения).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Cm>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<EL>
+			<Header>Потенциал утечки EL</Header>
+			<Description>Равновесный потенциал утечки, к которому стремится мембрана при отсутствии входов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</EL>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<IsNeuronActivated>
+			<Header>Нейрон активирован</Header>
+			<Description>Флаг, показывающий, что по результатам работы канала нейрон перешёл в активное состояние (сгенерировал импульс).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsNeuronActivated>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<Output>
+			<Header>Выход</Header>
+			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Output>
+		<Rm>
+			<Header>Мембранное сопротивление Rm</Header>
+			<Description>Состояние, отражающее текущие значения сопротивления мембраны.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</Rm>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<SumChannelInput>
+			<Header>Суммарный вход канала</Header>
+			<Description>Интегральный ток от прямых входов канала.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</SumChannelInput>
+		<SumSynapticInput>
+			<Header>Суммарный синаптический вход</Header>
+			<Description>Интегральный ток, сформированный синапсами, подключёнными к каналу.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</SumSynapticInput>
+		<SynapticInputCoeff>
+			<Header>Коэффициент синаптического тока</Header>
+			<Description>Масштабирует вклад синаптических входов в мембранный ток.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapticInputCoeff>
+		<SynapticInputs>
+			<Header>Синаптические входы</Header>
+			<Description>Массив матриц с токами от синапсов, подключённых к каналу.</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>266</PropertyType>
+		</SynapticInputs>
+		<TRef>
+			<Header>Рефрактерный период TRef</Header>
+			<Description>Время (в шагах/мс), в течение которого нейрон остаётся нечувствительным после спайка.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</TRef>
+		<TauM>
+			<Header>Tau m</Header>
+			<Description>Tau m — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</TauM>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+		<Type>
+			<Header>Type</Header>
+			<Description>Type — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Type>
+		<UseAveragePotential>
+			<Header>Use average potential</Header>
+			<Description>Use average potential — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseAveragePotential>
+		<UseAverageSynapsis>
+			<Header>Use average synapsis</Header>
+			<Description>Use average synapsis — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseAverageSynapsis>
+		<VMin>
+			<Header>V min</Header>
+			<Description>V min — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</VMin>
+		<VReset>
+			<Header>V reset</Header>
+			<Description>V reset — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</VReset>
+		<VResetEnable>
+			<Header>V reset enable</Header>
+			<Description>V reset enable — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</VResetEnable>
+		<Vm>
+			<Header>Vm</Header>
+			<Description>Vm — параметр компонента NPulseChannelIaF.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</Vm>
+	</Properties>
+	<Favorites/>
+</ClassDescription>

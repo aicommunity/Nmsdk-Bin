@@ -1,117 +1,117 @@
 <ClassDescription>
-	<ClassName>NPulseNeuronCable</ClassName>
-	<Header>Кабельный импульсный нейрон</Header>
-	<Description>NPulseNeuronCable — вариант импульсного нейрона, в котором дендриты представлены кабельной моделью мембран и каналов. Используется для детальной отработки синаптических связей и распространения потенциала вдоль отростков.</Description>
+	<ClassName>NPNeuron</ClassName>
+	<Header>Импульсный нейрон (базовый)</Header>
+	<Description>Базовый импульсный нейрон PulseLib. Объединяет мембраны, каналы и LT‑зону, подсчитывает активность входов/выходов и служит основой для специализированных нейронов (афферентных, мотонейронов и т.п.).</Description>
 	<Properties>
 		<ActiveNegInputs>
 			<Header>Активные тормозные входы</Header>
-			<Description>Матрица, показывающая, какие синаптические входы на тормозных каналах активны на текущем шаге.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Description>Матрица, отражающая какие тормозные синаптические входы сработали на текущем шаге.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>18</PropertyType>
+			<PropertyType>274</PropertyType>
 		</ActiveNegInputs>
 		<ActiveOutputs>
 			<Header>Активные выходы</Header>
-			<Description>Метка тех выходных компонентов нейрона, которые сработали (сгенерировали импульс) на этом такте.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Description>Показывает, какие выходы нейрона сгенерировали импульс.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>18</PropertyType>
+			<PropertyType>274</PropertyType>
 		</ActiveOutputs>
 		<ActivePosInputs>
 			<Header>Активные возбуждающие входы</Header>
-			<Description>Матрица активных синаптических входов на возбуждающих каналах.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Description>Матрица активности возбуждающих каналов.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>18</PropertyType>
+			<PropertyType>274</PropertyType>
 		</ActivePosInputs>
 		<Activity>
 			<Header>Активность</Header>
-			<Description>Включает участие нейрона в расчёте. При значении false узел пропускает шаг моделирования.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</Activity>
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
 		<Coord>
 			<Header>Координаты в редакторе</Header>
-			<Description>Позиция узла на схеме (используется только визуальным редактором).</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</Coord>
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<DefaultComponentClassId>
 			<Header>Default component класс id</Header>
-			<Description>Default component класс id — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Default component класс id — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</DefaultComponentClassId>
 		<DendriticSumPotential>
-			<Header>Dendritic sum potential</Header>
-			<Description>Dendritic sum potential — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Header>Суммарный дендритный потенциал</Header>
+			<Description>Интегральный потенциал по всем дендритным ветвям, подаваемый далее в соматическую часть и LT‑зону.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>18</PropertyType>
+			<PropertyType>274</PropertyType>
 		</DendriticSumPotential>
 		<ExcGeneratorClassName>
 			<Header>Exc генератор класс name</Header>
-			<Description>Exc генератор класс name — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Exc генератор класс name — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</ExcGeneratorClassName>
 		<Id>
 			<Header>Идентификатор</Header>
@@ -122,106 +122,106 @@
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>513</PropertyType>
 		</Id>
 		<InhGeneratorClassName>
 			<Header>Inh генератор класс name</Header>
-			<Description>Inh генератор класс name — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Inh генератор класс name — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</InhGeneratorClassName>
 		<LTMembraneClassName>
 			<Header>Lt мембрана класс name</Header>
-			<Description>Lt мембрана класс name — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Lt мембрана класс name — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LTMembraneClassName>
 		<LTZoneClassName>
 			<Header>Lt zone класс name</Header>
-			<Description>Lt zone класс name — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Lt zone класс name — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LTZoneClassName>
 		<LayerHeight>
 			<Header>Layer height</Header>
-			<Description>Layer height — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Layer height — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LayerHeight>
 		<LayerWidth>
 			<Header>Layer width</Header>
-			<Description>Layer width — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Layer width — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LayerWidth>
 		<LinkDistance>
 			<Header>Link distance</Header>
-			<Description>Link distance — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Link distance — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LinkDistance>
 		<LinkOrganizationMode>
 			<Header>Link organization mode</Header>
-			<Description>Link organization mode — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Link organization mode — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</LinkOrganizationMode>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
 		<MembraneClassName>
 			<Header>Мембрана класс name</Header>
-			<Description>Мембрана класс name — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Мембрана класс name — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</MembraneClassName>
 		<Name>
 			<Header>Имя компонента</Header>
@@ -232,66 +232,66 @@
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>513</PropertyType>
 		</Name>
 		<NetStructure>
 			<Header>Net structure</Header>
-			<Description>Net structure — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Net structure — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>2</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NetStructure>
 		<NetType>
 			<Header>Net type</Header>
-			<Description>Net type — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Net type — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NetType>
 		<NumActiveNegInputs>
 			<Header>Num active neg inputs</Header>
-			<Description>Num active neg inputs — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Num active neg inputs — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>2</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NumActiveNegInputs>
 		<NumActiveOutputs>
 			<Header>Num active outputs</Header>
-			<Description>Num active outputs — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Num active outputs — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>2</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NumActiveOutputs>
 		<NumActivePosInputs>
 			<Header>Num active pos inputs</Header>
-			<Description>Num active pos inputs — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Num active pos inputs — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>2</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NumActivePosInputs>
 		<NumDendriteMembraneParts>
 			<Header>Num dendrite мембрана parts</Header>
-			<Description>Num dendrite мембрана parts — параметр компонента Кабельный импульсный нейрон.</Description>
+			<Description>Num dendrite мембрана parts — параметр компонента NPNeuron.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -302,36 +302,36 @@
 		</NumDendriteMembraneParts>
 		<NumDendriteMembranePartsVec>
 			<Header>Num dendrite мембрана parts vec</Header>
-			<Description>Num dendrite мембрана parts vec — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Num dendrite мембрана parts vec — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NumDendriteMembranePartsVec>
 		<NumLayers>
 			<Header>Num layers</Header>
-			<Description>Num layers — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Num layers — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NumLayers>
 		<NumSomaMembraneParts>
 			<Header>Num soma мембрана parts</Header>
-			<Description>Num soma мембрана parts — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Num soma мембрана parts — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NumSomaMembraneParts>
 		<Output>
 			<Header>Выход</Header>
@@ -346,58 +346,58 @@
 		</Output>
 		<ReceptorFieldHeight>
 			<Header>Receptor field height</Header>
-			<Description>Receptor field height — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Receptor field height — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</ReceptorFieldHeight>
 		<ReceptorFieldWidth>
 			<Header>Receptor field width</Header>
-			<Description>Receptor field width — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Receptor field width — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</ReceptorFieldWidth>
 		<SomaSumPotential>
 			<Header>Soma sum potential</Header>
-			<Description>Soma sum potential — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Description>Soma sum potential — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>18</PropertyType>
+			<PropertyType>274</PropertyType>
 		</SomaSumPotential>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState |</Type>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>2</PropertyType>
+			<PropertyType>770</PropertyType>
 		</StepDuration>
 		<StructureBuildMode>
 			<Header>Structure build mode</Header>
-			<Description>Structure build mode — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Structure build mode — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</StructureBuildMode>
 		<TimeStep>
 			<Header>Временной шаг</Header>
@@ -408,70 +408,63 @@
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>513</PropertyType>
 		</TimeStep>
 		<TrainingDendIndexes>
 			<Header>Training dend indexes</Header>
-			<Description>Training dend indexes — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Training dend indexes — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</TrainingDendIndexes>
 		<TrainingPattern>
 			<Header>Training pattern</Header>
-			<Description>Training pattern — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Training pattern — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</TrainingPattern>
 		<TrainingSynapsisNum>
 			<Header>Training synapsis num</Header>
-			<Description>Training synapsis num — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Training synapsis num — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</TrainingSynapsisNum>
 		<UseAverageDendritesPotential>
 			<Header>Use average dendrites potential</Header>
-			<Description>Use average dendrites potential — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Use average dendrites potential — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</UseAverageDendritesPotential>
 		<UseAverageLTZonePotential>
 			<Header>Use average lt zone potential</Header>
-			<Description>Use average lt zone potential — параметр компонента Кабельный импульсный нейрон.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Use average lt zone potential — параметр компонента NPNeuron.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>1</PropertyType>
+			<PropertyType>257</PropertyType>
 		</UseAverageLTZonePotential>
 	</Properties>
-	<Favorites>
-		<Length>
-			<Path>{CompName}.Soma1.ExcChannel:ModelMaxLength</Path>
-		</Length>
-		<Threshold>
-			<Path>{CompName}.LTZone:Threshold</Path>
-		</Threshold>
-	</Favorites>
+	<Favorites/>
 </ClassDescription>
