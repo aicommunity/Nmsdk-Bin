@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>NActuatorSignals</ClassName>
-	<Header>Блок определения поворота</Header>
-	<Description>По импульсам с левого и праваго двигателей определяет, в каком направлении происходит движение объекта: стоит, назад, вперед, поворот налево, поворот направо </Description>
+	<Header>Блок определения сигналов исполнительных механизмов</Header>
+	<Description>NActuatorSignals анализирует импульсы с двигателей и формирует направление движения объекта.</Description>
 	<Properties>
 		<Activity>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -15,9 +15,9 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<Amplitude>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Амплитуда</Header>
+			<Description>Амплитуда сигнала, импульса или генератора (в единицах потенциала или тока).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -26,9 +26,9 @@
 			<PropertyType>257</PropertyType>
 		</Amplitude>
 		<Back>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Back</Header>
+			<Description>Back — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -37,9 +37,9 @@
 			<PropertyType>274</PropertyType>
 		</Back>
 		<CalculationDurationThreshold>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -48,9 +48,9 @@
 			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
 		<ClassNameDelay>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс name задержка</Header>
+			<Description>Класс name задержка — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -59,9 +59,9 @@
 			<PropertyType>257</PropertyType>
 		</ClassNameDelay>
 		<ClassNameGenerator>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс name генератор</Header>
+			<Description>Класс name генератор — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -70,9 +70,9 @@
 			<PropertyType>257</PropertyType>
 		</ClassNameGenerator>
 		<ClassNameNeuron>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс name нейрон</Header>
+			<Description>Класс name нейрон — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -81,9 +81,9 @@
 			<PropertyType>257</PropertyType>
 		</ClassNameNeuron>
 		<Coord>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -92,9 +92,9 @@
 			<PropertyType>769</PropertyType>
 		</Coord>
 		<DebugSysEventsMask>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -103,9 +103,9 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<DelayLeft>
-			<Header>Задержка</Header>
-			<Description>Задержка импульса для левого двигателя</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Задержка левого двигателя</Header>
+			<Description>Задаёт задержку импульса для левого двигателя в миллисекундах.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -114,9 +114,9 @@
 			<PropertyType>257</PropertyType>
 		</DelayLeft>
 		<DelayRight>
-			<Header>Задержка</Header>
-			<Description>Задержка импульса для правого двигателя</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Задержка правого двигателя</Header>
+			<Description>Задаёт задержку импульса для правого двигателя в миллисекундах.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -125,9 +125,9 @@
 			<PropertyType>257</PropertyType>
 		</DelayRight>
 		<DelaySinchro1>
-			<Header>Задержка</Header>
-			<Description>Задержка синхронизирующего импульса, должен быть аналогом вращения назад</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Задержка sinchro1</Header>
+			<Description>Задержка sinchro1 — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -136,9 +136,9 @@
 			<PropertyType>257</PropertyType>
 		</DelaySinchro1>
 		<DelaySinchro2>
-			<Header>Задержка</Header>
-			<Description>Задержка синхронизирующего импульса, должен быть аналогом вращения вперед</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Задержка sinchro2</Header>
+			<Description>Задержка sinchro2 — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -147,9 +147,9 @@
 			<PropertyType>257</PropertyType>
 		</DelaySinchro2>
 		<Forward>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Forward</Header>
+			<Description>Forward — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -159,8 +159,8 @@
 		</Forward>
 		<Frequency>
 			<Header>Частота</Header>
-			<Description>Частота генерации (Гц) всех компонентов</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Частота следования импульсов или событий (Гц).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -169,8 +169,8 @@
 			<PropertyType>257</PropertyType>
 		</Frequency>
 		<Id>
-			<Header></Header>
-			<Description></Description>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -180,9 +180,9 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<Left>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Левый</Header>
+			<Description>Левый — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -191,9 +191,9 @@
 			<PropertyType>274</PropertyType>
 		</Left>
 		<MaxCalculationDuration>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -201,20 +201,9 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
-		<MemoryMonitor>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>769</PropertyType>
-		</MemoryMonitor>
 		<Name>
-			<Header></Header>
-			<Description></Description>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -224,9 +213,9 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<PulseLength>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Длительность импульса</Header>
+			<Description>Длительность текущего или последнего сгенерированного импульса.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -235,9 +224,9 @@
 			<PropertyType>257</PropertyType>
 		</PulseLength>
 		<Right>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Правый</Header>
+			<Description>Правый — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -246,9 +235,9 @@
 			<PropertyType>274</PropertyType>
 		</Right>
 		<Stay>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Stay</Header>
+			<Description>Stay — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -257,9 +246,9 @@
 			<PropertyType>274</PropertyType>
 		</Stay>
 		<StepDuration>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubState | </Type>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -268,8 +257,8 @@
 			<PropertyType>770</PropertyType>
 		</StepDuration>
 		<TimeStep>
-			<Header></Header>
-			<Description></Description>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -279,9 +268,9 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 		<UseTransitEngineSignal>
-			<Header>Использовать внешние сигналы двигателей</Header>
-			<Description>Признак необходимости транзита сигнала на двигатели от внешнего источника</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Транзит сигналов двигателей</Header>
+			<Description>Включает передачу сигналов к двигателям от внешнего источника.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -290,9 +279,9 @@
 			<PropertyType>257</PropertyType>
 		</UseTransitEngineSignal>
 		<UseTransitSinchroSignal>
-			<Header>Использовать внешние синхронизирующие сигналы</Header>
-			<Description>Признак необходимости транзита сигнала на синхронизирующие генераторы от внешнего источника</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Транзит синхросигналов</Header>
+			<Description>Включает передачу синхронизирующих сигналов от внешнего источника.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

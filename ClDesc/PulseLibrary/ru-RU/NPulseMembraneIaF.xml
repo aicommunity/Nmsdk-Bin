@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>NPulseMembraneIaF</ClassName>
-	<Header>Мембрана IaF</Header>
-	<Description>Мембранный блок нейрона типа Integrate‑and‑Fire. Накапливает входной ток, интегрирует потенциал и реализует пороговый сброс/рефрактерный период.</Description>
+	<Header>NPulseMembraneIaF</Header>
+	<Description>Компонент NPulseMembraneIaF относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -17,7 +17,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -28,7 +28,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -48,9 +48,9 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<ExcChannelClassName>
-			<Header>Класс возбуждающего канала</Header>
-			<Description>Имя класса канала, по которому подаётся возбуждающий ток на мембрану.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс возбудительного канала</Header>
+			<Description>Имя класса канала, через который проходят возбудительные сигналы.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -60,8 +60,8 @@
 		</ExcChannelClassName>
 		<Feedback>
 			<Header>Обратная связь</Header>
-			<Description>Скаляр состояния, отражающий величину обратной связи от нейрона к мембране.</Description>
-			<Type>| ptPubState | </Type>
+			<Description>Текущее значение сигнала обратной связи, учитываемое при расчёте мембранного потенциала.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -71,8 +71,8 @@
 		</Feedback>
 		<FeedbackGain>
 			<Header>Коэффициент обратной связи</Header>
-			<Description>Множитель, с которым обратная связь влияет на мембранный потенциал.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Масштабирует вклад обратной связи в потенциал мембраны.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -93,8 +93,8 @@
 		</Id>
 		<InhChannelClassName>
 			<Header>Класс тормозного канала</Header>
-			<Description>Имя класса канала, по которому подаётся тормозящий ток на мембрану.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Имя класса канала, через который проходят тормозные сигналы.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -103,9 +103,9 @@
 			<PropertyType>257</PropertyType>
 		</InhChannelClassName>
 		<InputFeedbackSignal>
-			<Header>Вход обратной связи</Header>
-			<Description>Дополнительный входной сигнал, используемый для внешнего управления обратной связью.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Header>Входной сигнал обратной связи</Header>
+			<Description>Сигнал обратной связи, влияющий на работу мембраны и её пороги.</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -116,7 +116,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -136,9 +136,9 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<NumExcitatorySynapses>
-			<Header>Число возбуждающих синапсов</Header>
-			<Description>Количество синаптических входов, создающих возбуждающий ток.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Количество возбудительных синапсов</Header>
+			<Description>Число возбудительных синаптических контактов, подключённых к мембране.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -147,9 +147,9 @@
 			<PropertyType>257</PropertyType>
 		</NumExcitatorySynapses>
 		<NumInhibitorySynapses>
-			<Header>Число тормозных синапсов</Header>
-			<Description>Количество синаптических входов, создающих тормозящий ток.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Количество тормозных синапсов</Header>
+			<Description>Число тормозных синаптических контактов, подключённых к мембране.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -158,9 +158,9 @@
 			<PropertyType>257</PropertyType>
 		</NumInhibitorySynapses>
 		<ResetAvailable>
-			<Header>Разрешён сброс</Header>
-			<Description>Управляет возможностью принудительного сброса потенциала к уровню VReset.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Разрешить сброс</Header>
+			<Description>Определяет, может ли состояние мембраны быть сброшено программно.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -171,7 +171,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -181,8 +181,8 @@
 		</StepDuration>
 		<SumPotential>
 			<Header>Суммарный потенциал</Header>
-			<Description>Интегральный мембранный потенциал, накопленный с учётом входных токов и параметров канала.</Description>
-			<Type>| ptPubState | </Type>
+			<Description>Сумма потенциалов по всем входным каналам и синапсам мембраны.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -192,8 +192,8 @@
 		</SumPotential>
 		<SynapseClassName>
 			<Header>Класс синапса</Header>
-			<Description>Имя класса синаптического объекта, подключаемого к данной мембране.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Имя класса синапса, который соединяет нейроны.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -213,9 +213,9 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 		<UseAveragePotential>
-			<Header>Усреднять потенциал</Header>
-			<Description>Если true, во внутренних расчётах используется средний потенциал по набору точек мембраны.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Использовать усреднённый потенциал</Header>
+			<Description>Если true, вместо суммы используется среднее значение мембранного потенциала.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

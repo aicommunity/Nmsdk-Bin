@@ -1,11 +1,11 @@
 <ClassDescription>
 	<ClassName>NCLTZone</ClassName>
-	<Header>Низкопороговая зона (LT‑зона)</Header>
-	<Description>Компонент низкопороговой зоны импульсного нейрона. Агрегирует потенциалы входных каналов, применяет порог/гистерезис и формирует импульсную активность зоны (потенциал, частоту и времена спайков).</Description>
+	<Header>NCLTZone</Header>
+	<Description>Компонент NCLTZone относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
-			<Description>Флаг участия LT‑зоны в расчёте. При значении false расчёт пропускается.</Description>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -15,8 +15,8 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<AvgFrequencyCounter>
-			<Header>Счётчик частоты</Header>
-			<Description>Внутренний список времен срабатываний, используемый для оценки средней частоты импульсов.</Description>
+			<Header>Счётчик средней частоты</Header>
+			<Description>Счётчик, накапливающий данные для расчёта средней частоты импульсов в LT-зоне.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -27,7 +27,7 @@
 		</AvgFrequencyCounter>
 		<AvgInterval>
 			<Header>Средний интервал</Header>
-			<Description>Интервал усреднения между спайками, используемый при расчёте частоты.</Description>
+			<Description>Средний интервал времени между импульсами в непрерывной LT-зоне.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -38,7 +38,7 @@
 		</AvgInterval>
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
-			<Description>Максимально допустимое время шага (мс) для вычисления LT‑зоны.</Description>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -49,7 +49,7 @@
 		</CalculationDurationThreshold>
 		<Coord>
 			<Header>Координаты в редакторе</Header>
-			<Description>Позиция LT‑зоны на диаграмме модели (служебное поле редактора).</Description>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -60,7 +60,7 @@
 		</Coord>
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
-			<Description>Битовая маска событий LT‑зоны, которые должны выводиться в журнал.</Description>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -81,8 +81,8 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<Inputs>
-			<Header>Входные потенциалы</Header>
-			<Description>Набор матриц потенциалов от каналов/мембран, по которым вычисляется интегральный потенциал LT‑зоны.</Description>
+			<Header>Входные сигналы</Header>
+			<Description>Набор входных сигналов или каналов, подаваемых на компонент.</Description>
 			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -114,8 +114,8 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<NeuralPotential>
-			<Header>Потенциал LT‑зоны</Header>
-			<Description>Текущий мембранный потенциал в зоне, на основе которого принимается решение о генерации импульса.</Description>
+			<Header>Нейронный потенциал</Header>
+			<Description>Текущее значение мембранного потенциала непрерывной LT-зоны.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -125,8 +125,8 @@
 			<PropertyType>258</PropertyType>
 		</NeuralPotential>
 		<NumChannelsInGroup>
-			<Header>Число каналов в группе</Header>
-			<Description>Количество каналов, объединяемых в один блок LT‑зоны при вычислении потенциала и частоты.</Description>
+			<Header>Количество каналов в группе</Header>
+			<Description>Число каналов, объединённых в группу для совместного расчёта в непрерывной LT-зоне.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -136,8 +136,8 @@
 			<PropertyType>257</PropertyType>
 		</NumChannelsInGroup>
 		<Output>
-			<Header>Импульсный выход</Header>
-			<Description>Матрица активностей LT‑зоны (импульсный выход), используемая нейроном и последующими компонентами.</Description>
+			<Header>Выход</Header>
+			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -147,8 +147,8 @@
 			<PropertyType>274</PropertyType>
 		</Output>
 		<OutputFrequency>
-			<Header>Частота спайков</Header>
-			<Description>Оценка частоты срабатываний LT‑зоны по окну усреднения.</Description>
+			<Header>Выходная частота</Header>
+			<Description>Текущая частота импульсов на выходе LT-зоны или нейрона (Гц).</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -159,7 +159,7 @@
 		</OutputFrequency>
 		<OutputPotential>
 			<Header>Выходной потенциал</Header>
-			<Description>Потенциал LT‑зоны после пороговой обработки, используемый как характеристика активации.</Description>
+			<Description>Текущее значение мембранного потенциала на выходе непрерывной LT-зоны.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -169,8 +169,8 @@
 			<PropertyType>274</PropertyType>
 		</OutputPotential>
 		<OutputPulseTimes>
-			<Header>Моменты спайков</Header>
-			<Description>Массив времен генерации импульсов, пригоден для последующего временного анализа.</Description>
+			<Header>Времена выходных импульсов</Header>
+			<Description>Вектор моментов времени, когда были сгенерированы выходные импульсы непрерывной LT-зоны.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -180,8 +180,8 @@
 			<PropertyType>274</PropertyType>
 		</OutputPulseTimes>
 		<Potential>
-			<Header>Потенциал интеграции</Header>
-			<Description>Внутренний интегральный потенциал до применения порога `Threshold` и гистерезиса `ThresholdOff`.</Description>
+			<Header>Потенциал</Header>
+			<Description>Текущее значение мембранного потенциала непрерывной LT-зоны.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -191,8 +191,8 @@
 			<PropertyType>258</PropertyType>
 		</Potential>
 		<PrePotential>
-			<Header>Pre potential</Header>
-			<Description>Pre potential — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Предыдущий потенциал</Header>
+			<Description>Значение мембранного потенциала непрерывной LT-зоны на предыдущем шаге расчёта.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -202,8 +202,8 @@
 			<PropertyType>258</PropertyType>
 		</PrePotential>
 		<PulseAmplitude>
-			<Header>Импульсный амплитуда</Header>
-			<Description>Импульсный амплитуда — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Амплитуда импульса</Header>
+			<Description>Базовая амплитуда формируемого импульсного сигнала.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -213,8 +213,8 @@
 			<PropertyType>257</PropertyType>
 		</PulseAmplitude>
 		<PulseCounter>
-			<Header>Импульсный счётчик</Header>
-			<Description>Импульсный счётчик — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Счётчик импульсов</Header>
+			<Description>Счётчик общего количества импульсов, сгенерированных непрерывной LT-зоной.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -224,8 +224,8 @@
 			<PropertyType>258</PropertyType>
 		</PulseCounter>
 		<PulseFlag>
-			<Header>Импульсный flag</Header>
-			<Description>Импульсный flag — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Флаг импульса</Header>
+			<Description>Флаг, показывающий, был ли сгенерирован импульс непрерывной LT-зоной на текущем шаге.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -235,8 +235,8 @@
 			<PropertyType>258</PropertyType>
 		</PulseFlag>
 		<PulseLength>
-			<Header>Импульсный length</Header>
-			<Description>Импульсный length — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Длительность импульса</Header>
+			<Description>Длительность текущего или последнего сгенерированного импульса непрерывной LT-зоной.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -258,7 +258,7 @@
 		</StepDuration>
 		<Threshold>
 			<Header>Порог</Header>
-			<Description>Порог — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Description>Пороговое значение потенциала, при превышении которого непрерывная LT-зона генерирует импульс.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -268,8 +268,8 @@
 			<PropertyType>257</PropertyType>
 		</Threshold>
 		<ThresholdOff>
-			<Header>Порог off</Header>
-			<Description>Порог off — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Порог выключения</Header>
+			<Description>Пороговое значение потенциала, при падении ниже которого импульс непрерывной LT-зоны прекращается.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -290,8 +290,8 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 		<UseAveragePotential>
-			<Header>Use average potential</Header>
-			<Description>Use average potential — параметр компонента Низкопороговая зона (LT‑зона).</Description>
+			<Header>Использовать усреднённый потенциал</Header>
+			<Description>Если true, вместо суммы используется среднее значение мембранного потенциала.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">

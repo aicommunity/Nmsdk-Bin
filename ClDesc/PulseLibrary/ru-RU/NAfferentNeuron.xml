@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>NAfferentNeuron</ClassName>
 	<Header>Афферентный нейрон</Header>
-	<Description>Нейрон, превращающий выходы рецепторов в импульсный сигнал. Поддерживает разные схемы построения структуры (мембрана, LT‑зона, генераторы) и масштабирование выхода рецептора.</Description>
+	<Description>NAfferentNeuron моделирует первичный нейрон с рецептором: строит классическую или упрощённую структуру из мембраны, LT-зоны, рецептора и генераторов возбуждения.</Description>
 	<Properties>
 		<ActiveNegInputs>
-			<Header>Активные тормозные входы</Header>
-			<Description>Матрица активностей тормозных входных каналов афферентного нейрона.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Активные отрицательные входы</Header>
+			<Description>Матрица, показывающая, какие тормозные входы нейрона активны на текущем шаге.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -16,8 +16,8 @@
 		</ActiveNegInputs>
 		<ActiveOutputs>
 			<Header>Активные выходы</Header>
-			<Description>Какие выходы нейрона сработали (сгенерировали импульсы) на текущем шаге.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Матрица, показывающая, какие выходы нейрона активны (выдают импульсы) на текущем шаге.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -26,9 +26,9 @@
 			<PropertyType>274</PropertyType>
 		</ActiveOutputs>
 		<ActivePosInputs>
-			<Header>Активные возбуждающие входы</Header>
-			<Description>Состояние возбуждающих каналов, через которые рецептор передаёт сигнал.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Активные положительные входы</Header>
+			<Description>Матрица, показывающая, какие возбудительные входы нейрона активны на текущем шаге.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -61,7 +61,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -72,7 +72,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -82,8 +82,8 @@
 		</DebugSysEventsMask>
 		<DefaultComponentClassId>
 			<Header>Класс компонента по умолчанию</Header>
-			<Description>Имя класса, который используется редактором при автоматическом создании новых дочерних узлов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Идентификатор класса компонента, используемого по умолчанию при автоматическом построении структуры сети.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -93,8 +93,8 @@
 		</DefaultComponentClassId>
 		<DendriticSumPotential>
 			<Header>Суммарный дендритный потенциал</Header>
-			<Description>Интегральный потенциал по дендритам афферентного нейрона, формирующий вход LT‑зоны.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Сумма мембранных потенциалов всех дендритов нейрона.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -103,9 +103,9 @@
 			<PropertyType>274</PropertyType>
 		</DendriticSumPotential>
 		<ExcGeneratorClassName>
-			<Header>Класс возбуждающего генератора</Header>
-			<Description>Имя класса генератора, создающего возбуждающий импульсный вход.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс возбудительного генератора</Header>
+			<Description>Имя класса генератора возбудительных импульсов для афферентного нейрона.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -125,9 +125,9 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<LTZoneClassName>
-			<Header>Класс LT‑зоны</Header>
-			<Description>Имя класса низкопороговой зоны, в которой формируется частота/потенциал выходного импульсного сигнала.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс LT-зоны</Header>
+			<Description>Имя класса низкопороговой зоны для детекции слабых сигналов в афферентном нейроне.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -137,8 +137,8 @@
 		</LTZoneClassName>
 		<LayerHeight>
 			<Header>Высота слоя</Header>
-			<Description>Размер афферентного слоя по вертикали (для построения двумерной решётки нейронов).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Количество нейронов по вертикали в одном слое.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</LayerHeight>
 		<LayerWidth>
 			<Header>Ширина слоя</Header>
-			<Description>Размер афферентного слоя по горизонтали.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Количество нейронов по горизонтали в одном слое.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -158,9 +158,9 @@
 			<PropertyType>257</PropertyType>
 		</LayerWidth>
 		<LinkDistance>
-			<Header>Дистанция связей</Header>
-			<Description>Максимальная удалённость нейронов, между которыми формируются связи при автоматической разметке.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Расстояние связи</Header>
+			<Description>Максимальное расстояние, на котором могут быть установлены связи между нейронами.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -170,8 +170,8 @@
 		</LinkDistance>
 		<LinkOrganizationMode>
 			<Header>Режим организации связей</Header>
-			<Description>Определяет схему соединения узлов в слое (окрестность, полный граф и т.п.).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Способ организации связей: 0 — без связей, 1 — многослойные, 2 — рецепторные, 3 — полный радиус.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -182,7 +182,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -191,9 +191,9 @@
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
 		<MaxReceptorOutput>
-			<Header>Макс. выход рецептора</Header>
-			<Description>Нормирующий коэффициент: максимальное значение сигнала на выходе рецептора, используемое при построении простой структуры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Максимальный выход рецептора</Header>
+			<Description>Максимальное значение выходного сигнала рецептора, используемое для нормализации в упрощённом режиме построения.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -203,8 +203,8 @@
 		</MaxReceptorOutput>
 		<MembraneClassName>
 			<Header>Класс мембраны</Header>
-			<Description>Имя класса мембранного блока, который используется внутри афферентного нейрона.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Имя класса мембраны для соматической части афферентного нейрона (используется в классическом режиме).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -224,9 +224,9 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<NetStructure>
-			<Header>Net structure</Header>
-			<Description>Net structure — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubState | </Type>
+			<Header>Структура сети</Header>
+			<Description>Многомерная структура идентификаторов компонентов, определяющая топологию нейронной сети.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -235,9 +235,9 @@
 			<PropertyType>258</PropertyType>
 		</NetStructure>
 		<NetType>
-			<Header>Net type</Header>
-			<Description>Net type — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Тип сети</Header>
+			<Description>Тип топологии сети: 0 — без структуры, 1 — слоистая, 2 — рецепторная и т.д.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -246,9 +246,9 @@
 			<PropertyType>257</PropertyType>
 		</NetType>
 		<NumActiveNegInputs>
-			<Header>Num active neg inputs</Header>
-			<Description>Num active neg inputs — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubState | </Type>
+			<Header>Количество активных отрицательных входов</Header>
+			<Description>Число тормозных входов нейрона, получивших импульсы на текущем шаге.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -257,9 +257,9 @@
 			<PropertyType>258</PropertyType>
 		</NumActiveNegInputs>
 		<NumActiveOutputs>
-			<Header>Num active outputs</Header>
-			<Description>Num active outputs — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubState | </Type>
+			<Header>Количество активных выходов</Header>
+			<Description>Число выходов нейрона, которые выдали импульсы на текущем шаге.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -268,9 +268,9 @@
 			<PropertyType>258</PropertyType>
 		</NumActiveOutputs>
 		<NumActivePosInputs>
-			<Header>Num active pos inputs</Header>
-			<Description>Num active pos inputs — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubState | </Type>
+			<Header>Количество активных положительных входов</Header>
+			<Description>Число возбудительных входов нейрона, получивших импульсы на текущем шаге.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -279,9 +279,9 @@
 			<PropertyType>258</PropertyType>
 		</NumActivePosInputs>
 		<NumLayers>
-			<Header>Num layers</Header>
-			<Description>Num layers — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Количество слоёв</Header>
+			<Description>Число слоёв в многослойной структуре нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -290,9 +290,9 @@
 			<PropertyType>257</PropertyType>
 		</NumLayers>
 		<NumSomaMembraneParts>
-			<Header>Num soma мембрана parts</Header>
-			<Description>Num soma мембрана parts — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Количество частей соматической мембраны</Header>
+			<Description>Число сегментов соматической мембраны в классическом режиме построения афферентного нейрона.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -303,7 +303,7 @@
 		<Output>
 			<Header>Выход</Header>
 			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -312,9 +312,9 @@
 			<PropertyType>274</PropertyType>
 		</Output>
 		<ReceptorClassName>
-			<Header>Receptor класс name</Header>
-			<Description>Receptor класс name — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Класс рецептора</Header>
+			<Description>Имя класса рецептора, преобразующего внешние сигналы во входные импульсы афферентного нейрона.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -323,9 +323,9 @@
 			<PropertyType>257</PropertyType>
 		</ReceptorClassName>
 		<ReceptorFieldHeight>
-			<Header>Receptor field height</Header>
-			<Description>Receptor field height — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Высота рецепторного поля</Header>
+			<Description>Высота рецепторного поля в единицах нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -334,9 +334,9 @@
 			<PropertyType>257</PropertyType>
 		</ReceptorFieldHeight>
 		<ReceptorFieldWidth>
-			<Header>Receptor field width</Header>
-			<Description>Receptor field width — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Ширина рецепторного поля</Header>
+			<Description>Ширина рецепторного поля в единицах нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -345,9 +345,9 @@
 			<PropertyType>257</PropertyType>
 		</ReceptorFieldWidth>
 		<SomaSumPotential>
-			<Header>Soma sum potential</Header>
-			<Description>Soma sum potential — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Header>Суммарный соматический потенциал</Header>
+			<Description>Сумма мембранных потенциалов соматической части нейрона.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -358,7 +358,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -367,9 +367,9 @@
 			<PropertyType>770</PropertyType>
 		</StepDuration>
 		<StructureBuildMode>
-			<Header>Structure build mode</Header>
-			<Description>Structure build mode — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Режим построения структуры</Header>
+			<Description>Режим сборки афферентного нейрона: 0 — без структуры, 1 — классическая структура (мембрана + LT-зона + рецептор + генераторы), 2 — упрощённая структура (только LT-зона + рецептор).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -389,9 +389,9 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 		<UseAverageDendritesPotential>
-			<Header>Use average dendrites potential</Header>
-			<Description>Use average dendrites potential — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Использовать усреднённый дендритный потенциал</Header>
+			<Description>Если true, вместо суммы используется среднее значение потенциала по всем дендритам.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -400,9 +400,9 @@
 			<PropertyType>257</PropertyType>
 		</UseAverageDendritesPotential>
 		<UseAverageLTZonePotential>
-			<Header>Use average lt zone potential</Header>
-			<Description>Use average lt zone potential — параметр компонента NAfferentNeuron.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Header>Использовать усреднённый потенциал LT-зоны</Header>
+			<Description>Если true, вместо суммы используется среднее значение потенциала низкопороговой зоны.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
