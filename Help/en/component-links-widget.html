@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Links Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Component Links Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Component Links Widget provides a detailed interface for managing connections between components in your neural network model. It displays inputs, outputs, and existing links for components, allowing you to create, modify, and delete connections with precision.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Component Links Widget can be opened from the main window menu or by right-clicking on a component in the diagram view. It appears in a separate window or dock panel.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Three Operation Modes:</strong> Single component view, two-component linking, and link transfer mode</li>
+        <li><strong>Hierarchical Display:</strong> Shows nested inputs/outputs including child component ports</li>
+        <li><strong>Link Management:</strong> Create, break, and switch connections between components</li>
+        <li><strong>Public Ports Only:</strong> Displays only publicly accessible inputs and outputs</li>
+        <li><strong>Internal Links Filter:</strong> Option to hide or show internal component links</li>
+    </ul>
+    
+    <h2>Operation Modes</h2>
+    
+    <h3>Mode 1: Single Component View</h3>
+    <p>In this mode, the widget displays all inputs and outputs (including nested ones) of a single component. You can:</p>
+    <ul>
+        <li>View all connections for the component</li>
+        <li>Create links between the component's own inputs and outputs</li>
+        <li>Create links between nested components within the selected component</li>
+    </ul>
+    
+    <h3>Mode 2: Two-Component Linking</h3>
+    <p>This mode displays outputs and links (including nested) of the first component, and inputs (including nested) of the second component. Use this mode to:</p>
+    <ul>
+        <li>Create new connections between two specific components</li>
+        <li>View existing connections between the components</li>
+        <li>Modify connections between the two components</li>
+    </ul>
+    
+    <h3>Mode 3: Link Transfer Mode</h3>
+    <p>This special mode shows only available outputs from both components (including nested outputs and links). Use this mode to:</p>
+    <ul>
+        <li>Transfer connections from one component to another</li>
+        <li>Copy link patterns between similar components</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Viewing Component Links</h3>
+    <ol>
+        <li>Right-click on a component in the diagram view</li>
+        <li>Select "View Links" or "Component Links" from the context menu</li>
+        <li>The Component Links Widget opens showing the component's inputs, outputs, and connections</li>
+    </ol>
+    
+    <h3>Creating a Link</h3>
+    <ol>
+        <li>Open the Component Links Widget for the components you want to connect</li>
+        <li>Select an output from the source component</li>
+        <li>Select an input from the destination component</li>
+        <li>Click the <strong>Create Link</strong> button</li>
+    </ol>
+    
+    <h3>Breaking a Link</h3>
+    <ol>
+        <li>Select the link you want to remove from the links table</li>
+        <li>Click the <strong>Break Link</strong> button</li>
+        <li>The connection will be removed</li>
+    </ol>
+    
+    <h3>Switching a Link</h3>
+    <p>Use the <strong>Switch Link</strong> button to redirect an existing connection to a different input or output.</p>
+    
+    <h3>Hiding Internal Links</h3>
+    <p>Use the "Hide Internal Links" checkbox to filter out internal component connections and focus on external links only.</p>
+    
+    <div class="info">
+        <strong>Note:</strong> The widget only displays public inputs and outputs. Private or internal ports are not shown.
+    </div>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="modern-diagram.html">Modern Diagram Widget</a> - Visual link creation in diagram view</li>
+        <li><a href="components-list-widget.html">Components List Widget</a> - Component browser and selector</li>
+        <li><a href="draw-engine-widget.html">Draw Engine Widget</a> - Main diagram interface</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+

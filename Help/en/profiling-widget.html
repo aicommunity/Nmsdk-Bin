@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profiling Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Profiling Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Profiling Widget displays performance information about component execution times in your neural network model. It helps you identify bottlenecks and optimize model performance by showing how much time each component takes to execute.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Profiling Widget can be opened from the <strong>Window → Profiling</strong> menu item. It appears in a dock panel showing a table of execution times.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Execution Time Display:</strong> Shows execution time for individual components</li>
+        <li><strong>Component Selection:</strong> Add specific components to the profiling table</li>
+        <li><strong>Group Components:</strong> Add all sub-components of a selected component</li>
+        <li><strong>Base Components:</strong> Always displays base components (Model, Overhead, Full Step, Gui)</li>
+        <li><strong>Real-time Updates:</strong> Execution times update during model execution</li>
+        <li><strong>Performance Analysis:</strong> Identify slow components and optimization opportunities</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Viewing Base Components</h3>
+    <p>The profiling table always displays base performance metrics:</p>
+    <ul>
+        <li><strong>Model:</strong> Total model execution time</li>
+        <li><strong>Overhead:</strong> System overhead time</li>
+        <li><strong>Full Step:</strong> Complete calculation step time</li>
+        <li><strong>Gui:</strong> GUI update time</li>
+    </ul>
+    
+    <h3>Adding Components to Profile</h3>
+    <ol>
+        <li>Click <strong>Select Component</strong></li>
+        <li>Navigate to the component you want to profile</li>
+        <li>The component will be added to the profiling table</li>
+        <li>Execution time for this component will be displayed during model execution</li>
+    </ol>
+    
+    <h3>Adding Component Groups</h3>
+    <ol>
+        <li>Click <strong>Add Group Components</strong></li>
+        <li>Select a component that contains sub-components</li>
+        <li>All sub-components will be added to the profiling table</li>
+        <li>This is useful for analyzing hierarchical component structures</li>
+    </ol>
+    
+    <h3>Adding All Components</h3>
+    <p>Click <strong>Select All Components</strong> to add all external (non-nested) components to the profiling table.</p>
+    
+    <h3>Removing Components</h3>
+    <ul>
+        <li>Click <strong>Delete All</strong> to remove all non-base components from the table</li>
+        <li>Base components (Model, Overhead, Full Step, Gui) cannot be removed</li>
+    </ul>
+    
+    <h2>Interpreting Results</h2>
+    <p>The profiling table shows:</p>
+    <ul>
+        <li>Component name</li>
+        <li>Execution time per step (in milliseconds or microseconds)</li>
+        <li>Percentage of total execution time</li>
+    </ul>
+    
+    <p>Use this information to:</p>
+    <ul>
+        <li>Identify components that take the most time</li>
+        <li>Find optimization opportunities</li>
+        <li>Balance computational load</li>
+        <li>Verify that components are executing as expected</li>
+    </ul>
+    
+    <div class="info">
+        <strong>Tip:</strong> Focus on components with high execution times. These are the best candidates for optimization.
+    </div>
+    
+    <h2>Performance Optimization</h2>
+    <p>When analyzing profiling data:</p>
+    <ol>
+        <li>Look for components with unexpectedly high execution times</li>
+        <li>Check if component groups show uneven distribution of computation</li>
+        <li>Consider optimizing or replacing slow components</li>
+        <li>Verify that overhead is reasonable compared to model execution time</li>
+    </ol>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="status-panel.html">Status Panel</a> - Overall execution statistics</li>
+        <li><a href="graph-widget.html">Graph Widget</a> - Visualize performance trends</li>
+        <li><a href="watch-window.html">Watch Window</a> - Monitor component behavior</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+

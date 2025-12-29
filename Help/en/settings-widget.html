@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Settings Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Settings Widget provides a mechanism for arbitrary QObject-derived classes to receive load/save parameter events from the RDK framework. It acts as a bridge between the RDK parameter storage system and custom widgets that need to persist their settings.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Settings Widget is automatically created when the main application window is initialized. It operates in the background and doesn't have a visible interface.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Parameter Persistence:</strong> Enables widgets to save and load their configuration automatically</li>
+        <li><strong>Event Bridge:</strong> Connects RDK parameter storage events to custom widget handlers</li>
+        <li><strong>Automatic Integration:</strong> Works seamlessly with the RDK framework's parameter management system</li>
+    </ul>
+    
+    <h2>How It Works</h2>
+    <p>The Settings Widget receives two types of events from the RDK framework:</p>
+    <ul>
+        <li><strong>LoadParameters:</strong> Triggered when the application loads saved parameters</li>
+        <li><strong>SaveParameters:</strong> Triggered when the application saves current parameters</li>
+    </ul>
+    <p>When these events occur, the widget emits corresponding signals that can be connected to custom widget functions, allowing them to save or restore their state.</p>
+    
+    <h2>Usage</h2>
+    <p>This widget is primarily used internally by the framework. Application developers typically don't interact with it directly, but it ensures that all widgets can properly save and restore their settings when projects are saved or loaded.</p>
+    
+    <div class="info">
+        <strong>Note:</strong> The Settings Widget is a system component that works automatically. You don't need to configure it manually.
+    </div>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="component-property-editor.html">Component Property Editor</a> - Uses settings for property configurations</li>
+        <li><a href="draw-engine-widget.html">Draw Engine Widget</a> - Saves diagram layout settings</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+

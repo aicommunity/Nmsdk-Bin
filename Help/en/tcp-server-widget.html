@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP Server Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>TCP Server Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The TCP Server Widget allows you to control and monitor a TCP server that can communicate with your neural network model. This enables external applications to interact with your model over a network connection.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The TCP Server Widget can be opened from the <strong>Window → TCP Server</strong> menu item. It appears in a separate window or dock panel.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Server Control:</strong> Start and stop the TCP server</li>
+        <li><strong>Configuration:</strong> Configure server settings (port, address, etc.)</li>
+        <li><strong>Status Monitoring:</strong> View server status and connection information</li>
+        <li><strong>Auto-restart:</strong> Automatic server restart on errors</li>
+        <li><strong>Network Communication:</strong> Enable external applications to communicate with your model</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Starting the Server</h3>
+    <ol>
+        <li>Open the TCP Server Widget</li>
+        <li>Configure server settings (if needed)</li>
+        <li>Click <strong>Start Server</strong></li>
+        <li>The server will start listening for connections</li>
+    </ol>
+    
+    <h3>Stopping the Server</h3>
+    <ul>
+        <li>Click <strong>Stop Server</strong> to stop the server</li>
+        <li>All active connections will be closed</li>
+    </ul>
+    
+    <h3>Configuring Server Settings</h3>
+    <p>Configure the server before starting:</p>
+    <ul>
+        <li>Set the server port number</li>
+        <li>Configure network address (if needed)</li>
+        <li>Set other server parameters</li>
+        <li>Click <strong>Apply</strong> to save settings</li>
+    </ul>
+    
+    <h3>Resetting the Server</h3>
+    <p>Use the <strong>Reset</strong> button to reset server state and clear any errors.</p>
+    
+    <h2>Server Status</h2>
+    <p>The widget displays:</p>
+    <ul>
+        <li>Current server state (running/stopped)</li>
+        <li>Number of active connections</li>
+        <li>Server port and address</li>
+        <li>Error messages (if any)</li>
+    </ul>
+    
+    <h2>Auto-restart Feature</h2>
+    <p>The server can be configured to automatically restart if it encounters errors or stops unexpectedly. This helps maintain connectivity for external applications.</p>
+    
+    <div class="warning">
+        <strong>Warning:</strong> Make sure the server port is not already in use by another application. Using a port that's already in use will prevent the server from starting.
+    </div>
+    
+    <h2>Network Communication</h2>
+    <p>Once the server is running, external applications can:</p>
+    <ul>
+        <li>Connect to the server using the configured port</li>
+        <li>Send commands to control the model</li>
+        <li>Receive data from the model</li>
+        <li>Monitor model state in real-time</li>
+    </ul>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="status-panel.html">Status Panel</a> - Overall system status</li>
+        <li><a href="logger-widget.html">Logger Widget</a> - View server log messages</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+
