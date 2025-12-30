@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Panel - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Status Panel</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Status Panel displays real-time information about the current state of your model execution, including time, step count, frames per second (FPS), and global project settings. It's located at the bottom of the main application window.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Status Panel is always visible at the bottom of the main application window. It cannot be hidden but can be resized.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Execution Statistics:</strong> Displays current time, step number, and FPS</li>
+        <li><strong>Global Settings:</strong> Checkboxes for global project configuration options</li>
+        <li><strong>Thread Mode:</strong> Switch between single-threaded and multi-threaded execution</li>
+        <li><strong>Auto-update Controls:</strong> Enable/disable automatic property updates</li>
+        <li><strong>Logging Options:</strong> Control debug messages and detailed logging</li>
+    </ul>
+    
+    <h2>Displayed Information</h2>
+    
+    <h3>Execution Statistics</h3>
+    <ul>
+        <li><strong>Time:</strong> Current simulation time</li>
+        <li><strong>Step:</strong> Current calculation step number</li>
+        <li><strong>FPS:</strong> Frames per second - calculation rate</li>
+    </ul>
+    
+    <h3>Global Settings Checkboxes</h3>
+    <ul>
+        <li><strong>Show Debug Messages:</strong> Enable/disable debug message display in the logger</li>
+        <li><strong>Detailed Log:</strong> Enable detailed logging mode</li>
+        <li><strong>Auto-update Properties:</strong> Automatically update component properties during execution</li>
+        <li><strong>Auto-save States:</strong> Automatically save component states</li>
+        <li><strong>Auto-save Project:</strong> Automatically save the project at regular intervals</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Monitoring Execution</h3>
+    <p>The Status Panel continuously updates during model execution, showing:</p>
+    <ul>
+        <li>How long the simulation has been running</li>
+        <li>How many calculation steps have been completed</li>
+        <li>The current calculation speed (FPS)</li>
+    </ul>
+    
+    <h3>Changing Global Settings</h3>
+    <p>Click the checkboxes to enable or disable global settings:</p>
+    <ul>
+        <li>Changes take effect immediately</li>
+        <li>Some settings (like Thread Mode) trigger a configuration save</li>
+        <li>Settings are persisted in the project configuration</li>
+    </ul>
+    
+    <h3>Thread Mode</h3>
+    <p>The Thread Mode setting controls how the model executes:</p>
+    <ul>
+        <li><strong>Single-threaded:</strong> Sequential execution (slower but more predictable)</li>
+        <li><strong>Multi-threaded:</strong> Parallel execution (faster but requires thread-safe components)</li>
+    </ul>
+    <p>Changing thread mode triggers an automatic configuration save.</p>
+    
+    <div class="warning">
+        <strong>Warning:</strong> Changing thread mode during execution may cause instability. It's recommended to pause or stop execution before changing this setting.
+    </div>
+    
+    <h2>Property Update Interval</h2>
+    <p>The Status Panel can control the interval at which component properties are automatically updated. This helps balance between real-time feedback and performance.</p>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="logger-widget.html">Logger Widget</a> - View log messages (affected by debug settings)</li>
+        <li><a href="channels-widget.html">Calculation Channels Widget</a> - Manage calculation channels</li>
+        <li><a href="watch-window.html">Watch Window</a> - Monitor component data</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+

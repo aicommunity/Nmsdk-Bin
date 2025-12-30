@@ -1,0 +1,366 @@
+<ClassDescription>
+	<ClassName>NConditionedReflex</ClassName>
+	<Header>NConditionedReflex</Header>
+	<Description>Компонент NConditionedReflex относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<BigNeuronSize>
+			<Header>Размер большого нейрона</Header>
+			<Description>Размер (количество элементов) большого нейрона в ассоциативном формирователе.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BigNeuronSize>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<ConditionalStimulPattern>
+			<Header>Conditional stimul шаблон</Header>
+			<Description>Входной шаблон условного стимула для условного рефлекса.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ConditionalStimulPattern>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<Delay>
+			<Header>Задержка</Header>
+			<Description>Базовая временная задержка импульсов или реакции системы (в условных единицах/мс).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Delay>
+		<FixedLTZThreshold>
+			<Header>Фиксированный порог LT-зоны</Header>
+			<Description>Жёстко заданное значение порога LT-зоны, используемое вместо адаптивного.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</FixedLTZThreshold>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<IsNeedToTrain>
+			<Header>Требуется обучение</Header>
+			<Description>Если true, компонент будет выполнять процедуру обучения перед эксплуатацией.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</IsNeedToTrain>
+		<IsNegInfluence>
+			<Header>Is neg influence</Header>
+			<Description>Флаг, указывающий, оказывает ли стимул отрицательное (тормозное) влияние на рефлекс.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</IsNegInfluence>
+		<LTZThreshold>
+			<Header>Порог LT-зоны</Header>
+			<Description>Порог активации низкопороговой зоны (LT-zone) нейрона.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LTZThreshold>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<MaxDendriteLength>
+			<Header>Максимальная длина дендритов</Header>
+			<Description>Ограничение на длину дендритных ветвей в шагах или сегментах.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxDendriteLength>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NeuronClassName>
+			<Header>Класс нейрона</Header>
+			<Description>Имя класса нейрона, используемого в данном компоненте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronClassName>
+		<NeuronTrainerClassName>
+			<Header>Класс тренера нейронов</Header>
+			<Description>Имя класса, реализующего алгоритм обучения нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronTrainerClassName>
+		<NumConditionalStimulDendrite>
+			<Header>Num conditional stimul дендрит</Header>
+			<Description>Число дендритов, связанных с условным стимулом в условном рефлексе.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumConditionalStimulDendrite>
+		<NumUnconditionalStimulDendrite>
+			<Header>Num unconditional stimul дендрит</Header>
+			<Description>Число дендритов, связанных с безусловным стимулом в условном рефлексе.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumUnconditionalStimulDendrite>
+		<PulseGeneratorClassName>
+			<Header>Класс генератора импульсов</Header>
+			<Description>Имя класса генератора, создающего импульсные последовательности для нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseGeneratorClassName>
+		<SpikesFrequency>
+			<Header>Частота спайков</Header>
+			<Description>Желаемая или измеряемая частота следования спайков (Гц).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SpikesFrequency>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<StructureBuildMode>
+			<Header>Режим построения структуры</Header>
+			<Description>Определяет, как автоматически строится структура нейронов/синапсов в компоненте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</StructureBuildMode>
+		<SynapseClassName>
+			<Header>Класс синапса</Header>
+			<Description>Имя класса синапса, который соединяет нейроны.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseClassName>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+		<UnconditionalStimulPattern>
+			<Header>Unconditional stimul шаблон</Header>
+			<Description>Входной шаблон безусловного стимула для условного рефлекса.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UnconditionalStimulPattern>
+		<UseFixedLTZThreshold>
+			<Header>Использовать фиксированный порог LT-зоны</Header>
+			<Description>Если true, используется фиксированное значение порога LT-зоны.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseFixedLTZThreshold>
+	</Properties>
+	<Favorites>
+		<AndNeuronNeuronDendrite2_1ExcChannelCoord>
+			<Path>AndNeuron.Neuron.Dendrite2_1.ExcChannel.Coord</Path>
+		</AndNeuronNeuronDendrite2_1ExcChannelCoord>
+		<AndNeuronNeuronDendrite2_1InhChannelActivity>
+			<Path>AndNeuron.Neuron.Dendrite2_1.InhChannel.Activity</Path>
+		</AndNeuronNeuronDendrite2_1InhChannelActivity>
+		<AndNeuronNeuronDendrite2_1InhChannelOutput>
+			<Path>AndNeuron.Neuron.Dendrite2_1.InhChannel.Output</Path>
+		</AndNeuronNeuronDendrite2_1InhChannelOutput>
+		<AndNeuronNeuronSoma1ExcChannelCoord>
+			<Path>AndNeuron.Neuron.Soma1.ExcChannel.Coord</Path>
+		</AndNeuronNeuronSoma1ExcChannelCoord>
+		<AndNeuronNeuronSoma1ExcChannelType>
+			<Path>AndNeuron.Neuron.Soma1.ExcChannel.Type</Path>
+		</AndNeuronNeuronSoma1ExcChannelType>
+		<AndNeuronNeuronSoma1ExcSynapse1Type>
+			<Path>AndNeuron.Neuron.Soma1.ExcSynapse1.Type</Path>
+		</AndNeuronNeuronSoma1ExcSynapse1Type>
+		<AndNeuronNeuronSoma1InhChannelCoord>
+			<Path>AndNeuron.Neuron.Soma1.InhChannel.Coord</Path>
+		</AndNeuronNeuronSoma1InhChannelCoord>
+		<AndNeuronNeuronSoma1InhChannelType>
+			<Path>AndNeuron.Neuron.Soma1.InhChannel.Type</Path>
+		</AndNeuronNeuronSoma1InhChannelType>
+		<AndNeuronNeuronSoma1InhSynapse1Type>
+			<Path>AndNeuron.Neuron.Soma1.InhSynapse1.Type</Path>
+		</AndNeuronNeuronSoma1InhSynapse1Type>
+		<AndNeuronNeuronSoma2ExcChannelCapacity>
+			<Path>AndNeuron.Neuron.Soma2.ExcChannel.Capacity</Path>
+		</AndNeuronNeuronSoma2ExcChannelCapacity>
+		<AndNeuronNeuronSoma2ExcChannelChannelInputs>
+			<Path>AndNeuron.Neuron.Soma2.ExcChannel.ChannelInputs</Path>
+		</AndNeuronNeuronSoma2ExcChannelChannelInputs>
+		<AndNeuronNeuronSoma2ExcChannelCoord>
+			<Path>AndNeuron.Neuron.Soma2.ExcChannel.Coord</Path>
+		</AndNeuronNeuronSoma2ExcChannelCoord>
+		<AndNeuronNeuronSoma2ExcChannelSynapticInputs>
+			<Path>AndNeuron.Neuron.Soma2.ExcChannel.SynapticInputs</Path>
+		</AndNeuronNeuronSoma2ExcChannelSynapticInputs>
+		<AndNeuronNeuronSoma2ExcChannelType>
+			<Path>AndNeuron.Neuron.Soma2.ExcChannel.Type</Path>
+		</AndNeuronNeuronSoma2ExcChannelType>
+		<AndNeuronNeuronSoma2ExcSynapse1Type>
+			<Path>AndNeuron.Neuron.Soma2.ExcSynapse1.Type</Path>
+		</AndNeuronNeuronSoma2ExcSynapse1Type>
+		<AndNeuronNeuronSoma2InhChannelCoord>
+			<Path>AndNeuron.Neuron.Soma2.InhChannel.Coord</Path>
+		</AndNeuronNeuronSoma2InhChannelCoord>
+		<AndNeuronNeuronSoma2InhChannelFBResistance>
+			<Path>AndNeuron.Neuron.Soma2.InhChannel.FBResistance</Path>
+		</AndNeuronNeuronSoma2InhChannelFBResistance>
+		<AndNeuronNeuronSoma2InhChannelTimeConstant>
+			<Path>AndNeuron.Neuron.Soma2.InhChannel.TimeConstant</Path>
+		</AndNeuronNeuronSoma2InhChannelTimeConstant>
+		<AndNeuronNeuronSoma2InhChannelType>
+			<Path>AndNeuron.Neuron.Soma2.InhChannel.Type</Path>
+		</AndNeuronNeuronSoma2InhChannelType>
+		<AndNeuronNeuronSoma2InhSynapse1Type>
+			<Path>AndNeuron.Neuron.Soma2.InhSynapse1.Type</Path>
+		</AndNeuronNeuronSoma2InhSynapse1Type>
+	</Favorites>
+</ClassDescription>

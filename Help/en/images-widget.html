@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Images Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Images Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Images Widget displays image data from components in your neural network model. It's particularly useful for computer vision components, allowing you to visualize image inputs and outputs in real-time during model execution.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Images Widget can be opened from the <strong>Window → Images</strong> menu item. Multiple image windows can be created to monitor different components or properties simultaneously.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Grid Layout:</strong> Display multiple images in a customizable grid (rows and columns)</li>
+        <li><strong>Real-time Updates:</strong> Images update automatically during model execution</li>
+        <li><strong>Image Selection:</strong> Click on an image to select and view it in detail</li>
+        <li><strong>Full-screen View:</strong> View selected images in full-screen mode</li>
+        <li><strong>Drawing Tools:</strong> Draw polygons and rectangles on images for annotation</li>
+        <li><strong>Save Images:</strong> Export images to BMP or JPEG format</li>
+        <li><strong>Individual Channels:</strong> Display images using individual calculation channels</li>
+        <li><strong>Size Modes:</strong> Original size, tiled, or proportional scaling</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Adding Images</h3>
+    <ol>
+        <li>Open the Images Widget</li>
+        <li>Right-click in the widget area</li>
+        <li>Select <strong>Add Column</strong> or <strong>Add Row</strong> to create image slots</li>
+        <li>Right-click on an image slot and select <strong>Select Source</strong></li>
+        <li>Choose the component and property that provides the image data</li>
+    </ol>
+    
+    <h3>Configuring Image Sources</h3>
+    <p>Each image slot can be configured to display data from a specific component property:</p>
+    <ul>
+        <li>Select the image slot</li>
+        <li>Right-click and choose <strong>Select Source</strong></li>
+        <li>Navigate to the component and property containing image data</li>
+        <li>The image will automatically update when the property value changes</li>
+    </ul>
+    
+    <h3>Image Layout</h3>
+    <ul>
+        <li><strong>Add Column:</strong> Adds a new column to the image grid</li>
+        <li><strong>Add Row:</strong> Adds a new row to the image grid</li>
+        <li><strong>Delete Column:</strong> Removes the rightmost column</li>
+        <li><strong>Delete Row:</strong> Removes the bottom row</li>
+    </ul>
+    
+    <h3>Image Size Modes</h3>
+    <ul>
+        <li><strong>Original Size:</strong> Display images at their native resolution</li>
+        <li><strong>Tiled:</strong> Tile images to fill available space</li>
+        <li><strong>Proportional:</strong> Scale images proportionally to fit the display area</li>
+    </ul>
+    
+    <h3>Saving Images</h3>
+    <ul>
+        <li><strong>Save to BMP:</strong> Save the selected image as a BMP file</li>
+        <li><strong>Save to JPEG:</strong> Save the selected image as a JPEG file</li>
+        <li><strong>Save All to BMP:</strong> Save all images in the grid as BMP files</li>
+        <li><strong>Save All to JPEG:</strong> Save all images in the grid as JPEG files</li>
+    </ul>
+    
+    <h3>Drawing on Images</h3>
+    <p>The Images Widget supports drawing polygons and rectangles on images:</p>
+    <ul>
+        <li>Enable drawing mode for an image</li>
+        <li>Draw polygons by clicking points on the image</li>
+        <li>Draw rectangles using left and right mouse buttons</li>
+        <li>Select and modify drawn shapes</li>
+    </ul>
+    
+    <h2>Individual Channels</h2>
+    <p>When multiple calculation channels are available, you can configure each image to display data from a specific channel. Use the channel selector to switch between channels for each image.</p>
+    
+    <div class="info">
+        <strong>Tip:</strong> Use multiple Images Widgets to monitor different aspects of your model simultaneously. Each widget can display a different set of images.
+    </div>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="watch-window.html">Watch Window</a> - Monitor other component data types</li>
+        <li><a href="graph-widget.html">Graph Widget</a> - Visualize numerical data</li>
+        <li><a href="components.html">Working with Components</a> - General component information</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+

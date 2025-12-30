@@ -1,11 +1,11 @@
 <ClassDescription>
 	<ClassName>NPulseNeuronCable</ClassName>
-	<Header></Header>
-	<Description></Description>
+	<Header>NPulseNeuronCable</Header>
+	<Description>Компонент NPulseNeuronCable относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
 	<Properties>
 		<ActiveNegInputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Активные отрицательные входы</Header>
+			<Description>Матрица, показывающая, какие тормозные входы нейрона активны на текущем шаге.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -15,8 +15,8 @@
 			<PropertyType>18</PropertyType>
 		</ActiveNegInputs>
 		<ActiveOutputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Активные выходы</Header>
+			<Description>Матрица, показывающая, какие выходы нейрона активны (выдают импульсы) на текущем шаге.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -26,8 +26,8 @@
 			<PropertyType>18</PropertyType>
 		</ActiveOutputs>
 		<ActivePosInputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Активные положительные входы</Header>
+			<Description>Матрица, показывающая, какие возбудительные входы нейрона активны на текущем шаге.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -37,8 +37,8 @@
 			<PropertyType>18</PropertyType>
 		</ActivePosInputs>
 		<Activity>
-			<Header></Header>
-			<Description></Description>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -47,31 +47,9 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</Activity>
-		<AutoNumInputs>
-			<Header></Header>
-			<Description></Description>
-			<Type></Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>0</PropertyType>
-		</AutoNumInputs>
-		<AutoNumOutputs>
-			<Header></Header>
-			<Description></Description>
-			<Type></Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>0</PropertyType>
-		</AutoNumOutputs>
 		<CalculationDurationThreshold>
-			<Header></Header>
-			<Description></Description>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -81,8 +59,8 @@
 			<PropertyType>1</PropertyType>
 		</CalculationDurationThreshold>
 		<Coord>
-			<Header></Header>
-			<Description></Description>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -91,141 +69,9 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</Coord>
-		<DataInput0>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubInput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>8</PropertyType>
-		</DataInput0>
-		<DataOutput0>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput0>
-		<DataOutput1>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput1>
-		<DataOutput10>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput10>
-		<DataOutput2>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput2>
-		<DataOutput3>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput3>
-		<DataOutput4>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput4>
-		<DataOutput5>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput5>
-		<DataOutput6>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput6>
-		<DataOutput7>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput7>
-		<DataOutput8>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput8>
-		<DataOutput9>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>16</PropertyType>
-		</DataOutput9>
 		<DebugSysEventsMask>
-			<Header></Header>
-			<Description></Description>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -235,8 +81,8 @@
 			<PropertyType>1</PropertyType>
 		</DebugSysEventsMask>
 		<DefaultComponentClassId>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс компонента по умолчанию</Header>
+			<Description>Идентификатор класса компонента, используемого по умолчанию при автоматическом построении структуры сети.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -246,8 +92,8 @@
 			<PropertyType>1</PropertyType>
 		</DefaultComponentClassId>
 		<DendriticSumPotential>
-			<Header></Header>
-			<Description></Description>
+			<Header>Суммарный дендритный потенциал</Header>
+			<Description>Сумма мембранных потенциалов всех дендритов нейрона.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -257,8 +103,8 @@
 			<PropertyType>18</PropertyType>
 		</DendriticSumPotential>
 		<ExcGeneratorClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс возбудительного генератора</Header>
+			<Description>Имя класса генератора возбудительных импульсов для нейрона.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -268,8 +114,8 @@
 			<PropertyType>1</PropertyType>
 		</ExcGeneratorClassName>
 		<Id>
-			<Header></Header>
-			<Description></Description>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -279,8 +125,8 @@
 			<PropertyType>1</PropertyType>
 		</Id>
 		<InhGeneratorClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс тормозного генератора</Header>
+			<Description>Имя класса генератора тормозных импульсов для нейрона.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -290,8 +136,8 @@
 			<PropertyType>1</PropertyType>
 		</InhGeneratorClassName>
 		<LTMembraneClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс мембраны LT-зоны</Header>
+			<Description>Имя класса мембраны для низкопороговой зоны (LT-zone) нейрона.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -301,8 +147,8 @@
 			<PropertyType>1</PropertyType>
 		</LTMembraneClassName>
 		<LTZoneClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс LT-зоны</Header>
+			<Description>Имя класса низкопороговой зоны (LT-zone), используемой для детекции слабых сигналов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -312,8 +158,8 @@
 			<PropertyType>1</PropertyType>
 		</LTZoneClassName>
 		<LayerHeight>
-			<Header></Header>
-			<Description></Description>
+			<Header>Высота слоя</Header>
+			<Description>Количество нейронов по вертикали в одном слое.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -323,8 +169,8 @@
 			<PropertyType>1</PropertyType>
 		</LayerHeight>
 		<LayerWidth>
-			<Header></Header>
-			<Description></Description>
+			<Header>Ширина слоя</Header>
+			<Description>Количество нейронов по горизонтали в одном слое.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -334,8 +180,8 @@
 			<PropertyType>1</PropertyType>
 		</LayerWidth>
 		<LinkDistance>
-			<Header></Header>
-			<Description></Description>
+			<Header>Расстояние связи</Header>
+			<Description>Максимальное расстояние, на котором могут быть установлены связи между нейронами.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -345,8 +191,8 @@
 			<PropertyType>1</PropertyType>
 		</LinkDistance>
 		<LinkOrganizationMode>
-			<Header></Header>
-			<Description></Description>
+			<Header>Режим организации связей</Header>
+			<Description>Способ организации связей: 0 — без связей, 1 — многослойные, 2 — рецепторные, 3 — полный радиус.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -356,8 +202,8 @@
 			<PropertyType>1</PropertyType>
 		</LinkOrganizationMode>
 		<MaxCalculationDuration>
-			<Header></Header>
-			<Description></Description>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -367,8 +213,8 @@
 			<PropertyType>1</PropertyType>
 		</MaxCalculationDuration>
 		<MembraneClassName>
-			<Header></Header>
-			<Description></Description>
+			<Header>Класс мембраны</Header>
+			<Description>Имя класса мембраны, используемой для моделирования соматической части нейрона.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -377,20 +223,9 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</MembraneClassName>
-		<MemoryMonitor>
-			<Header></Header>
-			<Description></Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>1</PropertyType>
-		</MemoryMonitor>
 		<Name>
-			<Header></Header>
-			<Description></Description>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -400,8 +235,8 @@
 			<PropertyType>1</PropertyType>
 		</Name>
 		<NetStructure>
-			<Header></Header>
-			<Description></Description>
+			<Header>Структура сети</Header>
+			<Description>Многомерная структура идентификаторов компонентов, определяющая топологию нейронной сети.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -411,8 +246,8 @@
 			<PropertyType>2</PropertyType>
 		</NetStructure>
 		<NetType>
-			<Header></Header>
-			<Description></Description>
+			<Header>Тип сети</Header>
+			<Description>Тип топологии сети: 0 — без структуры, 1 — слоистая, 2 — рецепторная и т.д.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -422,8 +257,8 @@
 			<PropertyType>1</PropertyType>
 		</NetType>
 		<NumActiveNegInputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество активных отрицательных входов</Header>
+			<Description>Число тормозных входов нейрона, получивших импульсы на текущем шаге.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -433,8 +268,8 @@
 			<PropertyType>2</PropertyType>
 		</NumActiveNegInputs>
 		<NumActiveOutputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество активных выходов</Header>
+			<Description>Число выходов нейрона, которые выдали импульсы на текущем шаге.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -444,8 +279,8 @@
 			<PropertyType>2</PropertyType>
 		</NumActiveOutputs>
 		<NumActivePosInputs>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество активных положительных входов</Header>
+			<Description>Число возбудительных входов нейрона, получивших импульсы на текущем шаге.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -455,8 +290,8 @@
 			<PropertyType>2</PropertyType>
 		</NumActivePosInputs>
 		<NumDendriteMembraneParts>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество частей дендритной мембраны</Header>
+			<Description>Число сегментов дендритной мембраны для каждого дендрита.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -466,8 +301,8 @@
 			<PropertyType>2</PropertyType>
 		</NumDendriteMembraneParts>
 		<NumDendriteMembranePartsVec>
-			<Header></Header>
-			<Description></Description>
+			<Header>Вектор количества частей дендритной мембраны</Header>
+			<Description>Вектор, задающий число сегментов для каждого дендрита отдельно.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -476,20 +311,9 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</NumDendriteMembranePartsVec>
-		<NumInputs>
-			<Header></Header>
-			<Description></Description>
-			<Type></Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>0</PropertyType>
-		</NumInputs>
 		<NumLayers>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество слоёв</Header>
+			<Description>Число слоёв в многослойной структуре нейронов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -498,20 +322,9 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</NumLayers>
-		<NumOutputs>
-			<Header></Header>
-			<Description></Description>
-			<Type></Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>0</PropertyType>
-		</NumOutputs>
 		<NumSomaMembraneParts>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество частей соматической мембраны</Header>
+			<Description>Число сегментов или частей, на которые разделена соматическая мембрана нейрона.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -520,9 +333,20 @@
 			</ValueList>
 			<PropertyType>1</PropertyType>
 		</NumSomaMembraneParts>
+		<Output>
+			<Header>Выход</Header>
+			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Output>
 		<ReceptorFieldHeight>
-			<Header></Header>
-			<Description></Description>
+			<Header>Высота рецепторного поля</Header>
+			<Description>Высота рецепторного поля в единицах нейронов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -532,8 +356,8 @@
 			<PropertyType>1</PropertyType>
 		</ReceptorFieldHeight>
 		<ReceptorFieldWidth>
-			<Header></Header>
-			<Description></Description>
+			<Header>Ширина рецепторного поля</Header>
+			<Description>Ширина рецепторного поля в единицах нейронов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -543,8 +367,8 @@
 			<PropertyType>1</PropertyType>
 		</ReceptorFieldWidth>
 		<SomaSumPotential>
-			<Header></Header>
-			<Description></Description>
+			<Header>Суммарный соматический потенциал</Header>
+			<Description>Сумма мембранных потенциалов соматической части нейрона.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -554,8 +378,8 @@
 			<PropertyType>18</PropertyType>
 		</SomaSumPotential>
 		<StepDuration>
-			<Header></Header>
-			<Description></Description>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -565,8 +389,8 @@
 			<PropertyType>2</PropertyType>
 		</StepDuration>
 		<StructureBuildMode>
-			<Header></Header>
-			<Description></Description>
+			<Header>Режим построения структуры</Header>
+			<Description>Определяет, как автоматически строится структура нейронов/синапсов в компоненте.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -576,8 +400,8 @@
 			<PropertyType>1</PropertyType>
 		</StructureBuildMode>
 		<TimeStep>
-			<Header></Header>
-			<Description></Description>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -587,8 +411,8 @@
 			<PropertyType>1</PropertyType>
 		</TimeStep>
 		<TrainingDendIndexes>
-			<Header></Header>
-			<Description></Description>
+			<Header>Индексы обучаемых дендритов</Header>
+			<Description>Матрица индексов дендритов, которые участвуют в обучении на текущем шаге.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -598,8 +422,8 @@
 			<PropertyType>1</PropertyType>
 		</TrainingDendIndexes>
 		<TrainingPattern>
-			<Header></Header>
-			<Description></Description>
+			<Header>Обучающий шаблон</Header>
+			<Description>Матрица входных данных, используемая для обучения нейрона на текущем шаге.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -609,8 +433,8 @@
 			<PropertyType>1</PropertyType>
 		</TrainingPattern>
 		<TrainingSynapsisNum>
-			<Header></Header>
-			<Description></Description>
+			<Header>Количество обучаемых синапсов</Header>
+			<Description>Число синапсов, которые участвуют в обучении на текущем шаге.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -620,8 +444,8 @@
 			<PropertyType>1</PropertyType>
 		</TrainingSynapsisNum>
 		<UseAverageDendritesPotential>
-			<Header></Header>
-			<Description></Description>
+			<Header>Использовать усреднённый дендритный потенциал</Header>
+			<Description>Если true, вместо суммы используется среднее значение потенциала по всем дендритам.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -631,8 +455,8 @@
 			<PropertyType>1</PropertyType>
 		</UseAverageDendritesPotential>
 		<UseAverageLTZonePotential>
-			<Header></Header>
-			<Description></Description>
+			<Header>Использовать усреднённый потенциал LT-зоны</Header>
+			<Description>Если true, вместо суммы используется среднее значение потенциала низкопороговой зоны.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -646,6 +470,66 @@
 		<Length>
 			<Path>{CompName}.Soma1.ExcChannel:ModelMaxLength</Path>
 		</Length>
+		<Soma1ExcChannelActivity>
+			<Path>Soma1.ExcChannel.Activity</Path>
+		</Soma1ExcChannelActivity>
+		<Soma1ExcChannelCalcMode>
+			<Path>Soma1.ExcChannel.CalcMode</Path>
+		</Soma1ExcChannelCalcMode>
+		<Soma1ExcChannelCm>
+			<Path>Soma1.ExcChannel.Cm</Path>
+		</Soma1ExcChannelCm>
+		<Soma1ExcChannelCoord>
+			<Path>Soma1.ExcChannel.Coord</Path>
+		</Soma1ExcChannelCoord>
+		<Soma1ExcChannelD>
+			<Path>Soma1.ExcChannel.D</Path>
+		</Soma1ExcChannelD>
+		<Soma1ExcChannelDt>
+			<Path>Soma1.ExcChannel.dt</Path>
+		</Soma1ExcChannelDt>
+		<Soma1ExcChannelDx>
+			<Path>Soma1.ExcChannel.dx</Path>
+		</Soma1ExcChannelDx>
+		<Soma1ExcChannelEL>
+			<Path>Soma1.ExcChannel.EL</Path>
+		</Soma1ExcChannelEL>
+		<Soma1ExcChannelInpV>
+			<Path>Soma1.ExcChannel.InpV</Path>
+		</Soma1ExcChannelInpV>
+		<Soma1ExcChannelModelMaxTime>
+			<Path>Soma1.ExcChannel.ModelMaxTime</Path>
+		</Soma1ExcChannelModelMaxTime>
+		<Soma1ExcChannelOutput>
+			<Path>Soma1.ExcChannel.Output</Path>
+		</Soma1ExcChannelOutput>
+		<Soma1ExcChannelRi>
+			<Path>Soma1.ExcChannel.Ri</Path>
+		</Soma1ExcChannelRi>
+		<Soma1ExcChannelRm>
+			<Path>Soma1.ExcChannel.Rm</Path>
+		</Soma1ExcChannelRm>
+		<Soma1ExcChannelStepDuration>
+			<Path>Soma1.ExcChannel.StepDuration</Path>
+		</Soma1ExcChannelStepDuration>
+		<Soma1ExcChannelTauM>
+			<Path>Soma1.ExcChannel.TauM</Path>
+		</Soma1ExcChannelTauM>
+		<Soma1ExcChannelType>
+			<Path>Soma1.ExcChannel.Type</Path>
+		</Soma1ExcChannelType>
+		<Soma1ExcChannelVm>
+			<Path>Soma1.ExcChannel.Vm</Path>
+		</Soma1ExcChannelVm>
+		<Soma1ExcSynapse1Input>
+			<Path>Soma1.ExcSynapse1.Input</Path>
+		</Soma1ExcSynapse1Input>
+		<Soma1ExcSynapse1Resistance>
+			<Path>Soma1.ExcSynapse1.Resistance</Path>
+		</Soma1ExcSynapse1Resistance>
+		<Soma1ExcSynapse1SecretionTC>
+			<Path>Soma1.ExcSynapse1.SecretionTC</Path>
+		</Soma1ExcSynapse1SecretionTC>
 		<Threshold>
 			<Path>{CompName}.LTZone:Threshold</Path>
 		</Threshold>

@@ -1,0 +1,267 @@
+<ClassDescription>
+	<ClassName>NPulsePerseptronIaF</ClassName>
+	<Header>NPulsePerseptronIaF</Header>
+	<Description>Компонент NPulsePerseptronIaF относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<AffNeuronsLayerSize>
+			<Header>Размер слоя афферентных нейронов</Header>
+			<Description>Общее количество афферентных нейронов в слое.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AffNeuronsLayerSize>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<FlagFreqGroupLayer>
+			<Header>Flag freq group layer</Header>
+			<Description>Флаг, указывающий, используется ли частотная групповая слоистая структура.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</FlagFreqGroupLayer>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NeuronFreqGroupLayerClassName>
+			<Header>Нейрон freq group layer класс name</Header>
+			<Description>Имя класса нейрона для частотной групповой слоистой структуры.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronFreqGroupLayerClassName>
+		<NeuronsLayerClassName>
+			<Header>Neurons layer класс name</Header>
+			<Description>Имя класса нейронов, используемых в слое.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronsLayerClassName>
+		<NeuronsLayerSize>
+			<Header>Размер слоя нейронов</Header>
+			<Description>Общее количество нейронов в слое (ширина × высота).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronsLayerSize>
+		<NumAffNeuronsInGroup>
+			<Header>Количество афферентных нейронов в группе</Header>
+			<Description>Число афферентных нейронов, объединённых в одну группу для совместной обработки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumAffNeuronsInGroup>
+		<NumInputFeatures>
+			<Header>Количество входных признаков</Header>
+			<Description>Число признаков или размерность входного вектора.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumInputFeatures>
+		<NumNeuronsLayer>
+			<Header>Количество нейронов в слое</Header>
+			<Description>Число нейронов в одном слое нейронной сети.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumNeuronsLayer>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<StructureBuildMode>
+			<Header>Режим построения структуры</Header>
+			<Description>Определяет, как автоматически строится структура нейронов/синапсов в компоненте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</StructureBuildMode>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+	</Properties>
+	<Favorites>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerAMinus>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.AMinus</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerAMinus>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerAPlus>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.APlus</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerAPlus>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerActivity>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.Activity</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerActivity>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerCoord>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.Coord</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerCoord>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerDebugSysEventsMask>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.DebugSysEventsMask</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerDebugSysEventsMask>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsInputPulseActive>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.IsInputPulseActive</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsInputPulseActive>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsOutputPulseActive>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.IsOutputPulseActive</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsOutputPulseActive>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsTrainEnable>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.IsTrainEnable</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerIsTrainEnable>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerPostSynInput>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.PostSynInput</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerPostSynInput>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerPreSynInput>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.PreSynInput</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerPreSynInput>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerStepDuration>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.StepDuration</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerStepDuration>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTDiff>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.TDiff</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTDiff>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPost>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.TPost</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPost>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPostOld>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.TPostOld</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPostOld>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPre>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.TPre</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPre>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPreOld>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.TPreOld</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerTPreOld>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWMax>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.WMax</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWMax>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWMin>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.WMin</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWMin>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWeightOutput>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.WeightOutput</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerWeightOutput>
+		<NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerXYDiff>
+			<Path>NeuronsLayer1.Neuron1.Soma1.ExcSynapse1.Trainer.XYDiff</Path>
+		</NeuronsLayer1Neuron1Soma1ExcSynapse1TrainerXYDiff>
+	</Favorites>
+</ClassDescription>

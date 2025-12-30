@@ -1,0 +1,344 @@
+<ClassDescription>
+	<ClassName>NLogicalNot</ClassName>
+	<Header>NLogicalNot</Header>
+	<Description>Компонент NLogicalNot относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalculateMode>
+			<Header>Режим расчёта</Header>
+			<Description>Выбирает алгоритм или сценарий расчёта (обучение, тестирование, комбинированный режим).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculateMode>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<DendriteLengthNGen1>
+			<Header>Дендрит length  gen1</Header>
+			<Description>Длина дендрита для первого генератора отрицания в логическом NOT.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DendriteLengthNGen1>
+		<DendriteLengthNGen2>
+			<Header>Дендрит length  gen2</Header>
+			<Description>Длина дендрита для второго генератора отрицания в логическом NOT.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DendriteLengthNGen2>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<InputPattern>
+			<Header>Входной шаблон</Header>
+			<Description>Шаблон входных данных для текущего эксперимента или шага обучения.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InputPattern>
+		<IsNeedToTrain>
+			<Header>Требуется обучение</Header>
+			<Description>Если true, компонент будет выполнять процедуру обучения перед эксплуатацией.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</IsNeedToTrain>
+		<LogicalNotClassName>
+			<Header>Logical not класс name</Header>
+			<Description>Имя класса компонента логического отрицания (NOT).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LogicalNotClassName>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NeuronClassName>
+			<Header>Класс нейрона</Header>
+			<Description>Имя класса нейрона, используемого в данном компоненте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronClassName>
+		<NeuronTrainerClassName>
+			<Header>Класс тренера нейронов</Header>
+			<Description>Имя класса, реализующего алгоритм обучения нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NeuronTrainerClassName>
+		<NumExcSynapsesNGen1>
+			<Header>Num exc synapses  gen1</Header>
+			<Description>Количество возбудительных синапсов для первого генератора отрицания в логическом NOT.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumExcSynapsesNGen1>
+		<NumExcSynapsesNGen2>
+			<Header>Num exc synapses  gen2</Header>
+			<Description>Количество возбудительных синапсов для второго генератора отрицания в логическом NOT.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumExcSynapsesNGen2>
+		<NumInputDendrite>
+			<Header>Число входных дендритов</Header>
+			<Description>Количество дендритов, к которым подаются входные сигналы.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumInputDendrite>
+		<PatternFrequency>
+			<Header>Шаблон частота</Header>
+			<Description>Частота следования импульсов в паттерне (Гц).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PatternFrequency>
+		<PulseGeneratorClassName>
+			<Header>Класс генератора импульсов</Header>
+			<Description>Имя класса генератора, создающего импульсные последовательности для нейронов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseGeneratorClassName>
+		<SpikesFrequency>
+			<Header>Частота спайков</Header>
+			<Description>Желаемая или измеряемая частота следования спайков (Гц).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SpikesFrequency>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<StructureBuildMode>
+			<Header>Режим построения структуры</Header>
+			<Description>Определяет, как автоматически строится структура нейронов/синапсов в компоненте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</StructureBuildMode>
+		<SynapseClassName>
+			<Header>Класс синапса</Header>
+			<Description>Имя класса синапса, который соединяет нейроны.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseClassName>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+	</Properties>
+	<Favorites>
+		<NeuronTrainerNeuronSoma2ExcChannelActivity>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Activity</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelActivity>
+		<NeuronTrainerNeuronSoma2ExcChannelCapacity>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Capacity</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelCapacity>
+		<NeuronTrainerNeuronSoma2ExcChannelCoord>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Coord</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelCoord>
+		<NeuronTrainerNeuronSoma2ExcChannelOutput>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Output</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelOutput>
+		<NeuronTrainerNeuronSoma2ExcChannelResistance>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Resistance</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelResistance>
+		<NeuronTrainerNeuronSoma2ExcChannelType>
+			<Path>NeuronTrainer.Neuron.Soma2.ExcChannel.Type</Path>
+		</NeuronTrainerNeuronSoma2ExcChannelType>
+		<NeuronTrainerNeuronSoma2InhChannelActivity>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Activity</Path>
+		</NeuronTrainerNeuronSoma2InhChannelActivity>
+		<NeuronTrainerNeuronSoma2InhChannelCapacity>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Capacity</Path>
+		</NeuronTrainerNeuronSoma2InhChannelCapacity>
+		<NeuronTrainerNeuronSoma2InhChannelCoord>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Coord</Path>
+		</NeuronTrainerNeuronSoma2InhChannelCoord>
+		<NeuronTrainerNeuronSoma2InhChannelOutput>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Output</Path>
+		</NeuronTrainerNeuronSoma2InhChannelOutput>
+		<NeuronTrainerNeuronSoma2InhChannelResistance>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Resistance</Path>
+		</NeuronTrainerNeuronSoma2InhChannelResistance>
+		<NeuronTrainerNeuronSoma2InhChannelType>
+			<Path>NeuronTrainer.Neuron.Soma2.InhChannel.Type</Path>
+		</NeuronTrainerNeuronSoma2InhChannelType>
+		<NeuronTrainerNeuronSoma4ExcChannelActivity>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Activity</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelActivity>
+		<NeuronTrainerNeuronSoma4ExcChannelCapacity>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Capacity</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelCapacity>
+		<NeuronTrainerNeuronSoma4ExcChannelCoord>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Coord</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelCoord>
+		<NeuronTrainerNeuronSoma4ExcChannelOutput>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Output</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelOutput>
+		<NeuronTrainerNeuronSoma4ExcChannelResistance>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Resistance</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelResistance>
+		<NeuronTrainerNeuronSoma4ExcChannelType>
+			<Path>NeuronTrainer.Neuron.Soma4.ExcChannel.Type</Path>
+		</NeuronTrainerNeuronSoma4ExcChannelType>
+		<NeuronTrainerNeuronSoma4InhChannelOutput>
+			<Path>NeuronTrainer.Neuron.Soma4.InhChannel.Output</Path>
+		</NeuronTrainerNeuronSoma4InhChannelOutput>
+		<NeuronTrainerNeuronSoma4InhSynapse1Resistance>
+			<Path>NeuronTrainer.Neuron.Soma4.InhSynapse1.Resistance</Path>
+		</NeuronTrainerNeuronSoma4InhSynapse1Resistance>
+	</Favorites>
+</ClassDescription>

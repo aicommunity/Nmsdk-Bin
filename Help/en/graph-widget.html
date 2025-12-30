@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Widget - NMSDK User Guide</title>
+    <link rel="stylesheet" href="../styles/help.css">
+</head>
+<body>
+    <h1>Graph Widget</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">← Back to Main Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="divider"></div>
+    
+    <h2>Overview</h2>
+    <p>The Graph Widget provides real-time visualization of numerical data from your neural network model. It displays time-series graphs showing how component properties change over time during model execution.</p>
+    
+    <h2>Accessing the Widget</h2>
+    <p>The Graph Widget can be opened from the <strong>Window</strong> menu. It appears in a separate window or dock panel, allowing you to monitor multiple data series simultaneously.</p>
+    
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Multiple Series:</strong> Display multiple data series on the same graph</li>
+        <li><strong>Real-time Updates:</strong> Graphs update automatically as data arrives</li>
+        <li><strong>Customizable Axes:</strong> Set custom labels and ranges for X and Y axes</li>
+        <strong>Color Coding:</strong> Each series can have a different color</li>
+        <li><strong>Data Source Selection:</strong> Choose component properties to monitor</li>
+        <li><strong>Auto-scaling:</strong> Automatic or manual axis scaling</li>
+        <li><strong>Matrix Support:</strong> Display matrix data with X and Y indices</li>
+    </ul>
+    
+    <h2>Usage</h2>
+    
+    <h3>Adding a Data Series</h3>
+    <ol>
+        <li>Click the <strong>Select Output</strong> button</li>
+        <li>Navigate to the component and property you want to monitor</li>
+        <li>For matrix properties, specify the X and Y indices</li>
+        <li>Select the calculation channel (if multiple channels exist)</li>
+        <li>The graph will start displaying data from the selected property</li>
+    </ol>
+    
+    <h3>Configuring Graph Settings</h3>
+    <ul>
+        <li><strong>Graph Settings:</strong> Click the settings button to configure axis labels, ranges, and display options</li>
+        <li><strong>Color Selection:</strong> Change the color of individual graph series</li>
+        <li><strong>Series Name:</strong> Each series can have a custom name for identification</li>
+    </ul>
+    
+    <h3>Graph Layout</h3>
+    <p>The Graph Widget supports:</p>
+    <ul>
+        <li>Custom X and Y axis labels</li>
+        <li>Manual or automatic axis limits</li>
+        <li>Display of last N elements (sliding window)</li>
+        <li>Auto-updating right border (for time-series)</li>
+    </ul>
+    
+    <h3>Deleting Series</h3>
+    <ul>
+        <li>Select a series from the list</li>
+        <li>Click <strong>Delete Current Item</strong> to remove it</li>
+        <li>Use <strong>Delete All</strong> to clear all series</li>
+    </ul>
+    
+    <h2>Data Sources</h2>
+    <p>The Graph Widget can monitor:</p>
+    <ul>
+        <li>Scalar properties (single values)</li>
+        <li>Matrix properties (with X and Y indices)</li>
+        <li>Properties from any calculation channel</li>
+        <li>Multiple properties simultaneously</li>
+    </ul>
+    
+    <h2>Graph Display Modes</h2>
+    <ul>
+        <li><strong>Continuous Update:</strong> Graph updates in real-time as new data arrives</li>
+        <li><strong>Sliding Window:</strong> Display only the last N data points</li>
+        <li><strong>Fixed Range:</strong> Display data within a fixed time or value range</li>
+    </ul>
+    
+    <div class="info">
+        <strong>Tip:</strong> Use multiple Graph Widgets to monitor different aspects of your model. Each widget can display different properties or use different display settings.
+    </div>
+    
+    <h2>Related Widgets</h2>
+    <ul>
+        <li><a href="watch-window.html">Watch Window</a> - Advanced monitoring with multiple chart types</li>
+        <li><a href="images-widget.html">Images Widget</a> - Visualize image data</li>
+        <li><a href="profiling-widget.html">Profiling Widget</a> - Performance analysis</li>
+    </ul>
+    
+    <div class="divider"></div>
+    
+    <p><a href="index.html">← Back to Main Page</a></p>
+</body>
+</html>
+
