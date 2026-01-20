@@ -36,6 +36,28 @@
 - **Стили** (`theme.json`, `*.qss`) - читаются через `UStyleManager`
 - **Описания классов** (`ClDesc/*.xml`) - читаются через `UStorage` при загрузке библиотек
 
+### Процесс чтения конфигураций
+
+**Поток чтения конфигураций:**
+
+```mermaid
+flowchart TB
+    Start[Запуск приложения] --> LoadProject[UProject::Load]
+    LoadProject --> ReadXML[USerStorageXML<br/>Чтение XML]
+    ReadXML --> Deserialize[UXMLEnvSerialize<br/>Десериализация компонентов]
+    Deserialize --> CreateComps[Создание компонентов]
+    
+    Start --> ReadINI[UApplication<br/>Чтение .ini]
+    ReadINI --> ParseINI[Qt QSettings<br/>Парсинг настроек]
+    
+    Start --> LoadStyles[UStyleManager<br/>loadTheme]
+    LoadStyles --> ReadJSON[Чтение theme.json]
+    LoadStyles --> ReadQSS[Чтение .qss]
+    
+    Start --> LoadClDesc[UStorage<br/>LoadClassesDescription]
+    LoadClDesc --> ReadClDescXML[Чтение ClDesc/*.xml]
+```
+
 ### Артефакты сборки vs исходные ресурсы
 
 **Исходные ресурсы** (хранятся в репозитории):
@@ -47,6 +69,37 @@
 - `Bin/Platform/<OS>/` - скомпилированные исполняемые файлы и библиотеки
 - `Bin/Platform/<OS>/Lib.CMake/` - скомпилированные библиотеки
 - `Bin/ClDesc/` - может содержать автогенерируемые описания классов (если используется автогенерация)
+
+### Процесс деплоя конфигураций
+
+`UProjectDeployer` используется для развертывания проектов на удалённые системы. Процесс включает:
+
+1. **Загрузку данных** (`StartProjectDeployment`): загрузка шаблонов, скриптов, весов моделей и данных с FTP сервера
+2. **Распаковку** (`DeployTemplate`, `DeployScript`, `DeployWeights`, `DeployData`): распаковка ZIP архивов во временные каталоги
+3. **Подготовку проекта** (`PrepareProject`): копирование во временное хранилище, открытие в mock режиме, настройка путей и связей
+
+**Процесс деплоя:**
+
+```mermaid
+sequenceDiagram
+    participant App as UApplication
+    participant Deployer as UProjectDeployer
+    participant FTP as FTP Server
+    participant Temp as Temp Folder
+    participant Project as UProject
+    
+    App->>Deployer: StartProjectDeployment(task_id)
+    Deployer->>FTP: DownloadTemplate.zip
+    FTP-->>Deployer: Template files
+    Deployer->>Temp: UnpackTemplate
+    Deployer->>FTP: DownloadWeights.zip
+    FTP-->>Deployer: Model weights
+    Deployer->>Temp: UnpackWeights
+    Deployer->>App: PrepareProject()
+    App->>Project: OpenProjectMockMode()
+    Project->>Project: SetupMockParameters()
+    Project-->>App: Project ready
+```
 
 ### См. также
 

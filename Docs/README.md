@@ -14,6 +14,27 @@
 - **Styles/** - стили и темы для GUI
 - **Platform/** - платформенные артефакты (Win/Linux)
 
+**Архитектура каталога Bin:**
+
+```mermaid
+flowchart TB
+    Bin[Bin/] --> Configs[Configs/<br/>XML проекты]
+    Bin --> ClDesc[ClDesc/<br/>XML описания классов]
+    Bin --> Help[Help/<br/>HTML справка RU/EN]
+    Bin --> Styles[Styles/<br/>QSS + JSON темы]
+    Bin --> Platform[Platform/<br/>Артефакты сборки]
+    
+    Platform --> WinBin[Win/<br/>Windows бинарники]
+    Platform --> LinuxBin[Linux/<br/>Linux бинарники]
+    
+    Configs --> Projects[Проекты .xml]
+    ClDesc --> ClassXML[Описания .xml]
+    Styles --> QSSFiles[*.qss]
+    Styles --> JSONThemes[theme.json]
+```
+
+Каталог `Bin/` содержит как исходные ресурсы (конфигурации, справка, стили), так и артефакты сборки (скомпилированные библиотеки и исполняемые файлы в `Platform/`). Исходные ресурсы копируются в `Bin/` при сборке из соответствующих каталогов в репозитории.
+
 ### Документация
 
 - [Help-Structure.md](Help-Structure.md) - структура справочной системы

@@ -50,7 +50,33 @@ The user help system is located in `Bin/Help/` and is available in two languages
 
 ### Structure
 
+```
+Bin/Help/
+├── en/          # English version
+│   ├── index.html
+│   ├── getting-started.html
+│   ├── components.html
+│   └── ...
+├── ru/          # Russian version
+│   ├── index.html
+│   ├── getting-started.html
+│   ├── components.html
+│   └── ...
+└── styles/      # Shared help styles
+    └── help.css
+```
+
 ### Main Sections
+
+- **getting-started.html** - getting started guide
+- **components.html** - component overview and usage
+- **class-editor.html** - class editor guide
+- **components-list-widget.html** - components list widget
+- **component-property-editor.html** - component property editor
+- **modern-diagram.html** - modern diagram editor
+- **logger-widget.html** - logger window
+- **graph-widget.html** - graph window
+- **keyboard-shortcuts.html** - keyboard shortcuts
 
 ### See Also
 
