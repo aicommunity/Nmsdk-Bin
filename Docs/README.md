@@ -42,8 +42,8 @@ flowchart TB
 
 ### Связь с корневой документацией
 
-- [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - обзор конфигураций
-- [Docs/GUI/Style-System.md](../Docs/GUI/Style-System.md) - система стилей
+- [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - обзор конфигураций
+- [Docs/GUI/Style-System.md](../../Docs/GUI/Style-System.md) - система стилей
 
 ---
 
@@ -68,5 +68,5 @@ The `Bin/` directory contains resources and configurations necessary for the Nms
 
 ### Link to Root Documentation
 
-- [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
-- [Docs/GUI/Style-System.md](../Docs/GUI/Style-System.md) - style system
+- [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
+- [Docs/GUI/Style-System.md](../../Docs/GUI/Style-System.md) - style system
