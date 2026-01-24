@@ -22,41 +22,14 @@
 
 ### Использование конфигураций в коде
 
-**Модули, читающие конфигурации:**
+**Примечание:** Детальная информация о работе с конфигурациями через классы Rdk (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer) находится в [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md).
 
-- **UProject** (`Rdk/Core/Application/UProject.*`) - загрузка и сохранение проектов из XML конфигураций
-- **UXMLEnvSerialize** (`Rdk/Core/Engine/UXMLEnvSerialize.*`) - десериализация компонентов из XML
-- **UApplication** (`Rdk/Core/Application/UApplication.*`) - чтение настроек приложения из INI файлов
-- **UStyleManager** (`Rdk/GUI/Qt/UStyleManager.*`) - загрузка стилей из JSON файлов в `Bin/Styles/`
+**Краткая информация:**
 
-**Типы конфигурационных файлов:**
-
-- **Проекты** (`.xml`) - читаются через `UProject::Load()` и `UXMLEnvSerialize`
-- **Настройки приложения** (`.ini`) - читаются через системные утилиты Qt
-- **Стили** (`theme.json`, `*.qss`) - читаются через `UStyleManager`
-- **Описания классов** (`ClDesc/*.xml`) - читаются через `UStorage` при загрузке библиотек
-
-### Процесс чтения конфигураций
-
-**Поток чтения конфигураций:**
-
-```mermaid
-flowchart TB
-    Start[Запуск приложения] --> LoadProject[UProject::Load]
-    LoadProject --> ReadXML[USerStorageXML<br/>Чтение XML]
-    ReadXML --> Deserialize[UXMLEnvSerialize<br/>Десериализация компонентов]
-    Deserialize --> CreateComps[Создание компонентов]
-    
-    Start --> ReadINI[UApplication<br/>Чтение .ini]
-    ReadINI --> ParseINI[Qt QSettings<br/>Парсинг настроек]
-    
-    Start --> LoadStyles[UStyleManager<br/>loadTheme]
-    LoadStyles --> ReadJSON[Чтение theme.json]
-    LoadStyles --> ReadQSS[Чтение .qss]
-    
-    Start --> LoadClDesc[UStorage<br/>LoadClassesDescription]
-    LoadClDesc --> ReadClDescXML[Чтение ClDesc/*.xml]
-```
+- **Проекты** (`.xml`) - загружаются через `UProject::Load()`
+- **Настройки приложения** (`.ini`) - читаются через `UApplication::Init()`
+- **Стили** (`theme.json`, `*.qss`) - загружаются через `UStyleManager`
+- **Описания классов** (`ClDesc/*.xml`) - загружаются автоматически при загрузке библиотек
 
 ### Артефакты сборки vs исходные ресурсы
 
@@ -103,8 +76,9 @@ sequenceDiagram
 
 ### См. также
 
+- [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - детальная информация о работе с конфигурациями через классы Rdk (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - обзор конфигураций
-- [Docs/Components-And-Configuration/Component-System.md](../../Docs/Components-And-Configuration/Component-System.md) - компонентная система
+- [Component System](../../Rdk/Docs/Guides/Component-System.md) - компонентная система
 
 ---
 
@@ -130,19 +104,14 @@ Project configurations contain:
 
 ### Configuration Usage in Code
 
-**Modules reading configurations:**
+**Note:** Detailed information about working with configurations through Rdk classes (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer) is in [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md).
 
-- **UProject** (`Rdk/Core/Application/UProject.*`) - loading and saving projects from XML configurations
-- **UXMLEnvSerialize** (`Rdk/Core/Engine/UXMLEnvSerialize.*`) - deserializing components from XML
-- **UApplication** (`Rdk/Core/Application/UApplication.*`) - reading application settings from INI files
-- **UStyleManager** (`Rdk/GUI/Qt/UStyleManager.*`) - loading styles from JSON files in `Bin/Styles/`
+**Brief information:**
 
-**Configuration file types:**
-
-- **Projects** (`.xml`) - read via `UProject::Load()` and `UXMLEnvSerialize`
-- **Application settings** (`.ini`) - read via Qt system utilities
-- **Styles** (`theme.json`, `*.qss`) - read via `UStyleManager`
-- **Class descriptions** (`ClDesc/*.xml`) - read via `UStorage` when loading libraries
+- **Projects** (`.xml`) - loaded via `UProject::Load()`
+- **Application settings** (`.ini`) - read via `UApplication::Init()`
+- **Styles** (`theme.json`, `*.qss`) - loaded via `UStyleManager`
+- **Class descriptions** (`ClDesc/*.xml`) - loaded automatically when loading libraries
 
 ### Build Artifacts vs Source Resources
 
@@ -158,5 +127,6 @@ Project configurations contain:
 
 ### See Also
 
+- [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - detailed information about working with configurations through Rdk classes (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
 - [Docs/Components-And-Configuration/Component-System.md](../../Docs/Components-And-Configuration/Component-System.md) - component system

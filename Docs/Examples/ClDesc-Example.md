@@ -76,7 +76,7 @@ ClDesc файлы автоматически загружаются при ин�
 ### Связанная документация
 
 - [Configs-Structure.md](../Configs-Structure.md) - структура конфигураций
-- [Docs/Components-And-Configuration/Component-System.md](../../../Docs/Components-And-Configuration/Component-System.md) - компонентная система
+- [Component System](../../../Rdk/Docs/Guides/Component-System.md) - компонентная система
 
 ---
 
