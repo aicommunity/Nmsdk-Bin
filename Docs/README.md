@@ -6,6 +6,12 @@
 
 Каталог `Bin/` содержит ресурсы и конфигурации, необходимые для работы приложения Nmsdk.
 
+### Быстрые ссылки
+
+- [Структура конфигураций](Configs-Structure.md) - описание конфигурационных файлов
+- [Структура справки](Help-Structure.md) - структура справочной системы
+- [FAQ](FAQ.md) - часто задаваемые вопросы по Bin
+
 ### Структура
 
 - **Configs/** - конфигурационные файлы проектов и компонентов
@@ -39,6 +45,8 @@ flowchart TB
 
 - [Help-Structure.md](Help-Structure.md) - структура справочной системы
 - [Configs-Structure.md](Configs-Structure.md) - структура конфигурационных файлов
+- [FAQ.md](FAQ.md) - часто задаваемые вопросы по конфигурациям и ресурсам
+- [Examples/](Examples/) - примеры конфигураций и использования ресурсов
 
 ### Связь с корневой документацией
 
@@ -53,6 +61,12 @@ flowchart TB
 
 The `Bin/` directory contains resources and configurations necessary for the Nmsdk application to work.
 
+### Quick Links
+
+- [Configuration Structure](Configs-Structure.md) - configuration files description
+- [Help Structure](Help-Structure.md) - help system structure
+- [FAQ](FAQ.md) - frequently asked questions about Bin
+
 ### Structure
 
 - **Configs/** - project and component configuration files
@@ -65,6 +79,8 @@ The `Bin/` directory contains resources and configurations necessary for the Nms
 
 - [Help-Structure.md](Help-Structure.md) - help system structure
 - [Configs-Structure.md](Configs-Structure.md) - configuration file structure
+- [FAQ.md](FAQ.md) - frequently asked questions about configurations and resources
+- [Examples/](Examples/) - configuration and resource usage examples
 
 ### Link to Root Documentation
 
