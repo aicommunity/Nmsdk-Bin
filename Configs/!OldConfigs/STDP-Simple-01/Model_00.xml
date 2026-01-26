@@ -1,12 +1,11 @@
 <Save ModelName="Model">
 	<Model Class="NModel">
 		<Parameters>
-			<Activity Type="bool" PType="257">1</Activity>
-			<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-			<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">0 0 0</Coord>
-			<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
-			<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-			<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
+			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<Activity Type="b" PType="257" IoType="17">1</Activity>
+			<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
 		</Parameters>
 		<Links Type="ULinksList" Size="2">
 			<elem Type="ULink">
@@ -21,54 +20,56 @@
 		<Components>
 			<PresynActivity Class="NPGenerator">
 				<Parameters>
-					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
-					<AvgInterval Type="double" PType="257">5</AvgInterval>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5.66667 6.99993 0</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
-					<Frequency Type="double" PType="257">0</Frequency>
-					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
-					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+					<PulseLength Type="d" PType="257" IoType="17">0,001</PulseLength>
+					<Amplitude Type="d" PType="257" IoType="17">1</Amplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Delay Type="d" PType="257" IoType="17">0</Delay>
+					<ActionPeriod Type="j" PType="257" IoType="17">0</ActionPeriod>
+					<AvgInterval Type="d" PType="257" IoType="17">5</AvgInterval>
+					<FrequencyDeviation Type="d" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">5.66667 6.99993 0</Coord>
+					<Frequency Type="d" PType="257" IoType="17">0</Frequency>
 				</Parameters>
 				<Components/>
 			</PresynActivity>
 			<PossynActivity Class="NPGenerator">
 				<Parameters>
-					<ActionPeriod Type="unsigned int" PType="257">0</ActionPeriod>
-					<Activity Type="bool" PType="257">1</Activity>
-					<Amplitude Type="double" PType="257">1</Amplitude>
-					<AvgInterval Type="double" PType="257">5</AvgInterval>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">5.66667 9.99997 5</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
-					<Frequency Type="double" PType="257">100</Frequency>
-					<FrequencyDeviation Type="double" PType="257">0</FrequencyDeviation>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
-					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
+					<PulseLength Type="d" PType="257" IoType="17">0,001</PulseLength>
+					<Amplitude Type="d" PType="257" IoType="17">1</Amplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Delay Type="d" PType="257" IoType="17">0</Delay>
+					<ActionPeriod Type="j" PType="257" IoType="17">0</ActionPeriod>
+					<AvgInterval Type="d" PType="257" IoType="17">5</AvgInterval>
+					<FrequencyDeviation Type="d" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">5.66667 9.99997 5</Coord>
+					<Frequency Type="d" PType="257" IoType="17">100</Frequency>
 				</Parameters>
 				<Components/>
 			</PossynActivity>
 			<SynapseStdp Class="NSynapseStdp">
 				<Parameters>
-					<AMinus Type="double" PType="257">1</AMinus>
-					<APlus Type="double" PType="257">1</APlus>
-					<Activity Type="bool" PType="257">1</Activity>
-					<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="769">14 8.66667 2</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769">4294967295</DebugSysEventsMask>
-					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
-					<MemoryMonitor Type="bool" PType="769">0</MemoryMonitor>
-					<PulseAmplitude Type="double" PType="257">1</PulseAmplitude>
-					<Resistance Type="double" PType="257">1</Resistance>
-					<XModCoeff Type="double" PType="257">1</XModCoeff>
-					<XTau Type="double" PType="257">0.010000000000000000208</XTau>
-					<YModCoeff Type="double" PType="257">1</YModCoeff>
-					<YTau Type="double" PType="257">0.0010000000000000000208</YTau>
+					<Resistance Type="d" PType="257" IoType="17">1</Resistance>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
+					<Type Type="d" PType="257" IoType="17">-1</Type>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Weight Type="d" PType="257" IoType="17">1</Weight>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">14 8.66667 2</Coord>
+					<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+					<XModCoeff Type="d" PType="257" IoType="17">1</XModCoeff>
+					<YModCoeff Type="d" PType="257" IoType="17">1</YModCoeff>
+					<APlus Type="d" PType="257" IoType="17">1</APlus>
+					<AMinus Type="d" PType="257" IoType="17">1</AMinus>
+					<XTau Type="d" PType="257" IoType="17">0,01</XTau>
+					<YTau Type="d" PType="257" IoType="17">0,001</YTau>
 				</Parameters>
 				<Components/>
 			</SynapseStdp>

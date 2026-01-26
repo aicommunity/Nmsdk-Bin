@@ -1,102 +1,108 @@
 <SaveProperties ModelName="Model">
 	<Model Class="Model">
 		<Parameters>
-			<Activity Type="bool" PType="257" IoType="17">1</Activity>
-			<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-			<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
-			<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-			<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<Output Type="UBitmap" Size="0" PType="257" IoType="17">
+				<Width Type="i">0</Width>
+				<Height Type="i">0</Height>
+				<ColorModel Type="UBMColorModel">3</ColorModel>
+				<Data/>
+			</Output>
+			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<Activity Type="b" PType="257" IoType="17">1</Activity>
+			<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
 		</Parameters>
 		<Components>
 			<PGenerator Class="NPGenerator">
 				<Parameters>
-					<ActionPeriod Type="unsigned int" PType="257" IoType="17">0</ActionPeriod>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<Amplitude Type="double" PType="257" IoType="17">1</Amplitude>
-					<AvgInterval Type="double" PType="257" IoType="17">5</AvgInterval>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">4.66666 5.33333 1</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-					<Delay Type="double" PType="257" IoType="17">0</Delay>
-					<Frequency Type="double" PType="257" IoType="17">1</Frequency>
-					<FrequencyDeviation Type="double" PType="257" IoType="17">0</FrequencyDeviation>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<PulseLength Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</PulseLength>
+					<PulseLength Type="d" PType="257" IoType="17">0,001</PulseLength>
+					<Amplitude Type="d" PType="257" IoType="17">1</Amplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Delay Type="d" PType="257" IoType="17">0</Delay>
+					<ActionPeriod Type="j" PType="257" IoType="17">0</ActionPeriod>
+					<AvgInterval Type="d" PType="257" IoType="17">5</AvgInterval>
+					<FrequencyDeviation Type="d" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">4.66666 5.33333 1</Coord>
+					<Frequency Type="d" PType="257" IoType="17">1</Frequency>
 				</Parameters>
 				<Components/>
 			</PGenerator>
 			<SynapseStepTest Class="NPSynapse">
 				<Parameters>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">12.6666 4 4</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-					<DissociationTC Type="double" PType="257" IoType="17">0.01000000000000000020816681711721685132943</DissociationTC>
-					<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
-					<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
-					<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+					<UsePulseSignal Type="b" PType="257" IoType="17">1</UsePulseSignal>
+					<InhibitionCoeff Type="d" PType="257" IoType="17">0</InhibitionCoeff>
+					<DissociationTC Type="d" PType="257" IoType="17">0,01</DissociationTC>
+					<SecretionTC Type="d" PType="257" IoType="17">0,001</SecretionTC>
+					<UsePresynapticInhibition Type="b" PType="257" IoType="17">0</UsePresynapticInhibition>
 					<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
-					<Type Type="double" PType="257" IoType="17">-1</Type>
-					<TypicalPulseDuration Type="double" PType="257" IoType="17">0.01000000000000000020816681711721685132943</TypicalPulseDuration>
-					<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
-					<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
-					<Weight Type="double" PType="257" IoType="17">1</Weight>
+					<TypicalPulseDuration Type="d" PType="257" IoType="17">0,001</TypicalPulseDuration>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">12.6666 4 4</Coord>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Weight Type="d" PType="257" IoType="17">1</Weight>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Type Type="d" PType="257" IoType="17">-1</Type>
+					<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Resistance Type="d" PType="257" IoType="17">1000000000</Resistance>
 				</Parameters>
 				<Components/>
 			</SynapseStepTest>
 			<StatisticDoubleMatrix Class="UStatisticDoubleMatrix">
 				<Parameters>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<PrefixName Type="std::string" PType="257" IoType="17"></PrefixName>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<ManualModeSwitch Type="b" PType="257" IoType="17">0</ManualModeSwitch>
+					<SubFolderAfterResetFlag Type="b" PType="257" IoType="17">1</SubFolderAfterResetFlag>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<SavePath Type="std::string" PType="257" IoType="17">StatisticLog</SavePath>
+					<ExcludeModelFileName Type="b" PType="257" IoType="17">1</ExcludeModelFileName>
+					<NumSkipSteps Type="i" PType="257" IoType="17">0</NumSkipSteps>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">20.3333 5.33333 6</Coord>
 					<AverageInput Type="std::pair" PType="257" IoType="17">
 						<first Type="std::string"></first>
 						<second Type="std::string"></second>
 					</AverageInput>
-					<AverageMode Type="int" PType="257" IoType="17">0</AverageMode>
-					<AverageNumber Type="int" PType="257" IoType="17">5</AverageNumber>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">20.3333 5.33333 6</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-					<ExcludeModelFileName Type="bool" PType="257" IoType="17">1</ExcludeModelFileName>
-					<ForceCreateSavePath Type="bool" PType="257" IoType="17">0</ForceCreateSavePath>
-					<ManualModeEnabled Type="bool" PType="257" IoType="17">0</ManualModeEnabled>
-					<ManualModeSwitch Type="bool" PType="257" IoType="17">0</ManualModeSwitch>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<NumSkipSteps Type="int" PType="257" IoType="17">0</NumSkipSteps>
-					<OrderIndexToFileNameFlag Type="bool" PType="257" IoType="17">1</OrderIndexToFileNameFlag>
-					<PrefixName Type="std::string" PType="257" IoType="17"></PrefixName>
-					<SaveMode Type="int" PType="257" IoType="17">0</SaveMode>
-					<SavePath Type="std::string" PType="257" IoType="17">StatisticLog</SavePath>
-					<SubFolderAfterResetFlag Type="bool" PType="257" IoType="17">1</SubFolderAfterResetFlag>
-					<TimeInterval Type="double" PType="257" IoType="17">0</TimeInterval>
-					<TimeToFileNameFlag Type="bool" PType="257" IoType="17">0</TimeToFileNameFlag>
-					<WriteIndexFlag Type="bool" PType="257" IoType="17">0</WriteIndexFlag>
-					<WriteModelTimeStampFlag Type="bool" PType="257" IoType="17">1</WriteModelTimeStampFlag>
-					<WriteSourceTimeStampFlag Type="bool" PType="257" IoType="17">0</WriteSourceTimeStampFlag>
-					<WriteTimeFromResetFlag Type="bool" PType="257" IoType="17">0</WriteTimeFromResetFlag>
-					<WriteTimeStampFlag Type="bool" PType="257" IoType="17">0</WriteTimeStampFlag>
+					<WriteModelTimeStampFlag Type="b" PType="257" IoType="17">1</WriteModelTimeStampFlag>
+					<WriteTimeStampFlag Type="b" PType="257" IoType="17">0</WriteTimeStampFlag>
+					<AverageNumber Type="i" PType="257" IoType="17">5</AverageNumber>
+					<TimeToFileNameFlag Type="b" PType="257" IoType="17">0</TimeToFileNameFlag>
+					<OrderIndexToFileNameFlag Type="b" PType="257" IoType="17">1</OrderIndexToFileNameFlag>
+					<ForceCreateSavePath Type="b" PType="257" IoType="17">0</ForceCreateSavePath>
+					<ManualModeEnabled Type="b" PType="257" IoType="17">0</ManualModeEnabled>
+					<TimeInterval Type="d" PType="257" IoType="17">0</TimeInterval>
+					<SaveMode Type="i" PType="257" IoType="17">0</SaveMode>
+					<AverageMode Type="i" PType="257" IoType="17">0</AverageMode>
+					<WriteTimeFromResetFlag Type="b" PType="257" IoType="17">0</WriteTimeFromResetFlag>
+					<WriteSourceTimeStampFlag Type="b" PType="257" IoType="17">0</WriteSourceTimeStampFlag>
+					<WriteIndexFlag Type="b" PType="257" IoType="17">0</WriteIndexFlag>
 				</Parameters>
 				<Components/>
 			</StatisticDoubleMatrix>
 			<SynapseSpikeTest Class="NPSynapse">
 				<Parameters>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">12.6666 6.33333 4</Coord>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">4294967295</DebugSysEventsMask>
-					<DissociationTC Type="double" PType="257" IoType="17">0.01000000000000000020816681711721685132943</DissociationTC>
-					<InhibitionCoeff Type="double" PType="257" IoType="17">0</InhibitionCoeff>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
-					<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
-					<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
+					<UsePulseSignal Type="b" PType="257" IoType="17">1</UsePulseSignal>
+					<InhibitionCoeff Type="d" PType="257" IoType="17">0</InhibitionCoeff>
+					<DissociationTC Type="d" PType="257" IoType="17">0,01</DissociationTC>
+					<SecretionTC Type="d" PType="257" IoType="17">0,001</SecretionTC>
+					<UsePresynapticInhibition Type="b" PType="257" IoType="17">0</UsePresynapticInhibition>
 					<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
-					<Type Type="double" PType="257" IoType="17">-1</Type>
-					<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
-					<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
-					<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
-					<Weight Type="double" PType="257" IoType="17">1</Weight>
+					<TypicalPulseDuration Type="d" PType="257" IoType="17">0,001</TypicalPulseDuration>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">12.6666 6.33333 4</Coord>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Weight Type="d" PType="257" IoType="17">1</Weight>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Type Type="d" PType="257" IoType="17">-1</Type>
+					<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Resistance Type="d" PType="257" IoType="17">1000000000</Resistance>
 				</Parameters>
 				<Components/>
 			</SynapseSpikeTest>
