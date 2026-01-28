@@ -14,11 +14,11 @@
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.Receptor</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.PosChannel</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.ExcChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.NegChannel</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronMembrane.InhChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">AfferentNeuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -27,11 +27,11 @@
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.PNeuronNegCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.ExcChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron.Receptor</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">AfferentNeuron.PNeuronMembrane.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">AfferentNeuron2.Receptor</Item>
@@ -50,7 +50,7 @@
 					<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 				</Parameters>
-				<Components/>
+				<Components />
 			</CGenerator>
 			<AfferentNeuron Class="NSAfferentNeuron">
 				<Parameters>
@@ -86,7 +86,7 @@
 							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
-						<Components/>
+						<Components />
 					</LTZone>
 					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 						<Parameters>
@@ -99,7 +99,7 @@
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
-						<Components/>
+						<Components />
 					</PNeuronPosCGenerator>
 					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 						<Parameters>
@@ -112,7 +112,7 @@
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
-						<Components/>
+						<Components />
 					</PNeuronNegCGenerator>
 					<PNeuronMembrane Class="NPNeuronMembrane">
 						<Parameters>
@@ -126,7 +126,7 @@
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
 						<Components>
-							<PosChannel Class="NPNeuronChannel">
+							<ExcChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
 									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
@@ -153,7 +153,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse>
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
@@ -168,7 +168,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse2>
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
@@ -183,11 +183,11 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse3>
 								</Components>
-							</PosChannel>
-							<NegChannel Class="NPNeuronChannel">
+							</ExcChannel>
+							<InhChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
 									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
@@ -214,7 +214,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse>
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
@@ -229,7 +229,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse2>
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
@@ -244,10 +244,10 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse3>
 								</Components>
-							</NegChannel>
+							</InhChannel>
 						</Components>
 					</PNeuronMembrane>
 					<Receptor Class="NReceptor">
@@ -270,7 +270,7 @@
 							<OutputAdaptationMode Type="int" PType="257">1</OutputAdaptationMode>
 							<SumCoeff Type="double" PType="257">2</SumCoeff>
 						</Parameters>
-						<Components/>
+						<Components />
 					</Receptor>
 				</Components>
 			</AfferentNeuron>
@@ -308,7 +308,7 @@
 							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
-						<Components/>
+						<Components />
 					</LTZone>
 					<Receptor Class="NReceptor">
 						<Parameters>
@@ -330,7 +330,7 @@
 							<OutputAdaptationMode Type="int" PType="257">0</OutputAdaptationMode>
 							<SumCoeff Type="double" PType="257">2</SumCoeff>
 						</Parameters>
-						<Components/>
+						<Components />
 					</Receptor>
 				</Components>
 			</AfferentNeuron2>

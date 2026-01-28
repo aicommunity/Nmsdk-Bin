@@ -10,20 +10,20 @@
 		<Links Type="ULinksList" Size="10">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">PosPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.ExcChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">NegPGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel.Synapse</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.InhChannel.Synapse</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.PosChannel</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.ExcChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.NegChannel</Item>
+				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronMembrane.InhChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="DataInput1">Neuron.LTZone</Connector>
 			</elem>
 			<elem Type="ULink">
@@ -45,11 +45,11 @@
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronPosCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.NegChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="DataOutput0">Neuron.PNeuronNegCGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.PosChannel</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="DataInput0">Neuron.PNeuronMembrane.ExcChannel</Connector>
 			</elem>
 		</Links>
 		<Components>
@@ -68,7 +68,7 @@
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 				</Parameters>
-				<Components/>
+				<Components />
 			</PosPGenerator>
 			<NegPGenerator Class="NPGenerator">
 				<Parameters>
@@ -85,7 +85,7 @@
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 					<PulseLength Type="double" PType="257">0.0010000000000000000208</PulseLength>
 				</Parameters>
-				<Components/>
+				<Components />
 			</NegPGenerator>
 			<Neuron Class="NSPNeuron">
 				<Parameters>
@@ -121,7 +121,7 @@
 							<TimeConstant Type="double" PType="257">0.005000000000000000104</TimeConstant>
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
-						<Components/>
+						<Components />
 					</LTZone>
 					<PNeuronPosCGenerator Class="NPNeuronPosCGenerator">
 						<Parameters>
@@ -134,7 +134,7 @@
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
-						<Components/>
+						<Components />
 					</PNeuronPosCGenerator>
 					<PNeuronNegCGenerator Class="NPNeuronNegCGenerator">
 						<Parameters>
@@ -147,7 +147,7 @@
 							<DebugSysEventsMask Type="unsigned int" PType="257">4294967295</DebugSysEventsMask>
 							<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 						</Parameters>
-						<Components/>
+						<Components />
 					</PNeuronNegCGenerator>
 					<PNeuronMembrane Class="NPNeuronMembrane">
 						<Parameters>
@@ -161,7 +161,7 @@
 							<UseAveragePotential Type="bool" PType="257">1</UseAveragePotential>
 						</Parameters>
 						<Components>
-							<PosChannel Class="NPNeuronChannel">
+							<ExcChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
 									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
@@ -189,7 +189,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse>
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
@@ -204,7 +204,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse2>
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
@@ -219,11 +219,11 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse3>
 								</Components>
-							</PosChannel>
-							<NegChannel Class="NPNeuronChannel">
+							</ExcChannel>
+							<InhChannel Class="NPNeuronChannel">
 								<Parameters>
 									<Activity Type="bool" PType="257">1</Activity>
 									<CalculationDurationThreshold Type="__int64" PType="257">-1</CalculationDurationThreshold>
@@ -251,7 +251,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse>
 									<Synapse2 Class="NPSynapse">
 										<Parameters>
@@ -266,7 +266,7 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse2>
 									<Synapse3 Class="NPSynapse">
 										<Parameters>
@@ -281,10 +281,10 @@
 											<Resistance Type="double" PType="257">100000000</Resistance>
 											<SecretionTC Type="double" PType="257">0.0010000000000000000208</SecretionTC>
 										</Parameters>
-										<Components/>
+										<Components />
 									</Synapse3>
 								</Components>
-							</NegChannel>
+							</InhChannel>
 						</Components>
 					</PNeuronMembrane>
 				</Components>
@@ -293,8 +293,8 @@
 				<Parameters>
 					<Activity Type="bool" PType="257">1</Activity>
 					<AverageInput Type="std::pair" PType="257">
-						<first Type="std::string"></first>
-						<second Type="std::string"></second>
+						<first Type="std::string" />
+						<second Type="std::string" />
 					</AverageInput>
 					<AverageMode Type="int" PType="257">0</AverageMode>
 					<AverageNumber Type="int" PType="257">5</AverageNumber>
@@ -308,7 +308,7 @@
 					<MaxCalculationDuration Type="__int64" PType="257">-1</MaxCalculationDuration>
 					<NumSkipSteps Type="int" PType="257">0</NumSkipSteps>
 					<OrderIndexToFileNameFlag Type="bool" PType="257">1</OrderIndexToFileNameFlag>
-					<PrefixName Type="std::string" PType="257"></PrefixName>
+					<PrefixName Type="std::string" PType="257" />
 					<SaveMode Type="int" PType="257">0</SaveMode>
 					<SavePath Type="std::string" PType="257">StatisticLog</SavePath>
 					<SubFolderAfterResetFlag Type="bool" PType="257">1</SubFolderAfterResetFlag>
@@ -319,7 +319,7 @@
 					<WriteSourceTimeStampFlag Type="bool" PType="257">0</WriteSourceTimeStampFlag>
 					<WriteTimeStampFlag Type="bool" PType="257">0</WriteTimeStampFlag>
 				</Parameters>
-				<Components/>
+				<Components />
 			</StatisticDoubleMatrix>
 		</Components>
 	</Model>
