@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Save ModelName="Model">
 	<Model Class="Model">
 		<Parameters>
@@ -150,10 +151,6 @@
 				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTrainer.Neuron.Dendrite1_3.ExcChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="Output"></Item>
-				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTrainer.Neuron.Dendrite1_3.ExcChannel</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTrainer.Neuron.Dendrite1_3.InhSynapse1</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTrainer.Neuron.Dendrite1_3.InhChannel</Connector>
 			</elem>
@@ -207,7 +204,7 @@
 							<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
 							<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
 						</Parameters>
-						<Components/>
+						<Components />
 					</Source1>
 					<Source2 Class="NPulseGeneratorTransit">
 						<Parameters>
@@ -229,7 +226,7 @@
 							<UsePatternOutput Type="bool" PType="257" IoType="17">0</UsePatternOutput>
 							<UseTransitSignal Type="bool" PType="257" IoType="17">0</UseTransitSignal>
 						</Parameters>
-						<Components/>
+						<Components />
 					</Source2>
 					<Neuron Class="NSPNeuronGen">
 						<Parameters>
@@ -240,7 +237,7 @@
 							<DefaultComponentClassId Type="int" PType="257" IoType="17">0</DefaultComponentClassId>
 							<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
 							<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
-							<LTMembraneClassName Type="std::string" PType="257" IoType="17"></LTMembraneClassName>
+							<LTMembraneClassName Type="std::string" PType="257" IoType="17" />
 							<LTZoneClassName Type="std::string" PType="257" IoType="17">NPulseLTZoneThreshold</LTZoneClassName>
 							<LayerHeight Type="unsigned __int64" PType="257" IoType="17">1</LayerHeight>
 							<LayerWidth Type="unsigned __int64" PType="257" IoType="17">1</LayerWidth>
@@ -280,7 +277,7 @@
 									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 								</Parameters>
-								<Components/>
+								<Components />
 							</PosGenerator>
 							<NegGenerator Class="NPNeuronNegCGenerator">
 								<Parameters>
@@ -293,7 +290,7 @@
 									<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 									<MemoryMonitor Type="bool" PType="769" IoType="17">0</MemoryMonitor>
 								</Parameters>
-								<Components/>
+								<Components />
 							</NegGenerator>
 							<LTZone Class="NPulseLTZoneThreshold">
 								<Parameters>
@@ -311,7 +308,7 @@
 									<ThresholdOff Type="double" PType="257" IoType="17">0</ThresholdOff>
 									<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 								</Parameters>
-								<Components/>
+								<Components />
 							</LTZone>
 							<Soma1 Class="NPMembraneBio">
 								<Parameters>
@@ -347,7 +344,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -362,14 +359,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -387,7 +384,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -402,14 +399,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 								</Components>
 							</Soma1>
@@ -447,7 +444,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -462,14 +459,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -487,7 +484,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -502,14 +499,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 								</Components>
 							</Dendrite1_1>
@@ -547,7 +544,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -562,14 +559,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -587,7 +584,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -602,14 +599,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 								</Components>
 							</Soma2>
@@ -647,7 +644,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -662,14 +659,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -687,7 +684,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -702,14 +699,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 								</Components>
 							</Dendrite2_1>
@@ -747,7 +744,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -762,14 +759,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -787,7 +784,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -802,14 +799,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 								</Components>
 							</Dendrite1_2>
@@ -847,7 +844,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcChannel>
 									<ExcSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -862,14 +859,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse1>
 									<InhChannel Class="NPInhChannelBio">
 										<Parameters>
@@ -887,7 +884,7 @@
 											<UseAveragePotential Type="bool" PType="257" IoType="17">1</UseAveragePotential>
 											<UseAverageSynapsis Type="bool" PType="257" IoType="17">0</UseAverageSynapsis>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhChannel>
 									<InhSynapse1 Class="NPSynapseBio">
 										<Parameters>
@@ -902,14 +899,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">86000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</InhSynapse1>
 									<ExcSynapse2 Class="NPSynapseBio">
 										<Parameters>
@@ -924,14 +921,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse2>
 									<ExcSynapse3 Class="NPSynapseBio">
 										<Parameters>
@@ -946,14 +943,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse3>
 									<ExcSynapse4 Class="NPSynapseBio">
 										<Parameters>
@@ -968,14 +965,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse4>
 									<ExcSynapse5 Class="NPSynapseBio">
 										<Parameters>
@@ -990,14 +987,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse5>
 									<ExcSynapse6 Class="NPSynapseBio">
 										<Parameters>
@@ -1012,14 +1009,14 @@
 											<PulseAmplitude Type="double" PType="257" IoType="17">1</PulseAmplitude>
 											<Resistance Type="double" PType="257" IoType="17">1000000000</Resistance>
 											<SecretionTC Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</SecretionTC>
-											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+											<TrainerClassName Type="std::string" PType="257" IoType="17" />
 											<Type Type="double" PType="257" IoType="17">-1</Type>
 											<TypicalPulseDuration Type="double" PType="257" IoType="17">0.001000000000000000020816681711721685132943</TypicalPulseDuration>
 											<UsePresynapticInhibition Type="bool" PType="257" IoType="17">0</UsePresynapticInhibition>
 											<UsePulseSignal Type="bool" PType="257" IoType="17">1</UsePulseSignal>
 											<Weight Type="double" PType="257" IoType="17">1</Weight>
 										</Parameters>
-										<Components/>
+										<Components />
 									</ExcSynapse6>
 								</Components>
 							</Dendrite1_3>
