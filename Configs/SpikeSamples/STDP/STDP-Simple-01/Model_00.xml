@@ -1,0 +1,78 @@
+<Save ModelName="Model">
+	<Model Class="NModel">
+		<Parameters>
+			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+			<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+			<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+			<Activity Type="b" PType="257" IoType="17">1</Activity>
+			<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
+		</Parameters>
+		<Links Type="ULinksList" Size="2">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PresynActivity</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">SynapseStdp</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">PossynActivity</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="PsActivityInput">SynapseStdp</Connector>
+			</elem>
+		</Links>
+		<Components>
+			<PresynActivity Class="NPGenerator">
+				<Parameters>
+					<PulseLength Type="d" PType="257" IoType="17">0,001</PulseLength>
+					<Amplitude Type="d" PType="257" IoType="17">1</Amplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Delay Type="d" PType="257" IoType="17">0</Delay>
+					<ActionPeriod Type="j" PType="257" IoType="17">0</ActionPeriod>
+					<AvgInterval Type="d" PType="257" IoType="17">5</AvgInterval>
+					<FrequencyDeviation Type="d" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">5.66667 6.99993 0</Coord>
+					<Frequency Type="d" PType="257" IoType="17">0</Frequency>
+				</Parameters>
+				<Components/>
+			</PresynActivity>
+			<PossynActivity Class="NPGenerator">
+				<Parameters>
+					<PulseLength Type="d" PType="257" IoType="17">0,001</PulseLength>
+					<Amplitude Type="d" PType="257" IoType="17">1</Amplitude>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<Delay Type="d" PType="257" IoType="17">0</Delay>
+					<ActionPeriod Type="j" PType="257" IoType="17">0</ActionPeriod>
+					<AvgInterval Type="d" PType="257" IoType="17">5</AvgInterval>
+					<FrequencyDeviation Type="d" PType="257" IoType="17">0</FrequencyDeviation>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">5.66667 9.99997 5</Coord>
+					<Frequency Type="d" PType="257" IoType="17">100</Frequency>
+				</Parameters>
+				<Components/>
+			</PossynActivity>
+			<SynapseStdp Class="NSynapseStdp">
+				<Parameters>
+					<Resistance Type="d" PType="257" IoType="17">1</Resistance>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
+					<Type Type="d" PType="257" IoType="17">-1</Type>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<Weight Type="d" PType="257" IoType="17">1</Weight>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">14 8.66667 2</Coord>
+					<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
+					<XModCoeff Type="d" PType="257" IoType="17">1</XModCoeff>
+					<YModCoeff Type="d" PType="257" IoType="17">1</YModCoeff>
+					<APlus Type="d" PType="257" IoType="17">1</APlus>
+					<AMinus Type="d" PType="257" IoType="17">1</AMinus>
+					<XTau Type="d" PType="257" IoType="17">0,01</XTau>
+					<YTau Type="d" PType="257" IoType="17">0,001</YTau>
+				</Parameters>
+				<Components/>
+			</SynapseStdp>
+		</Components>
+	</Model>
+</Save>
