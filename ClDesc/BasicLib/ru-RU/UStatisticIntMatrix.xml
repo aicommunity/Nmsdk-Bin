@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>UStatisticIntMatrix</ClassName>
-	<Header>Статистика матриц (int)</Header>
-	<Description>Сохраняет целочисленные матрицы во время расчёта, поддерживает усреднение, отметки времени и ручной запуск логгирования.</Description>
+	<Header>статистика по int-матрицам (Rdk-BasicLib)</Header>
+	<Description>**Класс**: `UStatisticIntMatrix` — компонент сбора статистики по целочисленным матрицам на основе `UStatisticMatrix&lt;int&gt;`. Используется для анализа результатов экспериментов, построения логов и отчётов.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -17,7 +17,7 @@
 		<AverageInput>
 			<Header>Пара для усреднения</Header>
 			<Description>Зарезервированная пара «компонент:свойство»; оставлена для совместимости и не используется текущей реализацией.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -27,8 +27,8 @@
 		</AverageInput>
 		<AverageMode>
 			<Header>Режим усреднения</Header>
-			<Description>0 — писать каждую матрицу без изменений; 1 — суммировать и записывать среднее каждые <Property>AverageNumber</Property> шагов; 2 — накапливать эталонное среднее и выгружать его после достижения заданного количества шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>0 — писать каждую матрицу без изменений; 1 — суммировать и записывать среднее каждые</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<AverageNumber>
 			<Header>Длина окна усреднения</Header>
 			<Description>Сколько шагов нужно накопить в режимах 1/2, прежде чем результат будет записан.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -61,7 +61,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -72,7 +72,7 @@
 		<CurrentAverageNumber>
 			<Header>Накоплено шагов</Header>
 			<Description>Служебный счётчик количества итераций в текущем цикле усреднения.</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -83,7 +83,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -94,7 +94,7 @@
 		<ExcludeModelFileName>
 			<Header>Убирать имя модели из файла</Header>
 			<Description>Удаляет префикс модели из имени лог-файла (часть до первой точки), чтобы пути были короче.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -104,8 +104,8 @@
 		</ExcludeModelFileName>
 		<ForceCreateSavePath>
 			<Header>Force create save path</Header>
-			<Description>Force create save path — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Force create save path — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -127,7 +127,7 @@
 		<InputMatrixData>
 			<Header>Входные матрицы</Header>
 			<Description>Набор подключённых целочисленных матриц. Для каждого входа создаётся собственный файл статистики.</Description>
-			<Type>| ptPubInput | </Type>
+			<Type>| ptPubInput |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -137,8 +137,8 @@
 		</InputMatrixData>
 		<ManualModeEnabled>
 			<Header>Manual mode enabled</Header>
-			<Description>Manual mode enabled — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Manual mode enabled — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</ManualModeEnabled>
 		<ManualModeSwitch>
 			<Header>Manual mode switch</Header>
-			<Description>Manual mode switch — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Manual mode switch — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -160,7 +160,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -181,8 +181,8 @@
 		</Name>
 		<NumSkipSteps>
 			<Header>Num skip steps</Header>
-			<Description>Num skip steps — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Num skip steps — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -192,8 +192,8 @@
 		</NumSkipSteps>
 		<OrderIndexToFileNameFlag>
 			<Header>Order index to file name flag</Header>
-			<Description>Order index to file name flag — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Order index to file name flag — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -203,8 +203,8 @@
 		</OrderIndexToFileNameFlag>
 		<PrefixName>
 			<Header>Prefix name</Header>
-			<Description>Prefix name — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Prefix name — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -215,7 +215,7 @@
 		<SaveMode>
 			<Header>Режим записи</Header>
 			<Description>0 — выводить всю матрицу в одну строку (значения разделены табуляцией); 1 — печатать матрицу блоком с переносами строк.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -225,8 +225,8 @@
 		</SaveMode>
 		<SavePath>
 			<Header>Save path</Header>
-			<Description>Save path — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Save path — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -237,7 +237,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -247,8 +247,8 @@
 		</StepDuration>
 		<SubFolderAfterResetFlag>
 			<Header>Sub folder after reset flag</Header>
-			<Description>Sub folder after reset flag — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Sub folder after reset flag — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -258,8 +258,8 @@
 		</SubFolderAfterResetFlag>
 		<TimeInterval>
 			<Header>Время interval</Header>
-			<Description>Время interval — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Время interval — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -280,8 +280,8 @@
 		</TimeStep>
 		<TimeToFileNameFlag>
 			<Header>Время to file name flag</Header>
-			<Description>Время to file name flag — параметр компонента Статистика матриц (int).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Время to file name flag — свойство статистика по int-матрицам (Rdk-BasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -291,8 +291,8 @@
 		</TimeToFileNameFlag>
 		<WriteIndexFlag>
 			<Header>Добавлять индекс</Header>
-			<Description>Если включено, в начало каждой записи добавляется счётчик <Property>CurrentIndex</Property>.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Если включено, в начало каждой записи добавляется счётчик</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -303,7 +303,7 @@
 		<WriteModelTimeStampFlag>
 			<Header>Писать модельное время</Header>
 			<Description>Добавляет значение `GetTime().GetDoubleTime()` в начало записи.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -314,7 +314,7 @@
 		<WriteSourceTimeStampFlag>
 			<Header>Писать время источника</Header>
 			<Description>Добавляет глобальную временную метку источника (`GetSourceCurrentGlobalTime()*86400*1000`).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -325,7 +325,7 @@
 		<WriteTimeFromResetFlag>
 			<Header>Писать время от Reset</Header>
 			<Description>Вставляет в лог интервал HH:MM:SS, прошедший с момента последнего Reset.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -336,7 +336,7 @@
 		<WriteTimeStampFlag>
 			<Header>Писать локальную дату/время</Header>
 			<Description>При true в начале записи появляется отметка локального времени ОС.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

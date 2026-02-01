@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>NDCEngine</ClassName>
-	<Header>Модель двигателя постоянного тока</Header>
-	<Description>NDCEngine моделирует исполнитель на базе DC-мотора и используется для тестирования контуров управления движением.</Description>
+	<Header>DC-двигатель</Header>
+	<Description>компонент моделирования DC-двигателя с электромеханическими характеристиками.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -16,8 +16,8 @@
 		</Activity>
 		<Angle>
 			<Header>Angle</Header>
-			<Description>Angle — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Angle — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -28,7 +28,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -60,8 +60,8 @@
 		</DebugSysEventsMask>
 		<EMFactor>
 			<Header>Em factor</Header>
-			<Description>Em factor — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Em factor — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -82,8 +82,8 @@
 		</Id>
 		<Inductance>
 			<Header>Inductance</Header>
-			<Description>Inductance — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Inductance — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -93,8 +93,8 @@
 		</Inductance>
 		<InputMomentum>
 			<Header>Input momentum</Header>
-			<Description>Input momentum — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Input momentum — свойство DC-двигатель.</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -104,8 +104,8 @@
 		</InputMomentum>
 		<InputVoltage>
 			<Header>Input voltage</Header>
-			<Description>Input voltage — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Input voltage — свойство DC-двигатель.</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -116,7 +116,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -137,8 +137,8 @@
 		</Name>
 		<OutMoment>
 			<Header>Out moment</Header>
-			<Description>Out moment — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Out moment — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</OutMoment>
 		<OutputAngle>
 			<Header>Output angle</Header>
-			<Description>Output angle — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Output angle — свойство DC-двигатель.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -159,8 +159,8 @@
 		</OutputAngle>
 		<OutputAngleSpeed>
 			<Header>Output angle speed</Header>
-			<Description>Output angle speed — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Output angle speed — свойство DC-двигатель.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -170,8 +170,8 @@
 		</OutputAngleSpeed>
 		<OutputMomentum>
 			<Header>Output momentum</Header>
-			<Description>Output momentum — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Output momentum — свойство DC-двигатель.</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -181,8 +181,8 @@
 		</OutputMomentum>
 		<ReductionRate>
 			<Header>Reduction rate</Header>
-			<Description>Reduction rate — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Reduction rate — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -193,7 +193,7 @@
 		<Resistance>
 			<Header>Сопротивление</Header>
 			<Description>Сопротивление канала или пути тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -204,7 +204,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -225,8 +225,8 @@
 		</TimeStep>
 		<Tm>
 			<Header>Tm</Header>
-			<Description>Tm — свойство Модель двигателя постоянного тока.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Tm — свойство DC-двигатель.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

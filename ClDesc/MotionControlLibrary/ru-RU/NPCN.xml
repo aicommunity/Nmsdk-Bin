@@ -1,12 +1,12 @@
 <ClassDescription>
-	<ClassName>NNewPositionControlElement</ClassName>
-	<Header>новый элемент контроля позиции</Header>
-	<Description>расширенный элемент контроля позиции с поддержкой множественных контуров управления и элементов движения.</Description>
+	<ClassName>NPCN</ClassName>
+	<Header>PCN элемент</Header>
+	<Description>`NPCNElement` (регистрируется как `NPCN`) — элемент сети контроля позиции (Position Control Network) для управления движением на основе нейросетевых вычислений.</Description>
 	<Properties>
 		<Activity>
-			<Header>Активность</Header>
-			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Activity</Header>
+			<Description>Activity — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -15,9 +15,9 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<CalculationDurationThreshold>
-			<Header>Порог времени расчёта</Header>
-			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Calculation duration threshold</Header>
+			<Description>Calculation duration threshold — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -26,9 +26,9 @@
 			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
 		<ControlNeuronType>
-			<Header>Управление нейрон type</Header>
-			<Description>Управление нейрон type — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Control neuron type</Header>
+			<Description>Control neuron type — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -37,9 +37,9 @@
 			<PropertyType>257</PropertyType>
 		</ControlNeuronType>
 		<Coord>
-			<Header>Координаты в редакторе</Header>
-			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Coord</Header>
+			<Description>Coord — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -49,8 +49,8 @@
 		</Coord>
 		<CurrentPosition>
 			<Header>Current position</Header>
-			<Description>Current position — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Current position — свойство PCN элемент.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -59,9 +59,9 @@
 			<PropertyType>258</PropertyType>
 		</CurrentPosition>
 		<DebugSysEventsMask>
-			<Header>Маска системных событий</Header>
-			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Debug sys events mask</Header>
+			<Description>Debug sys events mask — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -71,8 +71,8 @@
 		</DebugSysEventsMask>
 		<Delta>
 			<Header>Delta</Header>
-			<Description>Delta — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Delta — свойство PCN элемент.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -81,9 +81,9 @@
 			<PropertyType>258</PropertyType>
 		</Delta>
 		<ExternalControl>
-			<Header>External управление</Header>
-			<Description>External управление — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>External control</Header>
+			<Description>External control — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -93,7 +93,7 @@
 		</ExternalControl>
 		<Id>
 			<Header>Идентификатор</Header>
-			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Description>Идентификатор — свойство PCN элемент.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -103,9 +103,9 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<InputNeuronType>
-			<Header>Input нейрон type</Header>
-			<Description>Input нейрон type — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Input neuron type</Header>
+			<Description>Input neuron type — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -114,9 +114,9 @@
 			<PropertyType>257</PropertyType>
 		</InputNeuronType>
 		<MaxCalculationDuration>
-			<Header>Макс. длительность расчёта</Header>
-			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Max calculation duration</Header>
+			<Description>Max calculation duration — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -125,9 +125,9 @@
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
 		<MotionControl>
-			<Header>Motion управление</Header>
-			<Description>Motion управление — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Motion control</Header>
+			<Description>Motion control — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -136,8 +136,8 @@
 			<PropertyType>257</PropertyType>
 		</MotionControl>
 		<Name>
-			<Header>Имя компонента</Header>
-			<Description>Отображаемое имя узла в проекте.</Description>
+			<Header>Имя</Header>
+			<Description>Имя — свойство PCN элемент.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -146,21 +146,10 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Name>
-		<Output>
-			<Header>Выход</Header>
-			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
-			<Type>| ptPubOutput |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>272</PropertyType>
-		</Output>
 		<RememberState>
-			<Header>Remember состояние</Header>
-			<Description>Remember состояние — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubState |</Type>
+			<Header>Remember state</Header>
+			<Description>Remember state — свойство PCN элемент.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -169,9 +158,9 @@
 			<PropertyType>258</PropertyType>
 		</RememberState>
 		<SimControl>
-			<Header>Sim управление</Header>
-			<Description>Sim управление — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Sim control</Header>
+			<Description>Sim control — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -180,9 +169,9 @@
 			<PropertyType>257</PropertyType>
 		</SimControl>
 		<StepDuration>
-			<Header>Время шага</Header>
-			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState |</Type>
+			<Header>Step duration</Header>
+			<Description>Step duration — свойство PCN элемент.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -192,8 +181,8 @@
 		</StepDuration>
 		<TargetPosition>
 			<Header>Target position</Header>
-			<Description>Target position — свойство новый элемент контроля позиции.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Target position — свойство PCN элемент.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -202,8 +191,8 @@
 			<PropertyType>257</PropertyType>
 		</TargetPosition>
 		<TimeStep>
-			<Header>Временной шаг</Header>
-			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Header>Time step</Header>
+			<Description>Time step — свойство PCN элемент.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">

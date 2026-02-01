@@ -1,8 +1,19 @@
 <ClassDescription>
 	<ClassName>NMazeMemorySimplified</ClassName>
-	<Header>Память лабиринта (упрощенная)</Header>
-	<Description>Упрощенная версия компонента для моделирования памяти лабиринта. Создает группу нейронов для моделирования условного рефлекса и запоминания траекторий движения в лабиринте. Упрощенная версия с ограниченным функционалом по сравнению с полной версией NMazeMemory.</Description>
+	<Header>упрощенная память лабиринта</Header>
+	<Description>упрощенная версия компонента памяти лабиринта с использованием элементов траектории (NTrajectoryElement), блоков множественного контроля позиции (NMultiPositionControl) и нейронных тренеров (NNeuronTrainer).</Description>
 	<Properties>
+		<ActionNeuronsType>
+			<Header>Тип нейронов действия</Header>
+			<Description>Имя класса нейронов, используемых для генерации действий. По умолчанию используется NSPNeuronGen.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ActionNeuronsType>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
@@ -47,6 +58,17 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
+		<FeaturesNum>
+			<Header>Количество признаков</Header>
+			<Description>Количество признаков, описывающих запоминаемую ситуацию. По умолчанию равно 4 (x, y, alpha, где alpha - ориентация робота).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</FeaturesNum>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -58,6 +80,28 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<InputActions>
+			<Header>Входные действия</Header>
+			<Description>Вектор возможных вариантов действий в ситуации (направлений движения). Количество элементов равно количеству возможных вариантов. Значения элементов вектора: 1 - есть возможность совершить это действие, 0 - нет возможности. [0] - поворот направо, [1] - поворот налево, [2] - ехать прямо, [3] - стоп.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InputActions>
+		<IsDone>
+			<Header>Завершено</Header>
+			<Description>Флаг завершения работы. Устанавливается в true, когда все возможные варианты исследованы.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</IsDone>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -80,6 +124,28 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Name>
+		<Situation>
+			<Header>Ситуация</Header>
+			<Description>Флаг ситуации с множественным выбором (перекресток, развилка). При значении true компонент обрабатывает ситуацию с несколькими возможными вариантами действий.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Situation>
+		<SituationCoords>
+			<Header>Координаты ситуации</Header>
+			<Description>Вектор параметров ситуации. Сейчас содержит координаты {x, y, alpha}, где alpha - ориентация робота. Используется для запоминания и распознавания ситуаций.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SituationCoords>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
@@ -102,73 +168,67 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
-		<Situation>
-			<Header>Ситуация</Header>
-			<Description>Флаг ситуации с множественным выбором (перекресток, развилка). При значении true компонент обрабатывает ситуацию с несколькими возможными вариантами действий.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Situation>
-		<InputActions>
-			<Header>Входные действия</Header>
-			<Description>Вектор возможных вариантов действий в ситуации (направлений движения). Количество элементов равно количеству возможных вариантов. Значения элементов вектора: 1 - есть возможность совершить это действие, 0 - нет возможности. [0] - поворот направо, [1] - поворот налево, [2] - ехать прямо, [3] - стоп.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</InputActions>
-		<ActionNeuronsType>
-			<Header>Тип нейронов действия</Header>
-			<Description>Имя класса нейронов, используемых для генерации действий. По умолчанию используется NSPNeuronGen.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</ActionNeuronsType>
-		<FeaturesNum>
-			<Header>Количество признаков</Header>
-			<Description>Количество признаков, описывающих запоминаемую ситуацию. По умолчанию равно 4 (x, y, alpha, где alpha - ориентация робота).</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</FeaturesNum>
-		<IsDone>
-			<Header>Завершено</Header>
-			<Description>Флаг завершения работы. Устанавливается в true, когда все возможные варианты исследованы.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</IsDone>
-		<SituationCoords>
-			<Header>Координаты ситуации</Header>
-			<Description>Вектор параметров ситуации. Сейчас содержит координаты {x, y, alpha}, где alpha - ориентация робота. Используется для запоминания и распознавания ситуаций.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</SituationCoords>
 	</Properties>
-	<Favorites/>
+	<Favorites>
+		<NTrajectoryElement0Neuron1Dendrite1_1InhChannelActivity>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_1.InhChannel.Activity</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_1InhChannelActivity>
+		<NTrajectoryElement0Neuron1Dendrite1_1InhChannelCapacity>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_1.InhChannel.Capacity</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_1InhChannelCapacity>
+		<NTrajectoryElement0Neuron1Dendrite1_1InhChannelCoord>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_1.InhChannel.Coord</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_1InhChannelCoord>
+		<NTrajectoryElement0Neuron1Dendrite1_1InhChannelOutput>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_1.InhChannel.Output</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_1InhChannelOutput>
+		<NTrajectoryElement0Neuron1Dendrite1_1InhChannelType>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_1.InhChannel.Type</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_1InhChannelType>
+		<NTrajectoryElement0Neuron1Dendrite1_4InhChannelActivity>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_4.InhChannel.Activity</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_4InhChannelActivity>
+		<NTrajectoryElement0Neuron1Dendrite1_4InhChannelCapacity>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_4.InhChannel.Capacity</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_4InhChannelCapacity>
+		<NTrajectoryElement0Neuron1Dendrite1_4InhChannelCoord>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_4.InhChannel.Coord</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_4InhChannelCoord>
+		<NTrajectoryElement0Neuron1Dendrite1_4InhChannelOutput>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_4.InhChannel.Output</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_4InhChannelOutput>
+		<NTrajectoryElement0Neuron1Dendrite1_4InhChannelType>
+			<Path>NTrajectoryElement0.Neuron1.Dendrite1_4.InhChannel.Type</Path>
+		</NTrajectoryElement0Neuron1Dendrite1_4InhChannelType>
+		<NTrajectoryElement0Neuron1Soma1ExcChannelType>
+			<Path>NTrajectoryElement0.Neuron1.Soma1.ExcChannel.Type</Path>
+		</NTrajectoryElement0Neuron1Soma1ExcChannelType>
+		<NTrajectoryElement0Neuron1Soma1InhChannelType>
+			<Path>NTrajectoryElement0.Neuron1.Soma1.InhChannel.Type</Path>
+		</NTrajectoryElement0Neuron1Soma1InhChannelType>
+		<NTrajectoryElement0Neuron2Dendrite1_1ExcSynapse1Output>
+			<Path>NTrajectoryElement0.Neuron2.Dendrite1_1.ExcSynapse1.Output</Path>
+		</NTrajectoryElement0Neuron2Dendrite1_1ExcSynapse1Output>
+		<NTrajectoryElement0Neuron2Dendrite1_3ExcChannelActivity>
+			<Path>NTrajectoryElement0.Neuron2.Dendrite1_3.ExcChannel.Activity</Path>
+		</NTrajectoryElement0Neuron2Dendrite1_3ExcChannelActivity>
+		<NTrajectoryElement0Neuron2Dendrite1_3ExcChannelOutput>
+			<Path>NTrajectoryElement0.Neuron2.Dendrite1_3.ExcChannel.Output</Path>
+		</NTrajectoryElement0Neuron2Dendrite1_3ExcChannelOutput>
+		<NTrajectoryElement0Neuron2Dendrite1_3InhSynapse1Type>
+			<Path>NTrajectoryElement0.Neuron2.Dendrite1_3.InhSynapse1.Type</Path>
+		</NTrajectoryElement0Neuron2Dendrite1_3InhSynapse1Type>
+		<NTrajectoryElement0Neuron2Soma1ExcChannelType>
+			<Path>NTrajectoryElement0.Neuron2.Soma1.ExcChannel.Type</Path>
+		</NTrajectoryElement0Neuron2Soma1ExcChannelType>
+		<NTrajectoryElement0Neuron2Soma1ExcSynapse1SecretionTC>
+			<Path>NTrajectoryElement0.Neuron2.Soma1.ExcSynapse1.SecretionTC</Path>
+		</NTrajectoryElement0Neuron2Soma1ExcSynapse1SecretionTC>
+		<NTrajectoryElement0Neuron2Soma1ExcSynapse1Type>
+			<Path>NTrajectoryElement0.Neuron2.Soma1.ExcSynapse1.Type</Path>
+		</NTrajectoryElement0Neuron2Soma1ExcSynapse1Type>
+		<NTrajectoryElement0Neuron2Soma1InhChannelType>
+			<Path>NTrajectoryElement0.Neuron2.Soma1.InhChannel.Type</Path>
+		</NTrajectoryElement0Neuron2Soma1InhChannelType>
+	</Favorites>
 </ClassDescription>
-

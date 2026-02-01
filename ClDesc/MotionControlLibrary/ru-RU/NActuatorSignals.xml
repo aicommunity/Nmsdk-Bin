@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NActuatorSignals</ClassName>
-	<Header>Блок определения сигналов исполнительных механизмов</Header>
-	<Description>NActuatorSignals анализирует импульсы с двигателей и формирует направление движения объекта.</Description>
+	<Header>сигналы актуаторов</Header>
+	<Description>компонент для определения направления движения объекта управления с использованием нейросетевой структуры из генераторов импульсов, задержек и нейронов.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -27,7 +27,7 @@
 		</Amplitude>
 		<Back>
 			<Header>Back</Header>
-			<Description>Back — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Back — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -49,7 +49,7 @@
 		</CalculationDurationThreshold>
 		<ClassNameDelay>
 			<Header>Класс name задержка</Header>
-			<Description>Класс name задержка — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Класс name задержка — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -60,7 +60,7 @@
 		</ClassNameDelay>
 		<ClassNameGenerator>
 			<Header>Класс name генератор</Header>
-			<Description>Класс name генератор — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Класс name генератор — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -71,7 +71,7 @@
 		</ClassNameGenerator>
 		<ClassNameNeuron>
 			<Header>Класс name нейрон</Header>
-			<Description>Класс name нейрон — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Класс name нейрон — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -126,7 +126,7 @@
 		</DelayRight>
 		<DelaySinchro1>
 			<Header>Задержка sinchro1</Header>
-			<Description>Задержка sinchro1 — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Задержка sinchro1 — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -137,7 +137,7 @@
 		</DelaySinchro1>
 		<DelaySinchro2>
 			<Header>Задержка sinchro2</Header>
-			<Description>Задержка sinchro2 — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Задержка sinchro2 — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -148,7 +148,7 @@
 		</DelaySinchro2>
 		<Forward>
 			<Header>Forward</Header>
-			<Description>Forward — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Forward — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -181,7 +181,7 @@
 		</Id>
 		<Left>
 			<Header>Левый</Header>
-			<Description>Левый — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Левый — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -225,7 +225,7 @@
 		</PulseLength>
 		<Right>
 			<Header>Правый</Header>
-			<Description>Правый — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Правый — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -236,7 +236,7 @@
 		</Right>
 		<Stay>
 			<Header>Stay</Header>
-			<Description>Stay — свойство Блок определения сигналов исполнительных механизмов.</Description>
+			<Description>Stay — свойство сигналы актуаторов.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -291,6 +291,12 @@
 		</UseTransitSinchroSignal>
 	</Properties>
 	<Favorites>
+		<BackSoma1ExcSynapse1Input>
+			<Path>Back.Soma1.ExcSynapse1.Input</Path>
+		</BackSoma1ExcSynapse1Input>
+		<BackSoma1ExcSynapse1Output>
+			<Path>Back.Soma1.ExcSynapse1.Output</Path>
+		</BackSoma1ExcSynapse1Output>
 		<DelayLeft>
 			<Path>{CompName}:DelayLeft</Path>
 		</DelayLeft>
@@ -306,6 +312,60 @@
 		<Frequency>
 			<Path>{CompName}:Frequency</Path>
 		</Frequency>
+		<IsBackSoma2ExcSynapse1Type>
+			<Path>IsBack.Soma2.ExcSynapse1.Type</Path>
+		</IsBackSoma2ExcSynapse1Type>
+		<IsLeftSoma1InhChannelCoord>
+			<Path>IsLeft.Soma1.InhChannel.Coord</Path>
+		</IsLeftSoma1InhChannelCoord>
+		<IsLeftSoma1InhChannelType>
+			<Path>IsLeft.Soma1.InhChannel.Type</Path>
+		</IsLeftSoma1InhChannelType>
+		<LeftSoma1ExcSynapse1Coord>
+			<Path>Left.Soma1.ExcSynapse1.Coord</Path>
+		</LeftSoma1ExcSynapse1Coord>
+		<LeftSoma1ExcSynapse1Input>
+			<Path>Left.Soma1.ExcSynapse1.Input</Path>
+		</LeftSoma1ExcSynapse1Input>
+		<LeftSoma1ExcSynapse1Output>
+			<Path>Left.Soma1.ExcSynapse1.Output</Path>
+		</LeftSoma1ExcSynapse1Output>
+		<RightSoma1ExcChannelCoord>
+			<Path>Right.Soma1.ExcChannel.Coord</Path>
+		</RightSoma1ExcChannelCoord>
+		<RightSoma1ExcSynapse1Type>
+			<Path>Right.Soma1.ExcSynapse1.Type</Path>
+		</RightSoma1ExcSynapse1Type>
+		<RightSoma1InhChannelCoord>
+			<Path>Right.Soma1.InhChannel.Coord</Path>
+		</RightSoma1InhChannelCoord>
+		<RightSoma1InhChannelOutput>
+			<Path>Right.Soma1.InhChannel.Output</Path>
+		</RightSoma1InhChannelOutput>
+		<RightSoma1InhChannelType>
+			<Path>Right.Soma1.InhChannel.Type</Path>
+		</RightSoma1InhChannelType>
+		<RightSoma1InhSynapse1Input>
+			<Path>Right.Soma1.InhSynapse1.Input</Path>
+		</RightSoma1InhSynapse1Input>
+		<RightSoma1InhSynapse1Type>
+			<Path>Right.Soma1.InhSynapse1.Type</Path>
+		</RightSoma1InhSynapse1Type>
+		<StaySoma1ExcChannelCoord>
+			<Path>Stay.Soma1.ExcChannel.Coord</Path>
+		</StaySoma1ExcChannelCoord>
+		<StaySoma1ExcChannelType>
+			<Path>Stay.Soma1.ExcChannel.Type</Path>
+		</StaySoma1ExcChannelType>
+		<StaySoma1ExcSynapse1Coord>
+			<Path>Stay.Soma1.ExcSynapse1.Coord</Path>
+		</StaySoma1ExcSynapse1Coord>
+		<StaySoma1InhChannelCoord>
+			<Path>Stay.Soma1.InhChannel.Coord</Path>
+		</StaySoma1InhChannelCoord>
+		<StaySoma1InhChannelOutput>
+			<Path>Stay.Soma1.InhChannel.Output</Path>
+		</StaySoma1InhChannelOutput>
 		<UseTransitEngineSignal>
 			<Path>{CompName}:UseTransitEngineSignal</Path>
 		</UseTransitEngineSignal>

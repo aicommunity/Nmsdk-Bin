@@ -1,12 +1,12 @@
 <ClassDescription>
-	<ClassName>NSignumSeparator</ClassName>
-	<Header>разделитель по знаку</Header>
-	<Description>компонент для разделения входного сигнала по знаку с применением усиления.</Description>
+	<ClassName>NNegSignumSeparator</ClassName>
+	<Header>разделитель отрицательной части сигнала</Header>
+	<Description>вариант конфигурации `NSignumSeparator` для выделения отрицательной составляющей сигнала.</Description>
 	<Properties>
 		<Activity>
-			<Header>Активность</Header>
-			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Activity</Header>
+			<Description>Activity — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -15,9 +15,9 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<CalculationDurationThreshold>
-			<Header>Порог времени расчёта</Header>
-			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Calculation duration threshold</Header>
+			<Description>Calculation duration threshold — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -26,9 +26,9 @@
 			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
 		<Coord>
-			<Header>Координаты в редакторе</Header>
-			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Coord</Header>
+			<Description>Coord — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -37,9 +37,9 @@
 			<PropertyType>257</PropertyType>
 		</Coord>
 		<DebugSysEventsMask>
-			<Header>Маска системных событий</Header>
-			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Debug sys events mask</Header>
+			<Description>Debug sys events mask — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -48,9 +48,9 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<Gain>
-			<Header>Коэффициент усиления</Header>
-			<Description>Масштабирует входной сигнал при преобразовании в выход компонента.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Gain</Header>
+			<Description>Gain — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -60,7 +60,7 @@
 		</Gain>
 		<Id>
 			<Header>Идентификатор</Header>
-			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Description>Идентификатор — свойство разделитель отрицательной части сигнала.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -70,9 +70,9 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<Input>
-			<Header>Вход</Header>
-			<Description>Матрица или bitmap, который поступает на обработку.</Description>
-			<Type>| ptPubInput | | ptPubState |</Type>
+			<Header>Input</Header>
+			<Description>Input — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -81,9 +81,9 @@
 			<PropertyType>266</PropertyType>
 		</Input>
 		<MaxCalculationDuration>
-			<Header>Макс. длительность расчёта</Header>
-			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Max calculation duration</Header>
+			<Description>Max calculation duration — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -92,8 +92,8 @@
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
 		<Name>
-			<Header>Имя компонента</Header>
-			<Description>Отображаемое имя узла в проекте.</Description>
+			<Header>Имя</Header>
+			<Description>Имя — свойство разделитель отрицательной части сигнала.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -103,9 +103,9 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<Output>
-			<Header>Выход</Header>
-			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Header>Output</Header>
+			<Description>Output — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -115,8 +115,8 @@
 		</Output>
 		<Sign>
 			<Header>Sign</Header>
-			<Description>Sign — свойство разделитель по знаку.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Sign — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -125,9 +125,9 @@
 			<PropertyType>257</PropertyType>
 		</Sign>
 		<StepDuration>
-			<Header>Время шага</Header>
-			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState |</Type>
+			<Header>Step duration</Header>
+			<Description>Step duration — свойство разделитель отрицательной части сигнала.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -136,8 +136,8 @@
 			<PropertyType>770</PropertyType>
 		</StepDuration>
 		<TimeStep>
-			<Header>Временной шаг</Header>
-			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Header>Time step</Header>
+			<Description>Time step — свойство разделитель отрицательной части сигнала.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">

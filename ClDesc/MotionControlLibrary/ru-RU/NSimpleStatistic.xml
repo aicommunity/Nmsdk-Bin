@@ -1,12 +1,12 @@
 <ClassDescription>
-	<ClassName>NPulseReceiver</ClassName>
-	<Header>приемник импульсов</Header>
-	<Description>приемник для накопления и обработки импульсных сигналов от нескольких источников.</Description>
+	<ClassName>NSimpleStatistic</ClassName>
+	<Header>простая статистика</Header>
+	<Description>компонент для сбора и записи статистики по входным данным в файл.</Description>
 	<Properties>
 		<Activity>
-			<Header>Активность</Header>
-			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Activity</Header>
+			<Description>Activity — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -15,9 +15,9 @@
 			<PropertyType>257</PropertyType>
 		</Activity>
 		<CalculationDurationThreshold>
-			<Header>Порог времени расчёта</Header>
-			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Calculation duration threshold</Header>
+			<Description>Calculation duration threshold — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -26,9 +26,9 @@
 			<PropertyType>257</PropertyType>
 		</CalculationDurationThreshold>
 		<Coord>
-			<Header>Координаты в редакторе</Header>
-			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Coord</Header>
+			<Description>Coord — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -37,9 +37,9 @@
 			<PropertyType>257</PropertyType>
 		</Coord>
 		<DebugSysEventsMask>
-			<Header>Маска системных событий</Header>
-			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Debug sys events mask</Header>
+			<Description>Debug sys events mask — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -47,9 +47,20 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
+		<Headers>
+			<Header>Headers</Header>
+			<Description>Headers — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Headers>
 		<Id>
 			<Header>Идентификатор</Header>
-			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Description>Идентификатор — свойство простая статистика.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -59,9 +70,9 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<Inputs>
-			<Header>Входные сигналы</Header>
-			<Description>Набор входных сигналов или каналов, подаваемых на компонент.</Description>
-			<Type>| ptPubInput | | ptPubState |</Type>
+			<Header>Inputs</Header>
+			<Description>Inputs — свойство простая статистика.</Description>
+			<Type>| ptPubInput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -69,21 +80,10 @@
 			</ValueList>
 			<PropertyType>266</PropertyType>
 		</Inputs>
-		<MaxAccumulationRange>
-			<Header>Max accumulation range</Header>
-			<Description>Max accumulation range — свойство приемник импульсов.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MaxAccumulationRange>
 		<MaxCalculationDuration>
-			<Header>Макс. длительность расчёта</Header>
-			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Header>Max calculation duration</Header>
+			<Description>Max calculation duration — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -91,9 +91,20 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
+		<Mode>
+			<Header>Mode</Header>
+			<Description>Mode — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Mode>
 		<Name>
-			<Header>Имя компонента</Header>
-			<Description>Отображаемое имя узла в проекте.</Description>
+			<Header>Имя</Header>
+			<Description>Имя — свойство простая статистика.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -103,9 +114,9 @@
 			<PropertyType>513</PropertyType>
 		</Name>
 		<Output>
-			<Header>Выход</Header>
-			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
-			<Type>| ptPubOutput | | ptPubState |</Type>
+			<Header>Output</Header>
+			<Description>Output — свойство простая статистика.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -113,10 +124,21 @@
 			</ValueList>
 			<PropertyType>274</PropertyType>
 		</Output>
+		<StatsInterval>
+			<Header>Stats interval</Header>
+			<Description>Stats interval — свойство простая статистика.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</StatsInterval>
 		<StepDuration>
-			<Header>Время шага</Header>
-			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState |</Type>
+			<Header>Step duration</Header>
+			<Description>Step duration — свойство простая статистика.</Description>
+			<Type>| ptPubState | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -125,8 +147,8 @@
 			<PropertyType>770</PropertyType>
 		</StepDuration>
 		<TimeStep>
-			<Header>Временной шаг</Header>
-			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Header>Time step</Header>
+			<Description>Time step — свойство простая статистика.</Description>
 			<Type></Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
