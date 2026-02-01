@@ -153,8 +153,8 @@ flowchart TD
 ### Связанные материалы
 
 - Теория и функциональное описание:
-  - [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](../../Docs/SpikeSamples/StructuralAdaptation.md) — метод структурной адаптации
-  - [`Bin/Docs/SpikeSamples/Classification.md`](../../Docs/SpikeSamples/Classification.md) — применение для задач классификации
+  - [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](../../../../Docs/SpikeSamples/StructuralAdaptation.md) — метод структурной адаптации
+  - [`Bin/Docs/SpikeSamples/Classification.md`](../../../../Docs/SpikeSamples/Classification.md) — применение для задач классификации
 - Компонентная документация:
   - `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTrainer.md` — документация компонента NNeuronTrainer
 - Связанные конфигурации:

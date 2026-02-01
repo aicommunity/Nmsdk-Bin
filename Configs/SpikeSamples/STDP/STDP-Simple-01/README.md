@@ -96,7 +96,7 @@ flowchart TD
 - Описание конфигурации:
   - `Description.rtf` — подробное описание конфигурации (в формате RTF)
 - Теория и функциональное описание:
-  - [`Bin/Docs/SpikeSamples/ImpulseProcessingModel.md`](../../../Docs/SpikeSamples/ImpulseProcessingModel.md) — модель преобразования импульсных потоков
+  - [`Bin/Docs/SpikeSamples/ImpulseProcessingModel.md`](../../../../Docs/SpikeSamples/ImpulseProcessingModel.md) — модель преобразования импульсных потоков
 
 ### Примечания
 

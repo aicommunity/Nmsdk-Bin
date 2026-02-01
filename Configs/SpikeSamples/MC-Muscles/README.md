@@ -149,8 +149,8 @@ flowchart LR
 ### Связанные материалы
 
 - Теория и функциональное описание:
-  - [`Bin/Docs/SpikeSamples/MuscleControlStructures.md`](../../Docs/SpikeSamples/MuscleControlStructures.md) — нейронные структуры управления мышечным сокращением
-  - [`Bin/Docs/SpikeSamples/NeuronReactions.md`](../../Docs/SpikeSamples/NeuronReactions.md) — реакции одиночных нейронов
+  - [`Bin/Docs/SpikeSamples/MuscleControlStructures.md`](../../../Docs/SpikeSamples/MuscleControlStructures.md) — нейронные структуры управления мышечным сокращением
+  - [`Bin/Docs/SpikeSamples/NeuronReactions.md`](../../../Docs/SpikeSamples/NeuronReactions.md) — реакции одиночных нейронов
 - Описание конфигураций:
   - `MC-M-00-EyeMuscle/Description.rtf` — подробное описание базовой конфигурации (в формате RTF)
   - `MC-M-01-EyeMuscle/Description.rtf` — подробное описание расширенной конфигурации (в формате RTF)

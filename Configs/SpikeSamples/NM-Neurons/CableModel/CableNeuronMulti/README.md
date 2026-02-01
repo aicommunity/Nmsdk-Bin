@@ -176,8 +176,8 @@ flowchart TD
 ### Связанные материалы
 
 - Теория и функциональное описание:
-  - [`Bin/Docs/SpikeSamples/CSNM-Models.md`](../../../../Docs/SpikeSamples/CSNM-Models.md) — детальное описание CSNM моделей и кабельной теории
-  - [`Bin/Docs/SpikeSamples/NeuronReactions.md`](../../../../Docs/SpikeSamples/NeuronReactions.md) — реакции одиночных нейронов
+  - [`Bin/Docs/SpikeSamples/CSNM-Models.md`](../../../../../Docs/SpikeSamples/CSNM-Models.md) — детальное описание CSNM моделей и кабельной теории
+  - [`Bin/Docs/SpikeSamples/NeuronReactions.md`](../../../../../Docs/SpikeSamples/NeuronReactions.md) — реакции одиночных нейронов
 - Компонентная документация:
   - `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseNeuronCableMulti.md` — документация компонента NPulseNeuronCableMulti
   - `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseChannelCable.md` — документация компонента NPulseChannelCable

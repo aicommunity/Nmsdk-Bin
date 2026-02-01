@@ -124,7 +124,7 @@ flowchart TD
 
 ### Связанные материалы
 
-- [`Bin/Docs/SpikeSamples/CSNM-Models.md`](../../../../Docs/SpikeSamples/CSNM-Models.md) — детальное описание CSNM моделей
+- [`Bin/Docs/SpikeSamples/CSNM-Models.md`](../../../../../Docs/SpikeSamples/CSNM-Models.md) — детальное описание CSNM моделей
 - [`CableNeuronMulti_CSNM/README.md`](../CableNeuronMulti_CSNM/README.md) — базовая CSNM модель
 - [`CableNeuronMulti_CSNM_Nd/README.md`](../CableNeuronMulti_CSNM_Nd/README.md) — CSNM с различным количеством дендритов
 
