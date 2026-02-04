@@ -1,27 +1,28 @@
 @echo off
-REM Скрипт для развёртывания Qt DLL из vcpkg в Bin/Platform/Win
-REM Использование: deploy_qt.bat <путь_к_vcpkg_installed>
+REM Скрипт для развёртывания всех DLL из vcpkg в Bin/Platform/Win
+REM Использование: deploy_all_dlls.bat [vcpkg_installed_path]
+REM Если путь не указан, используется build\win-msvc-debug\vcpkg_installed
 
 setlocal enabledelayedexpansion
 
 if "%1"=="" (
-    echo ERROR: Usage: deploy_qt.bat ^<vcpkg_installed_path^>
-    echo Example: deploy_qt.bat E:\Science-Repo\nmsdk-git\build\win-msvc-debug\vcpkg_installed
-    exit /b 1
+    set "VCPKG_INSTALLED=%~dp0..\..\..\..\build\win-msvc-debug\vcpkg_installed"
+) else (
+    set "VCPKG_INSTALLED=%~1"
 )
 
-set "VCPKG_INSTALLED=%1"
 set "VCPKG_BIN=%VCPKG_INSTALLED%\x64-windows\bin"
 set "VCPKG_DEBUG_BIN=%VCPKG_INSTALLED%\x64-windows\debug\bin"
 set "TARGET_DIR=%~dp0..\.."
 
 if not exist "%VCPKG_BIN%" (
     echo ERROR: vcpkg bin directory not found: %VCPKG_BIN%
+    echo Usage: deploy_all_dlls.bat [vcpkg_installed_path]
     exit /b 1
 )
 
 echo ========================================
-echo Deploying Qt DLLs from vcpkg
+echo Deploying all DLLs from vcpkg
 echo ========================================
 echo Source (release): %VCPKG_BIN%
 if exist "%VCPKG_DEBUG_BIN%" (
@@ -33,7 +34,7 @@ echo.
 
 REM Копируем все release DLL
 echo Copying release DLLs...
-robocopy "%VCPKG_BIN%" "%TARGET_DIR%" *.dll /NP /NFL /NDL /NJH /NJS
+robocopy "%VCPKG_BIN%" "%TARGET_DIR%" *.dll /NP /NFL /NDL /NJH /NJS /R:3 /W:1
 if errorlevel 8 (
     echo ERROR: robocopy failed
     exit /b 1
@@ -43,7 +44,7 @@ REM Копируем debug DLL, если они существуют
 if exist "%VCPKG_DEBUG_BIN%" (
     echo.
     echo Copying debug DLLs...
-    robocopy "%VCPKG_DEBUG_BIN%" "%TARGET_DIR%" *.dll /NP /NFL /NDL /NJH /NJS
+    robocopy "%VCPKG_DEBUG_BIN%" "%TARGET_DIR%" *.dll /NP /NFL /NDL /NJH /NJS /R:3 /W:1
     if errorlevel 8 (
         echo ERROR: robocopy failed for debug DLLs
         exit /b 1
@@ -78,7 +79,7 @@ if exist "%VCPKG_TOOLS_BIN%\QtWebEngineProcessd.exe" (
 REM Копируем Qt WebEngine DLL
 if exist "%VCPKG_BIN%\Qt5WebEngine*.dll" (
     echo Copying Qt WebEngine DLLs...
-    robocopy "%VCPKG_BIN%" "%TARGET_DIR%" Qt5WebEngine*.dll /NP /NFL /NDL /NJH /NJS
+    robocopy "%VCPKG_BIN%" "%TARGET_DIR%" Qt5WebEngine*.dll /NP /NFL /NDL /NJH /NJS /R:3 /W:1
 )
 
 REM Копируем ресурсы WebEngine, если они есть
@@ -101,5 +102,12 @@ echo ========================================
 echo Deployment completed successfully
 echo ========================================
 echo.
+
+REM Проверяем наличие Qt5QuickWidgetsd.dll
+if not exist "%TARGET_DIR%\Qt5QuickWidgetsd.dll" (
+    echo WARNING: Qt5QuickWidgetsd.dll not found in vcpkg_installed
+    echo This may be normal if debug DLLs are not installed in vcpkg
+    echo.
+)
 
 endlocal
