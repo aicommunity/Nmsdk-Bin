@@ -11,6 +11,8 @@
 | [05-ArduinoDcDemo](05-ArduinoDcDemo/) | `ArduinoDcDemo` + `ArduinoSensorSketch` | sensor_lab_v1 |
 | [06-ArduinoSensorSketch-Proto2](06-ArduinoSensorSketch-Proto2/) | `ArduinoSensorSketch` (v2) | sensor_lab_v1 |
 
-Перед тестом задайте `PortName` и следуйте [чеклисту](../../../../Libraries/Rdk-HardwareLib/Firmware/README.md).
+Перед тестом задайте `PortName` (57600) и следуйте [чеклисту](../../../../Libraries/Rdk-HardwareLib/Firmware/README.md).
+
+Документация компонентов: [Rdk-HardwareLib/Docs/README.md](../../../../Libraries/Rdk-HardwareLib/Docs/README.md).
 
 Генерация: `Scripts/generate_arduino_hardware_configs.py`
