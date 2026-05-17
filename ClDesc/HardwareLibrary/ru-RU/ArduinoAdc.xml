@@ -2,6 +2,66 @@
 	<ClassName>ArduinoAdc</ClassName>
 	<Header>ADC через Firmata</Header>
 	<Description>Компонент `UArduinoAdc`: чтение аналогового пина через связанный `ArduinoFirmata`.</Description>
-	<Properties/>
+	<Properties>
+		<ReadAdcFlag>
+			<Header>Read ADC</Header>
+			<Description>Edge: чтение через связанный Firmata.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ReadAdcFlag>
+
+		<AdcReadOk>
+			<Header>ADC read OK</Header>
+			<Description>State: Firmata готов и значение прочитано.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</AdcReadOk>
+
+		<LinkedFirmataName>
+			<Header>Linked Firmata</Header>
+			<Description>Имя узла `ArduinoFirmata` на canvas.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LinkedFirmataName>
+
+		<AnalogPin>
+			<Header>Analog pin</Header>
+			<Description>Номер аналогового пина Firmata.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AnalogPin>
+
+		<AdcValue>
+			<Header>ADC value</Header>
+			<Description>State: 0–1023.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</AdcValue>
+	</Properties>
 	<Favorites/>
 </ClassDescription>

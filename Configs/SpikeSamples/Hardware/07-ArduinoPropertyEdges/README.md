@@ -1,10 +1,10 @@
-# Hardware test: ArduinoDcDemo
+# Hardware test: Arduino property edges
 
-**Путь:** `Bin/Configs/SpikeSamples/Hardware/05-ArduinoDcDemo`
+**Путь:** `Bin/Configs/SpikeSamples/Hardware/07-ArduinoPropertyEdges`
 
 ## Назначение
 
-Проверка `ArduinoDcDemo`: один узел CustomLink + DC (sensor_lab_v1), edge Connect/SendCommand/GetSpeed.
+Ручная проверка edge-свойств Board без отдельного железа (порт можно оставить пустым).
 
 ## Перед запуском
 
@@ -15,7 +15,7 @@
 
 ## Компоненты
 
-- `DcDemo` (`ArduinoDcDemo`) — порт, прошивка, команды DC без LinkedSketchName.
+- `Board` (`ArduinoBoard`) — примеры `<Connect>1</Connect>`, `<UploadFirmware>1</UploadFirmware>`.
 
 ## Проверка
 

@@ -2,6 +2,174 @@
 	<ClassName>ArduinoSensorSketch</ClassName>
 	<Header>Arduino Sensor Lab (DHT/Hall/Servo)</Header>
 	<Description>Компонент `UArduinoSensorSketch`: кастомная прошивка sensor_lab, команды и матрица показаний.</Description>
-	<Properties/>
+	<Properties>
+		<SendCommand>
+			<Header>Send command</Header>
+			<Description>Edge: отправить `Command` на устройство.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</SendCommand>
+
+		<RequestGetStatus>
+			<Header>Request GET STATUS</Header>
+			<Description>Edge: запрос статуса.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</RequestGetStatus>
+
+		<RequestProtocolNegotiate>
+			<Header>Negotiate protocol</Header>
+			<Description>Edge: сброс и `PROTO n`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</RequestProtocolNegotiate>
+
+		<StartReading>
+			<Header>Start reading</Header>
+			<Description>Edge: команда `START READING`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</StartReading>
+
+		<StopReading>
+			<Header>Stop reading</Header>
+			<Description>Edge: команда `STOP READING`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</StopReading>
+
+		<Rotate>
+			<Header>Rotate</Header>
+			<Description>Edge: команда `ROTATE`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Rotate>
+
+		<StopRotate>
+			<Header>Stop rotate</Header>
+			<Description>Edge: команда `STOP ROTATE`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</StopRotate>
+
+		<GetDataFromBuffers>
+			<Header>Get data from buffers</Header>
+			<Description>Edge: записать RX в `DoubleMatrixReadings`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</GetDataFromBuffers>
+
+		<GetPinsInfo>
+			<Header>Get pins info</Header>
+			<Description>Edge: `GET STATUS` → `PinStatusJson`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</GetPinsInfo>
+
+		<IsProtocolReady>
+			<Header>Protocol ready</Header>
+			<Description>State: протокол согласован.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsProtocolReady>
+
+		<HasPendingCommands>
+			<Header>Pending commands</Header>
+			<Description>State: очередь/TX не пусты.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HasPendingCommands>
+
+		<LastSentCommand>
+			<Header>Last sent command</Header>
+			<Description>State: последняя отправленная строка.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastSentCommand>
+
+		<Command>
+			<Header>Command</Header>
+			<Description>Текстовая команда для прошивки.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Command>
+
+		<ProtocolVersion>
+			<Header>Protocol version</Header>
+			<Description>1=legacy, 2=framed CRC.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ProtocolVersion>
+	</Properties>
 	<Favorites/>
 </ClassDescription>

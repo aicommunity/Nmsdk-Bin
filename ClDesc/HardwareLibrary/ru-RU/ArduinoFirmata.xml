@@ -2,6 +2,78 @@
 	<ClassName>ArduinoFirmata</ClassName>
 	<Header>Arduino Firmata</Header>
 	<Description>Компонент `UArduinoFirmata`: StandardFirmata, digital/analog pin control.</Description>
-	<Properties/>
+	<Properties>
+		<RestartFirmata>
+			<Header>Restart Firmata</Header>
+			<Description>Edge: сброс handshake.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</RestartFirmata>
+
+		<ApplyPinConfig>
+			<Header>Apply pin config</Header>
+			<Description>Edge: применить pin mode / IO.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ApplyPinConfig>
+
+		<IsFirmataReady>
+			<Header>Firmata ready</Header>
+			<Description>State: handshake завершён.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsFirmataReady>
+
+		<IsLinkReady>
+			<Header>Link ready</Header>
+			<Description>State: connected ∧ Firmata ready.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsLinkReady>
+
+		<ReportAnalogEnable>
+			<Header>Report analog</Header>
+			<Description>Включить analog report для `SelectedPin`.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ReportAnalogEnable>
+
+		<SelectedPin>
+			<Header>Selected pin</Header>
+			<Description>Номер пина Firmata.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SelectedPin>
+	</Properties>
 	<Favorites/>
 </ClassDescription>

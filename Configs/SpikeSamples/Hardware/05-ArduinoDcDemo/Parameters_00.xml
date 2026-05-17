@@ -14,10 +14,10 @@
 			<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
 			</Parameters>
 		<Components>
-			<SensorSketch Class="ArduinoSensorSketch">
+			<DcDemo Class="ArduinoDcDemo">
 				<Parameters>
 					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">8 8 0</Coord>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">8 12 0</Coord>
 					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
 					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
 					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">2147483647</DebugSysEventsMask>
@@ -26,6 +26,11 @@
 					<BoardProfile Type="int" PType="257" IoType="17">0</BoardProfile>
 					<AutoReconnect Type="bool" PType="257" IoType="17">0</AutoReconnect>
 					<ConnectOnBuild Type="bool" PType="257" IoType="17">0</ConnectOnBuild>
+					<Connect Type="bool" PType="257" IoType="17">0</Connect>
+					<Disconnect Type="bool" PType="257" IoType="17">0</Disconnect>
+					<Reconnect Type="bool" PType="257" IoType="17">0</Reconnect>
+					<UploadFirmware Type="bool" PType="257" IoType="17">0</UploadFirmware>
+					<ClearLastError Type="bool" PType="257" IoType="17">0</ClearLastError>
 					<HeartbeatEnabled Type="bool" PType="257" IoType="17">1</HeartbeatEnabled>
 					<HeartbeatIntervalMs Type="int" PType="257" IoType="17">3000</HeartbeatIntervalMs>
 					<HeartbeatTimeoutMs Type="int" PType="257" IoType="17">10000</HeartbeatTimeoutMs>
@@ -35,48 +40,33 @@
 					<ConnectionState Type="int" PType="258" IoType="17">0</ConnectionState>
 					<LastError Type="std::string" PType="258" IoType="17"></LastError>
 					<LastActivityMs Type="double" PType="258" IoType="17">0</LastActivityMs>
+					<IsConnected Type="bool" PType="258" IoType="17">0</IsConnected>
+					<IsOpening Type="bool" PType="258" IoType="17">0</IsOpening>
+					<HasError Type="bool" PType="258" IoType="17">0</HasError>
+					<IsDisconnected Type="bool" PType="258" IoType="17">1</IsDisconnected>
+					<IsUploading Type="bool" PType="258" IoType="17">0</IsUploading>
+					<UploadComplete Type="bool" PType="258" IoType="17">0</UploadComplete>
 					<MissedHeartbeats Type="int" PType="258" IoType="17">0</MissedHeartbeats>
 					<RequestHealthCheck Type="bool" PType="258" IoType="17">0</RequestHealthCheck>
 					<UploadFirmwareFlag Type="bool" PType="258" IoType="17">0</UploadFirmwareFlag>
 					<UploadProgress Type="int" PType="258" IoType="17">0</UploadProgress>
 					<UploadLastResult Type="std::string" PType="258" IoType="17"></UploadLastResult>
 					<Command Type="std::string" PType="257" IoType="17"></Command>
+					<SendCommand Type="bool" PType="257" IoType="17">0</SendCommand>
+					<RequestGetStatus Type="bool" PType="257" IoType="17">0</RequestGetStatus>
+					<RequestProtocolNegotiate Type="bool" PType="257" IoType="17">0</RequestProtocolNegotiate>
 					<ProtocolVersion Type="int" PType="257" IoType="17">1</ProtocolVersion>
-					<LowerSensorLimit Type="double" PType="257" IoType="17">-100</LowerSensorLimit>
-					<UpperSensorLimit Type="double" PType="257" IoType="17">100</UpperSensorLimit>
-					<MatrixCols Type="int" PType="257" IoType="17">100</MatrixCols>
-					<GetDataFromBuffers Type="bool" PType="258" IoType="17">0</GetDataFromBuffers>
-					<GetPinsInfo Type="bool" PType="258" IoType="17">0</GetPinsInfo>
 					<SendCommandFlag Type="bool" PType="258" IoType="17">0</SendCommandFlag>
 					<SentCommand Type="std::string" PType="258" IoType="17"></SentCommand>
 					<InputCommand Type="std::string" PType="258" IoType="17"></InputCommand>
 					<RxFrameCount Type="int" PType="258" IoType="17">0</RxFrameCount>
 					<TxCommandCount Type="int" PType="258" IoType="17">0</TxCommandCount>
-					<DoubleMatrixReadings Type="MDMatrix&lt;double&gt;" Rows="4" Cols="100" PType="258" IoType="17">
-</DoubleMatrixReadings>
-					<PinStatusJson Type="std::string" PType="258" IoType="17"></PinStatusJson>
-				</Parameters>
-				<Components/>
-			</SensorSketch>
-			<DcDemo Class="ArduinoDcDemo">
-				<Parameters>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">8 12 0</Coord>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">2147483647</DebugSysEventsMask>
-					<Activity Type="bool" PType="257" IoType="17">1</Activity>
-					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">8 12 0</Coord>
-					<MaxCalculationDuration Type="__int64" PType="257" IoType="17">-1</MaxCalculationDuration>
-					<CalculationDurationThreshold Type="__int64" PType="257" IoType="17">-1</CalculationDurationThreshold>
-					<DebugSysEventsMask Type="unsigned int" PType="769" IoType="17">2147483647</DebugSysEventsMask>
-					<LinkedSketchName Type="std::string" PType="257" IoType="17">SensorSketch</LinkedSketchName>
-					<Command Type="std::string" PType="257" IoType="17"></Command>
-					<SendCommandFlag Type="bool" PType="258" IoType="17">0</SendCommandFlag>
-					<SentCommand Type="std::string" PType="258" IoType="17"></SentCommand>
+					<IsProtocolReady Type="bool" PType="258" IoType="17">0</IsProtocolReady>
+					<HasPendingCommands Type="bool" PType="258" IoType="17">0</HasPendingCommands>
+					<LastSentCommand Type="std::string" PType="258" IoType="17"></LastSentCommand>
 					<Speed Type="float" PType="258" IoType="17">0</Speed>
 					<Acceleration Type="float" PType="258" IoType="17">0</Acceleration>
-					<GetSpeed Type="bool" PType="258" IoType="17">0</GetSpeed>
+					<GetSpeed Type="bool" PType="257" IoType="17">0</GetSpeed>
 				</Parameters>
 				<Components/>
 			</DcDemo>
