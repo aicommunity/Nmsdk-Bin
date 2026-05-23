@@ -11,6 +11,7 @@
 | [05-ArduinoDcDemo](05-ArduinoDcDemo/) | `ArduinoDcDemo` (single node) | sensor_lab_v1 |
 | [06-ArduinoSensorSketch-Proto2](06-ArduinoSensorSketch-Proto2/) | `ArduinoSensorSketch` (v2) | sensor_lab_v1 |
 | [07-ArduinoPropertyEdges](07-ArduinoPropertyEdges/) | `ArduinoBoard` (edge API) | sensor_lab_v1 |
+| [08-ArduinoFirmata-AnalogLink](08-ArduinoFirmata-AnalogLink/) | `ArduinoFirmata` + `ArduinoAdc` (AnalogSamples) | standard_firmata |
 
 Перед тестом задайте `PortName` и следуйте [чеклисту](../../../../Libraries/Rdk-HardwareLib/Firmware/README.md).
 
