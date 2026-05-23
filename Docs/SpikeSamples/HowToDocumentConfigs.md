@@ -179,7 +179,7 @@ flowchart TD
 #### Обновление статуса
 
 При изменении статуса валидации необходимо обновить `README.md`:
-1. Запустить скрипт валидации: `scripts/generate_detailed_validation_report.py --subdir SpikeSamples`
+1. Запустить скрипт валидации: `Scripts/generate_detailed_validation_report.py --subdir SpikeSamples`
 2. Проверить статус в отчёте
 3. Обновить статус в `README.md`
 

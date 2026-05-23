@@ -75,7 +75,7 @@
 ### Связь с валидацией конфигураций
 
 Для всех конфигураций SpikeSamples поддерживается автоматическая валидация через
-`scripts/generate_detailed_validation_report.py --subdir SpikeSamples`.
+`Scripts/generate_detailed_validation_report.py --subdir SpikeSamples`.
 Итоги собраны в отчёте `Reports/SpikeSamples-Validation-Report.md`:
 
 - большинство конфигураций имеют статус **VALID**;
@@ -157,7 +157,7 @@
 
 ### Статус валидации SpikeSamples
 
-Отдельный отчет по валидации конфигураций `SpikeSamples` формируется скриптом `scripts/generate_detailed_validation_report.py` и сохраняется в `Reports/SpikeSamples-Validation-Report.md`.
+Отдельный отчет по валидации конфигураций `SpikeSamples` формируется скриптом `Scripts/generate_detailed_validation_report.py` и сохраняется в `Reports/SpikeSamples-Validation-Report.md`.
 
 Краткая сводка (из последнего отчета):
 
