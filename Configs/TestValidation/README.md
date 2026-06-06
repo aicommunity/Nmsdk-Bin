@@ -16,6 +16,10 @@
 | `test_invalid_classes/` | Неизвестные классы компонентов |
 | `test_invalid_links/` | Некорректные связи |
 
+### Runtime-артефакты
+
+`History.xml` в каталогах фикстур создаётся при прогоне тестов и **не коммитится** (см. `.gitignore`).
+
 ### См. также
 
 - [Tests/Integration/ConfigValidation/README.md](../../../Tests/Integration/ConfigValidation/README.md)
