@@ -8,20 +8,20 @@
 Основные тематические блоки:
 
 - **Реакции одиночных нейронов**: зависимость паттернов разрядов от структуры мембраны, размера сомы и параметров модели
-  (см. также [`Bin/Docs/SpikeSamples/NeuronReactions.md`](NeuronReactions.md)).
+  (см. также [`NeuronReactions.md`](NeuronReactions.md)).
 - **Модель преобразования импульсных потоков**: спайковая передача, синапсы, ионные механизмы, пресинаптическое торможение
-  (см. [`Bin/Docs/SpikeSamples/ImpulseProcessingModel.md`](ImpulseProcessingModel.md)).
+  (см. [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md)).
 - **Структуры управления движением и мышечным сокращением**: мотонейроны, клетки Реншоу, афферентные входы, простейшие моторные контуры
-  (см. [`Bin/Docs/SpikeSamples/MuscleControlStructures.md`](MuscleControlStructures.md)).
+  (см. [`MuscleControlStructures.md`](MuscleControlStructures.md)).
 - **Кабельные и компартментные нейроны**: многокомпартментные модели, сегментные нейроны, CSNM‑подход с кабельным уравнением
-  (см. также [`Bin/Docs/SpikeSamples/CSNM-Models.md`](SpikeSamples/CSNM-Models.md)).
+  (см. также [`CSNM-Models.md`](CSNM-Models.md)).
 - **Память и обучение**: простейшие ассоциативные и условнорефлекторные схемы, STDP, структурное обучение.
 - **Структурная адаптация**: автоматический подбор структуры нейрона (размер сомы, длина дендритов, количество синапсов) для распознавания паттернов
-  (см. [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](SpikeSamples/StructuralAdaptation.md)).
+  (см. [`StructuralAdaptation.md`](StructuralAdaptation.md)).
 - **Инкрементальное обучение**: обучение на новых образцах без переобучения на всех данных
-  (см. [`Bin/Docs/SpikeSamples/IncrementalLearning.md`](SpikeSamples/IncrementalLearning.md)).
+  (см. [`IncrementalLearning.md`](IncrementalLearning.md)).
 - **Классификация**: применение сегментной спайковой модели для задач классификации с временным кодированием
-  (см. [`Bin/Docs/SpikeSamples/Classification.md`](SpikeSamples/Classification.md)).
+  (см. [`Classification.md`](Classification.md)).
 
 ### Краткая карта конфигураций SpikeSamples
 
@@ -58,7 +58,7 @@
     — демонстрация правила спайк‑зависимого изменения веса (STDP).
   - `StructTrain/SpikeTrainer`, `StructTrain/SpikeAnsTrainer`, `StructTrain/XOR`
     — структурное обучение (изменение топологии и количества синапсов/каналов) с использованием метода структурной адаптации
-    (см. [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](SpikeSamples/StructuralAdaptation.md)).
+    (см. [`StructuralAdaptation.md`](StructuralAdaptation.md)).
 
 - **Нейронные элементы и рецепторы (`SpikeSamples/NeuralElements/…`)**
   - `NeuralElements/NReceptor`
@@ -130,11 +130,11 @@
   - `SpikeSamples/StructTrain/SpikeTrainer` — базовое структурное обучение
   - `SpikeSamples/StructTrain/SpikeAnsTrainer` — структурное обучение с ответами
   - `SpikeSamples/StructTrain/XOR` — применение для задачи XOR
-  - См. [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](SpikeSamples/StructuralAdaptation.md)
+  - См. [`StructuralAdaptation.md`](StructuralAdaptation.md)
 
 - **Classifier** — классификация с использованием спайковых моделей:
   - `SpikeSamples/Classifier/SpikeIrisClassifier` — классификация цветков ириса с инкрементальным обучением
-  - См. [`Bin/Docs/SpikeSamples/Classification.md`](SpikeSamples/Classification.md), [`Bin/Docs/SpikeSamples/IncrementalLearning.md`](SpikeSamples/IncrementalLearning.md)
+  - См. [`Classification.md`](Classification.md), [`IncrementalLearning.md`](IncrementalLearning.md)
 
 - **MC1-PCN (Motion Control)** — конфигурации для управления движением:
   - `SpikeSamples/MC1-PCN/MotionControl_Test`
@@ -171,13 +171,16 @@
 
 Для более глубокого понимания моделируемых сущностей и экспериментов используются следующие документы:
 
-- `Bin/Docs/SpikeSamples/NeuronReactions.md` — по мотивам работы [1] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=20:2012-07-19-04-53-55&catid=67&lang=ru&Itemid=676)).
-- `Bin/Docs/SpikeSamples/ImpulseProcessingModel.md` — по работе [2] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676)).
-- `Bin/Docs/SpikeSamples/MuscleControlStructures.md` — по работе [3] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)).
-- `Bin/Docs/SpikeSamples/CSNM-Models.md` — компартментная спайковая модель нейрона (CSNM) с кабельным уравнением, пространственные параметры, компоненты кабельной модели.
-- `Bin/Docs/SpikeSamples/StructuralAdaptation.md` — метод структурной адаптации компартментной спайковой модели нейрона, автоматический подбор структуры для распознавания паттернов.
-- `Bin/Docs/SpikeSamples/IncrementalLearning.md` — стратегия инкрементального обучения на компартментной спайковой модели нейрона, обучение на новых образцах без переобучения.
-- `Bin/Docs/SpikeSamples/Classification.md` — применение сегментной спайковой модели нейрона со структурной адаптацией для решения задач классификации, временное кодирование, результаты на Iris и MNIST.
+- [`NeuronReactions.md`](NeuronReactions.md) — по мотивам работы [1] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=20:2012-07-19-04-53-55&catid=67&lang=ru&Itemid=676)).
+- [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — по работе [2] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676)).
+- [`MuscleControlStructures.md`](MuscleControlStructures.md) — по работе [3] ([онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)).
+- [`CSNM-Models.md`](CSNM-Models.md) — компартментная спайковая модель нейрона (CSNM) с кабельным уравнением, пространственные параметры, компоненты кабельной модели.
+- [`StructuralAdaptation.md`](StructuralAdaptation.md) — метод структурной адаптации компартментной спайковой модели нейрона, автоматический подбор структуры для распознавания паттернов.
+- [`IncrementalLearning.md`](IncrementalLearning.md) — стратегия инкрементального обучения на компартментной спайковой модели нейрона, обучение на новых образцах без переобучения.
+- [`Classification.md`](Classification.md) — применение сегментной спайковой модели нейрона со структурной адаптацией для решения задач классификации, временное кодирование, результаты на Iris и MNIST.
+- [`ActivitySwitcher.md`](ActivitySwitcher.md) — блок последовательного переключения активности для запоминания и воспроизведения последовательности ситуаций.
+- [`CognitiveMap.md`](CognitiveMap.md) — алгоритм формирования когнитивной карты и исследования среды роботом.
+- [`HowToDocumentConfigs.md`](HowToDocumentConfigs.md) — рекомендации по оформлению `README.md` для конфигураций SpikeSamples.
 
 Каждый из этих файлов связывает теоретическое описание из статей с конкретными конфигурациями в `SpikeSamples`, указывая:
 

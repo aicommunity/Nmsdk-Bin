@@ -84,7 +84,7 @@ sequenceDiagram
 
 - [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - детальная информация о работе с конфигурациями через классы Rdk (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - обзор конфигураций
-- [Component System](../../Rdk/Docs/Guides/Component-System.md) - компонентная система
+- [Component System](../../Docs/Components-And-Configuration/Component-System.md) - компонентная система
 
 ---
 

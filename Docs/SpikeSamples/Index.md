@@ -1,5 +1,20 @@
 ## Индекс документации SpikeSamples
 
+### Все тематические документы
+
+- [`ActivitySwitcher.md`](ActivitySwitcher.md) — блок последовательного переключения активности
+- [`Classification.md`](Classification.md) — классификация с временным кодированием
+- [`CognitiveMap.md`](CognitiveMap.md) — алгоритм формирования когнитивной карты
+- [`CSNM-Models.md`](CSNM-Models.md) — компартментная спайковая модель нейрона (CSNM)
+- [`HowToDocumentConfigs.md`](HowToDocumentConfigs.md) — рекомендации по оформлению README конфигураций
+- [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — модель преобразования импульсных потоков
+- [`IncrementalLearning.md`](IncrementalLearning.md) — инкрементальное обучение
+- [`MuscleControlStructures.md`](MuscleControlStructures.md) — структуры управления мышечным сокращением
+- [`NeuronReactions.md`](NeuronReactions.md) — реакции одиночных нейронов
+- [`StructuralAdaptation.md`](StructuralAdaptation.md) — структурная адаптация нейрона
+
+Навигационные документы: [`Overview.md`](Overview.md), [`Index.md`](Index.md).
+
 ### Тематические разделы
 
 - **Реакции одиночных нейронов**
@@ -96,6 +111,21 @@
     - `SpikeSamples/MC1-PCN/*`
     - `SpikeSamples/EyeRetina/EyeRetina`
     - `SpikeSamples/EyeRetina/EyeRetinaMuscle`
+
+- **ActivitySwitcher (переключение активности)**
+  - Обзор: [`ActivitySwitcher.md`](ActivitySwitcher.md)
+  - Блок последовательного переключения активности между узлами графа на базе нейронов CSNM
+  - Связан с [`CognitiveMap.md`](CognitiveMap.md) и конфигурациями управления движением (`SpikeSamples/MC1-PCN/*`)
+
+- **Когнитивная карта**
+  - Обзор: [`CognitiveMap.md`](CognitiveMap.md)
+  - Алгоритм построения графа ситуаций при исследовании среды роботом
+  - Использует блоки ActivitySwitcher и SignalManager
+  - См. также [`ActivitySwitcher.md`](ActivitySwitcher.md)
+
+- **Оформление документации конфигураций**
+  - Руководство: [`HowToDocumentConfigs.md`](HowToDocumentConfigs.md)
+  - Рекомендации по структуре и содержанию `README.md` в `Bin/Configs/SpikeSamples/...`
 
 ### Навигация по конфигурациям
 
