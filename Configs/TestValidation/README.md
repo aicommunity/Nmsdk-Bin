@@ -1,8 +1,33 @@
 # TestValidation fixtures
 
+## RU
+
+Фикстуры интеграционных тестов для `NeuroModelerConsole --check-config`.
+
+### Каталоги
+
+| Каталог | Назначение |
+|---------|------------|
+| `test_valid/` | Валидный проект (базовый) |
+| `test_missing_model/` | Отсутствует model XML |
+| `test_missing_parameters/` | Отсутствует parameters XML |
+| `test_invalid_xml/` | Невалидный XML |
+| `test_empty_model/` | Пустой model |
+| `test_invalid_classes/` | Неизвестные классы компонентов |
+| `test_invalid_links/` | Некорректные связи |
+
+### См. также
+
+- [Tests/Integration/ConfigValidation/README.md](../../../Tests/Integration/ConfigValidation/README.md)
+- [Docs/Testing/ConfigValidation-Tests.md](../../../Docs/Testing/ConfigValidation-Tests.md)
+
+---
+
+## EN
+
 Integration-test configuration fixtures for `NeuroModelerConsole --check-config`.
 
-## Layout
+### Layout
 
 | Directory | Purpose |
 |-----------|---------|
@@ -14,7 +39,7 @@ Integration-test configuration fixtures for `NeuroModelerConsole --check-config`
 | `test_invalid_classes/` | Unknown component classes |
 | `test_invalid_links/` | Invalid component links |
 
-## See also
+### See also
 
 - [Tests/Integration/ConfigValidation/README.md](../../../Tests/Integration/ConfigValidation/README.md)
 - [Docs/Testing/ConfigValidation-Tests.md](../../../Docs/Testing/ConfigValidation-Tests.md)
