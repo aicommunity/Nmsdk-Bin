@@ -116,11 +116,11 @@ flowchart TD
 
 ```markdown
 - Теория и функциональное описание:
-  - [`Document.md`](../../Docs/SpikeSamples/Document.md) — описание
+  - `Topic-Overview.md` — пример тематического обзора (замените на имя вашего файла)
 - Компонентная документация:
   - `Libraries/Nmsdk-PulseLib/Docs/Components/Component.md` — документация компонента
 - Связанные конфигурации:
-  - [`RelatedConfig/README.md`](../RelatedConfig/README.md) — описание
+  - `../RelatedTopic/OtherConfig/README.md` — пример связанного конфига (подставьте реальный путь)
 - Описание конфигурации:
   - `Description.rtf` — подробное описание (в формате RTF)
 ```
@@ -239,11 +239,11 @@ flowchart TD
 ### Связанные материалы
 
 - Теория и функциональное описание:
-  - [`Document.md`](../../Docs/SpikeSamples/Document.md) — описание
+  - `Topic-Overview.md` — пример тематического обзора (замените на имя вашего файла)
 - Компонентная документация:
   - `Libraries/Nmsdk-PulseLib/Docs/Components/Component.md` — документация компонента
 - Связанные конфигурации:
-  - [`RelatedConfig/README.md`](../RelatedConfig/README.md) — описание
+  - `../RelatedTopic/OtherConfig/README.md` — пример связанного конфига (подставьте реальный путь)
 
 
 ### Дополнительные рекомендации
@@ -264,7 +264,7 @@ flowchart TD
 
 - Используйте относительные пути для ссылок на файлы в проекте
 - Проверяйте работоспособность всех ссылок
-- Используйте формат `[текст](путь)` для markdown ссылок
+- Используйте markdown-ссылки с реальным относительным путём к README (например: имя файла `../SiblingConfig/README.md`)
 
 #### Изображения
 
