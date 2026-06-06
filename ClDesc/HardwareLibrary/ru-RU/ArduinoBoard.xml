@@ -1,0 +1,163 @@
+<ClassDescription>
+	<ClassName>ArduinoBoard</ClassName>
+	<Header>базовое управление платой Arduino</Header>
+	<Description>Компонент `UArduinoBoard`: порт, профиль платы (Uno/Mega), подключение, health-check и прошивка.</Description>
+	<Properties>
+		<Connect>
+			<Header>Connect</Header>
+			<Description>Edge: открыть serial-порт (`EnsureConnected`).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Connect>
+
+		<Disconnect>
+			<Header>Disconnect</Header>
+			<Description>Edge: закрыть порт; `PortName` не очищается.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Disconnect>
+
+		<Reconnect>
+			<Header>Reconnect</Header>
+			<Description>Edge: close + open.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Reconnect>
+
+		<UploadFirmware>
+			<Header>Upload firmware</Header>
+			<Description>Edge: прошивка HEX (avrdude).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</UploadFirmware>
+
+		<ClearLastError>
+			<Header>Clear last error</Header>
+			<Description>Edge: очистить `LastError`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ClearLastError>
+
+		<IsConnected>
+			<Header>Is connected</Header>
+			<Description>State: `ConnectionState==Connected`.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsConnected>
+
+		<IsOpening>
+			<Header>Is opening</Header>
+			<Description>State: открытие порта.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsOpening>
+
+		<HasError>
+			<Header>Has error</Header>
+			<Description>State: ошибка подключения/upload.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HasError>
+
+		<IsDisconnected>
+			<Header>Is disconnected</Header>
+			<Description>State: порт закрыт.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsDisconnected>
+
+		<IsUploading>
+			<Header>Is uploading</Header>
+			<Description>State: прошивка в процессе.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsUploading>
+
+		<UploadComplete>
+			<Header>Upload complete</Header>
+			<Description>State: `UploadLastResult==ok`.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</UploadComplete>
+
+		<PortName>
+			<Header>Port name</Header>
+			<Description>Путь к serial (`/dev/ttyACM0`, `COM3`).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PortName>
+
+		<BundledFirmwareId>
+			<Header>Bundled firmware</Header>
+			<Description>ID из manifest (`sensor_lab_v1`, `standard_firmata`).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BundledFirmwareId>
+	</Properties>
+	<Favorites/>
+</ClassDescription>

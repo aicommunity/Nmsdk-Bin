@@ -1,0 +1,91 @@
+<ClassDescription>
+	<ClassName>ArduinoDcDemo</ClassName>
+	<Header>DC demo через Sensor Sketch</Header>
+	<Description>Компонент `UArduinoDcDemo`: отправка команд связанному `ArduinoSensorSketch`.</Description>
+	<Properties>
+		<SendCommand>
+			<Header>Send command</Header>
+			<Description>Edge: DC-команда (`SET SPEED …`).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</SendCommand>
+
+		<GetSpeed>
+			<Header>Get speed</Header>
+			<Description>Edge: обновить `Speed`/`Acceleration` из RX.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</GetSpeed>
+
+		<Speed>
+			<Header>Speed</Header>
+			<Description>State: скорость DC.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</Speed>
+
+		<Acceleration>
+			<Header>Acceleration</Header>
+			<Description>State: ускорение (если есть в кадре).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</Acceleration>
+
+		<LinkedSketchName>
+			<Header>Linked sketch (deprecated)</Header>
+			<Description>**Устарело.** Используйте один узел `ArduinoDcDemo` с `PortName`.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LinkedSketchName>
+
+		<PortName>
+			<Header>Port name</Header>
+			<Description>Serial-порт (наследуется от Board).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PortName>
+
+		<BundledFirmwareId>
+			<Header>Bundled firmware</Header>
+			<Description>По умолчанию `sensor_lab_v1`.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BundledFirmwareId>
+	</Properties>
+	<Favorites/>
+</ClassDescription>

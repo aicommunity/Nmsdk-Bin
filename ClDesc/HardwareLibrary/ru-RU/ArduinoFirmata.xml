@@ -1,0 +1,487 @@
+<ClassDescription>
+	<ClassName>ArduinoFirmata</ClassName>
+	<Header>Arduino Firmata</Header>
+	<Description>Компонент `UArduinoFirmata`: StandardFirmata, digital/analog pin control.</Description>
+	<Properties>
+		<RestartFirmata>
+			<Header>Restart Firmata</Header>
+			<Description>Edge: сброс handshake.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</RestartFirmata>
+
+		<ApplyPinConfig>
+			<Header>Apply pin config</Header>
+			<Description>Edge: применить pin mode / IO.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ApplyPinConfig>
+
+		<SetPinMode>
+			<Header>Set pin mode</Header>
+			<Description>Edge: `setPinMode` для `SelectedPin`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</SetPinMode>
+
+		<WriteDigital>
+			<Header>Write digital</Header>
+			<Description>Edge: digital write `SelectedPin`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</WriteDigital>
+
+		<ReadAnalog>
+			<Header>Read analog</Header>
+			<Description>Edge: analog report для `SelectedPin`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ReadAnalog>
+
+		<RefreshPins>
+			<Header>Refresh pins</Header>
+			<Description>Edge: one-shot digital/analog report.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</RefreshPins>
+
+		<WritePwm>
+			<Header>Write PWM</Header>
+			<Description>Edge: extended analog write.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</WritePwm>
+
+		<LoadPreset>
+			<Header>Load preset</Header>
+			<Description>Edge: применить `PinConfigPreset`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</LoadPreset>
+
+		<QueryPinState>
+			<Header>Query pin state</Header>
+			<Description>Edge: PIN_STATE_QUERY.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</QueryPinState>
+
+		<ConfigureServo>
+			<Header>Configure servo</Header>
+			<Description>Edge: SERVO_CONFIG.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ConfigureServo>
+
+		<WriteServo>
+			<Header>Write servo</Header>
+			<Description>Edge: servo angle write.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</WriteServo>
+
+		<I2cWrite>
+			<Header>I2C write</Header>
+			<Description>Edge: I2C write sysex.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</I2cWrite>
+
+		<I2cRead>
+			<Header>I2C read</Header>
+			<Description>Edge: I2C read request.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</I2cRead>
+
+		<IsFirmataReady>
+			<Header>Firmata ready</Header>
+			<Description>State: handshake завершён.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsFirmataReady>
+
+		<IsLinkReady>
+			<Header>Link ready</Header>
+			<Description>State: connected ∧ Firmata ready.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsLinkReady>
+
+		<HandshakeStage>
+			<Header>Handshake stage</Header>
+			<Description>State: 0..4 handshake progress.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HandshakeStage>
+
+		<PinStatusJson>
+			<Header>Pin status JSON</Header>
+			<Description>State: snapshot всех пинов.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</PinStatusJson>
+
+		<CapabilityJson>
+			<Header>Capability JSON</Header>
+			<Description>State: capability subset.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</CapabilityJson>
+
+		<AnalogPinValue>
+			<Header>Analog value</Header>
+			<Description>State: последний analog выбранного пина.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</AnalogPinValue>
+
+		<StreamLog>
+			<Header>Stream log</Header>
+			<Description>State: TX/RX hex log.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</StreamLog>
+
+		<I2cReadData>
+			<Header>I2C read data</Header>
+			<Description>State: hex ответ I2C.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</I2cReadData>
+
+		<AnalogSamples>
+			<Header>Analog samples</Header>
+			<Description>Output: matrix timestamp/pin/channel/value.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</AnalogSamples>
+
+		<DigitalSamples>
+			<Header>Digital samples</Header>
+			<Description>Output: matrix timestamp/pin/value.</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</DigitalSamples>
+
+		<ReportAnalogEnable>
+			<Header>Report analog</Header>
+			<Description>Включить analog report для `SelectedPin`.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ReportAnalogEnable>
+
+		<AutoRefreshPins>
+			<Header>Auto refresh pins</Header>
+			<Description>Непрерывный port/analog report.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AutoRefreshPins>
+
+		<StreamLogEnable>
+			<Header>Stream log enable</Header>
+			<Description>Писать StreamLog при ShowDebug.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</StreamLogEnable>
+
+		<SelectedPin>
+			<Header>Selected pin</Header>
+			<Description>Номер пина Firmata.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SelectedPin>
+
+		<SelectedPinMode>
+			<Header>Pin mode</Header>
+			<Description>0=input, 1=output, 2=analog, 3=pwm.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SelectedPinMode>
+
+		<DigitalPinValue>
+			<Header>Digital value</Header>
+			<Description>0/1 для write digital.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DigitalPinValue>
+
+		<PwmPinValue>
+			<Header>PWM value</Header>
+			<Description>0..255 extended analog.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PwmPinValue>
+
+		<SampleBufferRows>
+			<Header>Sample buffer rows</Header>
+			<Description>Макс. строк в sample matrices.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SampleBufferRows>
+
+		<PinConfigPreset>
+			<Header>Pin config preset</Header>
+			<Description>Id пресета (uno_d13_blink, …).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PinConfigPreset>
+
+		<QueryPin>
+			<Header>Query pin</Header>
+			<Description>Firmata pin для query.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</QueryPin>
+
+		<ServoPin>
+			<Header>Servo pin</Header>
+			<Description>Пин серво.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ServoPin>
+
+		<ServoAngle>
+			<Header>Servo angle</Header>
+			<Description>0..180.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ServoAngle>
+
+		<I2cAddress>
+			<Header>I2C address</Header>
+			<Description>7-bit I2C address.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</I2cAddress>
+
+		<I2cWriteData>
+			<Header>I2C write data</Header>
+			<Description>Hex bytes для write.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</I2cWriteData>
+
+		<DigitalOutputCommands>
+			<Header>Digital output batch</Header>
+			<Description>Input matrix: pin, value.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</DigitalOutputCommands>
+
+		<PinConfigBatch>
+			<Header>Pin config batch</Header>
+			<Description>Input matrix: pin, mode.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</PinConfigBatch>
+
+		<AnalogOutputCommands>
+			<Header>Analog output batch</Header>
+			<Description>Input matrix: pin, pwm value.</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</AnalogOutputCommands>
+	</Properties>
+	<Favorites/>
+</ClassDescription>

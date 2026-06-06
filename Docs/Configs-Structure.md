@@ -12,6 +12,12 @@
 - **INI** - конфигурационные файлы приложения
 - **JPEG/PNG** - изображения для конфигураций
 
+### Структура каталога Configs
+
+- **Configs/** — корень хранилища конфигураций.
+- **Configs/Users/&lt;UserName&gt;/** — папки конфигураций пользователей (создаются NeuroModeler автоматически по имени пользователя). Для каждого пользователя при первом обращении создаётся каталог `Configs/Users/<UserName>/`.
+- Остальные каталоги в Configs (например, SpikeSamples, TestValidation, !OldConfigs) — общие шаблоны и примеры.
+
 ### Структура конфигураций проектов
 
 Конфигурации проектов содержат:
@@ -60,7 +66,7 @@ sequenceDiagram
     participant FTP as FTP Server
     participant Temp as Temp Folder
     participant Project as UProject
-    
+
     App->>Deployer: StartProjectDeployment(task_id)
     Deployer->>FTP: DownloadTemplate.zip
     FTP-->>Deployer: Template files
@@ -93,6 +99,12 @@ Configuration files in `Bin/Configs/` are used to configure projects, components
 - **XML** - main format for projects and components
 - **INI** - application configuration files
 - **JPEG/PNG** - images for configurations
+
+### Configs Directory Structure
+
+- **Configs/** — root of the configuration store.
+- **Configs/Users/&lt;UserName&gt;/** — per-user configuration folders (created automatically by NeuroModeler from the user name). For each user, the directory `Configs/Users/<UserName>/` is created on first use.
+- Other directories under Configs (e.g. SpikeSamples, TestValidation, !OldConfigs) — shared templates and examples.
 
 ### Project Configuration Structure
 

@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NTrajectoryElement</ClassName>
-	<Header>NTrajectoryElement</Header>
-	<Description>Компонент NTrajectoryElement относится к библиотеке MotionControlLibrary. Описание сформировано автоматически.</Description>
+	<Header>элемент траектории</Header>
+	<Description>элемент траектории для построения и следования по траекториям движения, используется в системах навигации и памяти лабиринта.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -14,6 +14,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Activity>
+		<BackwardSynsNames>
+			<Header>Backward syns names</Header>
+			<Description>Backward syns names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BackwardSynsNames>
+		<BackwardsNames>
+			<Header>Backwards names</Header>
+			<Description>Backwards names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BackwardsNames>
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
@@ -47,6 +69,28 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
+		<ForwardSynsNames>
+			<Header>Forward syns names</Header>
+			<Description>Forward syns names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ForwardSynsNames>
+		<ForwardsNames>
+			<Header>Forwards names</Header>
+			<Description>Forwards names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ForwardsNames>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -58,9 +102,31 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<LastUsedBackward>
+			<Header>Last used backward</Header>
+			<Description>Last used backward — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastUsedBackward>
+		<LastUsedForward>
+			<Header>Last used forward</Header>
+			<Description>Last used forward — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastUsedForward>
 		<Layer>
 			<Header>Layer</Header>
-			<Description>Layer — свойство NTrajectoryElement.</Description>
+			<Description>Layer — свойство элемент траектории.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -113,6 +179,17 @@
 			</ValueList>
 			<PropertyType>274</PropertyType>
 		</Output>
+		<PathsNames>
+			<Header>Paths names</Header>
+			<Description>Paths names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PathsNames>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
@@ -136,5 +213,66 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 	</Properties>
-	<Favorites/>
+	<Favorites>
+		<Neuron1Dendrite1_3ExcChannelActivity>
+			<Path>Neuron1.Dendrite1_3.ExcChannel.Activity</Path>
+		</Neuron1Dendrite1_3ExcChannelActivity>
+		<Neuron1Dendrite1_3ExcChannelCapacity>
+			<Path>Neuron1.Dendrite1_3.ExcChannel.Capacity</Path>
+		</Neuron1Dendrite1_3ExcChannelCapacity>
+		<Neuron1Dendrite1_3ExcChannelCoord>
+			<Path>Neuron1.Dendrite1_3.ExcChannel.Coord</Path>
+		</Neuron1Dendrite1_3ExcChannelCoord>
+		<Neuron1Dendrite1_3ExcChannelType>
+			<Path>Neuron1.Dendrite1_3.ExcChannel.Type</Path>
+		</Neuron1Dendrite1_3ExcChannelType>
+		<Neuron1Dendrite1_3InhChannelActivity>
+			<Path>Neuron1.Dendrite1_3.InhChannel.Activity</Path>
+		</Neuron1Dendrite1_3InhChannelActivity>
+		<Neuron1Dendrite1_3InhChannelOutput>
+			<Path>Neuron1.Dendrite1_3.InhChannel.Output</Path>
+		</Neuron1Dendrite1_3InhChannelOutput>
+		<Neuron1Soma1ExcChannelType>
+			<Path>Neuron1.Soma1.ExcChannel.Type</Path>
+		</Neuron1Soma1ExcChannelType>
+		<Neuron1Soma1InhChannelActivity>
+			<Path>Neuron1.Soma1.InhChannel.Activity</Path>
+		</Neuron1Soma1InhChannelActivity>
+		<Neuron1Soma1InhChannelCapacity>
+			<Path>Neuron1.Soma1.InhChannel.Capacity</Path>
+		</Neuron1Soma1InhChannelCapacity>
+		<Neuron1Soma1InhChannelChannelInputs>
+			<Path>Neuron1.Soma1.InhChannel.ChannelInputs</Path>
+		</Neuron1Soma1InhChannelChannelInputs>
+		<Neuron1Soma1InhChannelCoord>
+			<Path>Neuron1.Soma1.InhChannel.Coord</Path>
+		</Neuron1Soma1InhChannelCoord>
+		<Neuron1Soma1InhChannelResistance>
+			<Path>Neuron1.Soma1.InhChannel.Resistance</Path>
+		</Neuron1Soma1InhChannelResistance>
+		<Neuron1Soma1InhChannelStepDuration>
+			<Path>Neuron1.Soma1.InhChannel.StepDuration</Path>
+		</Neuron1Soma1InhChannelStepDuration>
+		<Neuron1Soma1InhChannelSynapticInputs>
+			<Path>Neuron1.Soma1.InhChannel.SynapticInputs</Path>
+		</Neuron1Soma1InhChannelSynapticInputs>
+		<Neuron1Soma1InhChannelType>
+			<Path>Neuron1.Soma1.InhChannel.Type</Path>
+		</Neuron1Soma1InhChannelType>
+		<Neuron2Soma1ExcChannelType>
+			<Path>Neuron2.Soma1.ExcChannel.Type</Path>
+		</Neuron2Soma1ExcChannelType>
+		<Neuron2Soma1ExcSynapse1OutInCopy>
+			<Path>Neuron2.Soma1.ExcSynapse1.OutInCopy</Path>
+		</Neuron2Soma1ExcSynapse1OutInCopy>
+		<Neuron2Soma1ExcSynapse1Output>
+			<Path>Neuron2.Soma1.ExcSynapse1.Output</Path>
+		</Neuron2Soma1ExcSynapse1Output>
+		<Neuron2Soma1ExcSynapse1SecretionTC>
+			<Path>Neuron2.Soma1.ExcSynapse1.SecretionTC</Path>
+		</Neuron2Soma1ExcSynapse1SecretionTC>
+		<Neuron2Soma1InhChannelType>
+			<Path>Neuron2.Soma1.InhChannel.Type</Path>
+		</Neuron2Soma1InhChannelType>
+	</Favorites>
 </ClassDescription>

@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>VideoSimulatorSimpleBin</ClassName>
-	<Header>Симулятор бинарного видео</Header>
-	<Description>Выдаёт бинарные кадры (0/1) для тестирования простых алгоритмов.</Description>
+	<Header>видеосимуляторы (Rdk-CvBasicLib)</Header>
+	<Description>`UBAVideoSimulator`, `UBAVideoSimulatorSimple`, `UBAVideoSimulatorSimpleBin`, `UBARotCameraSimulator`, `UBADataSimulator`, `UBADataSimulatorSimple` — генерация синтетических видеопотоков и данных для тестов/демо.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -17,7 +17,7 @@
 		<BgColor>
 			<Header>Цвет фона</Header>
 			<Description>Используется при режиме заливки (BgMode=1) для генерации фонового поля перед отрисовкой объектов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -27,8 +27,8 @@
 		</BgColor>
 		<BgMode>
 			<Header>Режим фона</Header>
-			<Description>0 — сохранять фон входного кадра, 1 — заливать цветом <Property>BgColor</Property>, 2 — зарезервировано для альтернативных фоновых рисунков.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>0 — сохранять фон входного кадра, 1 — заливать цветом</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<BinarOutput>
 			<Header>Бинарный выход</Header>
 			<Description>Отдельный буфер, где объекты рисуются только чёрным/белым и затем конвертируются в ubmY8. Используется для тестирования детекторов на идеальных масках.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -61,7 +61,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -72,7 +72,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -83,7 +83,7 @@
 		<HideAllFlag>
 			<Header>Скрыть объекты</Header>
 			<Description>Если true, генератор не рисует движущиеся объекты (полезно для прогрева фоновой модели).</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -105,7 +105,7 @@
 		<Input>
 			<Header>Базовый кадр</Header>
 			<Description>Исходное изображение, на которое накладываются синтетические объекты и из которого берётся размер для всех буферов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -116,7 +116,7 @@
 		<InputData>
 			<Header>Внутренний буфер</Header>
 			<Description>Служебное хранилище (UBitmap). Внешние узлы обычно его не используют.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -127,7 +127,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</Name>
 		<NumObjects>
 			<Header>Количество объектов</Header>
-			<Description>Размер массива <Property>Objects</Property>, описывающего прямоугольные примитивы.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Размер массива</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -160,7 +160,7 @@
 		<Objects>
 			<Header>Описание объектов</Header>
 			<Description>Массив структур UBVSObject (позиции, размеры, смещения, цвета). Используется для отрисовки как цветного, так и бинарного канала.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -170,8 +170,8 @@
 		</Objects>
 		<Output>
 			<Header>Синтетический кадр</Header>
-			<Description>Кадр в цвете: до тех пор, пока <Property>countFirstCleanBgFrame</Property> не достигнут, на выход передаётся входное изображение, затем — сгенерированная сцена.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Кадр в цвете: до тех пор, пока</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -181,8 +181,8 @@
 		</Output>
 		<PixelGridColor>
 			<Header>Цвет сетки</Header>
-			<Description>Цвет вспомогательной сетки, если активирован флаг <Property>ShowGrid</Property>.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Цвет вспомогательной сетки, если активирован флаг</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -193,7 +193,7 @@
 		<PixelGridStep>
 			<Header>Шаг сетки</Header>
 			<Description>Интервал между линиями сетки в пикселях.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -204,7 +204,7 @@
 		<PixelGridWidth>
 			<Header>Толщина линий сетки</Header>
 			<Description>Ширина пера для отрисовки сетки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -215,7 +215,7 @@
 		<ShowGrid>
 			<Header>Показывать сетку</Header>
 			<Description>Включает отрисовку вспомогательной сетки поверх сцены.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -226,7 +226,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -247,8 +247,8 @@
 		</TimeStep>
 		<WorkArea>
 			<Header>Work область</Header>
-			<Description>Work область — параметр компонента Симулятор бинарного видео.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Work область — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -259,7 +259,7 @@
 		<countFirstCleanBgFrame>
 			<Header>Длина прогрева</Header>
 			<Description>Количество кадров, которые следует пропустить перед тем, как начать выдавать синтетический фон. До достижения этого значения на выход транслируется оригинальный вход.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

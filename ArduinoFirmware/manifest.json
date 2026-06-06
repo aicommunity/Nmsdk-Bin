@@ -1,0 +1,26 @@
+{
+  "bundled": [
+    {
+      "id": "sensor_lab_v1",
+      "name": "Sensor Lab (DHT/Hall/Servo)",
+      "transport": "custom",
+      "sketch": "sensor_lab/sensor_lab.ino",
+      "boards": {
+        "uno": { "hex": "sensor_lab/uno.hex", "fcpu": "16000000L" },
+        "mega2560": { "hex": "sensor_lab/mega2560.hex", "fcpu": "16000000L" }
+      },
+      "defaultPins": { "dht": "D2", "hall": "A2", "servo": "D9" },
+      "runtimeBaud": 57600
+    },
+    {
+      "id": "standard_firmata",
+      "name": "StandardFirmata",
+      "transport": "firmata",
+      "boards": {
+        "uno": { "hex": "firmata/standard_firmata_uno.hex" },
+        "mega2560": { "hex": "firmata/standard_firmata_mega2560.hex" }
+      },
+      "runtimeBaud": 57600
+    }
+  ]
+}
