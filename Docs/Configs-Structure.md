@@ -142,3 +142,24 @@ Project configurations contain:
 - [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - detailed information about working with configurations through Rdk classes (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
 - [Docs/Components-And-Configuration/Component-System.md](../../Docs/Components-And-Configuration/Component-System.md) - component system
+
+```mermaid
+sequenceDiagram
+    participant App as UApplication
+    participant Deployer as UProjectDeployer
+    participant FTP as FTP Server
+    participant Temp as Temp Folder
+    participant Project as UProject
+
+    App->>Deployer: StartProjectDeployment(task_id)
+    Deployer->>FTP: DownloadTemplate.zip
+    FTP-->>Deployer: Template files
+    Deployer->>Temp: UnpackTemplate
+    Deployer->>FTP: DownloadWeights.zip
+    FTP-->>Deployer: Model weights
+    Deployer->>Temp: UnpackWeights
+    Deployer->>App: PrepareProject()
+    App->>Project: OpenProjectMockMode()
+    Project->>Project: SetupMockParameters()
+    Project-->>App: Project ready
+```

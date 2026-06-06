@@ -310,6 +310,7 @@ Each `README.md` should contain the following sections in the specified order:
 #### 1. Title and path
 
 ```markdown
+
 ## Configuration name — brief description
 
 **Path:** `Bin/Configs/SpikeSamples/.../...`
@@ -356,9 +357,9 @@ Section should contain:
 ```markdown
 ```mermaid
 flowchart TD
-    Input[Входной сигнал] --> Component1[Компонент 1]
-    Component1 --> Component2[Компонент 2]
-    Component2 --> Output[Выходной сигнал]
+    Input[Input signal] --> Component1[Component 1]
+    Component1 --> Component2[Component 2]
+    Component2 --> Output[Output signal]
 ```
 ```
 
@@ -448,17 +449,17 @@ Repeat publication list with full bibliographic data and DOI.
 ```markdown
 ```mermaid
 flowchart TD
-    subgraph Input["Входные данные"]
-        Gen1[Генератор 1]
-        Gen2[Генератор 2]
+    subgraph Input["Input data"]
+        Gen1[Generator 1]
+        Gen2[Generator 2]
     end
 
-    subgraph Processing["Обработка"]
-        Neuron[Нейрон]
+    subgraph Processing["Processing"]
+        Neuron[Neuron]
     end
 
-    subgraph Output["Выходные данные"]
-        Result[Результат]
+    subgraph Output["Output data"]
+        Result[Result]
     end
 
     Input --> Processing
@@ -499,6 +500,7 @@ See [`Bin/Configs/SpikeSamples/NM-Neurons/CableModel/CableNeuronMulti_CSNM/READM
 ### README.md template
 
 ```markdown
+
 ## Configuration name — brief description
 
 **Path:** `Bin/Configs/SpikeSamples/.../...`
@@ -589,4 +591,3 @@ Before completing work on `README.md`, verify:
 - [`Overview.md`](Overview.md) — SpikeSamples configurations overview
 - [`Index.md`](Index.md) — topical sections index
 - `Reports/SpikeSamples-Validation-Report.md` — configuration validation report
-

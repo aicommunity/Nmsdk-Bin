@@ -286,7 +286,7 @@ flowchart TD
 (SumPotential, Feedback)"]
     membrane --> ltZone["NPulseLTZone
 (Threshold P)"]
-    ltZone --> neuronOutput["Выходной спайковый поток"]
+    ltZone --> neuronOutput["Output spikeовый поток"]
     neuronOutput -->|обратная связь| membrane
 ```
 
@@ -335,4 +335,3 @@ For each configuration in the listed groups, `README.md` should contain:
 - explanation of which parameters in `Parameters.xml` are critical for the result (τs, τd, R0, RF, Cm, threshold P, feedback depth, etc.).
 
 This document serves as a framework; details for each configuration are recorded in its local `README.md`.
-

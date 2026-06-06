@@ -436,14 +436,144 @@ No, files in `Platform/` are generated during build and should not be edited man
 - Ensure style files are in `Bin/Styles/`
 - Check theme loading via `UStyleManager`
 
+### CSNM models (Compartmental spiking neuron model)
+
+#### What is CSNM?
+
+CSNM (Compartmental Spiking Neuron Model) is a compartmental spiking neuron model that accounts for the spatial distribution of membrane potential across dendrites and soma. Unlike point models, CSNM allows modeling spatial signal propagation and the influence of geometric neuron parameters on its behavior.
+
+#### Which components are used for CSNM?
+
+Main cable model components in NMSDK:
+- `NSynapseCable` — synapse for the cable model
+- `NPulseChannelCable` — channel implementing the cable equation
+- `NPulseMembraneCable` — membrane for the cable model
+- `NPulseLTZoneCable` — low-threshold zone for the cable model
+- `NPulseNeuronCable` — neuron based on the cable model
+- `NPulseNeuronCableMulti` — multi-compartment neuron
+
+#### Which spatial parameters are used in CSNM?
+
+According to [1], the following spatial parameters were identified for the point configuration:
+- **Segment length:** ~200 μm (2·10⁻⁴ m)
+- **Segment diameter:** ~20 μm (2·10⁻⁵ m)
+
+These values are comparable to biological data.
+
+#### Where can I find CSNM documentation?
+
+See [`Bin/Docs/SpikeSamples/CSNM-Models.md`](SpikeSamples/CSNM-Models.md) for a detailed description of CSNM models, cable theory, and components.
+
+#### Which configurations demonstrate CSNM?
+
+Example configurations:
+- `SpikeSamples/NM-Neurons/CableModel/CableNeuronMulti_CSNM` — basic CSNM model
+- `SpikeSamples/NM-Neurons/CableModel/CableNeuronMulti_CSNM_Nd` — CSNM with different numbers of dendrites
+- `SpikeSamples/NM-Neurons/CableModel/CableNeuronMulti_CSNM_Nsyn` — CSNM with different numbers of synapses
+
+### Structural adaptation
+
+#### What is structural adaptation?
+
+Structural adaptation is a method for automatically selecting parameters of the compartmental spiking neuron model depending on a given input pattern. Unlike traditional learning methods where only synaptic weights change, structural adaptation changes the neuron topology itself: soma size, dendrite length, and number of synapses on each dendrite.
+
+#### How does structural adaptation work?
+
+The process includes the following stages:
+1. Input pattern analysis (temporal coding)
+2. Determination of the required neuron structure
+3. Automatic creation/modification of structure
+4. Training on the given pattern
+5. Structure adjustment when necessary
+
+#### Which component implements structural adaptation?
+
+In NMSDK, structural adaptation is implemented through the `NNeuronTrainer` component from the `Nmsdk-PulseLib` library.
+
+#### Which parameters affect structural adaptation?
+
+Main parameters:
+- `MaxDendriteLength` — maximum dendrite length
+- `LTZThreshold` — low-threshold zone activation threshold
+- `FixedLTZThreshold` — fixed activation threshold
+- `SpikesFrequency` — spike generation frequency
+- `InputPattern` — input pattern matrix
+
+#### Where can I find structural adaptation documentation?
+
+See [`Bin/Docs/SpikeSamples/StructuralAdaptation.md`](SpikeSamples/StructuralAdaptation.md) for a detailed description of the structural adaptation method.
+
+#### Which configurations demonstrate structural adaptation?
+
+Example configurations:
+- `SpikeSamples/StructTrain/SpikeTrainer` — basic structural training
+- `SpikeSamples/StructTrain/SpikeAnsTrainer` — structural training with answers
+- `SpikeSamples/StructTrain/XOR` — application to the XOR problem
+
+### Incremental learning
+
+#### What is incremental learning?
+
+Incremental learning allows training a neuron on new samples without needing to store and retrain on all previous training samples. This is especially important for tasks where data arrives sequentially or when adaptation to new classes is required without losing knowledge of old classes.
+
+#### How does incremental learning work?
+
+The process includes:
+1. Neuron initialization
+2. Sequential presentation of new samples
+3. Adaptation of structure and parameters to the new sample
+4. Formation of new classes when necessary
+5. Retention of knowledge about previous classes without explicitly storing all samples
+
+#### What are the advantages of incremental learning?
+
+Advantages:
+- **Memory efficiency:** no need to store all previous samples
+- **Adaptability:** ability to learn on new data without full retraining
+- **Scalability:** ability to add new classes without retraining on all data
+- **Biological realism:** corresponds to the learning process in biological neural networks
+
+#### Where can I find incremental learning documentation?
+
+See [`Bin/Docs/SpikeSamples/IncrementalLearning.md`](SpikeSamples/IncrementalLearning.md) for a detailed description of the incremental learning strategy.
+
+#### Which configurations demonstrate incremental learning?
+
+Example configurations:
+- `SpikeSamples/Classifier/SpikeIrisClassifier` — Iris classification with incremental learning
+- `SpikeSamples/StructTrain/SpikeTrainer` — basic structural training
+- `SpikeSamples/StructTrain/SpikeAnsTrainer` — structural training with answers
+
+### Classification
+
+#### How is the segmental spiking model applied to classification?
+
+The segmental spiking neuron model with structural adaptation is applied to solving classification problems where the following is required:
+- Recognition of different object classes
+- Adaptation to new classes without full retraining
+- Efficient processing of temporal patterns
+- Operation under limited computational resources
+
+#### What is temporal coding?
+
+Temporal coding is the conversion of numerical information into impulse patterns, where the time of impulse occurrence carries information about the value. For example, a larger value may be encoded by an earlier spike time.
+
+#### What results have been obtained on classification tasks?
+
+According to publication [1]:
+- **Iris:** results comparable to classical machine learning methods
+- **MNIST:** application of temporal coding to convert images into spike patterns
+- **ROV (remotely operated vehicle):** successful application for determining the state of a teleoperated unmanned underwater vehicle
+
+#### Where can I find classification documentation?
+
+See [`Bin/Docs/SpikeSamples/Classification.md`](SpikeSamples/Classification.md) for a detailed description of application to classification problems.
+
 ### Additional Resources
 
 - [Configs-Structure.md](Configs-Structure.md) - detailed configuration description
 - [Help-Structure.md](Help-Structure.md) - help structure
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
 - [Docs/GUI/Style-System.md](../../Docs/GUI/Style-System.md) - style system
-
-## Literature
-1. Демчева А.А. Разработка сегментной спайковой модели нейрона на основе кабельной теории для нейроморфных систем: выпускная квалификационная работа магистра. 2023. [онлайн](https://doi.org/10.18720/SPBPU/3/2023/vr/vr23-5657)
-
-2. Korsakov, A. M., Astapova, L. A., Bakhshiev, A. V. Application of a compartmental spiking neuron model with structural adaptation for solving classification problems // Informatics and Automation, 2022, 21(3), 493-520. [DOI](https://doi.org/10.15622/ia.21.3.2)
+- [SpikeSamples/Overview.md](SpikeSamples/Overview.md) - SpikeSamples configurations overview
+- [SpikeSamples/Index.md](SpikeSamples/Index.md) - topical sections index

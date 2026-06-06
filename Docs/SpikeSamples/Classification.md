@@ -558,7 +558,7 @@ classDiagram
     }
 
     InputLayer --> SegmentNeuron : Паттерн спайков
-    SegmentNeuron --> OutputLayer : Выходной спайк
+    SegmentNeuron --> OutputLayer : Output spike
 ```
 
 #### Interaction of neurons in the network
@@ -718,5 +718,4 @@ The following directions for further research are considered:
 
 3. MNIST handwritten digit database. [online](http://yann.lecun.com/exdb/mnist/)
 
-4. Astapova, L. A., Korsakov, A. M., Bakhshiev, A. V. [et al.] Compartmental spiking neuron model for pattern classification // Journal of Physics: Conference Series, Krasnoyarsk, Russia, 24 сентября – 03 2021 года. Vol. Volume 2094. – Krasnoyarsk, Russia: IOP Publishing Ltd, 2021. – P. 32032. [DOI](https://iopscience.iop.org/article/10.1088/1742-6596/2094/3/032032)
-
+4. Astapova, L. A., Korsakov, A. M., Bakhshiev, A. V. [et al.] Compartmental spiking neuron model for pattern classification // Journal of Physics: Conference Series, Krasnoyarsk, Russia, 24 September – 03 2021 year. Vol. Volume 2094. – Krasnoyarsk, Russia: IOP Publishing Ltd, 2021. – P. 32032. [DOI](https://iopscience.iop.org/article/10.1088/1742-6596/2094/3/032032)

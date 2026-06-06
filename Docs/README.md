@@ -86,3 +86,20 @@ The `Bin/` directory contains resources and configurations necessary for the Nms
 
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
 - [Docs/GUI/Style-System.md](../../Docs/GUI/Style-System.md) - style system
+
+```mermaid
+flowchart TB
+    Bin[Bin/] --> Configs["Configs/<br/>XML проекты"]
+    Bin --> ClDesc["ClDesc/<br/>XML описания классов"]
+    Bin --> Help["Help/<br/>HTML справка RU/EN"]
+    Bin --> Styles["Styles/<br/>QSS + JSON темы"]
+    Bin --> Platform["Platform/<br/>Артефакты сборки"]
+    
+    Platform --> WinBin["Win/<br/>Windows бинарники"]
+    Platform --> LinuxBin["Linux/<br/>Linux бинарники"]
+    
+    Configs --> Projects[Проекты .xml]
+    ClDesc --> ClassXML[Описания .xml]
+    Styles --> QSSFiles[*.qss]
+    Styles --> JSONThemes[theme.json]
+```

@@ -622,22 +622,22 @@ Each compartment models a membrane segment with specific electrical properties.
 
 ```mermaid
 flowchart TD
-    subgraph Soma["Сома (N_s участков)"]
+    subgraph Soma["Soma (N_s segments)"]
         Soma1[B¹]
         Soma2[B²]
         SomaN[B^N_s]
     end
 
-    subgraph Dendrites["Дендриты (N_d дендритов)"]
-        Dend1["Дендрит 1<br/>D^(1,1) ... D^(L1,1)"]
-        Dend2["Дендрит 2<br/>D^(1,2) ... D^(L2,2)"]
-        DendN["Дендрит N_d<br/>D^(1,N_d) ... D^(LN_d,N_d)"]
+    subgraph Dendrites["Dendrites (N_d dendrites)"]
+        Dend1["Dendrite 1<br/>D^(1,1) ... D^(L1,1)"]
+        Dend2["Dendrite 2<br/>D^(1,2) ... D^(L2,2)"]
+        DendN["Dendrite N_d<br/>D^(1,N_d) ... D^(LN_d,N_d)"]
     end
 
-    subgraph Synapses["Синапсы (N_syn синапсов)"]
-        Syn1[Синапс 1]
-        Syn2[Синапс 2]
-        SynN[Синапс N_syn]
+    subgraph Synapses["Synapses (N_syn synapses)"]
+        Syn1[Synapse 1]
+        Syn2[Synapse 2]
+        SynN[Synapse N_syn]
     end
 
     Syn1 --> Dend1
@@ -648,8 +648,8 @@ flowchart TD
     Dend2 --> Soma1
     DendN --> Soma1
 
-    Soma1 --> LTZone["LT-зона<br/>Генерация спайков"]
-    LTZone --> Output[Выходной спайк]
+    Soma1 --> LTZone["LT zone<br/>Spike generation"]
+    LTZone --> Output[Output spike]
 ```
 
 **Diagram description:**
@@ -725,13 +725,13 @@ where:
 
 ```mermaid
 flowchart LR
-    subgraph Cable["Кабельная модель дендрита"]
+    subgraph Cable["Dendrite cable model"]
         direction LR
-        Syn["Синапс<br/>x=0"] --> Seg1["Сегмент 1<br/>x=Δx"]
-        Seg1 --> Seg2["Сегмент 2<br/>x=2Δx"]
-        Seg2 --> Seg3["Сегмент 3<br/>x=3Δx"]
-        Seg3 --> SegN["Сегмент N<br/>x=NΔx"]
-        SegN --> Soma[Сома]
+        Syn["Synapse<br/>x=0"] --> Seg1["Segment 1<br/>x=Δx"]
+        Seg1 --> Seg2["Segment 2<br/>x=2Δx"]
+        Seg2 --> Seg3["Segment 3<br/>x=3Δx"]
+        Seg3 --> SegN["Segment N<br/>x=NΔx"]
+        SegN --> Soma[Soma]
     end
 
     Syn -->|V_inp(t)| Seg1
@@ -920,10 +920,10 @@ classDiagram
         +ThresholdOff : double
     }
 
-    NPulseNeuronCableMulti *-- NPulseMembraneCable : содержит
-    NPulseMembraneCable *-- NPulseChannelCable : содержит
-    NPulseMembraneCable *-- NSynapseCable : содержит
-    NPulseNeuronCableMulti *-- NPulseLTZoneCable : содержит
+    NPulseNeuronCableMulti *-- NPulseMembraneCable : contains
+    NPulseMembraneCable *-- NPulseChannelCable : contains
+    NPulseMembraneCable *-- NSynapseCable : contains
+    NPulseNeuronCableMulti *-- NPulseLTZoneCable : contains
 ```
 
 **Diagram description:**
@@ -1176,5 +1176,4 @@ For spatial configurations (N_s>1, N_d>0), the cable model provides more accurat
 
 1. Bakhshiev A. V., Demcheva A. A. Compartmental spiking neuron model CSNM // Izvestiya VUZ. Applied Nonlinear Dynamics, 2022, vol. 30, iss. 3, pp. 299-310. [DOI](https://doi.org/10.18500/0869-6632-2022-30-3-299-310)
 
-2. Демчева А.А. Разработка сегментной спайковой модели нейрона на основе кабельной теории для нейроморфных систем: выпускная квалификационная работа магистра. 2023. [online](https://doi.org/10.18720/SPBPU/3/2023/vr/vr23-5657)
-
+2. Demcheva A. A. Development of a segmental spiking neuron model based on cable theory for neuromorphic systems: master's thesis. 2023. [online](https://doi.org/10.18720/SPBPU/3/2023/vr/vr23-5657)

@@ -410,7 +410,7 @@ The following configurations demonstrate incremental learning and related concep
 
 ```mermaid
 flowchart TD
-    Start[Начало] --> Init[Инициализация нейрона]
+    Start[Start] --> Init[Initialization нейрона]
     Init --> Wait[Ожидание нового образца]
     Wait --> Present[Предъявление образца]
     Present --> Analyze[Анализ реакции нейрона]
@@ -549,4 +549,3 @@ According to publication [1]:
 1. Korsakov, A. M., Isakov, T. T., Bakhshiev, A. V. Strategy of Incremental Learning on a Compartmental Spiking Neuron Model // Optical Memory and Neural Networks. – 2023. – Vol. 32, No. S2. – P. S237-S243. [DOI](https://doi.org/10.3103/s1060992x23060073)
 
 2. UCI Machine Learning Repository: Iris Data Set. [online](https://archive.ics.uci.edu/ml/datasets/iris)
-

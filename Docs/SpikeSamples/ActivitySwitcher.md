@@ -272,7 +272,7 @@ sequenceDiagram
     Note over N1_next,N2_next: Торможение блокирует активацию<br/>(сила торможения > силы возбуждения)
 
     Note over SM_i: Этап 4: Распознавание знакомой ситуации
-    SM_i->>PostInput_i: Обработка ситуации
+    SM_i->>PostInput_i: Processing ситуации
     PostInput_i->>N1_i: y^PIN → тормозной сигнал на D¹
     PostInput_i->>N2_i: y^PIN → тормозной сигнал на D³
     deactivate N1_i
@@ -397,4 +397,3 @@ flowchart TD
 10. **Bakhshiev A. V., Demcheva A. A.** Compartmental spiking neuron model CSNM // Izvestiya VUZ. Applied Nonlinear Dynamics, 2022, vol. 30, iss. 3, pp. 299-310.
 
     [DOI](https://doi.org/10.18500/0869-6632-2022-30-3-299-310) | [Literature-References.md](../Literature-References.md)
-

@@ -460,13 +460,13 @@ sequenceDiagram
     participant Action1 as Нейрон действия 1
     participant Action2 as Нейрон действия 2
 
-    Note over System: Инициализация алгоритма
-    System->>Node0: Создание корневого узла<br/>(исходное положение робота)
+    Note over System: Initialization алгоритма
+    System->>Node0: Creation корневого узла<br/>(исходное положение робота)
     activate Node0
-    Node0->>AS0: Создание блока AS_0
-    Node0->>SM0: Создание блока SM_0
-    SM0->>PI0: Создание нейрона PI_0
-    SM0->>PC0: Создание нейрона PC_0
+    Node0->>AS0: Creation блока AS_0
+    Node0->>SM0: Creation блока SM_0
+    SM0->>PI0: Creation нейрона PI_0
+    SM0->>PC0: Creation нейрона PC_0
 
     Note over Robot: Попадание в ситуацию с выбором
     Robot->>System: Сигнал о попадании в ситуацию
@@ -474,20 +474,20 @@ sequenceDiagram
     SM0->>PI0: Проверка активности PI_0
     PI0-->>SM0: Ситуация не знакома
 
-    Note over System: Создание дочерних узлов
-    System->>Node1: Создание узла 1<br/>(N_poss = 2)
+    Note over System: Creation дочерних узлов
+    System->>Node1: Creation узла 1<br/>(N_poss = 2)
     activate Node1
-    System->>Node2: Создание узла 2
+    System->>Node2: Creation узла 2
     activate Node2
 
-    Node1->>AS1: Создание блока AS_1
-    Node2->>AS2: Создание блока AS_2
+    Node1->>AS1: Creation блока AS_1
+    Node2->>AS2: Creation блока AS_2
 
     Note over System: Подключение связей к нейронам действия
     AS1->>Action1: Выход AS_1 → возбуждающий вход<br/>нейрона действия 1
     AS2->>Action2: Выход AS_2 → возбуждающий вход<br/>нейрона действия 2
 
-    Note over System: Построение связей между узлами
+    Note over System: Build связей между узлами
     AS0->>AS1: Возбуждающая связь<br/>w_1 = 1.0
     AS0->>AS2: Возбуждающая связь<br/>w_2 = 0.75
     AS1->>AS0: Обратная связь<br/>w_fb = 0
@@ -579,11 +579,11 @@ sequenceDiagram
     participant Node4 as Узел 4 (уровень 2)
     participant PC4 as PC_4
 
-    Note over System: Создание новых дочерних узлов
-    System->>Node3: Создание узла 3
-    System->>Node4: Создание узла 4
+    Note over System: Creation новых дочерних узлов
+    System->>Node3: Creation узла 3
+    System->>Node4: Creation узла 4
 
-    Note over System: Построение связей лавинного распространения
+    Note over System: Build связей лавинного распространения
     Note over System: От всех пройденных узлов<br/>на уровнях выше
     PC0->>PC3: Связь PC_0 → PC_3<br/>w = 1.0
     PC0->>PC4: Связь PC_0 → PC_4<br/>w = 1.0
@@ -652,7 +652,7 @@ sequenceDiagram
     participant SM_active as SM активного узла
 
     Note over System: Попадание в новый узел
-    System->>Node_new: Создание нового узла
+    System->>Node_new: Creation нового узла
     activate Node_new
 
     Note over System: Детектирование активности
@@ -833,4 +833,3 @@ flowchart TD
 12. **Korsakov, A., Bakhshiev, A., Astapova, L., Stankevich, L.** Behavioral functions implementation on spiking neural networks // Informatics and Automation, 2021, 20:3, 591–622.
 
     [DOI](https://doi.org/10.15622/ia.2021.3.4) | [Literature-References.md](../Literature-References.md)
-

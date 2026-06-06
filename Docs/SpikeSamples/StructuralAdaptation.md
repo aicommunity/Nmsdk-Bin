@@ -348,7 +348,7 @@ The structural adaptation process can be represented by the following stages:
 
 ```mermaid
 flowchart TD
-    Start[Начало обучения] --> Analyze[Анализ входного паттерна]
+    Start[Start обучения] --> Analyze[Анализ входного паттерна]
     Analyze --> Determine[Определение необходимой структуры]
     Determine --> Create[Автоматическое создание/модификация структуры]
     Create --> Train[Обучение на заданном паттерне]
@@ -487,9 +487,9 @@ sequenceDiagram
     Input->>Trainer: Вектор спайков с временным кодированием
     Trainer->>Trainer: Анализ паттерна
     Trainer->>Structure: Определение начальной структуры
-    Structure->>Neuron: Создание нейрона
+    Structure->>Neuron: Creation нейрона
     Trainer->>Neuron: Предъявление паттерна
-    Neuron->>Trainer: Амплитуда потенциала
+    Neuron->>Trainer: Амплитуда potentialа
     Trainer->>Trainer: Проверка генерации спайка
     alt Спайк не генерируется
         Trainer->>Structure: Корректировка структуры
@@ -597,4 +597,3 @@ According to publication [1]:
 ## Literature
 
 1. Korsakov, A., Astapova, L., Bakhshiev, A. The Method of Structural Adaptation of the Compartmental Spiking Neuron Model // Cyber-Physical Systems and Control II. CPS&C 2021. Lecture Notes in Networks and Systems, vol 460. Springer, Cham, 2023. [DOI](https://doi.org/10.1007/978-3-031-20875-1_51)
-
