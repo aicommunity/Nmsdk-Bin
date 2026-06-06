@@ -1,3 +1,5 @@
+## RU
+
 ## Нейронные структуры управления мышечным сокращением
 
 В работе [1] рассматриваются:
@@ -157,4 +159,172 @@ flowchart TD
 ## Литература
 
 1. [31] Моделирование нейронных структур управления мышечным сокращением. Схемы нейронных сетей. [онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)
+
+---
+
+## EN
+
+## Neural structures for muscle contraction control
+
+Work [1] covers:
+
+- afferent neurons (Ia, II, Ib channels);
+- motoneurons, Renshaw cells, inhibitory interneurons;
+- methods of regulating muscle contraction force (discharge frequency, number of active motoneurons);
+- reflex and recurrent circuits in the spinal cord.
+
+### Corresponding SpikeSamples configurations
+
+In `Bin/Configs/SpikeSamples`, these topics correspond primarily to:
+
+- `MC0-RCN/MC-RCN-00-*/...`
+  — reflex circuits (Ring/Reflex Control Networks) with motoneurons, Renshaw cells, branching afferent pathways.
+- `MC0-RCN/MC-RCN-01-NumMotionElements-Pendulum/...`
+  — influence of the number of motor elements and feedback structure on pendulum model dynamics.
+- `MC1-PCN/*` (`MotionControl_Test`, `MultiPositionControl_*`, `NewPositionControl_Test`)
+  — more applied positional control schemes involving spiking networks.
+- `EyeRetina/EyeRetinaMuscle`
+  — example of a visuomotor circuit "retina → processing network → muscle".
+
+Each configuration includes `Description.rtf` with detailed experiment descriptions; the new documentation in local `README.md` files consolidates these descriptions in Markdown format and supplements them with diagrams (mermaid), validation status, and links to relevant articles.
+
+### General motoneuron – Renshaw cell circuit diagram
+
+```mermaid
+flowchart LR
+    afferentIa["AfferentNeuron_Ia"] --> motoneuron["Motoneuron"]
+    motoneuron --> muscle["Muscle"]
+    motoneuron --> renshaw["RenshawCell"]
+    renshaw --> motoneuron
+    renshaw --> inhInterneuron["InhibitoryInterneuron"]
+    inhInterneuron --> antagonistMN["AntagonistMotoneuron"]
+```
+
+Key effects demonstrated in SpikeSamples configurations:
+
+- **recurrent inhibition** of motoneurons through Renshaw cells;
+- **reciprocal inhibition of antagonist muscles** through interneurons;
+- **dependence of motoneuron discharge frequency** on afferent input frequency and inhibitory circuit parameters.
+
+### Link to specific configurations
+
+- `MC0-RCN/*`
+  — closest to schemes described in the article: explicit implementation of afferent channels, motoneurons, Renshaw cells, and muscle models (pendulum / DC motor).
+- `MC1-PCN/*`
+  — uses similar principles at a higher level (positional control), but can be viewed as an extension of basic RCN schemes.
+- `EyeRetina/EyeRetinaMuscle`
+  — adds a sensory (visual) front end and connects it to the motor circuit.
+
+For each configuration set, local `README.md` files have been prepared with:
+
+- biological motivation of the experiment;
+- network structure (including mermaid diagrams for specific variants);
+- stimulation scenarios and qualitative results (e.g., discharge frequency stabilization as input frequency increases, coordinated control of multiple muscles, etc.).
+
+## SpikeSamples — neural structures for muscle contraction control
+
+This document is based on work [1] and describes how the corresponding schemes are implemented in `Bin/Configs/SpikeSamples` configurations.
+
+### Biological prototype
+
+The classical spinal neural structure scheme is considered:
+
+- afferent neurons (Ia, II, Ib) transmitting information from muscle spindles and Golgi organs;
+- motoneurons innervating muscle fibers;
+- inhibitory interneurons;
+- Renshaw cells providing recurrent inhibition of motoneurons;
+- muscle as the controlled object.
+
+The network implements:
+
+- mono- and disynaptic reflex arcs;
+- recurrent inhibition;
+- alpha-gamma coordination when additional control inputs are present.
+
+### SpikeSamples configurations related to movement control
+
+Main configurations:
+
+- `SpikeSamples/MC1-PCN/MotionControl_Test`
+- `SpikeSamples/MC1-PCN/NewPositionControl_Test`
+- `SpikeSamples/MC1-PCN/MultiPositionControl_SimpleTest`
+- `SpikeSamples/MC1-PCN/MultiPositionControl_SoloModeTest`
+- `SpikeSamples/MC1-PCN/MultiPositionControl_TaskTest`
+- `SpikeSamples/MC1-PCN/MultiPositionControl_RememberStateTest`
+- `SpikeSamples/MC1-PCN/MultiPC_TwoLevelsTask`
+
+Additionally, some aspects of afferent channels and sensing are demonstrated in:
+
+- `SpikeSamples/NM-AfferentNeurons/*`
+- `SpikeSamples/NeuralElements/NReceptor`
+
+Each MC1-PCN configuration models:
+
+- a subset of the scheme described in the article;
+- a specific control scenario (positional, multi-position, with state memory, with multi-level hierarchy, etc.).
+
+### Motoneuron — Renshaw cell scheme (recurrent inhibition)
+
+A key theme of the article is recurrent motoneuron inhibition through a Renshaw cell, stabilizing discharge frequency as input frequency increases.
+
+This can be schematically represented as:
+
+```mermaid
+flowchart TD
+    afferentIa["Afferent Ia/II
+(SpikeSamples/NM-AfferentNeurons)"] --> motoneuron["Motoneuron
+(NPulseNeuron)"]
+    motoneuron --> muscle["Muscle
+(модель мышцы или выходной канал)"]
+    motoneuron --> renshaw["Renshaw cell
+(NPulseNeuron)"]
+    renshaw -->|тормозное влияние| motoneuron
+```
+
+In MC1-PCN configurations:
+
+- afferent inputs may be played by spike generators or afferent neurons (`NM-AN-*`);
+- motoneurons and Renshaw cells are implemented based on `NPulseNeuron` with different membrane structures and input connections;
+- muscle is represented either as an aggregated network output or as a separate subsystem (in some configurations).
+
+### Scenario examples from MC1-PCN
+
+1. **MotionControl_Test / NewPositionControl_Test**
+   - demonstrate the basic circuit "afferentation → motoneuron → muscle" with position feedback;
+   - `README.md` should describe:
+     - which afferent feedback channels are used;
+     - how motoneuron discharge patterns change under different command trajectories;
+     - how this relates to article results (stabilization, output dynamics).
+
+2. **MultiPositionControl_* and MultiPC_TwoLevelsTask**
+   - extend the basic scheme to multi-position and/or hierarchical control:
+     - multiple motoneurons and effector muscles;
+     - role distribution between levels (local and global feedback loops);
+   - `README.md` should record:
+     - map of neural blocks (which configuration node corresponds to which article scheme element);
+     - scenarios: target position changes, memory of previous position, antagonist muscle interaction.
+
+3. **Link to afferent configurations**
+   - `SpikeSamples/NM-AfferentNeurons/*` and `SpikeSamples/NeuralElements/NReceptor` demonstrate formation of afferent impulse streams;
+   - their `README.md` should describe:
+     - afferent neuron frequency response (dependence of output pulse frequency on input signal);
+     - input signal types (muscle stretch, tendon tension force, etc.);
+     - how these channels are used in MC1-PCN configurations.
+
+### README recommendations for muscle control configurations
+
+For each MC1-PCN configuration:
+
+- clearly specify:
+  - which neural blocks are modeled (motoneurons, Renshaw cells, interneurons, afferent channels);
+  - main parameters (threshold, feedback depth, time constants);
+  - which experiment scenarios are considered (step command, sinusoidal, trajectory, multi-position mode);
+- include at least one mermaid structure diagram;
+- relate observed patterns (frequency limiting, stabilization, phase relationships) to corresponding figures/graphs from the article.
+
+This document sets the framework for such README files; specific details for each configuration are described at the `SpikeSamples/MC1-PCN/*` folder level.
+
+## Literature
+
+1. [31] Modeling neural structures for muscle contraction control. Neural network schemes. [online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)
 

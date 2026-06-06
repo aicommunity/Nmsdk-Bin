@@ -1,3 +1,5 @@
+## RU
+
 ## Стратегия инкрементального обучения на компартментной спайковой модели нейрона
 
 ### Назначение метода
@@ -270,3 +272,281 @@ classifier->Reset();
 1. Korsakov, A. M., Isakov, T. T., Bakhshiev, A. V. Strategy of Incremental Learning on a Compartmental Spiking Neuron Model // Optical Memory and Neural Networks. – 2023. – Vol. 32, No. S2. – P. S237-S243. [DOI](https://doi.org/10.3103/s1060992x23060073)
 
 2. UCI Machine Learning Repository: Iris Data Set. [онлайн](https://archive.ics.uci.edu/ml/datasets/iris)
+
+---
+
+## EN
+
+## Incremental learning strategy on a compartmental spiking neuron model
+
+### Purpose of the method
+
+Incremental learning allows training a neuron on new samples without storing and retraining on all previous training samples. This is especially important for tasks where data arrives sequentially or when adaptation to new classes is required without losing knowledge of old classes.
+
+### Core concepts
+
+#### Incremental learning scenario
+
+Work [1] considers an incremental learning scenario where:
+- Training occurs on **a single neuron** with the ability to form new classes
+- During training, **only the new sample** is used, without knowledge of all previous training samples
+- The neuron must retain the ability to recognize previously trained classes when learning new ones
+
+#### Key feature
+
+The key feature of incremental learning is that the system does not have access to all training samples simultaneously. Instead:
+- Samples arrive sequentially
+- Each new sample is used to update the model
+- Previous samples are not stored or reused
+- Knowledge of previous classes is preserved in the neuron's structure and parameters
+
+### Incremental learning algorithm
+
+#### Stage 1: Neuron initialization
+
+- Create a neuron with initial structure
+- Set initial parameters
+- Prepare for training on the first class
+
+#### Stage 2: Sequential presentation of new samples
+
+For each new sample:
+
+1. **Present sample to the neuron**
+   - Convert sample to a spike pattern with temporal coding
+   - Feed pattern to neuron inputs
+
+2. **Analyze neuron response**
+   - Check whether the neuron generates a spike
+   - Determine which class the sample belongs to (known or new)
+
+3. **Adapt structure and parameters**
+
+   **If the sample belongs to a known class:**
+   - Fine-tune parameters to improve recognition
+   - Minor structure adjustment may be possible
+
+   **If the sample belongs to a new class:**
+   - Form a new class
+   - Adapt neuron structure to recognize the new class
+   - Preserve ability to recognize previous classes
+
+#### Stage 3: Formation of new classes
+
+When a new class is detected:
+- Analyze characteristics of the new sample
+- Determine required neuron structure for recognizing the new class
+- Modify structure while preserving ability to recognize previous classes
+- Tune parameters for the new class
+
+#### Stage 4: Preserving knowledge of previous classes
+
+It is critically important to preserve the neuron's ability to recognize previously trained classes:
+- Structural adaptation must be careful not to disrupt recognition of old classes
+- Parameters critical for old classes must be preserved
+- New structural elements are added, not replacing old ones
+
+### Application on the Iris dataset
+
+#### Dataset description
+
+The Iris dataset (UCI Machine Learning Repository) contains:
+- 150 iris flower samples
+- 3 classes: Iris-setosa, Iris-versicolor, Iris-virginica
+- 4 features: sepal length, sepal width, petal length, petal width
+
+#### Experimental setup
+
+In work [1]:
+- A single neuron is trained on all three classes
+- Samples from different classes are presented sequentially
+- Only new samples are used without knowledge of all previous ones
+- Neuron ability to recognize all classes after training is verified
+
+#### Experimental results
+
+Results demonstrate:
+- **Applicability of the chosen strategy** for incremental learning on a compartmental spiking neuron model
+- Ability to train a neuron to recognize multiple classes sequentially
+- Preservation of ability to recognize previously trained classes when learning new ones
+
+### Link to structural adaptation
+
+#### Use of structural adaptation
+
+Incremental learning uses structural adaptation to adjust to new samples:
+
+- **New sample analysis:** determine required neuron structure
+- **Structure adaptation:** change soma size, dendrite length, number of synapses
+- **Preserving structure for old classes:** careful modification that does not disrupt recognition of previous classes
+
+#### Method combination
+
+Combination of structural adaptation and incremental learning enables:
+- Efficient learning on new data
+- Forming new classes without retraining
+- Preserving knowledge of previous classes
+- Adapting to changing conditions
+
+### Corresponding SpikeSamples configurations
+
+The following configurations demonstrate incremental learning and related concepts:
+
+- **`SpikeSamples/Classifier/SpikeIrisClassifier`** — Iris classification with incremental learning
+  - Demonstrates incremental learning application for classification
+  - Uses structural adaptation to adjust to new classes
+
+- **`SpikeSamples/StructTrain/SpikeTrainer`** — basic structural learning
+  - Demonstrates structural adaptation process
+  - Can serve as a basis for incremental learning
+
+- **`SpikeSamples/StructTrain/SpikeAnsTrainer`** — structural learning with answers
+  - Extended version with ability to train on multiple patterns
+  - Demonstrates forming responses to different input patterns
+
+### Incremental learning algorithm (details)
+
+**Incremental learning algorithm diagram:**
+
+```mermaid
+flowchart TD
+    Start[Начало] --> Init[Инициализация нейрона]
+    Init --> Wait[Ожидание нового образца]
+    Wait --> Present[Предъявление образца]
+    Present --> Analyze[Анализ реакции нейрона]
+    Analyze --> Check{Нейрон распознал образец?}
+    Check -->|Да, известный класс| Tune[Тонкая настройка параметров]
+    Check -->|Нет, новый класс| Adapt[Структурная адаптация]
+    Adapt --> Verify[Проверка сохранения старых классов]
+    Verify -->|Нарушено| Restore[Восстановление структуры]
+    Restore --> Adapt
+    Verify -->|Сохранено| Tune
+    Tune --> Test[Тестирование на всех классах]
+    Test --> Wait
+```
+
+#### Stage details
+
+**1. Neuron response analysis:**
+- Check spike generation when sample is presented
+- Determine class based on spike generation time or activity pattern
+- Compare with known classes
+
+**2. Parameter fine-tuning:**
+- Small changes to synaptic weights
+- Threshold adjustment (if necessary)
+- Preserve neuron structure
+
+**3. Structural adaptation:**
+- Analyze characteristics of the new sample
+- Determine required structure changes:
+  - Add new dendrites (if necessary)
+  - Change length of existing dendrites
+  - Add synapses
+  - Change soma size (carefully)
+- Modify structure while preserving elements critical for old classes
+
+**4. Verification of old class preservation:**
+- Test on samples from previous classes
+- Verify neuron still recognizes old classes
+- If disrupted — roll back changes or perform additional adaptation
+
+### Usage examples
+
+#### Example 1: Iris flower classification
+
+```cpp
+// Создание классификатора с инкрементальным обучением
+NSpikeClassifier* classifier = CreateComponent<NSpikeClassifier>("Classifier");
+
+// Настройка для инкрементального обучения
+classifier->StructureBuildMode = 1;  // Структурная адаптация
+classifier->IsNeedToTrain = true;
+
+// Обучение на первом классе (Iris-setosa)
+MDMatrix<double> pattern_setosa;
+// ... заполнение паттерна для первого класса
+classifier->TrainingPatterns = pattern_setosa;
+classifier->NumNeurons = 1;
+classifier->Reset();
+
+// Обучение на втором классе (Iris-versicolor)
+// Без переобучения на первом классе
+MDMatrix<double> pattern_versicolor;
+// ... заполнение паттерна для второго класса
+classifier->TrainingPatterns = pattern_versicolor;
+classifier->NumNeurons = 2;  // Добавление нового нейрона для нового класса
+classifier->Reset();
+
+// Обучение на третьем классе (Iris-virginica)
+// Без переобучения на предыдущих классах
+MDMatrix<double> pattern_virginica;
+// ... заполнение паттерна для третьего класса
+classifier->TrainingPatterns = pattern_virginica;
+classifier->NumNeurons = 3;  // Добавление нового нейрона для нового класса
+classifier->Reset();
+```
+
+#### Example 2: Extension to other classification tasks
+
+Incremental learning can be applied to various classification tasks:
+- Pattern recognition
+- Time series classification
+- Adaptation to new conditions in robotics
+- Online learning in changing environments
+
+### Advantages of incremental learning
+
+1. **Memory efficiency:**
+   - No need to store all previous samples
+   - Knowledge is preserved in neuron structure and parameters
+
+2. **Adaptability:**
+   - Ability to learn on new data without full retraining
+   - Adaptation to changing conditions
+
+3. **Scalability:**
+   - Ability to add new classes without retraining on all data
+   - Efficient use of computational resources
+
+4. **Biological realism:**
+   - Corresponds to learning process in biological neural networks
+   - Learning occurs sequentially, not in batches
+
+### Limitations and challenges
+
+1. **Catastrophic forgetting:**
+   - Risk of losing ability to recognize old classes when learning new ones
+   - Need for careful structure adaptation
+
+2. **Balance between old and new classes:**
+   - Need to preserve structure for old classes
+   - Simultaneous adaptation for new classes
+
+3. **New class detection:**
+   - Problem of determining when a sample belongs to a new class
+   - Need for threshold values for decision making
+
+### Experimental results
+
+According to publication [1]:
+
+- Incremental learning strategy is successfully applied on a compartmental spiking neuron model
+- Neuron can learn on new samples without knowledge of all previous training samples
+- Results on the Iris dataset demonstrate method applicability
+- Combination of structural adaptation and incremental learning provides efficient learning
+
+### Related materials
+
+- [`StructuralAdaptation.md`](StructuralAdaptation.md) — structural adaptation method used in incremental learning
+- [`Classification.md`](Classification.md) — application to classification tasks
+- [`CSNM-Models.md`](CSNM-Models.md) — compartmental spiking neuron model description
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTrainer.md` — NNeuronTrainer component documentation
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NSpikeClassifier.md` — NSpikeClassifier component documentation
+
+## Literature
+
+1. Korsakov, A. M., Isakov, T. T., Bakhshiev, A. V. Strategy of Incremental Learning on a Compartmental Spiking Neuron Model // Optical Memory and Neural Networks. – 2023. – Vol. 32, No. S2. – P. S237-S243. [DOI](https://doi.org/10.3103/s1060992x23060073)
+
+2. UCI Machine Learning Repository: Iris Data Set. [online](https://archive.ics.uci.edu/ml/datasets/iris)
+

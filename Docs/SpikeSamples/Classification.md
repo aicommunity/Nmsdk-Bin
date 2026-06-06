@@ -1,3 +1,5 @@
+## RU
+
 ## Применение сегментной спайковой модели нейрона со структурной адаптацией для решения задач классификации
 
 ### Назначение метода
@@ -355,3 +357,366 @@ classDiagram
 3. MNIST handwritten digit database. [онлайн](http://yann.lecun.com/exdb/mnist/)
 
 4. Astapova, L. A., Korsakov, A. M., Bakhshiev, A. V. [et al.] Compartmental spiking neuron model for pattern classification // Journal of Physics: Conference Series, Krasnoyarsk, Russia, 24 сентября – 03 2021 года. Vol. Volume 2094. – Krasnoyarsk, Russia: IOP Publishing Ltd, 2021. – P. 32032. [DOI](https://iopscience.iop.org/article/10.1088/1742-6596/2094/3/032032)
+
+---
+
+## EN
+
+## Application of a segmental spiking neuron model with structural adaptation for solving classification problems
+
+### Purpose of the method
+
+The segmental spiking neuron model with structural adaptation is applied to solve classification problems where the following is required:
+- Recognition of different object classes
+- Adaptation to new classes without full retraining
+- Efficient processing of temporal patterns
+- Operation under limited computational resources
+
+### Analysis of the current state of spiking neural networks
+
+#### Conclusions from the publication
+
+According to the analysis conducted in [1]:
+- There is an **extremely small number of works** on studying segmental neuron models
+- Most research focuses on point models (LIF, Izhikevich, etc.)
+- Segmental models open new possibilities for solving classification problems
+
+#### Rationale for model selection
+
+The **segmental spiking model** is justified as the neuron model for this work for the following reasons:
+- Capability for structural reconfiguration
+- Accounting for spatial signal propagation
+- Ability to process complex temporal patterns
+- Biological realism
+
+### Core concepts
+
+#### Segmental spiking neuron model
+
+The segmental spiking neuron model is a model where:
+- The neuron is divided into segments (compartments): soma and dendrites
+- Each segment has its own membrane parameters
+- Signals propagate between segments with spatial delays taken into account
+- The neuron structure can change during learning
+
+#### Capability for structural reconfiguration
+
+Main features enabling structural reconfiguration:
+- **Dynamic structure change:** soma size, dendrite length, and number of synapses can change
+- **Automatic parameter selection:** the algorithm automatically selects the optimal structure for each pattern
+- **Preservation of functionality:** structural changes do not impair the ability to recognize previously learned patterns
+
+#### Temporal coding
+
+**Temporal coding** is chosen as the method for encoding numerical information into spike patterns:
+
+- **Principle:** a numerical value is converted into the time of spike occurrence
+- **Advantages:**
+  - Efficient use of temporal information
+  - Natural representation for spiking neural networks
+  - Ability to process temporal sequences
+
+**Example of temporal coding:**
+- Larger value → earlier spike
+- Smaller value → later spike
+- Zero value → no spike
+
+#### Structural adaptation of the model to an input spike pattern
+
+The method of structural adaptation of the model to an input spike pattern includes:
+
+1. **Input pattern analysis:**
+   - Determining the dimension of the pattern vector
+   - Analyzing temporal coding
+   - Determining the required neuron structure
+
+2. **Automatic parameter selection:**
+   - **Soma size:** number of somatic membrane segments
+   - **Dendrite length:** number of segments in each dendrite
+   - **Number of synapses:** number of synapses on each dendrite
+
+3. **Training on the pattern:**
+   - Presenting the pattern to the neuron
+   - Monitoring neuron activity
+   - Adjusting structure when necessary
+
+#### General scheme for organizing segmental spiking neurons into a network
+
+To solve a classification problem, segmental spiking neurons are organized into a network as follows:
+
+```mermaid
+flowchart TD
+    Input[Входные данные] --> Encode[Временное кодирование]
+    Encode --> Pattern[Паттерн спайков]
+    Pattern --> Network[Сеть сегментных нейронов]
+    Network --> Neuron1[Нейрон класса 1]
+    Network --> Neuron2[Нейрон класса 2]
+    Network --> Neuron3[Нейрон класса N]
+    Neuron1 --> Decision[Принятие решения]
+    Neuron2 --> Decision
+    Neuron3 --> Decision
+    Decision --> Output[Выходной класс]
+```
+
+**Network architecture:**
+- Each neuron is trained to recognize one class
+- The input pattern is fed to all neurons simultaneously
+- The neuron generating a spike determines the sample class
+- Structural adaptation is used for each neuron during training
+
+### Experimental results
+
+#### Classification on publicly available datasets
+
+##### Iris (UCI Machine Learning Repository)
+
+**Dataset description:**
+- 150 iris flower samples
+- 3 classes: Iris-setosa, Iris-versicolor, Iris-virginica
+- 4 features: sepal length and width, petal length and width
+
+**Results:**
+- Results comparable to classical machine learning methods
+- Successful application of the segmental spiking model with structural adaptation
+- Capability for incremental learning on new classes
+
+##### MNIST (handwritten digit database)
+
+**Dataset description:**
+- 70,000 images of handwritten digits (0-9)
+- 60,000 samples for training, 10,000 for testing
+- Image size: 28×28 pixels
+
+**Results:**
+- Application of temporal coding to convert images into spike patterns
+- Use of structural adaptation to train neurons on different classes
+- Results comparable to classical methods
+
+**Features:**
+- Conversion of spatial image information into temporal patterns
+- Use of segmental structure to process complex patterns
+- Capability to process large volumes of data
+
+#### Application for determining the state of a remotely operated unmanned underwater vehicle
+
+##### Task of determining distance to the bottom
+
+**Experiment description:**
+- Determining the distance of a remotely operated unmanned underwater vehicle (ROV) to the bottom
+- Using data from pressure sensors
+- Classification of different distances to the bottom
+
+**Methodology:**
+1. Collecting data from pressure sensors at various distances to the bottom
+2. Converting data into spike patterns with temporal coding
+3. Training a network of segmental neurons on different distance classes
+4. Testing on new data
+
+**Results:**
+- Demonstrated correspondence of obtained results to the actual ROV state
+- Successful classification of different distances to the bottom
+- Capability for application in real-world conditions
+
+##### Task of determining the nature of motion
+
+**Experiment description:**
+- Determining the nature of ROV motion (ascent, descent, horizontal movement, etc.)
+- Using data from various sensors
+- Classification of different motion modes
+
+**Methodology:**
+1. Collecting data on ROV motion in various modes
+2. Converting data into spike patterns
+3. Training the network to recognize different motion modes
+4. Validation on real data
+
+**Results:**
+- Demonstrated correspondence of obtained results to the actual ROV state
+- Successful classification of different motion modes
+- Demonstration of method applicability for practical tasks
+
+### Schemes for organizing segmental spiking neurons into a network
+
+#### Network architecture for classification
+
+**Class diagram of the network architecture:**
+
+```mermaid
+classDiagram
+    class InputLayer {
+        +Входные данные
+        +Временное кодирование
+    }
+    class SegmentNeuron {
+        +Структурная адаптация
+        +Распознавание паттерна
+        +Генерация спайка
+    }
+    class OutputLayer {
+        +Принятие решения
+        +Определение класса
+    }
+
+    InputLayer --> SegmentNeuron : Паттерн спайков
+    SegmentNeuron --> OutputLayer : Выходной спайк
+```
+
+#### Interaction of neurons in the network
+
+- **Parallel processing:** all neurons receive the input pattern simultaneously
+- **Competition:** the neuron generating a spike first or with the greatest amplitude determines the class
+- **Independent learning:** each neuron is trained independently on its own class
+- **Structural adaptation:** each neuron adapts its structure to its class
+
+#### Class decision process
+
+1. **Presenting the input pattern:**
+   - Input data is converted into a spike pattern with temporal coding
+   - The pattern is fed to all neurons in the network simultaneously
+
+2. **Spike generation:**
+   - Each neuron analyzes the input pattern
+   - Neurons trained on similar patterns generate spikes
+   - Spike generation time depends on the degree of pattern match
+
+3. **Class determination:**
+   - The class is determined by the neuron that generates a spike
+   - When multiple neurons generate spikes, the neuron with the greatest amplitude or earliest generation time is selected
+
+### Description of experiments and results
+
+#### Experimental methodology
+
+**General experiment scheme:**
+
+1. **Data preparation:**
+   - Feature normalization
+   - Conversion into spike patterns with temporal coding
+   - Split into training and test sets
+
+2. **Network training:**
+   - Creating neurons for each class
+   - Training each neuron on its class using structural adaptation
+   - Verifying the ability to recognize its class
+
+3. **Testing:**
+   - Presenting test samples to the network
+   - Class determination by each neuron
+   - Computing classification quality metrics
+
+#### Classification quality metrics
+
+**Main metrics:**
+- **Accuracy:** proportion of correctly classified samples
+- **Precision:** for each class separately
+- **Recall:** ability to find all samples of a class
+- **F-measure (F1-score):** harmonic mean of precision and recall
+
+**Results on Iris:**
+- Comparable to classical methods (k-NN, SVM, neural networks)
+- High classification accuracy for all three classes
+- Successful application of incremental learning
+
+**Results on MNIST:**
+- Comparable to classical methods for small data subsets
+- Demonstration of image processing capability
+- Potential for scaling to the full dataset
+
+#### Comparison with other methods
+
+**Advantages of the segmental model:**
+- Capability for structural adaptation
+- Efficient processing of temporal patterns
+- Incremental learning without retraining
+- Biological realism
+
+**Limitations:**
+- Higher computational complexity than simple models
+- More time required for training
+- Need to tune structural adaptation parameters
+
+### Corresponding SpikeSamples configurations
+
+The following configurations demonstrate application for classification tasks:
+
+- **`SpikeSamples/Classifier/SpikeIrisClassifier`** — classification on Iris
+  - Demonstrates application of the segmental model for iris flower classification
+  - Uses temporal coding and structural adaptation
+  - Shows incremental learning results
+
+- **Configurations demonstrating temporal coding:**
+  - Configurations that convert numerical data into spike patterns
+  - Examples of various temporal coding methods
+
+- **Configurations with structural adaptation:**
+  - `SpikeSamples/StructTrain/SpikeTrainer` — basic structural training
+  - `SpikeSamples/StructTrain/SpikeAnsTrainer` — structural training with answers
+  - Demonstrate the structural adaptation process for pattern recognition
+
+### Application prospects
+
+According to publication [1], application of spiking segmental neuron models with structural adaptation capability is promising for:
+
+1. **Classification tasks:**
+   - Pattern recognition
+   - Time series classification
+   - Sensor data processing
+
+2. **Robotics:**
+   - Robot state determination
+   - Operating mode classification
+   - Adaptation to changing conditions
+
+3. **Neuromorphic systems:**
+   - Energy-efficient information processing
+   - Implementation on specialized hardware
+   - Real-time online learning
+
+4. **Biomedical applications:**
+   - Biosignal analysis
+   - Organism state classification
+   - Adaptive monitoring systems
+
+### Further promising research directions
+
+The following directions for further research are considered:
+
+1. **Scaling to large datasets:**
+   - Application to full datasets (e.g., full MNIST)
+   - Optimization of computational complexity
+   - Parallel processing
+
+2. **Improving structural adaptation algorithms:**
+   - More efficient structure selection algorithms
+   - Automatic determination of optimal parameters
+   - Acceleration of the learning process
+
+3. **Extension to other task types:**
+   - Regression
+   - Clustering
+   - Reinforcement learning
+
+4. **Integration with other methods:**
+   - Combination with STDP
+   - Use of neuron ensembles
+   - Hybrid architectures
+
+### Related materials
+
+- [`StructuralAdaptation.md`](StructuralAdaptation.md) — structural adaptation method used for classification
+- [`IncrementalLearning.md`](IncrementalLearning.md) — incremental learning strategy for classification
+- [`CSNM-Models.md`](CSNM-Models.md) — description of the compartmental spiking neuron model
+- [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — impulse stream conversion model
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NSpikeClassifier.md` — NSpikeClassifier component documentation
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTrainer.md` — NNeuronTrainer component documentation
+
+## References
+
+1. Korsakov, A. M., Astapova, L. A., Bakhshiev, A. V. Application of a compartmental spiking neuron model with structural adaptation for solving classification problems // Informatics and Automation, 2022, 21(3), 493-520. [DOI](https://doi.org/10.15622/ia.21.3.2)
+
+2. UCI Machine Learning Repository: Iris Data Set. [online](https://archive.ics.uci.edu/ml/datasets/iris)
+
+3. MNIST handwritten digit database. [online](http://yann.lecun.com/exdb/mnist/)
+
+4. Astapova, L. A., Korsakov, A. M., Bakhshiev, A. V. [et al.] Compartmental spiking neuron model for pattern classification // Journal of Physics: Conference Series, Krasnoyarsk, Russia, 24 сентября – 03 2021 года. Vol. Volume 2094. – Krasnoyarsk, Russia: IOP Publishing Ltd, 2021. – P. 32032. [DOI](https://iopscience.iop.org/article/10.1088/1742-6596/2094/3/032032)
+

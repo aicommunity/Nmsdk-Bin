@@ -1,3 +1,5 @@
+## RU
+
 ## Метод структурной адаптации компартментной спайковой модели нейрона
 
 ### Назначение метода
@@ -294,3 +296,305 @@ trainer->Reset();
 ## Литература
 
 1. Korsakov, A., Astapova, L., Bakhshiev, A. The Method of Structural Adaptation of the Compartmental Spiking Neuron Model // Cyber-Physical Systems and Control II. CPS&C 2021. Lecture Notes in Networks and Systems, vol 460. Springer, Cham, 2023. [DOI](https://doi.org/10.1007/978-3-031-20875-1_51)
+
+---
+
+## EN
+
+## Structural adaptation method for the compartmental spiking neuron model
+
+### Purpose of the method
+
+The structural adaptation method automatically selects parameters of the compartmental spiking neuron model depending on a given input pattern. Unlike traditional learning methods where only synaptic weights change, structural adaptation changes the neuron's topology itself: soma size, dendrite length, and number of synapses on each dendrite.
+
+### Core concepts
+
+#### Learning task
+
+The learning task consists of forming a response to a pattern represented as a **vector of single spikes with temporal coding**, where each vector component enters a separate dendrite of the neuron.
+
+Temporal coding means numerical information is converted into a pulse sequence where the spike arrival time carries information about the value. For example, a larger value may be encoded by an earlier spike time.
+
+#### Automatic neuron parameter selection
+
+Depending on the given pattern, the algorithm automatically selects the following neuron model parameters:
+
+1. **Soma size** (number of somatic membrane segments, N_s)
+   - Affects the neuron's ability to integrate input signals
+   - A larger soma provides more stable integration but may reduce sensitivity
+
+2. **Dendrite length** (number of segments in each dendrite, N_d)
+   - Determines signal propagation delay from synapse to soma
+   - Longer dendrites better process temporal patterns
+   - Each dendrite may have its own length
+
+3. **Number of synapses on each dendrite** (N_syn)
+   - Determines number of input channels for each dendrite
+   - Affects the neuron's ability to distinguish different patterns
+
+#### Pattern recognition criterion
+
+The criterion for pattern recognition by a trained model is **output spike generation** by the neuron when the corresponding input pattern is presented.
+
+#### Universal activation threshold value
+
+Experimentally, a **universal neuron activation threshold value** was determined that does not depend on the size of the vector describing the input pattern. This important property allows using the same threshold for various classification tasks without adjustment.
+
+### Structural adaptation algorithm
+
+The structural adaptation process can be represented by the following stages:
+
+**Structural adaptation process diagram:**
+
+```mermaid
+flowchart TD
+    Start[Начало обучения] --> Analyze[Анализ входного паттерна]
+    Analyze --> Determine[Определение необходимой структуры]
+    Determine --> Create[Автоматическое создание/модификация структуры]
+    Create --> Train[Обучение на заданном паттерне]
+    Train --> Check{Нейрон генерирует спайк?}
+    Check -->|Нет| Adjust[Корректировка структуры]
+    Adjust --> Create
+    Check -->|Да| End[Обучение завершено]
+```
+
+#### Stage 1: Input pattern analysis
+
+- Determine pattern vector dimension (number of components)
+- Analyze temporal coding (spike arrival times)
+- Determine required number of dendrites (equal to pattern vector dimension)
+
+#### Stage 2: Determine required structure
+
+- Select initial neuron structure:
+  - Number of somatic segments (usually starts at minimum)
+  - Number of dendrites (equal to input pattern dimension)
+  - Initial length of each dendrite (usually starts at 1 segment)
+  - Number of synapses on each dendrite (usually starts at 1)
+
+#### Stage 3: Automatic structure creation/modification
+
+At this stage:
+- Neuron structure is created with specified parameters
+- Input generators are connected to corresponding synapses
+- Membrane, channel, and synapse parameters are configured
+
+#### Stage 4: Training on the given pattern
+
+- Present input pattern to neuron
+- Monitor neuron activity
+- Measure membrane potential amplitude
+- Check output spike generation
+
+#### Stage 5: Structure adjustment (if necessary)
+
+If the neuron does not generate a spike or generates it incorrectly:
+- Increase dendrite length (to improve temporal processing)
+- Change soma size (to change activation threshold)
+- Add synapses (to strengthen input signal)
+- Retrain with new structure
+
+### Implementation in NMSDK
+
+In NMSDK, structural adaptation is implemented through the `NNeuronTrainer` component (`Nmsdk-PulseLib` library).
+
+#### Main NNeuronTrainer parameters
+
+- `NumInputDendrite` — number of input dendrites (corresponds to input pattern dimension)
+- `MaxDendriteLength` — maximum dendrite length
+- `InputPattern` — input pattern matrix (temporal coding)
+- `LTZThreshold` — low-threshold zone activation threshold
+- `FixedLTZThreshold` — fixed activation threshold
+- `TrainingLTZThreshold` — activation threshold during training
+- `SpikesFrequency` — spike generation frequency
+- `StructureBuildMode` — structure build mode (1 — structural adaptation)
+- `CalculateMode` — calculation mode (defines learning algorithm)
+
+#### Structural adaptation process in NNeuronTrainer
+
+The `NNeuronTrainer` component implements structural adaptation as follows:
+
+1. **Structure initialization:**
+   - Create neuron with initial structure
+   - Create pulse generators for each input dendrite
+   - Connect generators to synapses on dendrites
+
+2. **Iterative learning:**
+   - At each iteration, membrane potential amplitude is measured
+   - If amplitude increases when dendrite length increases — dendrite continues growing
+   - If amplitude does not increase — dendrite is shortened or learning moves to next dendrite
+
+3. **Dendrite synchronization:**
+   - Algorithm seeks to synchronize times of maximum amplitude arrival on different dendrites
+   - This ensures optimal temporal pattern processing
+
+4. **Learning completion:**
+   - Learning completes when all dendrites are synchronized and neuron generates a spike when pattern is presented
+
+### Corresponding SpikeSamples configurations
+
+The following configurations demonstrate structural adaptation:
+
+- **`SpikeSamples/StructTrain/SpikeTrainer`** — basic structural learning
+  - Demonstrates structural adaptation process on a simple pattern
+  - Uses `NNeuronTrainer` component for automatic structure adjustment
+
+- **`SpikeSamples/StructTrain/SpikeAnsTrainer`** — structural learning with answers
+  - Extended version with ability to train on multiple patterns
+  - Demonstrates forming responses to different input patterns
+
+- **`SpikeSamples/NM-Neurons/CableModel/CableNeuronMulti_CSNM*`** — CSNM models with structural adaptation capability
+  - Demonstrate structural adaptation on compartmental neuron models
+  - Show influence of spatial parameters on adaptation process
+
+### Parameters affecting structural adaptation
+
+#### Maximum dendrite length (`MaxDendriteLength`)
+
+- Limits maximum number of segments in each dendrite
+- Affects maximum signal processing delay
+- Recommended values: 10 to 100 segments depending on task
+
+#### Maximum number of synapses
+
+- Determined by neuron structure and membrane parameters
+- Affects neuron's ability to integrate multiple inputs
+- Usually set equal to number of input dendrites
+
+#### Neuron activation threshold (`LTZThreshold`, `FixedLTZThreshold`)
+
+- Universal threshold value independent of input pattern size
+- Critically important for correct pattern recognition
+- May be fixed or adaptive depending on learning mode
+
+#### Temporal coding parameters
+
+- `SpikesFrequency` — spike generation frequency of input generators
+- `Delay` — training start delay relative to system start
+- `InputPattern` — matrix of temporal delays for each pattern component
+
+### Structural adaptation process diagram
+
+**Structural adaptation process sequence diagram:**
+
+```mermaid
+sequenceDiagram
+    participant Input as Входной паттерн
+    participant Trainer as NNeuronTrainer
+    participant Neuron as Нейрон
+    participant Structure as Структура нейрона
+
+    Input->>Trainer: Вектор спайков с временным кодированием
+    Trainer->>Trainer: Анализ паттерна
+    Trainer->>Structure: Определение начальной структуры
+    Structure->>Neuron: Создание нейрона
+    Trainer->>Neuron: Предъявление паттерна
+    Neuron->>Trainer: Амплитуда потенциала
+    Trainer->>Trainer: Проверка генерации спайка
+    alt Спайк не генерируется
+        Trainer->>Structure: Корректировка структуры
+        Structure->>Neuron: Модификация нейрона
+        Trainer->>Neuron: Повторное предъявление
+    else Спайк генерируется
+        Trainer->>Trainer: Обучение завершено
+    end
+```
+
+### Influence of parameters on adaptation result
+
+#### Soma size
+
+- **Small soma** (1-2 segments):
+  - High sensitivity to input signals
+  - Fast spike generation
+  - May be unstable with complex patterns
+
+- **Large soma** (3+ segments):
+  - More stable signal integration
+  - Higher activation threshold
+  - Better suited for complex patterns
+
+#### Dendrite length
+
+- **Short dendrites** (1-3 segments):
+  - Minimal processing delay
+  - Fast response to input signals
+  - Limited temporal processing capability
+
+- **Long dendrites** (10+ segments):
+  - Significant processing delay
+  - Ability to process complex temporal patterns
+  - May require more training time
+
+#### Number of synapses
+
+- **One synapse per dendrite:**
+  - Simple structure
+  - Fast learning
+  - Limited integration capability
+
+- **Multiple synapses per dendrite:**
+  - More complex structure
+  - Improved signal integration
+  - May require more training time
+
+### Link to other learning methods
+
+Structural adaptation can be combined with other learning methods:
+
+- **STDP (Spike-Timing-Dependent Plasticity)** — synaptic weight changes depending on spike timing
+- **Incremental learning** — learning on new samples without retraining on all previous ones
+- **Classification** — applying structural adaptation to classification tasks
+
+### Usage examples
+
+#### Example 1: Simple pattern recognition
+
+```cpp
+// Создание NNeuronTrainer
+NNeuronTrainer* trainer = CreateComponent<NNeuronTrainer>("Trainer");
+
+// Настройка параметров
+trainer->NumInputDendrite = 3;  // 3 компонента в паттерне
+trainer->MaxDendriteLength = 50;
+trainer->LTZThreshold = 0.0117;  // Универсальный порог
+trainer->SpikesFrequency = 1.5;
+
+// Задание входного паттерна (временные задержки в секундах)
+MDMatrix<double> pattern;
+pattern.Resize(3, 1);
+pattern[0] = 0.0;   // Первый спайк в момент 0
+pattern[1] = 0.1;   // Второй спайк через 0.1 сек
+pattern[2] = 0.2;   // Третий спайк через 0.2 сек
+trainer->InputPattern = pattern;
+
+// Запуск обучения
+trainer->IsNeedToTrain = true;
+trainer->Reset();
+```
+
+#### Example 2: Training on multiple patterns
+
+Structural adaptation can be used to train a neuron to recognize multiple different patterns, where each pattern corresponds to a separate class.
+
+### Experimental results
+
+According to publication [1]:
+
+- Structural adaptation method is successfully applied for training the compartmental spiking neuron model
+- Universal activation threshold value allows using the same threshold for different input pattern sizes
+- Pattern recognition quality is comparable to classical learning methods
+- Structural adaptation provides automatic selection of optimal neuron structure for each pattern
+
+### Related materials
+
+- [`IncrementalLearning.md`](IncrementalLearning.md) — incremental learning strategy using structural adaptation
+- [`Classification.md`](Classification.md) — applying structural adaptation to classification tasks
+- [`CSNM-Models.md`](CSNM-Models.md) — compartmental spiking neuron model description
+- [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — impulse stream processing model
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTrainer.md` — NNeuronTrainer component documentation
+
+## Literature
+
+1. Korsakov, A., Astapova, L., Bakhshiev, A. The Method of Structural Adaptation of the Compartmental Spiking Neuron Model // Cyber-Physical Systems and Control II. CPS&C 2021. Lecture Notes in Networks and Systems, vol 460. Springer, Cham, 2023. [DOI](https://doi.org/10.1007/978-3-031-20875-1_51)
+

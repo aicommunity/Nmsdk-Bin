@@ -24,14 +24,14 @@
 
 ```mermaid
 flowchart TB
-    Bin[Bin/] --> Configs[Configs/<br/>XML проекты]
-    Bin --> ClDesc[ClDesc/<br/>XML описания классов]
-    Bin --> Help[Help/<br/>HTML справка RU/EN]
-    Bin --> Styles[Styles/<br/>QSS + JSON темы]
-    Bin --> Platform[Platform/<br/>Артефакты сборки]
+    Bin[Bin/] --> Configs["Configs/<br/>XML проекты"]
+    Bin --> ClDesc["ClDesc/<br/>XML описания классов"]
+    Bin --> Help["Help/<br/>HTML справка RU/EN"]
+    Bin --> Styles["Styles/<br/>QSS + JSON темы"]
+    Bin --> Platform["Platform/<br/>Артефакты сборки"]
     
-    Platform --> WinBin[Win/<br/>Windows бинарники]
-    Platform --> LinuxBin[Linux/<br/>Linux бинарники]
+    Platform --> WinBin["Win/<br/>Windows бинарники"]
+    Platform --> LinuxBin["Linux/<br/>Linux бинарники"]
     
     Configs --> Projects[Проекты .xml]
     ClDesc --> ClassXML[Описания .xml]

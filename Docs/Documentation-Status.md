@@ -1,5 +1,7 @@
 # Статус документации Bin
 
+## RU
+
 Краткий статус документации каталога `Bin/Docs/` и чеклист синхронизации с ресурсами и конфигурациями.
 
 **Аудит:** 2026-06-06 — [Documentation-Inventory.json](../../Docs/Audit/Documentation-Inventory.json), [Link-Health-Report.md](../../Docs/Audit/Link-Health-Report.md), [Bilingual-Parity-Report.md](../../Docs/Audit/Bilingual-Parity-Report.md)

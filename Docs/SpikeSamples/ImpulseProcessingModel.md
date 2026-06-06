@@ -1,3 +1,5 @@
+## RU
+
 ## Модель преобразования импульсных потоков в естественном нейроне
 
 В работе [2] вводится детальная математическая модель:
@@ -161,4 +163,176 @@ flowchart TD
 - пояснение, какие параметры в `Parameters.xml` критичны для результата (τs, τd, R0, RF, Cm, порог P, глубина обратной связи и т.п.).
 
 Этот документ служит «каркасом»; детализация по каждой конфигурации фиксируется в её локальном `README.md`.
+
+---
+
+## EN
+
+## Impulse stream processing model in a natural neuron
+
+Work [2] introduces a detailed mathematical model of:
+
+- the synapse (mediator secretion and decay, presynaptic inhibition);
+- the membrane ionic mechanism (aperiodic element with variable time constant);
+- the action potential generator with feedback to somatic segments.
+
+In NMSDK this model is implemented through PulseLib components (`NPulseSynapse`, `NPulseChannel`, `NPulseMembrane`, `NPulseNeuron`), and SpikeSamples contains configurations demonstrating the behavior of such a model in different modes.
+
+### Corresponding SpikeSamples configurations
+
+Main configurations illustrating the impulse stream processing model:
+
+- `SpikeSamples/NM-Neurons/NM-PN-01-Neuron-1M1St1In1`
+- `SpikeSamples/NM-Neurons/NM-PN-02-Neuron-1M1St3In3`
+- `SpikeSamples/NM-Neurons/NM-PN-03/04/05/06-Neuron-*`
+- `SpikeSamples/NM-Neurons/NM-PN-07/08-LtmNeuron-*`
+- `SpikeSamples/NM-Neurons/LIF-Neuron` (comparative simplified model)
+- `SpikeSamples/Memory/MEM-OneNeuron3`, `SpikeSamples/Memory/MEM-SimpleMemory2`
+- `SpikeSamples/STDP/STDP-Simple-01`
+
+Each uses the same set of basic PulseLib components, differing in:
+
+- network structure (number of membrane segments, synapse organization);
+- synapse and channel parameters (time constants, resistances, weights);
+- stimulation modes (input pulse frequency, complex patterns).
+
+### Functional signal flow diagram
+
+```mermaid
+flowchart TD
+    afferentInput["AfferentInput (импульсный поток)"] --> synapse["NPulseSynapse (выделение/распад медиатора)"]
+    synapse --> channel["NPulseChannel (ионный механизм)"]
+    channel --> membrane["NPulseMembrane (участок мембраны)"]
+    membrane --> ltZone["NPulseLTZone (низкопороговая зона)"]
+    ltZone --> neuronOutput["Выход нейрона (импульсный поток)"]
+    neuronOutput --> feedback["Feedback (перезаряд сомы)"]
+    feedback --> membrane
+```
+
+In terms of work [2]:
+
+- **input impulse stream** — a sequence of discrete pulses at synapses;
+- **synapse** integrates pulses through parameters `PulseAmplitude`, `SecretionTC`, `DissociationTC`, with possible presynaptic inhibition (`InhibitionCoeff`, `UsePresynapticInhibition`);
+- **ionic mechanism** implements an inertial element with constants `Rm`, `Cm`, `RF`, parameters `Capacity`, `Resistance`, `FBResistance`;
+- **action potential generator** forms output pulses when threshold `P` is exceeded and triggers membrane recharge.
+
+### Typical effects demonstrated in SpikeSamples
+
+- **Frequency conversion**: dependence of output discharge frequency on input stream frequency (graphs like Fig. 14 in work [2]); implemented in PN configurations and memory.
+- **Presynaptic inhibition**: reduced synaptic efficacy at excessively high input frequency (saturation protection effect), used in particular to stabilize activity in ring structures and motor circuits.
+- **Dependence on membrane parameters**: `CableModel/*` and `NM-PN-*` configurations allow varying R, C, thresholds, and feedback depth, changing reaction speed and stability.
+
+Detailed description of each specific experiment and correspondence of parameters to the theoretical model is given in `README.md` in each `SpikeSamples/...` folder.
+
+## Literature
+
+1. [31] Mathematical modeling of impulse stream processing in a natural neuron // Neurocomputers: Development, Application, No. 3, 2009. – pp. 71-80. [online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676) | [elibrary](https://www.elibrary.ru/item.asp?id=13070281)
+
+## SpikeSamples — impulse stream processing model
+
+This document is based on work [2] and describes how its ideas are implemented in `Bin/Configs/SpikeSamples` configurations.
+
+### Functional blocks of the model
+
+The article distinguishes three key levels:
+
+1. **Synapse** — converts the input discrete pulse stream into an analog quantity (mediator concentration, conductance), accounting for:
+   - different secretion and decay time constants;
+   - presynaptic inhibition effect at high input frequencies.
+2. **Membrane ionic mechanisms** — a pair of depolarizing and hyperpolarizing channels:
+   - described by an equivalent RC circuit with resistances R0, RF and capacitance Cm;
+   - the total contribution of ionic mechanisms determines the local contribution of a membrane segment to intracellular potential.
+3. **Action potential generator** — forms a spike when threshold P is exceeded and closes the feedback loop, recharging the membrane.
+
+In PulseLib these blocks are implemented as:
+
+- `NPulseSynapse` / `NPulseSynapseCommon` — synapse model, parameters:
+  - `PulseAmplitude`, `SecretionTC`, `DissociationTC`, `InhibitionCoeff`, `Resistance`, `UsePresynapticInhibition`, etc.;
+- `NPulseChannel` / `NPulseChannelCommon` — ionic mechanism:
+  - `Capacity`, `Resistance`, `FBResistance`, `RestingResistance`, `Type` (excitatory/inhibitory);
+- `NPulseMembrane` / `NPulseMembraneCommon` — aggregates channels and synapses, sums their contribution to `SumPotential` and implements feedback through `Feedback`;
+- `NPulseLTZone` — low-threshold zone (spike generator).
+
+### SpikeSamples configurations illustrating impulse stream processing
+
+Key configurations:
+
+- single neurons with different membrane structures:
+  - `SpikeSamples/NM-Neurons/NM-PN-01-Neuron-1M1St1In1`
+  - `SpikeSamples/NM-Neurons/NM-PN-02-Neuron-1M1St3In3`
+  - `SpikeSamples/NM-Neurons/NM-PN-NeuronSizeActivity`
+- memory and conditioned reflex examples:
+  - `SpikeSamples/Memory/MEM-OneNeuron3`
+  - `SpikeSamples/Memory/MEM-SimpleMemory2`
+  - `SpikeSamples/Memory/SpikeAssociationPlus`
+  - `SpikeSamples/Memory/SpikeConditionalReflex`
+- training and structural learning:
+  - `SpikeSamples/StructTrain/SpikeTrainer`
+  - `SpikeSamples/StructTrain/SpikeAnsTrainer`
+- plasticity and STDP:
+  - `SpikeSamples/STDP/STDP-Simple-01`
+
+### Signal flow in a typical configuration
+
+The signal flow can be represented as follows:
+
+```mermaid
+flowchart TD
+    afferentInput["Входной импульсный поток"] --> synapse["NPulseSynapse
+(SecretionTC, DissociationTC, InhibitionCoeff)"]
+    synapse --> channel["NPulseChannel
+(Capacity, Resistance, Type)"]
+    channel --> membrane["NPulseMembrane
+(SumPotential, Feedback)"]
+    membrane --> ltZone["NPulseLTZone
+(Threshold P)"]
+    ltZone --> neuronOutput["Выходной спайковый поток"]
+    neuronOutput -->|обратная связь| membrane
+```
+
+Different `SpikeSamples` configurations implement various combinations of:
+
+- number of synapses and their spatial placement on the membrane;
+- frequency and patterns of input stimulation;
+- structural organization (number of soma and dendrite segments).
+
+### Experiment examples from SpikeSamples
+
+1. **Frequency characteristics of a single neuron** (neurons N1/N2 in the article):
+   - `NM-PN-*` and `NM-PN-NeuronSizeActivity` configurations use identical model parameters but different numbers of soma and dendrite segments.
+   - `README.md` for these configurations should include:
+     - dependence of output spike frequency on input frequency;
+     - differences between small and large neurons.
+
+2. **Presynaptic inhibition effect**:
+   - Configurations in `Memory` and `StructTrain` groups use high-frequency stimulation of some inputs and demonstrate:
+     - reduced synaptic influence when critical frequency is exceeded;
+     - network saturation protection by reducing contribution of abnormally active inputs.
+
+3. **Conditioned reflex formation**:
+   - `SpikeSamples/Memory/SpikeConditionalReflex` and `SpikeSamples/Memory/SpikeAssociationPlus` illustrate
+     how simultaneous or sequential activation of different inputs consolidates association between patterns,
+     and how the character of neuron/network responses changes.
+
+4. **Structural adaptation and learning**:
+   - `SpikeSamples/StructTrain/*` configurations demonstrate:
+     - network structure changes (number and placement of synapses, possible connection changes) under training patterns;
+     - transition from manual parameter tuning to self-organizing connection description.
+
+5. **STDP and plasticity**:
+   - `SpikeSamples/STDP/STDP-Simple-01` shows
+     how dependence of synaptic weight change on relative timing of pre- and postsynaptic spikes
+     can be implemented with PulseLib and used for network training.
+
+### README recommendations for corresponding configurations
+
+For each configuration in the listed groups, `README.md` should contain:
+
+- clear textual description of:
+  - input stimuli used (frequency, duration, pattern);
+  - output characteristics analyzed (frequency, number of spikes in a burst, presence of presynaptic inhibition, etc.);
+- references to corresponding article sections (figures, graphs);
+- explanation of which parameters in `Parameters.xml` are critical for the result (τs, τd, R0, RF, Cm, threshold P, feedback depth, etc.).
+
+This document serves as a framework; details for each configuration are recorded in its local `README.md`.
 

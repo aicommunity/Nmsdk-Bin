@@ -1,3 +1,5 @@
+## RU
+
 ## Обзор конфигураций SpikeSamples
 
 ### Назначение папки `SpikeSamples`
@@ -208,4 +210,219 @@
 2. Бахшиев А.В., Романов С.П. Математическое моделирование процессов преобразования импульсных потоков в естественном нейроне // Нейрокомпьютеры: разработка, применение, №3, 2009. – с.71-80. [онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676) | [elibrary](https://www.elibrary.ru/item.asp?id=13070281)
 
 3. Бахшиев А.В., Романов С.П. Моделирование нейронных структур управления мышечным сокращением. Схемы нейронных сетей. [онлайн](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)
+
+---
+
+## EN
+
+## Overview of SpikeSamples configurations
+
+### Purpose of the `SpikeSamples` folder
+
+The `Bin/Configs/SpikeSamples` folder contains a **showcase of reference configurations** for spiking neuron and neural network models in NMSDK.
+Each configuration illustrates one or more biologically motivated ideas described in Neuro Modeler publications ([list of works](https://neuromodeler.ru/index.php?option=com_content&view=article&id=44&Itemid=677&lang=ru)).
+
+Main thematic blocks:
+
+- **Single neuron reactions**: dependence of discharge patterns on membrane structure, soma size, and model parameters
+  (see also [`NeuronReactions.md`](NeuronReactions.md)).
+- **Impulse stream conversion model**: spike transmission, synapses, ionic mechanisms, presynaptic inhibition
+  (see [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md)).
+- **Motor control and muscle contraction structures**: motoneurons, Renshaw cells, afferent inputs, simple motor circuits
+  (see [`MuscleControlStructures.md`](MuscleControlStructures.md)).
+- **Cable and compartmental neurons**: multi-compartment models, segmental neurons, CSNM approach with cable equation
+  (see also [`CSNM-Models.md`](CSNM-Models.md)).
+- **Memory and learning**: simple associative and conditioned reflex schemes, STDP, structural learning.
+- **Structural adaptation**: automatic selection of neuron structure (soma size, dendrite length, number of synapses) for pattern recognition
+  (see [`StructuralAdaptation.md`](StructuralAdaptation.md)).
+- **Incremental learning**: learning on new samples without retraining on all data
+  (see [`IncrementalLearning.md`](IncrementalLearning.md)).
+- **Classification**: application of the segmental spiking model for classification tasks with temporal coding
+  (see [`Classification.md`](Classification.md)).
+
+### Brief map of SpikeSamples configurations
+
+Below are configuration groups with their main ideas (detailed descriptions are in `README.md` within the corresponding folders).
+
+- **Single pulse neurons (`SpikeSamples/NM-Neurons/…`)**
+  - `NM-PN-01-Neuron-1M1St1In1`, `NM-PN-02-Neuron-1M1St3In3`, `NM-PN-03/04/05/06`
+    — study of the influence of soma and dendrite structure on neuron response shape.
+  - `NM-PN-07/08-LtmNeuron-*`
+    — neurons with long-term membrane memory and modified feedback parameters.
+  - `NM-PN-NeuronSizeActivity`
+    — comparison of activity of neurons of different sizes (small/large soma).
+  - `LIF-Neuron`
+    — simplified LIF version of a pulse neuron for comparison with the detailed model.
+
+- **Afferent neurons (`SpikeSamples/NM-AfferentNeurons/…`)**
+  - `NM-AN-00-AfferentModelComparation`, `NM-AN-01-NSAfferentNeuron`, `NM-AN-02-NSimpleAfferentNeuron`
+    — conversion of sensory (analog) signal into pulse stream, afferent frequency characteristics.
+
+- **Cable neuron model (`SpikeSamples/NM-Neurons/CableModel/…`)**
+  - `CableNeuron`, `CableNeuronClassic`, `CableNeuronMulti*`, `CableNeuronParametersTest`
+    — compartmental neurons with spatial potential propagation, influence of length/diameter ions.
+  - `CableNeuronMulti_*_CSNM*` configurations
+    — examples related to the CSNM compartmental spiking model and segmental neurons.
+
+- **Memory and associations (`SpikeSamples/Memory/…`)**
+  - `MEM-OneNeuron3`, `MEM-SimpleMemory2`
+    — storage and reproduction of simple activity patterns in a single neuron/small network.
+  - `SpikeAssociationPlus`, `SpikeConditionalReflex`
+    — associative and conditioned reflex memory on spiking networks.
+
+- **STDP and structural learning (`SpikeSamples/STDP`, `SpikeSamples/StructTrain/…`)**
+  - `STDP/STDP-Simple-01`
+    — demonstration of spike-timing-dependent weight change rule (STDP).
+  - `StructTrain/SpikeTrainer`, `StructTrain/SpikeAnsTrainer`, `StructTrain/XOR`
+    — structural learning (changing topology and number of synapses/channels) using the structural adaptation method
+    (see [`StructuralAdaptation.md`](StructuralAdaptation.md)).
+
+- **Neural elements and receptors (`SpikeSamples/NeuralElements/…`)**
+  - `NeuralElements/NReceptor`
+    — receptor element model linking sensory input with an afferent neuron.
+
+- **Motion control and visuomotor circuits (`SpikeSamples/MC1-PCN`, `SpikeSamples/EyeRetina`, `SpikeSamples/MC0-RCN`)**
+  - `MC1-PCN/*`
+    — positional control (MultiPositionControl, MotionControl) using spiking networks and PulseLib.
+  - `EyeRetina/EyeRetina`, `EyeRetina/EyeRetinaMuscle`
+    — visual inputs and muscle/motor control based on neuromorphic image analysis.
+  - `MC0-RCN/*`
+    — reflex circuits (Ring/Reflex Control Networks) with motoneurons and Renshaw cells.
+
+### Connection with configuration validation
+
+Automatic validation is supported for all SpikeSamples configurations via
+`Scripts/generate_detailed_validation_report.py --subdir SpikeSamples`.
+Results are collected in the report `Reports/SpikeSamples-Validation-Report.md`:
+
+- most configurations have **VALID** status;
+- a small number of configurations are marked as **INVALID** or **TIMEOUT** — such cases are analyzed in detail in general validation reports.
+
+Each `README.md` for SpikeSamples configurations includes a **"Validation status"** block that synchronously reflects data from the report.
+
+### How to read SpikeSamples documentation
+
+- For **each specific configuration**, see the local `README.md` in its folder (model structure, experiment, results, links to articles and rtf descriptions).
+- For **experiment series** and connection with publications, use thematic documents:
+  - [`NeuronReactions.md`](NeuronReactions.md) — single neuron reactions;
+  - [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — impulse stream conversion model;
+  - [`MuscleControlStructures.md`](MuscleControlStructures.md) — muscle contraction control circuits.
+- For a quick overview of the entire collection and cross-references, use the index [`Index.md`](Index.md) (see below).
+
+## Overview of `SpikeSamples` configurations
+
+### Purpose of the section
+
+The `Bin/Configs/SpikeSamples` catalog contains **reference examples of spiking configurations** using `Nmsdk-PulseLib` components and related libraries. These configurations illustrate models described in works [list of publications](https://neuromodeler.ru/index.php?option=com_content&view=article&id=44&Itemid=677&lang=ru) on spiking neuron modeling, impulse stream conversion, and muscle movement control.
+
+This document provides a map of the main thematic groups of examples and references local `README.md` files in `SpikeSamples` subfolders, as well as thematic overviews in `Bin/Docs/SpikeSamples/*.md`.
+
+### Thematic configuration groups
+
+- **NM-Neurons** — single pulse neurons and cable models:
+  - `SpikeSamples/NM-Neurons/NM-PN-01-Neuron-1M1St1In1`
+  - `SpikeSamples/NM-Neurons/NM-PN-02-Neuron-1M1St3In3`
+  - `SpikeSamples/NM-Neurons/NM-PN-03-Neuron-4M4D3St3In`
+  - `SpikeSamples/NM-Neurons/NM-PN-04-Neuron-3M1St3In3`
+  - `SpikeSamples/NM-Neurons/NM-PN-05-Neuron-4M1D3St3In`
+  - `SpikeSamples/NM-Neurons/NM-PN-06-Neuron-1M4D3St3In`
+  - `SpikeSamples/NM-Neurons/NM-PN-07-LtmNeuron-1M1St3In3`
+  - `SpikeSamples/NM-Neurons/NM-PN-08-LtmNeuron-3M1St3In3`
+  - `SpikeSamples/NM-Neurons/NM-PN-NeuronSizeActivity`
+  - `SpikeSamples/NM-Neurons/LIF-Neuron`
+  - `SpikeSamples/NM-Neurons/CableModel/*` — compartmental (cable) neurons, including CSNM variants.
+
+- **NM-AfferentNeurons** — afferent (sensory) spiking neurons:
+  - `SpikeSamples/NM-AfferentNeurons/NM-AN-00-AfferentModelComparation`
+  - `SpikeSamples/NM-AfferentNeurons/NM-AN-01-NSAfferentNeuron`
+  - `SpikeSamples/NM-AfferentNeurons/NM-AN-02-NSimpleAfferentNeuron`
+
+- **Memory** — spiking memory and associative structures:
+  - `SpikeSamples/Memory/MEM-OneNeuron3`
+  - `SpikeSamples/Memory/MEM-SimpleMemory2`
+  - `SpikeSamples/Memory/SpikeAssociationPlus`
+  - `SpikeSamples/Memory/SpikeConditionalReflex`
+
+- **StructTrain** — structural learning and training:
+  - `SpikeSamples/StructTrain/SpikeTrainer` — basic structural training
+  - `SpikeSamples/StructTrain/SpikeAnsTrainer` — structural training with answers
+  - `SpikeSamples/StructTrain/XOR` — application to the XOR problem
+  - See [`StructuralAdaptation.md`](StructuralAdaptation.md)
+
+- **Classifier** — classification using spiking models:
+  - `SpikeSamples/Classifier/SpikeIrisClassifier` — iris flower classification with incremental learning
+  - See [`Classification.md`](Classification.md), [`IncrementalLearning.md`](IncrementalLearning.md)
+
+- **MC1-PCN (Motion Control)** — motion control configurations:
+  - `SpikeSamples/MC1-PCN/MotionControl_Test`
+  - `SpikeSamples/MC1-PCN/NewPositionControl_Test`
+  - `SpikeSamples/MC1-PCN/MultiPositionControl_SimpleTest`
+  - `SpikeSamples/MC1-PCN/MultiPositionControl_SoloModeTest`
+  - `SpikeSamples/MC1-PCN/MultiPositionControl_TaskTest`
+  - `SpikeSamples/MC1-PCN/MultiPositionControl_RememberStateTest`
+  - `SpikeSamples/MC1-PCN/MultiPC_TwoLevelsTask`
+
+- **EyeRetina** — visual structures:
+  - `SpikeSamples/EyeRetina/EyeRetina`
+  - `SpikeSamples/EyeRetina/EyeRetinaMuscle`
+
+- **NeuralElements** — elementary spiking elements:
+  - `SpikeSamples/NeuralElements/NReceptor`
+
+- **STDP / Plasticity**:
+  - `SpikeSamples/STDP/STDP-Simple-01`
+
+### SpikeSamples validation status
+
+A separate validation report for `SpikeSamples` configurations is generated by the script `Scripts/generate_detailed_validation_report.py` and saved in `Reports/SpikeSamples-Validation-Report.md`.
+
+Brief summary (from the latest report):
+
+- **Data source:** `Reports/ConfigValidation-Results.jsonl`
+- **Filter:** `path` starts with `SpikeSamples/`
+- **Detailed status table:** see `Reports/SpikeSamples-Validation-Report.md`
+
+Each local `README.md` in `SpikeSamples` subfolders contains a "Validation status" field synchronized with this report.
+
+### Thematic overviews
+
+The following documents are used for deeper understanding of modeled entities and experiments:
+
+- [`NeuronReactions.md`](NeuronReactions.md) — based on work [1] ([online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=20:2012-07-19-04-53-55&catid=67&lang=ru&Itemid=676)).
+- [`ImpulseProcessingModel.md`](ImpulseProcessingModel.md) — based on work [2] ([online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676)).
+- [`MuscleControlStructures.md`](MuscleControlStructures.md) — based on work [3] ([online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)).
+- [`CSNM-Models.md`](CSNM-Models.md) — compartmental spiking neuron model (CSNM) with cable equation, spatial parameters, cable model components.
+- [`StructuralAdaptation.md`](StructuralAdaptation.md) — structural adaptation method for the compartmental spiking neuron model, automatic structure selection for pattern recognition.
+- [`IncrementalLearning.md`](IncrementalLearning.md) — incremental learning strategy on the compartmental spiking neuron model, learning on new samples without retraining.
+- [`Classification.md`](Classification.md) — application of the segmental spiking neuron model with structural adaptation for solving classification problems, temporal coding, results on Iris and MNIST.
+- [`ActivitySwitcher.md`](ActivitySwitcher.md) — sequential activity switching block for memorizing and reproducing a sequence of situations.
+- [`CognitiveMap.md`](CognitiveMap.md) — algorithm for cognitive map formation and environment exploration by a robot.
+- [`HowToDocumentConfigs.md`](HowToDocumentConfigs.md) — recommendations for formatting `README.md` for SpikeSamples configurations.
+
+Each of these files connects theoretical descriptions from articles with specific configurations in `SpikeSamples`, indicating:
+
+- which biological prototypes are modeled;
+- which configurations (`Bin/Configs/SpikeSamples/...`) correspond to figures and diagrams from articles;
+- which parameters in configurations are critical for reproducing described reactions.
+
+### Connection with component documentation
+
+All `SpikeSamples` configurations are built on PulseLib components and basic Rdk libraries. For detailed description of elementary blocks, see:
+
+- `Docs/Libraries/Nmsdk-PulseLib.md`
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseMembrane.md`
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseMembraneCommon.md`
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseChannel.md`
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NPulseSynapse.md`
+- `Libraries/Nmsdk-PulseLib/Docs/Components/NSPMinNeuron.md`
+
+`README.md` files of individual configurations will contain links to specific component descriptions used in that configuration.
+
+## References
+
+1. Бахшиев А.В., Романов С.П. Воспроизведение реакций естественных нейронов как результат моделирования структурно-функциональных свойств мембраны и организации синаптического аппарата // Нейрокомпьютеры: разработка, применение, №7, 2012. – с.25-35. [online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=20:2012-07-19-04-53-55&catid=67&lang=ru&Itemid=676) | [elibrary](https://www.elibrary.ru/item.asp?id=17997711)
+
+2. Бахшиев А.В., Романов С.П. Математическое моделирование процессов преобразования импульсных потоков в естественном нейроне // Нейрокомпьютеры: разработка, применение, №3, 2009. – с.71-80. [online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=24:2012-11-07-16-42-21&catid=67&lang=ru&Itemid=676) | [elibrary](https://www.elibrary.ru/item.asp?id=13070281)
+
+3. Бахшиев А.В., Романов С.П. Моделирование нейронных структур управления мышечным сокращением. Схемы нейронных сетей. [online](https://neuromodeler.ru/index.php?option=com_content&view=article&id=29:1&catid=67&lang=ru&Itemid=676)
 
