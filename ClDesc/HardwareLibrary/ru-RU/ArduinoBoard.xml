@@ -147,6 +147,42 @@
 			<PropertyType>257</PropertyType>
 		</PortName>
 
+		<BaudRate>
+			<Header>Baud rate</Header>
+			<Description>Скорость serial (по умолчанию 57600).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BaudRate>
+
+		<BoardProfile>
+			<Header>Board profile</Header>
+			<Description>0=Uno, 1=Mega 2560.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BoardProfile>
+
+		<ConnectOnBuild>
+			<Header>Connect on build</Header>
+			<Description>Автоподключение при `ABuild`, если `PortName` задан.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ConnectOnBuild>
+
 		<BundledFirmwareId>
 			<Header>Bundled firmware</Header>
 			<Description>ID из manifest (`sensor_lab_v1`, `standard_firmata`).</Description>
@@ -158,6 +194,55 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</BundledFirmwareId>
+
+		<LastError>
+			<Header>Last error</Header>
+			<Description>State: текст последней ошибки порта/upload.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastError>
 	</Properties>
-	<Favorites/>
+			<Favorites>
+		<PortName>
+			<Path>{CompName}:PortName</Path>
+		</PortName>
+		<BaudRate>
+			<Path>{CompName}:BaudRate</Path>
+		</BaudRate>
+		<BoardProfile>
+			<Path>{CompName}:BoardProfile</Path>
+		</BoardProfile>
+		<ConnectOnBuild>
+			<Path>{CompName}:ConnectOnBuild</Path>
+		</ConnectOnBuild>
+		<BundledFirmwareId>
+			<Path>{CompName}:BundledFirmwareId</Path>
+		</BundledFirmwareId>
+		<Connect>
+			<Path>{CompName}:Connect</Path>
+		</Connect>
+		<Disconnect>
+			<Path>{CompName}:Disconnect</Path>
+		</Disconnect>
+		<Reconnect>
+			<Path>{CompName}:Reconnect</Path>
+		</Reconnect>
+		<UploadFirmware>
+			<Path>{CompName}:UploadFirmware</Path>
+		</UploadFirmware>
+		<IsConnected>
+			<Path>{CompName}:IsConnected</Path>
+		</IsConnected>
+		<HasError>
+			<Path>{CompName}:HasError</Path>
+		</HasError>
+		<LastError>
+			<Path>{CompName}:LastError</Path>
+		</LastError>
+	</Favorites>
 </ClassDescription>

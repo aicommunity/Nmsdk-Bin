@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NSynapseCable</ClassName>
-	<Header>кабельный импульсный синапс</Header>
-	<Description>**Класс**: `NSynapseCable` — конфигурационный вариант импульсного синапса для кабельных моделей. **Регистрация**: `NPulseLibrary.cpp` → `UploadClass(&quot;NSynapseCable&quot;, ...)`. **Storage-инстансы**: `ClassName = &quot;NSynapseCable&quot;` в `Bin/Configs/*/Model_*.xml`.</Description>
+	<Header>cable-синапс</Header>
+	<Description>Cable-синапс: Weight, Resistance, TC и амплитуда импульса.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -290,5 +290,42 @@
 			<PropertyType>266</PropertyType>
 		</WeightInput>
 	</Properties>
-	<Favorites/>
+		<Favorites>
+		<Weight>
+			<Path>{CompName}:Weight</Path>
+		</Weight>
+		<Resistance>
+			<Path>{CompName}:Resistance</Path>
+		</Resistance>
+		<SecretionTC>
+			<Path>{CompName}:SecretionTC</Path>
+		</SecretionTC>
+		<DissociationTC>
+			<Path>{CompName}:DissociationTC</Path>
+		</DissociationTC>
+		<PulseAmplitude>
+			<Path>{CompName}:PulseAmplitude</Path>
+		</PulseAmplitude>
+		<UsePulseSignal>
+			<Path>{CompName}:UsePulseSignal</Path>
+		</UsePulseSignal>
+		<InhibitionCoeff>
+			<Path>{CompName}:InhibitionCoeff</Path>
+		</InhibitionCoeff>
+		<UsePresynapticInhibition>
+			<Path>{CompName}:UsePresynapticInhibition</Path>
+		</UsePresynapticInhibition>
+		<TrainerClassName>
+			<Path>{CompName}:TrainerClassName</Path>
+		</TrainerClassName>
+		<Input>
+			<Path>{CompName}:Input</Path>
+		</Input>
+		<Output>
+			<Path>{CompName}:Output</Path>
+		</Output>
+		<WeightInput>
+			<Path>{CompName}:WeightInput</Path>
+		</WeightInput>
+	</Favorites>
 </ClassDescription>

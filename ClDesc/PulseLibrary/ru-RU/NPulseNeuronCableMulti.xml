@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NPulseNeuronCableMulti</ClassName>
-	<Header>NPulseNeuronCableMulti</Header>
-	<Description>Компонент NPulseNeuronCableMulti относится к библиотеке PulseLibrary. Описание сформировано автоматически.</Description>
+	<Header>cable-нейрон multi</Header>
+	<Description>Многосегментный cable-нейрон: StructureBuildMode и ClassName частей; I/O aliases.</Description>
 	<Properties>
 		<ActiveNegInputs>
 			<Header>Активные отрицательные входы</Header>
@@ -466,66 +466,78 @@
 			<PropertyType>257</PropertyType>
 		</UseAverageLTZonePotential>
 	</Properties>
-	<Favorites>
-		<Soma1ExcChannelActivity>
-			<Path>Soma1.ExcChannel.Activity</Path>
-		</Soma1ExcChannelActivity>
-		<Soma1ExcChannelCalcMode>
-			<Path>Soma1.ExcChannel.CalcMode</Path>
-		</Soma1ExcChannelCalcMode>
-		<Soma1ExcChannelCm>
-			<Path>Soma1.ExcChannel.Cm</Path>
-		</Soma1ExcChannelCm>
-		<Soma1ExcChannelCoord>
-			<Path>Soma1.ExcChannel.Coord</Path>
-		</Soma1ExcChannelCoord>
-		<Soma1ExcChannelD>
-			<Path>Soma1.ExcChannel.D</Path>
-		</Soma1ExcChannelD>
-		<Soma1ExcChannelDt>
-			<Path>Soma1.ExcChannel.dt</Path>
-		</Soma1ExcChannelDt>
-		<Soma1ExcChannelDx>
-			<Path>Soma1.ExcChannel.dx</Path>
-		</Soma1ExcChannelDx>
-		<Soma1ExcChannelEL>
-			<Path>Soma1.ExcChannel.EL</Path>
-		</Soma1ExcChannelEL>
-		<Soma1ExcChannelInpV>
-			<Path>Soma1.ExcChannel.InpV</Path>
-		</Soma1ExcChannelInpV>
-		<Soma1ExcChannelModelMaxTime>
-			<Path>Soma1.ExcChannel.ModelMaxTime</Path>
-		</Soma1ExcChannelModelMaxTime>
-		<Soma1ExcChannelOutput>
-			<Path>Soma1.ExcChannel.Output</Path>
-		</Soma1ExcChannelOutput>
-		<Soma1ExcChannelRi>
-			<Path>Soma1.ExcChannel.Ri</Path>
-		</Soma1ExcChannelRi>
-		<Soma1ExcChannelRm>
-			<Path>Soma1.ExcChannel.Rm</Path>
-		</Soma1ExcChannelRm>
-		<Soma1ExcChannelStepDuration>
-			<Path>Soma1.ExcChannel.StepDuration</Path>
-		</Soma1ExcChannelStepDuration>
-		<Soma1ExcChannelTauM>
-			<Path>Soma1.ExcChannel.TauM</Path>
-		</Soma1ExcChannelTauM>
-		<Soma1ExcChannelType>
-			<Path>Soma1.ExcChannel.Type</Path>
-		</Soma1ExcChannelType>
-		<Soma1ExcChannelVm>
-			<Path>Soma1.ExcChannel.Vm</Path>
-		</Soma1ExcChannelVm>
-		<Soma1ExcSynapse1Input>
+		<Favorites>
+		<StructureBuildMode>
+			<Path>{CompName}:StructureBuildMode</Path>
+		</StructureBuildMode>
+		<NumSomaMembraneParts>
+			<Path>{CompName}:NumSomaMembraneParts</Path>
+		</NumSomaMembraneParts>
+		<NumDendriteMembranePartsVec>
+			<Path>{CompName}:NumDendriteMembranePartsVec</Path>
+		</NumDendriteMembranePartsVec>
+		<NumDendriteMembraneParts>
+			<Path>{CompName}:NumDendriteMembraneParts</Path>
+		</NumDendriteMembraneParts>
+		<MembraneClassName>
+			<Path>{CompName}:MembraneClassName</Path>
+		</MembraneClassName>
+		<LTMembraneClassName>
+			<Path>{CompName}:LTMembraneClassName</Path>
+		</LTMembraneClassName>
+		<LTZoneClassName>
+			<Path>{CompName}:LTZoneClassName</Path>
+		</LTZoneClassName>
+		<ExcGeneratorClassName>
+			<Path>{CompName}:ExcGeneratorClassName</Path>
+		</ExcGeneratorClassName>
+		<InhGeneratorClassName>
+			<Path>{CompName}:InhGeneratorClassName</Path>
+		</InhGeneratorClassName>
+		<UseAverageDendritesPotential>
+			<Path>{CompName}:UseAverageDendritesPotential</Path>
+		</UseAverageDendritesPotential>
+		<UseAverageLTZonePotential>
+			<Path>{CompName}:UseAverageLTZonePotential</Path>
+		</UseAverageLTZonePotential>
+		<TrainingPattern>
+			<Path>{CompName}:TrainingPattern</Path>
+		</TrainingPattern>
+		<TrainingDendIndexes>
+			<Path>{CompName}:TrainingDendIndexes</Path>
+		</TrainingDendIndexes>
+		<TrainingSynapsisNum>
+			<Path>{CompName}:TrainingSynapsisNum</Path>
+		</TrainingSynapsisNum>
+		<Output>
+			<Path>{CompName}:Output</Path>
+		</Output>
+		<SomaSumPotential>
+			<Path>{CompName}:SomaSumPotential</Path>
+		</SomaSumPotential>
+		<DendriticSumPotential>
+			<Path>{CompName}:DendriticSumPotential</Path>
+		</DendriticSumPotential>
+		<LayerWidth>
+			<Path>{CompName}:LayerWidth</Path>
+		</LayerWidth>
+		<LayerHeight>
+			<Path>{CompName}:LayerHeight</Path>
+		</LayerHeight>
+		<NetStructure>
+			<Path>{CompName}:NetStructure</Path>
+		</NetStructure>
+		<ExcSynapseInput>
 			<Path>Soma1.ExcSynapse1.Input</Path>
-		</Soma1ExcSynapse1Input>
-		<Soma1ExcSynapse1Resistance>
-			<Path>Soma1.ExcSynapse1.Resistance</Path>
-		</Soma1ExcSynapse1Resistance>
-		<Soma1ExcSynapse1SecretionTC>
-			<Path>Soma1.ExcSynapse1.SecretionTC</Path>
-		</Soma1ExcSynapse1SecretionTC>
+		</ExcSynapseInput>
+		<InhSynapseInput>
+			<Path>Soma1.InhSynapse1.Input</Path>
+		</InhSynapseInput>
+		<LTZoneOutput>
+			<Path>LTZone.Output</Path>
+		</LTZoneOutput>
+		<LTZoneThreshold>
+			<Path>LTZone.Threshold</Path>
+		</LTZoneThreshold>
 	</Favorites>
 </ClassDescription>

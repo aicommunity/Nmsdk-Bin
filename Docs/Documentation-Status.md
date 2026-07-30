@@ -37,7 +37,7 @@
 ### Примеры (`Examples/`)
 - ✅ **README.md** — индекс примеров (RU/EN)
 - ✅ **Config-Example.md** — пример конфигурации (RU/EN)
-- ✅ **ClDesc-Example.md** — пример ClDesc (RU/EN)
+- ✅ **ClDesc-Example.md** — пример ClDesc по реальной схеме + Favorites (RU/EN); методология DETAILED — `Docs/ClDesc-Detailed-Methodology.md`
 - ✅ **Style-Example.md** — пример стилей (RU/EN)
 
 ### SpikeSamples (`SpikeSamples/`) — RU-only
