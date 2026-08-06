@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDatasetManual</ClassName>
 	<Header>Ручной датасет спайков</Header>
-	<Description>NDatasetManual задаёт размер через NumSamples/NumFeatures/MaxSpikesPerFeature (ресайз MatrixData, MatrixClasses, MatrixSpikeDelays), заполняет матрицы вручную и создаёт по одному NPulseGeneratorTransit на признак. Поддерживает цепочки спайков (ISI) через MatrixSpikeDelays.</Description>
+	<Description>NDatasetManual задаёт размер через NumSamples/NumFeatures/MaxSpikesPerFeature (ресайз MatrixData и MatrixClasses), заполняет ISI-пачки в MatrixData и создаёт по одному NPulseGeneratorTransit на признак. Цикл: пачка → Delay → повтор Iteration.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -48,8 +48,8 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<Delay>
-			<Header>Базовая задержка</Header>
-			<Description>Базовая задержка начала генерации (сек). К каждому генератору дополнительно прибавляется значение из MatrixDelay для текущего Iteration.</Description>
+			<Header>Пауза между повторами пачки</Header>
+			<Description>Пауза (сек) после завершения пачки спайков текущего Iteration перед повторным воспроизведением того же сэмпла.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -71,7 +71,7 @@
 		</Id>
 		<Iteration>
 			<Header>Текущий образец</Header>
-			<Description>Индекс текущего образца (строки) датасета, по которому выставляются задержки генераторов.</Description>
+			<Description>Индекс текущего образца (строки MatrixData). Смена Iteration перезапускает пачку; внутри цикла тот же Iteration повторяется после Delay.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -92,8 +92,8 @@
 			<PropertyType>257</PropertyType>
 		</MatrixClasses>
 		<MatrixData>
-			<Header>Матрица признаков</Header>
-			<Description>Матрица признаков: строки — образцы, столбцы — признаки. Размер задаётся NumSamples×NumFeatures; значения заполняются вручную.</Description>
+			<Header>Матрица ISI спайков</Header>
+			<Description>Редактируемая матрица NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; ≥0 — ISI (сек), −1 — пропуск слота.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -102,28 +102,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MatrixData>
-		<MatrixDelay>
-			<Header>Матрица задержек</Header>
-			<Description>Вычисленные временные сдвиги запусков генераторов по нормализованным признакам и параметру Tay (legacy). Только для чтения.</Description>
-			<Type>| ptPubState |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>258</PropertyType>
-		</MatrixDelay>
-		<MatrixSpikeDelays>
-			<Header>Матрица ISI спайков</Header>
-			<Description>Редактируемая матрица: NumSamples×(NumFeatures×MaxSpikesPerFeature). Колонки блоками по признакам; ≥0 — ISI (сек), −1 — пропуск слота. Primary-источник мультиспайкового воспроизведения.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MatrixSpikeDelays>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -137,7 +115,7 @@
 		</MaxCalculationDuration>
 		<MaxSpikesPerFeature>
 			<Header>Макс. спайков на признак</Header>
-			<Description>Число слотов спайков на признак. При изменении ресайзится MatrixSpikeDelays (новые ячейки = −1). По умолчанию 1.</Description>
+			<Description>Число слотов спайков на признак. При изменении ресайзится MatrixData (новые ячейки = −1). По умолчанию 1.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -170,7 +148,7 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков (столбцов MatrixData). Редактируемый параметр: при изменении MatrixData ресайзится; число дочерних Generator1..N равно NumFeatures после Build.</Description>
+			<Description>Число признаков. Редактируемый параметр: ресайзит MatrixData; число Generator1..N равно NumFeatures после Build.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -181,7 +159,7 @@
 		</NumFeatures>
 		<NumSamples>
 			<Header>Количество образцов</Header>
-			<Description>Число образцов (строк MatrixData). Редактируемый параметр: при изменении ресайзятся MatrixData и MatrixClasses (1×NumSamples).</Description>
+			<Description>Число образцов (строк MatrixData). При изменении ресайзятся MatrixData и MatrixClasses.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -214,7 +192,7 @@
 		</PulseGeneratorClassName>
 		<ResetDelay>
 			<Header>Сброс задержек</Header>
-			<Description>Внутренний флаг: при true на шаге расчёта заново применяются Delay и SpikesFrequency к генераторам.</Description>
+			<Description>Внутренний флаг: при true на шаге расчёта перезапускается расписание пачки текущего Iteration.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -223,20 +201,9 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</ResetDelay>
-		<SpikesFrequency>
-			<Header>Частота спайков</Header>
-			<Description>Частота следования спайков дочерних генераторов (Гц).</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</SpikesFrequency>
 		<StateGeneration>
 			<Header>Режим генерации</Header>
-			<Description>0 — генерация выключена; 1 — генерация в течение TimeGeneration секунд; 2 — непрерывная генерация.</Description>
+			<Description>0 — выкл; 1 — пачки в течение TimeGeneration; 2 — непрерывный цикл пачка→Delay→повтор.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -256,17 +223,6 @@
 			</ValueList>
 			<PropertyType>770</PropertyType>
 		</StepDuration>
-		<Tay>
-			<Header>Масштаб задержек (Tay)</Header>
-			<Description>Множитель нормализации признаков в MatrixDelay: значение признака отображается в интервал [0, Tay].</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Tay>
 		<TimeGeneration>
 			<Header>Длительность генерации</Header>
 			<Description>Длительность timed-режима в секундах (используется при StateGeneration=1).</Description>
@@ -300,24 +256,15 @@
 		<MaxSpikesPerFeature>
 			<Path>{CompName}:MaxSpikesPerFeature</Path>
 		</MaxSpikesPerFeature>
-		<MatrixSpikeDelays>
-			<Path>{CompName}:MatrixSpikeDelays</Path>
-		</MatrixSpikeDelays>
 		<MatrixData>
 			<Path>{CompName}:MatrixData</Path>
 		</MatrixData>
 		<MatrixClasses>
 			<Path>{CompName}:MatrixClasses</Path>
 		</MatrixClasses>
-		<SpikesFrequency>
-			<Path>{CompName}:SpikesFrequency</Path>
-		</SpikesFrequency>
 		<Delay>
 			<Path>{CompName}:Delay</Path>
 		</Delay>
-		<Tay>
-			<Path>{CompName}:Tay</Path>
-		</Tay>
 		<Iteration>
 			<Path>{CompName}:Iteration</Path>
 		</Iteration>

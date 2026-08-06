@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDataset</ClassName>
 	<Header>Генератор датасета спайков (из файла)</Header>
-	<Description>NDataset загружает датасет из файла (legacy MatrixData или v2 MatrixSpikeDelays с несколькими спайками на признак) и создаёт по одному NPulseGeneratorTransit на признак. Путь может быть абсолютным или относительным к Config/Work. Для ручного ввода используйте NDatasetManual.</Description>
+	<Description>NDataset загружает ISI-пачки из файла в MatrixData (опционально #NDataset;MaxSpikes=N) и создаёт по одному NPulseGeneratorTransit на признак. Цикл: пачка → Delay → повтор Iteration. Для ручного ввода — NDatasetManual.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -48,8 +48,8 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<Delay>
-			<Header>Базовая задержка</Header>
-			<Description>Базовая задержка начала генерации (сек). К каждому генератору дополнительно прибавляется значение из MatrixDelay для текущего Iteration.</Description>
+			<Header>Пауза между повторами пачки</Header>
+			<Description>Пауза (сек) после завершения пачки спайков текущего Iteration перед повторным воспроизведением того же сэмпла.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -82,7 +82,7 @@
 		</Id>
 		<Iteration>
 			<Header>Текущий образец</Header>
-			<Description>Индекс текущего образца (строки) датасета, по которому выставляются задержки генераторов.</Description>
+			<Description>Индекс текущего образца (строки MatrixData). Смена Iteration перезапускает пачку; внутри цикла тот же Iteration повторяется после Delay.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -103,8 +103,8 @@
 			<PropertyType>258</PropertyType>
 		</MatrixClasses>
 		<MatrixData>
-			<Header>Матрица признаков</Header>
-			<Description>Матрица признаков из файла: строки — образцы, столбцы — признаки. Только для чтения — заполняется при загрузке датасета.</Description>
+			<Header>Матрица ISI спайков</Header>
+			<Description>Матрица из файла: NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; ≥0 — ISI (сек), −1 — пропуск. Только для чтения после загрузки.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -113,28 +113,6 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</MatrixData>
-		<MatrixDelay>
-			<Header>Матрица задержек</Header>
-			<Description>Вычисленные временные сдвиги запусков генераторов по нормализованным признакам и параметру Tay (legacy single-spike). Только для чтения.</Description>
-			<Type>| ptPubState |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>258</PropertyType>
-		</MatrixDelay>
-		<MatrixSpikeDelays>
-			<Header>Матрица ISI спайков</Header>
-			<Description>Широкая матрица задержек: NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; значение ≥0 — ISI (сек), −1 — пропуск слота. Заполняется из файла формата v2.</Description>
-			<Type>| ptPubState |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>258</PropertyType>
-		</MatrixSpikeDelays>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -148,7 +126,7 @@
 		</MaxCalculationDuration>
 		<MaxSpikesPerFeature>
 			<Header>Макс. спайков на признак</Header>
-			<Description>Число слотов спайков на признак в MatrixSpikeDelays. Задаётся заголовком файла #NDataset;MaxSpikes=N (по умолчанию 1 — legacy).</Description>
+			<Description>Число слотов спайков на признак в MatrixData. Задаётся заголовком файла #NDataset;MaxSpikes=N (без мета — 1).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -236,7 +214,7 @@
 		</ReloadDataset>
 		<ResetDelay>
 			<Header>Сброс задержек</Header>
-			<Description>Внутренний флаг: при true на шаге расчёта заново применяются Delay и SpikesFrequency к генераторам.</Description>
+			<Description>Внутренний флаг: при true на шаге расчёта перезапускается расписание пачки текущего Iteration.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -245,20 +223,9 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</ResetDelay>
-		<SpikesFrequency>
-			<Header>Частота спайков</Header>
-			<Description>Частота следования спайков дочерних генераторов (Гц).</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</SpikesFrequency>
 		<StateGeneration>
 			<Header>Режим генерации</Header>
-			<Description>0 — генерация выключена; 1 — генерация в течение TimeGeneration секунд; 2 — непрерывная генерация.</Description>
+			<Description>0 — выкл; 1 — пачки в течение TimeGeneration; 2 — непрерывный цикл пачка→Delay→повтор.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -278,17 +245,6 @@
 			</ValueList>
 			<PropertyType>770</PropertyType>
 		</StepDuration>
-		<Tay>
-			<Header>Масштаб задержек (Tay)</Header>
-			<Description>Множитель нормализации признаков в MatrixDelay: значение признака отображается в интервал [0, Tay].</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Tay>
 		<TimeGeneration>
 			<Header>Длительность генерации</Header>
 			<Description>Длительность timed-режима в секундах (используется при StateGeneration=1).</Description>
@@ -347,15 +303,9 @@
 		<UseRelativePathFromWorkDir>
 			<Path>{CompName}:UseRelativePathFromWorkDir</Path>
 		</UseRelativePathFromWorkDir>
-		<SpikesFrequency>
-			<Path>{CompName}:SpikesFrequency</Path>
-		</SpikesFrequency>
 		<Delay>
 			<Path>{CompName}:Delay</Path>
 		</Delay>
-		<Tay>
-			<Path>{CompName}:Tay</Path>
-		</Tay>
 		<Iteration>
 			<Path>{CompName}:Iteration</Path>
 		</Iteration>
@@ -365,9 +315,9 @@
 		<MaxSpikesPerFeature>
 			<Path>{CompName}:MaxSpikesPerFeature</Path>
 		</MaxSpikesPerFeature>
-		<MatrixSpikeDelays>
-			<Path>{CompName}:MatrixSpikeDelays</Path>
-		</MatrixSpikeDelays>
+		<MatrixData>
+			<Path>{CompName}:MatrixData</Path>
+		</MatrixData>
 		<NumFeatures>
 			<Path>{CompName}:NumFeatures</Path>
 		</NumFeatures>
