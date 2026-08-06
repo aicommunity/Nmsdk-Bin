@@ -159,7 +159,7 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков (столбцов) в датасете. Вычисляется из файла; вручную не задаётся. После загрузки NumGenerators = NumFeatures.</Description>
+			<Description>Число признаков (столбцов) в датасете. Вычисляется из файла; вручную не задаётся. Число дочерних Generator1..N равно NumFeatures.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -168,17 +168,6 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</NumFeatures>
-		<NumGenerators>
-			<Header>Количество генераторов</Header>
-			<Description>Число дочерних NPulseGeneratorTransit. Всегда равно NumFeatures после успешной загрузки файла.</Description>
-			<Type>| ptPubState |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>258</PropertyType>
-		</NumGenerators>
 		<NumSamples>
 			<Header>Количество образцов</Header>
 			<Description>Число образцов (строк) в датасете. Вычисляется из файла; вручную не задаётся.</Description>
@@ -357,9 +346,6 @@
 		<NumSamples>
 			<Path>{CompName}:NumSamples</Path>
 		</NumSamples>
-		<NumGenerators>
-			<Path>{CompName}:NumGenerators</Path>
-		</NumGenerators>
 		<NumClasses>
 			<Path>{CompName}:NumClasses</Path>
 		</NumClasses>
