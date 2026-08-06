@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDatasetMatrix</ClassName>
 	<Header>Датасет спайков из матрицы</Header>
-	<Description>NDatasetMatrix задаёт размер через NumSamples/NumFeatures/MaxSpikesPerFeature (ресайз MatrixData и MatrixClasses), заполняет ISI-пачки в MatrixData и создаёт по одному NPulseGeneratorTransit на признак. Цикл: пачка → Delay → повтор Iteration.</Description>
+	<Description>NDatasetMatrix: NumSamples/NumFeatures/MaxSpikesPerFeature задают MatrixData размера (S×M)×F (колонки=фичи, блоки строк=сэмплы). Цикл пачка→Delay; опционально AdvanceSampleAfterBurst.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -49,7 +49,7 @@
 		</DebugSysEventsMask>
 		<Delay>
 			<Header>Пауза между повторами пачки</Header>
-			<Description>Пауза (сек) после завершения пачки спайков текущего Iteration перед повторным воспроизведением того же сэмпла.</Description>
+			<Description>Пауза (сек) после завершения пачки перед следующим воспроизведением (тот же Iteration или следующий при AdvanceSampleAfterBurst).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -58,6 +58,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Header>Следующий сэмпл после пачки</Header>
+			<Description>Если true, после Delay Iteration увеличивается по модулю NumSamples. Если false — повторяется тот же сэмпл.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AdvanceSampleAfterBurst>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -71,7 +82,7 @@
 		</Id>
 		<Iteration>
 			<Header>Текущий образец</Header>
-			<Description>Индекс текущего образца (строки MatrixData). Смена Iteration перезапускает пачку; внутри цикла тот же Iteration повторяется после Delay.</Description>
+			<Description>Индекс сэмпла 0..NumSamples-1 (блок из MaxSpikesPerFeature строк MatrixData). Смена перезапускает пачку.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -93,7 +104,7 @@
 		</MatrixClasses>
 		<MatrixData>
 			<Header>Матрица ISI спайков</Header>
-			<Description>Редактируемая матрица NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; ≥0 — ISI (сек), −1 — пропуск слота.</Description>
+			<Description>Матрица (NumSamples×MaxSpikesPerFeature)×NumFeatures: колонки — фичи, в блоке сэмпла строки — ISI-слоты; ≥0 сек, −1 — пропуск.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -115,7 +126,7 @@
 		</MaxCalculationDuration>
 		<MaxSpikesPerFeature>
 			<Header>Макс. спайков на признак</Header>
-			<Description>Число слотов спайков на признак. При изменении ресайзится MatrixData (новые ячейки = −1). По умолчанию 1.</Description>
+			<Description>Число ISI-слотов (строк) в блоке одного сэмпла. MatrixData имеет NumSamples×MaxSpikesPerFeature строк. По умолчанию 1.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -148,7 +159,7 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков. Редактируемый параметр: ресайзит MatrixData; число Generator1..N равно NumFeatures после Build.</Description>
+			<Description>Число признаков (столбцов MatrixData). Число Generator1..N после Build.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -159,7 +170,7 @@
 		</NumFeatures>
 		<NumSamples>
 			<Header>Количество образцов</Header>
-			<Description>Число образцов (строк MatrixData). При изменении ресайзятся MatrixData и MatrixClasses.</Description>
+			<Description>Число сэмплов. MatrixData получает NumSamples×MaxSpikesPerFeature строк; MatrixClasses — 1×NumSamples.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -265,6 +276,9 @@
 		<Delay>
 			<Path>{CompName}:Delay</Path>
 		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Path>{CompName}:AdvanceSampleAfterBurst</Path>
+		</AdvanceSampleAfterBurst>
 		<Iteration>
 			<Path>{CompName}:Iteration</Path>
 		</Iteration>

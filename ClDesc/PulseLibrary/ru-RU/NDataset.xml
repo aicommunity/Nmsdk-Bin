@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDataset</ClassName>
 	<Header>Генератор датасета спайков (из файла)</Header>
-	<Description>NDataset загружает ISI-пачки из файла в MatrixData (опционально #NDataset;MaxSpikes=N) и создаёт по одному NPulseGeneratorTransit на признак. Цикл: пачка → Delay → повтор Iteration. Для ручного ввода — NDatasetMatrix.</Description>
+	<Description>NDataset загружает блоки сэмплов из файла в MatrixData (S×M)×F (колонки=фичи). Мета #NDataset;MaxSpikes=M. Цикл пачка→Delay; опционально AdvanceSampleAfterBurst. Ручной ввод — NDatasetMatrix.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -49,7 +49,7 @@
 		</DebugSysEventsMask>
 		<Delay>
 			<Header>Пауза между повторами пачки</Header>
-			<Description>Пауза (сек) после завершения пачки спайков текущего Iteration перед повторным воспроизведением того же сэмпла.</Description>
+			<Description>Пауза (сек) после пачки перед следующим воспроизведением (тот же Iteration или следующий при AdvanceSampleAfterBurst).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -58,6 +58,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Header>Следующий сэмпл после пачки</Header>
+			<Description>Если true, после Delay Iteration увеличивается по модулю NumSamples. Если false — повторяется тот же сэмпл.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AdvanceSampleAfterBurst>
 		<FileName>
 			<Header>Имя файла датасета</Header>
 			<Description>Абсолютный путь к файлу либо относительный: при UseRelativePathFromConfig — от каталога Config/данных, при UseRelativePathFromWorkDir — от рабочей папки приложения. Если оба флага выключены, путь используется как есть.</Description>
@@ -82,7 +93,7 @@
 		</Id>
 		<Iteration>
 			<Header>Текущий образец</Header>
-			<Description>Индекс текущего образца (строки MatrixData). Смена Iteration перезапускает пачку; внутри цикла тот же Iteration повторяется после Delay.</Description>
+			<Description>Индекс сэмпла 0..NumSamples-1 (блок из MaxSpikesPerFeature строк MatrixData). Смена перезапускает пачку.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -104,7 +115,7 @@
 		</MatrixClasses>
 		<MatrixData>
 			<Header>Матрица ISI спайков</Header>
-			<Description>Матрица из файла: NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; ≥0 — ISI (сек), −1 — пропуск. Только для чтения после загрузки.</Description>
+			<Description>Матрица из файла: (NumSamples×MaxSpikesPerFeature)×NumFeatures; колонки — фичи, строки в блоке — ISI-слоты. Только для чтения после загрузки.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -126,7 +137,7 @@
 		</MaxCalculationDuration>
 		<MaxSpikesPerFeature>
 			<Header>Макс. спайков на признак</Header>
-			<Description>Число слотов спайков на признак в MatrixData. Задаётся заголовком файла #NDataset;MaxSpikes=N (без мета — 1).</Description>
+			<Description>Число ISI-строк в блоке сэмпла. Задаётся #NDataset;MaxSpikes=N (без мета — 1).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
