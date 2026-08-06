@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDataset</ClassName>
 	<Header>Генератор датасета спайков (из файла)</Header>
-	<Description>NDataset загружает матрицы признаков и классов из файла и создаёт по одному NPulseGeneratorTransit на каждый признак. Размеры и матрицы вычисляются из файла; путь может быть абсолютным или относительным к Config/Work. Для ручного ввода матриц в параметрах используйте sibling-класс NDatasetManual.</Description>
+	<Description>NDataset загружает датасет из файла (legacy MatrixData или v2 MatrixSpikeDelays с несколькими спайками на признак) и создаёт по одному NPulseGeneratorTransit на признак. Путь может быть абсолютным или относительным к Config/Work. Для ручного ввода используйте NDatasetManual.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -115,7 +115,7 @@
 		</MatrixData>
 		<MatrixDelay>
 			<Header>Матрица задержек</Header>
-			<Description>Вычисленные временные сдвиги запусков генераторов по нормализованным признакам и параметру Tay. Только для чтения.</Description>
+			<Description>Вычисленные временные сдвиги запусков генераторов по нормализованным признакам и параметру Tay (legacy single-spike). Только для чтения.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -124,6 +124,17 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</MatrixDelay>
+		<MatrixSpikeDelays>
+			<Header>Матрица ISI спайков</Header>
+			<Description>Широкая матрица задержек: NumSamples×(NumFeatures×MaxSpikesPerFeature). Блоки по признакам; значение ≥0 — ISI (сек), −1 — пропуск слота. Заполняется из файла формата v2.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</MatrixSpikeDelays>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -135,6 +146,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
+		<MaxSpikesPerFeature>
+			<Header>Макс. спайков на признак</Header>
+			<Description>Число слотов спайков на признак в MatrixSpikeDelays. Задаётся заголовком файла #NDataset;MaxSpikes=N (по умолчанию 1 — legacy).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxSpikesPerFeature>
 		<Name>
 			<Header>Имя компонента</Header>
 			<Description>Отображаемое имя узла в проекте.</Description>
@@ -340,6 +362,12 @@
 		<PulseGeneratorClassName>
 			<Path>{CompName}:PulseGeneratorClassName</Path>
 		</PulseGeneratorClassName>
+		<MaxSpikesPerFeature>
+			<Path>{CompName}:MaxSpikesPerFeature</Path>
+		</MaxSpikesPerFeature>
+		<MatrixSpikeDelays>
+			<Path>{CompName}:MatrixSpikeDelays</Path>
+		</MatrixSpikeDelays>
 		<NumFeatures>
 			<Path>{CompName}:NumFeatures</Path>
 		</NumFeatures>
