@@ -1,7 +1,7 @@
 <ClassDescription>
-	<ClassName>NDataset</ClassName>
-	<Header>Генератор датасета спайков (из файла)</Header>
-	<Description>NDataset загружает матрицы признаков и классов из файла и создаёт по одному NPulseGeneratorTransit на каждый признак. Размеры и матрицы вычисляются из файла; путь может быть абсолютным или относительным к Config/Work. Для ручного ввода матриц в параметрах используйте sibling-класс NDatasetManual.</Description>
+	<ClassName>NDatasetManual</ClassName>
+	<Header>Ручной датасет спайков</Header>
+	<Description>NDatasetManual задаёт матрицы признаков и классов вручную в параметрах компонента и создаёт по одному NPulseGeneratorTransit на каждый признак. В отличие от NDataset, данные не читаются из файла: размеры и MatrixDelay вычисляются из MatrixData/MatrixClasses при Build.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -58,17 +58,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Delay>
-		<FileName>
-			<Header>Имя файла датасета</Header>
-			<Description>Абсолютный путь к файлу либо относительный: при UseRelativePathFromConfig — от каталога Config/данных, при UseRelativePathFromWorkDir — от рабочей папки приложения. Если оба флага выключены, путь используется как есть.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</FileName>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -93,25 +82,25 @@
 		</Iteration>
 		<MatrixClasses>
 			<Header>Матрица классов</Header>
-			<Description>Метки классов, загруженные из файла (1×NumSamples). Только для чтения — заполняется при загрузке датасета.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Метки классов, задаваемые вручную (1×NumSamples). Редактируемый параметр; число столбцов должно совпадать с числом строк MatrixData.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
+			<PropertyType>257</PropertyType>
 		</MatrixClasses>
 		<MatrixData>
 			<Header>Матрица признаков</Header>
-			<Description>Матрица признаков из файла: строки — образцы, столбцы — признаки. Только для чтения — заполняется при загрузке датасета.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Матрица признаков, задаваемая вручную: строки — образцы, столбцы — признаки. Редактируемый параметр; при Build из неё вычисляются NumSamples, NumFeatures и MatrixDelay.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
+			<PropertyType>257</PropertyType>
 		</MatrixData>
 		<MatrixDelay>
 			<Header>Матрица задержек</Header>
@@ -148,7 +137,7 @@
 		</Name>
 		<NumClasses>
 			<Header>Количество классов</Header>
-			<Description>Число уникальных меток в MatrixClasses. Вычисляется автоматически при загрузке файла.</Description>
+			<Description>Число уникальных меток в MatrixClasses. Вычисляется автоматически при Build.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -159,7 +148,7 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков (столбцов) в датасете. Вычисляется из файла; вручную не задаётся. После загрузки NumGenerators = NumFeatures.</Description>
+			<Description>Число признаков (столбцов MatrixData). Вычисляется из матрицы; вручную не задаётся. После Build NumGenerators = NumFeatures.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -170,7 +159,7 @@
 		</NumFeatures>
 		<NumGenerators>
 			<Header>Количество генераторов</Header>
-			<Description>Число дочерних NPulseGeneratorTransit. Всегда равно NumFeatures после успешной загрузки файла.</Description>
+			<Description>Число дочерних NPulseGeneratorTransit. Всегда равно NumFeatures после успешного Build.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -181,7 +170,7 @@
 		</NumGenerators>
 		<NumSamples>
 			<Header>Количество образцов</Header>
-			<Description>Число образцов (строк) в датасете. Вычисляется из файла; вручную не задаётся.</Description>
+			<Description>Число образцов (строк MatrixData). Вычисляется из матрицы; вручную не задаётся.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -212,17 +201,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</PulseGeneratorClassName>
-		<ReloadDataset>
-			<Header>Перезагрузить датасет</Header>
-			<Description>При true на следующем шаге Build/Calculate файл читается заново; после успешной загрузки флаг сбрасывается в false.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>1</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</ReloadDataset>
 		<ResetDelay>
 			<Header>Сброс задержек</Header>
 			<Description>Внутренний флаг: при true на шаге расчёта заново применяются Delay и SpikesFrequency к генераторам.</Description>
@@ -300,42 +278,14 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
-		<UseRelativePathFromConfig>
-			<Header>Относительный путь (конфигурация)</Header>
-			<Description>Интерпретировать FileName относительно каталога конфигурации/данных проекта (GetCurrentDataDir). Взаимоисключает UseRelativePathFromWorkDir.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>1</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</UseRelativePathFromConfig>
-		<UseRelativePathFromWorkDir>
-			<Header>Относительный путь (рабочая папка)</Header>
-			<Description>Интерпретировать FileName относительно рабочей папки приложения (GetSystemDir). Взаимоисключает UseRelativePathFromConfig.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>1</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</UseRelativePathFromWorkDir>
 	</Properties>
 	<Favorites>
-		<FileName>
-			<Path>{CompName}:FileName</Path>
-		</FileName>
-		<ReloadDataset>
-			<Path>{CompName}:ReloadDataset</Path>
-		</ReloadDataset>
-		<UseRelativePathFromConfig>
-			<Path>{CompName}:UseRelativePathFromConfig</Path>
-		</UseRelativePathFromConfig>
-		<UseRelativePathFromWorkDir>
-			<Path>{CompName}:UseRelativePathFromWorkDir</Path>
-		</UseRelativePathFromWorkDir>
+		<MatrixData>
+			<Path>{CompName}:MatrixData</Path>
+		</MatrixData>
+		<MatrixClasses>
+			<Path>{CompName}:MatrixClasses</Path>
+		</MatrixClasses>
 		<SpikesFrequency>
 			<Path>{CompName}:SpikesFrequency</Path>
 		</SpikesFrequency>
