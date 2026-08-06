@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDatasetManual</ClassName>
 	<Header>Ручной датасет спайков</Header>
-	<Description>NDatasetManual задаёт матрицы признаков и классов вручную в параметрах компонента и создаёт по одному NPulseGeneratorTransit на каждый признак. В отличие от NDataset, данные не читаются из файла: размеры и MatrixDelay вычисляются из MatrixData/MatrixClasses при Build.</Description>
+	<Description>NDatasetManual задаёт размер датасета через NumSamples/NumFeatures (ресайз MatrixData/MatrixClasses), заполняет матрицы вручную и создаёт по одному NPulseGeneratorTransit на признак. В отличие от NDataset, файл не используется.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -82,7 +82,7 @@
 		</Iteration>
 		<MatrixClasses>
 			<Header>Матрица классов</Header>
-			<Description>Метки классов, задаваемые вручную (1×NumSamples). Редактируемый параметр; число столбцов должно совпадать с числом строк MatrixData.</Description>
+			<Description>Метки классов (1×NumSamples). Редактируемый параметр; при смене NumSamples ресайзится автоматически.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -93,7 +93,7 @@
 		</MatrixClasses>
 		<MatrixData>
 			<Header>Матрица признаков</Header>
-			<Description>Матрица признаков, задаваемая вручную: строки — образцы, столбцы — признаки. Редактируемый параметр; при Build из неё вычисляются NumSamples, NumFeatures и MatrixDelay.</Description>
+			<Description>Матрица признаков: строки — образцы, столбцы — признаки. Размер задаётся NumSamples×NumFeatures; значения заполняются вручную.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -148,25 +148,25 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков (столбцов MatrixData). Вычисляется из матрицы; вручную не задаётся. Число дочерних Generator1..N равно NumFeatures.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Число признаков (столбцов MatrixData). Редактируемый параметр: при изменении MatrixData ресайзится; число дочерних Generator1..N равно NumFeatures после Build.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NumFeatures>
 		<NumSamples>
 			<Header>Количество образцов</Header>
-			<Description>Число образцов (строк MatrixData). Вычисляется из матрицы; вручную не задаётся.</Description>
-			<Type>| ptPubState |</Type>
+			<Description>Число образцов (строк MatrixData). Редактируемый параметр: при изменении ресайзятся MatrixData и MatrixClasses (1×NumSamples).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
+			<PropertyType>257</PropertyType>
 		</NumSamples>
 		<OperatingTime>
 			<Header>Время старта генерации</Header>
@@ -269,6 +269,12 @@
 		</TimeStep>
 	</Properties>
 	<Favorites>
+		<NumSamples>
+			<Path>{CompName}:NumSamples</Path>
+		</NumSamples>
+		<NumFeatures>
+			<Path>{CompName}:NumFeatures</Path>
+		</NumFeatures>
 		<MatrixData>
 			<Path>{CompName}:MatrixData</Path>
 		</MatrixData>
@@ -290,12 +296,6 @@
 		<PulseGeneratorClassName>
 			<Path>{CompName}:PulseGeneratorClassName</Path>
 		</PulseGeneratorClassName>
-		<NumFeatures>
-			<Path>{CompName}:NumFeatures</Path>
-		</NumFeatures>
-		<NumSamples>
-			<Path>{CompName}:NumSamples</Path>
-		</NumSamples>
 		<NumClasses>
 			<Path>{CompName}:NumClasses</Path>
 		</NumClasses>
