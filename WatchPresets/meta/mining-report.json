@@ -1,8 +1,8 @@
 {
-  "classes": 37,
-  "presets": 86,
-  "singleKeys": 60,
-  "multiKeys": 26,
+  "classes": 40,
+  "presets": 76,
+  "singleKeys": 67,
+  "multiKeys": 25,
   "topSingles": [
     {
       "class": "NPGenerator",
@@ -47,9 +47,21 @@
       "hits": 82
     },
     {
+      "class": "NMultiPositionControl",
+      "path": "LTZone",
+      "property": "Output",
+      "hits": 42
+    },
+    {
       "class": "NNeuronTrainer",
       "path": "",
       "property": "NeuronAmplitude",
+      "hits": 36
+    },
+    {
+      "class": "NNewPositionControlElement",
+      "path": "LTZone",
+      "property": "Output",
       "hits": 36
     },
     {
@@ -77,6 +89,12 @@
       "hits": 19
     },
     {
+      "class": "NSpikeClassifier",
+      "path": "LTZone",
+      "property": "Output",
+      "hits": 18
+    },
+    {
       "class": "NPulseLTZoneThresholdBio2",
       "path": "",
       "property": "Output",
@@ -93,6 +111,18 @@
       "path": "",
       "property": "SomaSumPotential",
       "hits": 13
+    },
+    {
+      "class": "NSPNeuron",
+      "path": "Dendrite1_1.ExcChannel",
+      "property": "Output",
+      "hits": 12
+    },
+    {
+      "class": "NSPNeuron",
+      "path": "Dendrite*.ExcChannel",
+      "property": "Output",
+      "hits": 12
     },
     {
       "class": "NEyeMuscle",
@@ -153,36 +183,6 @@
       "path": "",
       "property": "SumPotential",
       "hits": 9
-    },
-    {
-      "class": "NPLTZone",
-      "path": "",
-      "property": "OutputFrequency",
-      "hits": 8
-    },
-    {
-      "class": "NPSynapse",
-      "path": "",
-      "property": "Output",
-      "hits": 8
-    },
-    {
-      "class": "NPSimpleLTZone",
-      "path": "",
-      "property": "OutputPulseTimes",
-      "hits": 7
-    },
-    {
-      "class": "NDCEngine",
-      "path": "",
-      "property": "OutputAngle",
-      "hits": 7
-    },
-    {
-      "class": "NPulseLTZoneIaF",
-      "path": "",
-      "property": "Output",
-      "hits": 6
     }
   ],
   "topMulti": [
@@ -195,6 +195,26 @@
         ]
       ],
       "hits": 20
+    },
+    {
+      "class": "NMultiPositionControl",
+      "signature": [
+        [
+          "LTZone",
+          "Output"
+        ]
+      ],
+      "hits": 6
+    },
+    {
+      "class": "NNewPositionControlElement",
+      "signature": [
+        [
+          "LTZone",
+          "Output"
+        ]
+      ],
+      "hits": 6
     },
     {
       "class": "NNewPositionControlElement",
@@ -290,19 +310,7 @@
       "class": "NSpikeClassifier",
       "signature": [
         [
-          "NeuronTrainer1.Neuron.LTZone",
-          "Output"
-        ],
-        [
-          "NeuronTrainer2.Neuron.LTZone",
-          "Output"
-        ],
-        [
-          "NeuronTrainer3.Neuron.LTZone",
-          "Output"
-        ],
-        [
-          "NeuronTrainer4.Neuron.LTZone",
+          "LTZone",
           "Output"
         ],
         [
@@ -330,15 +338,7 @@
       "class": "NSpikeClassifier",
       "signature": [
         [
-          "NeuronTrainer1.Neuron.LTZone",
-          "Output"
-        ],
-        [
-          "NeuronTrainer2.Neuron.LTZone",
-          "Output"
-        ],
-        [
-          "NeuronTrainer3.Neuron.LTZone",
+          "LTZone",
           "Output"
         ]
       ],
@@ -470,11 +470,7 @@
       "class": "NNewMotionElement",
       "signature": [
         [
-          "MotoneuronL.LTZone",
-          "Output"
-        ],
-        [
-          "MotoneuronR.LTZone",
+          "LTZone",
           "Output"
         ]
       ],
@@ -489,66 +485,6 @@
         ],
         [
           "AfferentR1.Receptor",
-          "Output"
-        ]
-      ],
-      "hits": 2
-    },
-    {
-      "class": "NNewPositionControlElement",
-      "signature": [
-        [
-          "PostInputNeuronL11.LTZone",
-          "Output"
-        ],
-        [
-          "PostInputNeuronL21.LTZone",
-          "Output"
-        ],
-        [
-          "PostInputNeuronL31.LTZone",
-          "Output"
-        ],
-        [
-          "PostInputNeuronR11.LTZone",
-          "Output"
-        ],
-        [
-          "PostInputNeuronR21.LTZone",
-          "Output"
-        ],
-        [
-          "PostInputNeuronR31.LTZone",
-          "Output"
-        ]
-      ],
-      "hits": 2
-    },
-    {
-      "class": "NNewPositionControlElement",
-      "signature": [
-        [
-          "PreControlNeuronL11.LTZone",
-          "Output"
-        ],
-        [
-          "PreControlNeuronL21.LTZone",
-          "Output"
-        ],
-        [
-          "PreControlNeuronL31.LTZone",
-          "Output"
-        ],
-        [
-          "PreControlNeuronR11.LTZone",
-          "Output"
-        ],
-        [
-          "PreControlNeuronR21.LTZone",
-          "Output"
-        ],
-        [
-          "PreControlNeuronR31.LTZone",
           "Output"
         ]
       ],
