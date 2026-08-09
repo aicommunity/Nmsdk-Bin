@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "library": "PulseLibrary",
+  "className": "NPulseNeuronIaF",
+  "presets": [
+    {
+      "id": "spikes_and_soma",
+      "title": "Spikes + soma potential",
+      "description": "Typical LIF view: LTZone spikes with soma membrane potential.",
+      "vizKind": "TimeSeries",
+      "series": [
+        {
+          "path": "LTZone",
+          "property": "Output",
+          "jx": 0,
+          "jy": 0
+        },
+        {
+          "path": "Soma1",
+          "property": "SomaSumPotential",
+          "jx": 0,
+          "jy": 0
+        }
+      ],
+      "evidence": {
+        "hitCount": 5,
+        "formats": [
+          "qt_v1"
+        ],
+        "exampleProjects": [
+          "SpikeSamples/NM-Neurons/LIF-Neuron"
+        ]
+      }
+    },
+    {
+      "id": "soma_sum_potential",
+      "title": "Soma sum potential",
+      "description": "Membrane potential on the neuron root (SomaSumPotential).",
+      "vizKind": "TimeSeries",
+      "series": [
+        {
+          "path": "",
+          "property": "SomaSumPotential",
+          "jx": 0,
+          "jy": 0
+        }
+      ],
+      "evidence": {
+        "hitCount": 5,
+        "formats": [
+          "qt_v1"
+        ],
+        "exampleProjects": [
+          "SpikeSamples/NM-Neurons/LIF-Neuron"
+        ]
+      }
+    }
+  ]
+}
