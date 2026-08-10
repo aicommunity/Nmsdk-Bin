@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "library": "PulseLibrary",
+  "className": "NPGenerator",
+  "presets": [
+    {
+      "id": "output",
+      "title": "Generator output",
+      "description": "Time series of NPGenerator.Output (most common SpikeSamples watch).",
+      "vizKind": "TimeSeries",
+      "series": [
+        {
+          "path": "",
+          "property": "Output",
+          "jx": 0,
+          "jy": 0
+        }
+      ],
+      "evidence": {
+        "hitCount": 180,
+        "formats": [
+          "bcb",
+          "qt_v1"
+        ],
+        "exampleProjects": [
+          "SpikeSamples/NM-Neurons/LIF-Neuron"
+        ]
+      }
+    },
+    {
+      "id": "output_pulse_times",
+      "title": "Pulse event times",
+      "description": "BCB-era OutputPulseTimes monitor for pulse generators.",
+      "vizKind": "TimeSeries",
+      "series": [
+        {
+          "path": "",
+          "property": "OutputPulseTimes",
+          "jx": 0,
+          "jy": 0
+        }
+      ],
+      "evidence": {
+        "hitCount": 15,
+        "formats": [
+          "bcb"
+        ],
+        "exampleProjects": [
+          "SpikeSamples/NM-Neurons/NM-PN-01-Neuron-1M1St1In1"
+        ]
+      }
+    }
+  ]
+}

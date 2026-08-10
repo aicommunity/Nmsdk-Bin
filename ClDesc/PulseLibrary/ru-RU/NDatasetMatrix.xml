@@ -1,0 +1,292 @@
+<ClassDescription>
+	<ClassName>NDatasetMatrix</ClassName>
+	<Header>Датасет спайков из матрицы</Header>
+	<Description>NDatasetMatrix: NumSamples/NumFeatures/MaxSpikesPerFeature задают MatrixData размера (S×M)×F (колонки=фичи, блоки строк=сэмплы). Цикл пачка→Delay; опционально AdvanceSampleAfterBurst.</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<CalculationDurationThreshold>
+			<Header>Порог времени расчёта</Header>
+			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalculationDurationThreshold>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<DebugSysEventsMask>
+			<Header>Маска системных событий</Header>
+			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>769</PropertyType>
+		</DebugSysEventsMask>
+		<Delay>
+			<Header>Пауза между повторами пачки</Header>
+			<Description>Пауза (сек) после завершения пачки перед следующим воспроизведением (тот же Iteration или следующий при AdvanceSampleAfterBurst).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Header>Следующий сэмпл после пачки</Header>
+			<Description>Если true, после Delay Iteration увеличивается по модулю NumSamples. Если false — повторяется тот же сэмпл.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AdvanceSampleAfterBurst>
+		<Id>
+			<Header>Идентификатор</Header>
+			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Id>
+		<Iteration>
+			<Header>Текущий образец</Header>
+			<Description>Индекс сэмпла 0..NumSamples-1 (блок из MaxSpikesPerFeature строк MatrixData). Смена перезапускает пачку.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Iteration>
+		<MatrixClasses>
+			<Header>Матрица классов</Header>
+			<Description>Метки классов (1×NumSamples). Редактируемый параметр; при смене NumSamples ресайзится автоматически.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MatrixClasses>
+		<MatrixData>
+			<Header>Матрица ISI спайков</Header>
+			<Description>Матрица (NumSamples×MaxSpikesPerFeature)×NumFeatures: колонки — фичи, в блоке сэмпла строки — ISI-слоты; ≥0 сек, −1 — пропуск.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MatrixData>
+		<MaxCalculationDuration>
+			<Header>Макс. длительность расчёта</Header>
+			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxCalculationDuration>
+		<MaxSpikesPerFeature>
+			<Header>Макс. спайков на признак</Header>
+			<Description>Число ISI-слотов (строк) в блоке одного сэмпла. MatrixData имеет NumSamples×MaxSpikesPerFeature строк. По умолчанию 1.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxSpikesPerFeature>
+		<Name>
+			<Header>Имя компонента</Header>
+			<Description>Отображаемое имя узла в проекте.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</Name>
+		<NumClasses>
+			<Header>Количество классов</Header>
+			<Description>Число уникальных меток в MatrixClasses. Вычисляется автоматически при Build.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NumClasses>
+		<NumFeatures>
+			<Header>Количество признаков</Header>
+			<Description>Число признаков (столбцов MatrixData). Число Generator1..N после Build.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumFeatures>
+		<NumSamples>
+			<Header>Количество образцов</Header>
+			<Description>Число сэмплов. MatrixData получает NumSamples×MaxSpikesPerFeature строк; MatrixClasses — 1×NumSamples.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NumSamples>
+		<OperatingTime>
+			<Header>Время старта генерации</Header>
+			<Description>Метка времени начала timed-режима (StateGeneration=1).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</OperatingTime>
+		<PulseGeneratorClassName>
+			<Header>Класс генератора импульсов</Header>
+			<Description>Имя класса дочерних генераторов (по умолчанию NPulseGeneratorTransit).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseGeneratorClassName>
+		<ResetDelay>
+			<Header>Сброс задержек</Header>
+			<Description>Внутренний флаг: при true на шаге расчёта перезапускается расписание пачки текущего Iteration.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</ResetDelay>
+		<StateGeneration>
+			<Header>Режим генерации</Header>
+			<Description>0 — выкл; 1 — пачки в течение TimeGeneration; 2 — непрерывный цикл пачка→Delay→повтор.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</StateGeneration>
+		<StepDuration>
+			<Header>Время шага</Header>
+			<Description>Продолжительность последнего расчётного шага (мс).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</StepDuration>
+		<TimeGeneration>
+			<Header>Длительность генерации</Header>
+			<Description>Длительность timed-режима в секундах (используется при StateGeneration=1).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</TimeGeneration>
+		<TimeStep>
+			<Header>Временной шаг</Header>
+			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
+			<Type></Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</TimeStep>
+	</Properties>
+	<Favorites>
+		<NumSamples>
+			<Path>{CompName}:NumSamples</Path>
+		</NumSamples>
+		<NumFeatures>
+			<Path>{CompName}:NumFeatures</Path>
+		</NumFeatures>
+		<MaxSpikesPerFeature>
+			<Path>{CompName}:MaxSpikesPerFeature</Path>
+		</MaxSpikesPerFeature>
+		<MatrixData>
+			<Path>{CompName}:MatrixData</Path>
+		</MatrixData>
+		<MatrixClasses>
+			<Path>{CompName}:MatrixClasses</Path>
+		</MatrixClasses>
+		<Delay>
+			<Path>{CompName}:Delay</Path>
+		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Path>{CompName}:AdvanceSampleAfterBurst</Path>
+		</AdvanceSampleAfterBurst>
+		<Iteration>
+			<Path>{CompName}:Iteration</Path>
+		</Iteration>
+		<PulseGeneratorClassName>
+			<Path>{CompName}:PulseGeneratorClassName</Path>
+		</PulseGeneratorClassName>
+		<NumClasses>
+			<Path>{CompName}:NumClasses</Path>
+		</NumClasses>
+	</Favorites>
+</ClassDescription>

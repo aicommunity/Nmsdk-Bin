@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NDataset</ClassName>
-	<Header>Генератор датасета спайков</Header>
-	<Description>NDataset создаёт набор спайковых данных по матрицам признаков и классов, управляя числом генераторов, признаков, образцов и частотой спайков.</Description>
+	<Header>Генератор датасета спайков (из файла)</Header>
+	<Description>NDataset загружает блоки сэмплов из файла в MatrixData (S×M)×F (колонки=фичи). Мета #NDataset;MaxSpikes=M. Цикл пачка→Delay; опционально AdvanceSampleAfterBurst. Ручной ввод — NDatasetMatrix.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -48,8 +48,8 @@
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
 		<Delay>
-			<Header>Задержка</Header>
-			<Description>Базовая временная задержка импульсов или реакции системы (в условных единицах/мс).</Description>
+			<Header>Пауза между повторами пачки</Header>
+			<Description>Пауза (сек) после пачки перед следующим воспроизведением (тот же Iteration или следующий при AdvanceSampleAfterBurst).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -58,16 +58,27 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Delay>
+		<AdvanceSampleAfterBurst>
+			<Header>Следующий сэмпл после пачки</Header>
+			<Description>Если true, после Delay Iteration увеличивается по модулю NumSamples. Если false — повторяется тот же сэмпл.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AdvanceSampleAfterBurst>
 		<FileName>
-			<Header>Имя файла</Header>
-			<Description>Путь к файлу, содержащему данные или изображение.</Description>
-			<Type>| ptPubState |</Type>
+			<Header>Имя файла датасета</Header>
+			<Description>Абсолютный путь к файлу либо относительный: при UseRelativePathFromConfig — от каталога Config/данных, при UseRelativePathFromWorkDir — от рабочей папки приложения. Если оба флага выключены, путь используется как есть.</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
+			<PropertyType>257</PropertyType>
 		</FileName>
 		<Id>
 			<Header>Идентификатор</Header>
@@ -81,8 +92,8 @@
 			<PropertyType>513</PropertyType>
 		</Id>
 		<Iteration>
-			<Header>Iteration</Header>
-			<Description>Номер текущей итерации или шага в цикле обработки данных.</Description>
+			<Header>Текущий образец</Header>
+			<Description>Индекс сэмпла 0..NumSamples-1 (блок из MaxSpikesPerFeature строк MatrixData). Смена перезапускает пачку.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -92,30 +103,8 @@
 			<PropertyType>257</PropertyType>
 		</Iteration>
 		<MatrixClasses>
-			<Header>Матрица classes</Header>
-			<Description>Матрица классов или меток для классификации.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MatrixClasses>
-		<MatrixData>
-			<Header>Матрица data</Header>
-			<Description>Матрица данных для обработки или хранения.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</MatrixData>
-		<MatrixDelay>
-			<Header>Матрица задержка</Header>
-			<Description>Матрица задержек для различных каналов или элементов.</Description>
+			<Header>Матрица классов</Header>
+			<Description>Метки классов, загруженные из файла (1×NumSamples). Только для чтения — заполняется при загрузке датасета.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -123,7 +112,18 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>258</PropertyType>
-		</MatrixDelay>
+		</MatrixClasses>
+		<MatrixData>
+			<Header>Матрица ISI спайков</Header>
+			<Description>Матрица из файла: (NumSamples×MaxSpikesPerFeature)×NumFeatures; колонки — фичи, строки в блоке — ISI-слоты. Только для чтения после загрузки.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</MatrixData>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -135,6 +135,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MaxCalculationDuration>
+		<MaxSpikesPerFeature>
+			<Header>Макс. спайков на признак</Header>
+			<Description>Число ISI-строк в блоке сэмпла. Задаётся #NDataset;MaxSpikes=N (без мета — 1).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxSpikesPerFeature>
 		<Name>
 			<Header>Имя компонента</Header>
 			<Description>Отображаемое имя узла в проекте.</Description>
@@ -148,7 +159,7 @@
 		</Name>
 		<NumClasses>
 			<Header>Количество классов</Header>
-			<Description>Число классов, на которые классификатор разделяет входные данные.</Description>
+			<Description>Число уникальных меток в MatrixClasses. Вычисляется автоматически при загрузке файла.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -159,40 +170,29 @@
 		</NumClasses>
 		<NumFeatures>
 			<Header>Количество признаков</Header>
-			<Description>Число признаков в векторе данных.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Число признаков (столбцов) в датасете. Вычисляется из файла; вручную не задаётся. Число дочерних Generator1..N равно NumFeatures.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>257</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NumFeatures>
-		<NumGenerators>
-			<Header>Количество генераторов</Header>
-			<Description>Число генераторов импульсов, используемых в компоненте.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</NumGenerators>
 		<NumSamples>
 			<Header>Количество образцов</Header>
-			<Description>Число образцов в наборе данных или обучающей выборке.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Число образцов (строк) в датасете. Вычисляется из файла; вручную не задаётся.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>257</PropertyType>
+			<PropertyType>258</PropertyType>
 		</NumSamples>
 		<OperatingTime>
-			<Header>Operating время</Header>
-			<Description>Время работы компонента или длительность операции.</Description>
+			<Header>Время старта генерации</Header>
+			<Description>Метка времени начала timed-режима (StateGeneration=1).</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -203,7 +203,7 @@
 		</OperatingTime>
 		<PulseGeneratorClassName>
 			<Header>Класс генератора импульсов</Header>
-			<Description>Имя класса генератора, создающего импульсные последовательности для нейронов.</Description>
+			<Description>Имя класса дочерних генераторов (по умолчанию NPulseGeneratorTransit).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -213,10 +213,10 @@
 			<PropertyType>257</PropertyType>
 		</PulseGeneratorClassName>
 		<ReloadDataset>
-			<Header>Reload набор данных</Header>
-			<Description>Флаг, указывающий, нужно ли перезагрузить набор данных.</Description>
+			<Header>Перезагрузить датасет</Header>
+			<Description>При true на следующем шаге Build/Calculate файл читается заново; после успешной загрузки флаг сбрасывается в false.</Description>
 			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
+			<DataSelectionType>1</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
@@ -224,8 +224,8 @@
 			<PropertyType>257</PropertyType>
 		</ReloadDataset>
 		<ResetDelay>
-			<Header>Reset задержка</Header>
-			<Description>Задержка перед сбросом состояния компонента.</Description>
+			<Header>Сброс задержек</Header>
+			<Description>Внутренний флаг: при true на шаге расчёта перезапускается расписание пачки текущего Iteration.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -234,20 +234,9 @@
 			</ValueList>
 			<PropertyType>258</PropertyType>
 		</ResetDelay>
-		<SpikesFrequency>
-			<Header>Частота спайков</Header>
-			<Description>Желаемая или измеряемая частота следования спайков (Гц).</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</SpikesFrequency>
 		<StateGeneration>
-			<Header>Состояние generation</Header>
-			<Description>Генерация состояния или режим работы генератора состояний.</Description>
+			<Header>Режим генерации</Header>
+			<Description>0 — выкл; 1 — пачки в течение TimeGeneration; 2 — непрерывный цикл пачка→Delay→повтор.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -267,20 +256,9 @@
 			</ValueList>
 			<PropertyType>770</PropertyType>
 		</StepDuration>
-		<Tay>
-			<Header>Tay</Header>
-			<Description>Параметр временной константы или задержки в модели.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Tay>
 		<TimeGeneration>
-			<Header>Время generation</Header>
-			<Description>Время генерации данных или паттернов.</Description>
+			<Header>Длительность генерации</Header>
+			<Description>Длительность timed-режима в секундах (используется при StateGeneration=1).</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -300,6 +278,65 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
+		<UseRelativePathFromConfig>
+			<Header>Относительный путь (конфигурация)</Header>
+			<Description>Интерпретировать FileName относительно каталога конфигурации/данных проекта (GetCurrentDataDir). Взаимоисключает UseRelativePathFromWorkDir.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseRelativePathFromConfig>
+		<UseRelativePathFromWorkDir>
+			<Header>Относительный путь (рабочая папка)</Header>
+			<Description>Интерпретировать FileName относительно рабочей папки приложения (GetSystemDir). Взаимоисключает UseRelativePathFromConfig.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseRelativePathFromWorkDir>
 	</Properties>
-	<Favorites/>
+	<Favorites>
+		<FileName>
+			<Path>{CompName}:FileName</Path>
+		</FileName>
+		<ReloadDataset>
+			<Path>{CompName}:ReloadDataset</Path>
+		</ReloadDataset>
+		<UseRelativePathFromConfig>
+			<Path>{CompName}:UseRelativePathFromConfig</Path>
+		</UseRelativePathFromConfig>
+		<UseRelativePathFromWorkDir>
+			<Path>{CompName}:UseRelativePathFromWorkDir</Path>
+		</UseRelativePathFromWorkDir>
+		<Delay>
+			<Path>{CompName}:Delay</Path>
+		</Delay>
+		<Iteration>
+			<Path>{CompName}:Iteration</Path>
+		</Iteration>
+		<PulseGeneratorClassName>
+			<Path>{CompName}:PulseGeneratorClassName</Path>
+		</PulseGeneratorClassName>
+		<MaxSpikesPerFeature>
+			<Path>{CompName}:MaxSpikesPerFeature</Path>
+		</MaxSpikesPerFeature>
+		<MatrixData>
+			<Path>{CompName}:MatrixData</Path>
+		</MatrixData>
+		<NumFeatures>
+			<Path>{CompName}:NumFeatures</Path>
+		</NumFeatures>
+		<NumSamples>
+			<Path>{CompName}:NumSamples</Path>
+		</NumSamples>
+		<NumClasses>
+			<Path>{CompName}:NumClasses</Path>
+		</NumClasses>
+	</Favorites>
 </ClassDescription>

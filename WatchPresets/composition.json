@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "parents": {
+    "NPNeuron": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPLTZone"
+      }
+    ],
+    "NPulseNeuronIaF": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneIaF"
+      }
+    ],
+    "NPulseNeuronCable": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneCable"
+      }
+    ],
+    "NPulseNeuronCableMulti": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneCable"
+      }
+    ],
+    "NSPNeuron": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPLTZone"
+      }
+    ],
+    "NSPNeuronGen": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneThreshold"
+      }
+    ],
+    "NSPNeuronBio": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneThresholdBio"
+      }
+    ],
+    "NSPNeuronBio2": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPulseLTZoneThresholdBio2"
+      }
+    ],
+    "NNewSPNeuron": [
+      {
+        "slot": "LTZone",
+        "childClass": "NPLTZone"
+      }
+    ]
+  },
+  "membraneChildren": {
+    "NPMembrane": [
+      {
+        "slot": "ExcChannel",
+        "childClass": "NPExcChannel"
+      },
+      {
+        "slot": "InhChannel",
+        "childClass": "NPInhChannel"
+      },
+      {
+        "slot": "ExcSynapse1",
+        "childClass": "NPSynapse"
+      },
+      {
+        "slot": "InhSynapse1",
+        "childClass": "NPSynapse"
+      }
+    ],
+    "NPNeuronMembrane": [
+      {
+        "slot": "ExcChannel",
+        "childClass": "NPExcChannel"
+      },
+      {
+        "slot": "InhChannel",
+        "childClass": "NPInhChannel"
+      },
+      {
+        "slot": "ExcSynapse1",
+        "childClass": "NPSynapse"
+      },
+      {
+        "slot": "InhSynapse1",
+        "childClass": "NPSynapse"
+      }
+    ],
+    "NPMembraneBio": [
+      {
+        "slot": "ExcChannel",
+        "childClass": "NPExcChannelBio"
+      },
+      {
+        "slot": "InhChannel",
+        "childClass": "NPInhChannelBio"
+      },
+      {
+        "slot": "ExcSynapse1",
+        "childClass": "NPSynapseBio"
+      },
+      {
+        "slot": "InhSynapse1",
+        "childClass": "NPSynapseBio"
+      }
+    ],
+    "NPMembraneBio2": [
+      {
+        "slot": "ExcChannel",
+        "childClass": "NPExcChannelBio2"
+      },
+      {
+        "slot": "InhChannel",
+        "childClass": "NPInhChannelBio2"
+      },
+      {
+        "slot": "ExcSynapse1",
+        "childClass": "NPSynapseBio2"
+      },
+      {
+        "slot": "InhSynapse1",
+        "childClass": "NPSynapseBio2"
+      }
+    ]
+  },
+  "families": {
+    "ltzone": [
+      "NPLTZone",
+      "NPulseLTZoneIaF",
+      "NPulseLTZoneCable",
+      "NPulseLTZoneThreshold",
+      "NPulseLTZoneThresholdBio",
+      "NPulseLTZoneThresholdBio2",
+      "NPSimpleLTZone",
+      "NCLTZone",
+      "NCSimpleLTZone"
+    ],
+    "synapse": [
+      "NPSynapse",
+      "NPSynapseBio",
+      "NPSynapseBio2",
+      "NPHebbSynapse"
+    ],
+    "exc_channel": [
+      "NPExcChannel",
+      "NPExcChannelBio",
+      "NPExcChannelBio2",
+      "NPChannel",
+      "NPSynNeuronChannel"
+    ],
+    "inh_channel": [
+      "NPInhChannel",
+      "NPInhChannelBio",
+      "NPInhChannelBio2"
+    ],
+    "generator": [
+      "NPGenerator",
+      "NPulseGeneratorTransit",
+      "NPulseGeneratorMulti",
+      "NCGenerator"
+    ]
+  }
+}
