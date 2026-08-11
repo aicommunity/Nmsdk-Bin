@@ -322,6 +322,17 @@
 			</ValueList>
 			<PropertyType>770</PropertyType>
 		</TrainingPhase>
+		<ResetToUntrainedState>
+			<Header>Сбросить в необученное состояние</Header>
+			<Description>Одноразово возвращает структуру и training metadata в исходное необученное состояние перед новым экспериментом.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</ResetToUntrainedState>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
@@ -412,17 +423,68 @@
 		</UseFixedLTZThreshold>
 	</Properties>
 		<Favorites>
-		<NeuronDendrite1_1ExcChannelOutput>
-			<Path>Neuron.Dendrite1_1.ExcChannel.Output</Path>
-		</NeuronDendrite1_1ExcChannelOutput>
-		<NeuronDendrite1_1InhSynapse1Weight>
-			<Path>Neuron.Dendrite1_1.InhSynapse1.Weight</Path>
-		</NeuronDendrite1_1InhSynapse1Weight>
-		<NeuronSoma1ExcSynapse1Output>
-			<Path>Neuron.Soma1.ExcSynapse1.Output</Path>
-		</NeuronSoma1ExcSynapse1Output>
-		<NeuronSoma1InhChannelSynapticInputs>
-			<Path>Neuron.Soma1.InhChannel.SynapticInputs</Path>
-		</NeuronSoma1InhChannelSynapticInputs>
+		<IsNeedToTrain>
+			<Path>{CompName}:IsNeedToTrain</Path>
+		</IsNeedToTrain>
+		<ResetToUntrainedState>
+			<Path>{CompName}:ResetToUntrainedState</Path>
+		</ResetToUntrainedState>
+		<InputPattern>
+			<Path>{CompName}:InputPattern</Path>
+		</InputPattern>
+		<AdditionalInputPattern>
+			<Path>{CompName}:AdditionalInputPattern</Path>
+		</AdditionalInputPattern>
+		<LTZThreshold>
+			<Path>{CompName}:LTZThreshold</Path>
+		</LTZThreshold>
+		<TrainingLTZThreshold>
+			<Path>{CompName}:TrainingLTZThreshold</Path>
+		</TrainingLTZThreshold>
+		<UseFixedLTZThreshold>
+			<Path>{CompName}:UseFixedLTZThreshold</Path>
+		</UseFixedLTZThreshold>
+		<FixedLTZThreshold>
+			<Path>{CompName}:FixedLTZThreshold</Path>
+		</FixedLTZThreshold>
+		<NumInputDendrite>
+			<Path>{CompName}:NumInputDendrite</Path>
+		</NumInputDendrite>
+		<DendriteLength>
+			<Path>{CompName}:DendriteLength</Path>
+		</DendriteLength>
+		<NumSynapse>
+			<Path>{CompName}:NumSynapse</Path>
+		</NumSynapse>
+		<MaxDendriteLength>
+			<Path>{CompName}:MaxDendriteLength</Path>
+		</MaxDendriteLength>
+		<IterationGap>
+			<Path>{CompName}:IterationGap</Path>
+		</IterationGap>
+		<SyncTolerance>
+			<Path>{CompName}:SyncTolerance</Path>
+		</SyncTolerance>
+		<TrainingPhase>
+			<Path>{CompName}:TrainingPhase</Path>
+		</TrainingPhase>
+		<SpikesFrequency>
+			<Path>{CompName}:SpikesFrequency</Path>
+		</SpikesFrequency>
+		<NeuronClassName>
+			<Path>{CompName}:NeuronClassName</Path>
+		</NeuronClassName>
+		<StructureBuildMode>
+			<Path>{CompName}:StructureBuildMode</Path>
+		</StructureBuildMode>
+		<SomaNeuronAmplitude>
+			<Path>{CompName}:SomaNeuronAmplitude</Path>
+		</SomaNeuronAmplitude>
+		<DendriteNeuronAmplitude>
+			<Path>{CompName}:DendriteNeuronAmplitude</Path>
+		</DendriteNeuronAmplitude>
+		<Output>
+			<Path>{CompName}:Output</Path>
+		</Output>
 	</Favorites>
 </ClassDescription>
