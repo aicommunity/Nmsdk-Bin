@@ -1,14 +1,27 @@
 # TimeNeuronTimeLearner
 
-Минимальный пример `NNeuronTimeLearner`: один компонент с `StructureBuildMode=1` сам собирает `Neuron` + `DatasetMatrix` и fan-out `Generator1` на все дендриты.
+Минимальный пример `NNeuronTimeLearner`: один компонент с `StructureBuildMode=1` собирает `Neuron` + `DatasetMatrix` и fan-out `Generator1` на все дендриты.
+
+Полное описание алгоритма: [ALGORITHM.md](ALGORITHM.md).
 
 ## Параметры
 
 - `NumInputDendrite = 4`
-- `InputPattern` ISI: `0 / 0.01 / 0.01 / 0.01` (первый импульс в t=0 пачки)
-- `IterationGap = 0.5` (параметр `t`)
-- `Delay = 0.5` (пауза датасета между пачками)
-- `SyncTolerance = 1e-6`
-- `IsNeedToTrain = 1`, `TrainingLTZThreshold = 100`
+- `InputPattern` ISI: `0.01 / 0.03 / 0.06 / 0.07`
+- `IterationGap = 0.5`, `Delay = 0.5`
+- `SyncTolerance = 0.02`
+- `NeuronClassName = NSPNeuronGen`
+- `IsNeedToTrain = 1`, `EnableDebug = 1`
 
-Эталон wiring без learner: локальный `Configs/Users/user/TimePatternDetectionTest01` (`PNeuron2` + внешний `DatasetMatrix`; каталог user в `.gitignore`).
+## Прогон
+
+```bash
+cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroModelerConsole -j$(nproc)
+./NeuroModelerConsole \
+  -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/Project.ini \
+  -s -t 30 -x
+```
+
+Ожидание Sync: batch-рост `len` у дендритов 1..N−1, ненулевой `amp` после роста, `phase -> Normalize` при `|dsyn| ≤ SyncTolerance`.
+
+Для сброса к необученному состоянию: `DendriteLength = 1 1 1 1`, `ResetToUntrainedState = 1`.
