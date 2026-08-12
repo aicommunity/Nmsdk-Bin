@@ -21,6 +21,6 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
   -s -t 120 -x
 ```
 
-Ожидание: `L0 > L1 > L2 > 1`, дифференцированный `NumSynapse`, amp ≈ Initial (или best-effort@64 / dead tip), один доминирующий пик на сумме сом, `phase -> Done`.
+Ожидание: `L0 > L1 > L2 > 1`, дифференцированный `NumSynapse`, amp ≈ Initial (или best-effort@128 / dead tip), один доминирующий пик на сумме сом, `phase -> Done`.
 
 После Done: `-t 8` и разбор `StatisticLog/` — один доминирующий пик sum (вторичный ≪ или Δt≪0.08 с).

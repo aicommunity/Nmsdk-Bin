@@ -60,7 +60,7 @@ dt = needed - delay_use
 Цель: `MaxIterSomaAmp[i] → InitialSomaPotential[i]` (захват **только при L==1** на полном пике).
 
 - Пока `Initial<=0` — синапсы не меняются (`SynapseStatus=0`).
-- `kMaxSynapsesPerDend = 64` (экспериментальный потолок).
+- `kMaxSynapsesPerDend = 128` (экспериментальный потолок).
 - `AllSynapsesNormalized`: amp в ε от Initial **или** best-effort@cap **или** dead tip (`amp < 1e-6`) при уже синхронизированной длине.
 - `AllDendritesSynced`: dead tip + `|needed−delay_len|≤tol` / best-effort — без требования `peakValid`.
 - На более длинных дендритах обычно больше синапсов; полный cap может потребовать `-t 120+`.
@@ -81,6 +81,6 @@ dt = needed - delay_use
 
 ## Known limitations
 
-- При сильной attenuation даже 64 tip-синапса могут не дотянуть amp до Initial → best-effort Done.
+- При сильной attenuation даже 128 tip-синапсов могут не дотянуть amp до Initial → best-effort Done.
 - Fan-out на все дендриты даёт кросс-пики на других ISI; критерий H1 — отсутствие пары пиков sync с Δt≈0.08 (L0≈L1), а не отсутствие любых вторичных пиков.
 - Warning `PrepareDataset rejected data on Dataset` — файловый `NDataset`, не `DatasetMatrix` sample.
