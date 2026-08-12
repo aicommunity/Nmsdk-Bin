@@ -64,23 +64,25 @@ dt = needed - delay_use
 | Mode | Имя | `NumSynapse` | Механизм | Done |
 |------|-----|--------------|----------|------|
 | 0 | Structural | 1…128 | ±`NumSynapse`, extra `R = SynapseResistanceStep` | amp≈Initial или best-effort@128 |
-| 1 | Parametric | всегда 1 | feedforward `R *= exp(-γ·ΔL)` + feedback `R *= amp/Initial` на tip `ExcSynapse1` | amp≈Initial или best-effort@`ResistanceMin` |
+| 1 | Parametric | всегда 1 | feedforward `R *= exp(-γ·ΔL)` + damped-P feedback на tip `ExcSynapse1` | amp≈Initial или best-effort@oscillation/`ResistanceMin` |
 
-**Structural (0, по умолчанию):**
+**Structural (0):**
 
 - Пока `Initial<=0` — синапсы не меняются (`SynapseStatus=0`).
 - `kMaxSynapsesPerDend = 128` (экспериментальный потолок).
 - `AllSynapsesNormalized`: amp в ε от Initial **или** best-effort@cap **или** dead tip (`amp < 1e-6`) при уже синхронизированной длине.
 
-**Parametric (1):**
+**Parametric (1, по умолчанию в `ADefault`):**
 
 - `TipSynapseResistance[i]` — сопротивление tip-синапса; сохраняется в `Parameters_00.xml`.
+- **Sync-first:** пока длина дендрита не синхронизирована (`lastAbsDt > SyncTolerance` или `DendStatus≠0`), feedback по R **не применяется**; только feedforward при росте L.
 - Feedforward при росте длины: `R_new = R_old · exp(-γ·ΔL)`; `AttenuationGamma <= 0` → авто-оценка из `amp/Initial`, fallback `0.05`.
-- Feedback: `R_new = R_old · (MaxIterSomaAmp / InitialSomaPotential)` с clamp `[ResistanceMin, ResistanceMax]`.
-- `AllSynapsesNormalized`: amp в ε **или** best-effort@`ResistanceMin` при `Initial > amp` и синхронизированной длине **или** dead tip.
+- **Damped-P feedback** (после sync длины): `step_ratio = 1 + gain·(amp/Initial − 1)`, где `gain = ResistanceAdjustGain` (default **0.4**). Adaptive gain: sign-flip → `×0.5`, недобор ×2 → `×1.5`. **Не PID** — один параметр Kp, без I/D (задержка 1 burst).
+- `ResistanceStatus=0` (settle) при `|ΔR|/R < 1e-3`.
+- `AllSynapsesNormalized`: amp в ε **и** `length_ok` **или** best-effort@`ResistanceMin` **или** oscillation band (`|dt| < 0.005`, 3 iter без улучшения) **или** dead tip — все пути требуют синхронизированную длину.
 - Переключение structural→parametric mid-train (большой `NumSynapse`) требует rebuild; **рекомендуется** `ResetToUntrainedState=1`.
 
-Параметры parametric: `SynapseResistanceBase` (8.6e7), `ResistanceMin` (1e6), `ResistanceMax` (1e11), `AttenuationGamma` (-1 = auto).
+Параметры parametric: `SynapseResistanceBase` (8.6e7), `ResistanceMin` (1e6), `ResistanceMax` (1e11), `AttenuationGamma` (-1 = auto), `ResistanceAdjustGain` (0.4).
 
 - `AllDendritesSynced`: dead tip + `|needed−delay_len|≤tol` / best-effort — без требования `peakValid`.
 - На более длинных дендритах в structural обычно больше синапсов; полный cap может потребовать `-t 120+`. Parametric обычно сходится быстрее (<80 iter).

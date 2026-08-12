@@ -10,7 +10,8 @@
 - `InputPattern` ISI: `0.01 / 0.08 / 0.16 / 0.24`
 - `IterationGap = 1.5`, `Delay = 1.5`, `SyncTolerance = 0.02`
 - `NeuronClassName = NSPNeuronGen`
-- `NormalizationMode = 0` (structural, по умолчанию); быстрый тест parametric: `NormalizationMode = 1` после reset
+- `NormalizationMode = 1` (parametric, по умолчанию); structural: `NormalizationMode = 0`
+- `ResistanceAdjustGain = 0.4` (уменьшать до 0.2–0.3 при осцилляции R)
 - Для обучения: `IsNeedToTrain = 1`; сброс: `DendriteLength = 1 1 1 1`, `NumSynapse = 1 1 1 1`, `ResetToUntrainedState = 1`
 
 ### Parametric (NormalizationMode=1)
@@ -23,9 +24,10 @@
 <ResistanceMin Type="d" ...>1000000</ResistanceMin>
 <ResistanceMax Type="d" ...>1e11</ResistanceMax>
 <AttenuationGamma Type="d" ...>-1</AttenuationGamma>
+<ResistanceAdjustGain Type="d" ...>0.4</ResistanceAdjustGain>
 ```
 
-Ожидание: `NumSynapse=[1,1,1,1]`, `phase -> Done` быстрее structural; в debug-log — `resistance=[...]`, `resStatus=[...]`, `atRMin=[...]`.
+Ожидание: `NumSynapse=[1,1,1,1]`, `phase -> Done` быстрее structural; в debug-log — `DampedResistance`, `adjGain=[...]`, `noImpR=[...]`, `resStatus=[...]`.
 
 ## Прогон
 
