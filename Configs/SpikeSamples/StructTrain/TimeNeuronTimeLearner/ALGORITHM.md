@@ -28,6 +28,13 @@ DatasetMatrix.Generator1.Output
 
 `EndOfLearning` → Done при `AllDendritesSynced() ∧ AllSynapsesNormalized()` (без Sync→Normalize).
 
+**Два контура:**
+
+1. **Length settle (sync):** `|sync_dt| ≤ SyncTolerance` (или best-effort) → `DendStatus=0`, длины больше не меняются. Sample `[49,41,25,1]` — штатная cable-цель при `EstDelayPerSeg≈0.01` и `Expected=[0,0.08,0.24,0.48]`.
+2. **Amp normalize:** после settle — parametric R (damped-P). Опора `N−1` **не** участвует в R-tune и **не** блокирует `AllSynapsesNormalized` (как в `AllDendritesSynced`).
+
+Feedforward `r_model` — ориентир, не hard floor: при `amp < Initial` feedback может снижать R ниже модели до `ResistanceMin`.
+
 ## Итерация
 
 1. `EffectiveIterationGap = max(IterationGap, span+settle+slack)`.
@@ -77,9 +84,9 @@ dt = needed - delay_use
 - `TipSynapseResistance[i]` — сопротивление tip-синапса; сохраняется в `Parameters_00.xml`.
 - **Sync-first:** пока длина дендрита не синхронизирована (`lastAbsDt > SyncTolerance` или `DendStatus≠0`), feedback по R **не применяется**; только feedforward при росте L.
 - Feedforward при росте длины: `R_new = R_old · exp(-γ·ΔL)`; `AttenuationGamma <= 0` → авто-оценка из `amp/Initial`, fallback `0.05`.
-- **Damped-P feedback** (после sync длины): `step_ratio = 1 + gain·(amp/Initial − 1)`, где `gain = ResistanceAdjustGain` (default **0.4**). Adaptive gain: sign-flip → `×0.5`, недобор ×2 → `×1.5`. **Не PID** — один параметр Kp, без I/D (задержка 1 burst).
+- **Damped-P feedback** (после sync длины): `step_ratio = 1 + gain·(amp/Initial − 1)`, где `gain = ResistanceAdjustGain` (default **0.4**). Adaptive gain: sign-flip → `×0.5`, недобор ×2 → `×1.5`. **Не PID** — один параметр Kp, без I/D (задержка 1 burst). При `amp < Initial` шаг может идти **ниже** feedforward `r_model` (пол — только `ResistanceMin`). Пока `|ampDt| > ε` feedback продолжается (не останавливается на частичном улучшении); маленький `|ΔR|/R` всё равно применяется к tip.
 - `ResistanceStatus=0` (settle) при `|ΔR|/R < 1e-3`.
-- `AllSynapsesNormalized`: amp в ε **и** `length_ok` **или** best-effort@`ResistanceMin` **или** oscillation band (`|dt| < 0.005`, 3 iter без улучшения) **или** dead tip — все пути требуют синхронизированную длину.
+- `AllSynapsesNormalized`: только дендриты `0..N-2` (опора исключена). amp в ε **и** `length_ok` **или** best-effort@`ResistanceMin` **или** oscillation band (`|dt| < 0.005`, 3 iter без улучшения) **или** dead tip — все пути требуют синхронизированную длину.
 - Переключение structural→parametric mid-train (большой `NumSynapse`) требует rebuild; **рекомендуется** `ResetToUntrainedState=1`.
 
 Параметры parametric: `SynapseResistanceBase` (8.6e7), `ResistanceMin` (1e6), `ResistanceMax` (1e11), `AttenuationGamma` (-1 = auto), `ResistanceAdjustGain` (0.4).
@@ -97,9 +104,16 @@ dt = needed - delay_use
 | `SyncTolerance` | 0.02 s |
 | `NeuronClassName` | `NSPNeuronGen` |
 
-Прогон обучения: `NeuroModelerConsole -c …/Project.ini -s -t 120 -x`.
+Прогон обучения: `NeuroModelerConsole -c …/Project.ini -s -t 160 -x` (warm на settled L; cold-рост L — отдельный сценарий).
 
-Осциллограммы: компонент `UStatisticDoubleMatrix` → `StatisticLog/` (`SomaNeuronAmplitude`, `SomaSumPotential`, Generator1).
+Осциллограммы / ход нормализации: `UStatisticDoubleMatrix` → `StatisticLog/<timestamp>/`:
+
+- `NeuronTimeLearner.SomaNeuronAmplitude.txt`
+- `NeuronTimeLearner.AmpDtTrace.txt`, `TipSynapseResistanceTrace.txt`
+- `ResistanceStatusTrace.txt`, `NoImproveResistanceTrace.txt`, `EffectiveGainTrace.txt`
+- `DendriteLengthTrace.txt`, `LastAbsDtTrace.txt`, `StimulusIterTrace.txt`
+
+Debug: `DampedResistance`, `ResistanceFloor` (шаг ниже `r_model`), `phase -> Done`.
 
 ## Known limitations
 

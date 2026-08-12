@@ -28,6 +28,8 @@
 ```
 
 Ожидание: `NumSynapse=[1,1,1,1]`, `phase -> Done` быстрее structural; в debug-log — `DampedResistance`, `adjGain=[...]`, `noImpR=[...]`, `resStatus=[...]`.
+Ход amp/R: `StatisticLog/*/NeuronTimeLearner.AmpDtTrace.txt`, `TipSynapseResistanceTrace.txt`, `StimulusIterTrace.txt`.
+`[49,41,25,1]` в sample — уже settled cable sync; Done ждёт нормализацию amp (не рост L).
 
 ## Прогон
 
