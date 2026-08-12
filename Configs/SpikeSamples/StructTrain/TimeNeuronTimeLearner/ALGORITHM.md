@@ -59,11 +59,31 @@ dt = needed - delay_use
 
 Цель: `MaxIterSomaAmp[i] → InitialSomaPotential[i]` (захват **только при L==1** на полном пике).
 
+### Режимы (`NormalizationMode`)
+
+| Mode | Имя | `NumSynapse` | Механизм | Done |
+|------|-----|--------------|----------|------|
+| 0 | Structural | 1…128 | ±`NumSynapse`, extra `R = SynapseResistanceStep` | amp≈Initial или best-effort@128 |
+| 1 | Parametric | всегда 1 | feedforward `R *= exp(-γ·ΔL)` + feedback `R *= amp/Initial` на tip `ExcSynapse1` | amp≈Initial или best-effort@`ResistanceMin` |
+
+**Structural (0, по умолчанию):**
+
 - Пока `Initial<=0` — синапсы не меняются (`SynapseStatus=0`).
 - `kMaxSynapsesPerDend = 128` (экспериментальный потолок).
 - `AllSynapsesNormalized`: amp в ε от Initial **или** best-effort@cap **или** dead tip (`amp < 1e-6`) при уже синхронизированной длине.
+
+**Parametric (1):**
+
+- `TipSynapseResistance[i]` — сопротивление tip-синапса; сохраняется в `Parameters_00.xml`.
+- Feedforward при росте длины: `R_new = R_old · exp(-γ·ΔL)`; `AttenuationGamma <= 0` → авто-оценка из `amp/Initial`, fallback `0.05`.
+- Feedback: `R_new = R_old · (MaxIterSomaAmp / InitialSomaPotential)` с clamp `[ResistanceMin, ResistanceMax]`.
+- `AllSynapsesNormalized`: amp в ε **или** best-effort@`ResistanceMin` при `Initial > amp` и синхронизированной длине **или** dead tip.
+- Переключение structural→parametric mid-train (большой `NumSynapse`) требует rebuild; **рекомендуется** `ResetToUntrainedState=1`.
+
+Параметры parametric: `SynapseResistanceBase` (8.6e7), `ResistanceMin` (1e6), `ResistanceMax` (1e11), `AttenuationGamma` (-1 = auto).
+
 - `AllDendritesSynced`: dead tip + `|needed−delay_len|≤tol` / best-effort — без требования `peakValid`.
-- На более длинных дендритах обычно больше синапсов; полный cap может потребовать `-t 120+`.
+- На более длинных дендритах в structural обычно больше синапсов; полный cap может потребовать `-t 120+`. Parametric обычно сходится быстрее (<80 iter).
 
 ## Параметры sample
 
