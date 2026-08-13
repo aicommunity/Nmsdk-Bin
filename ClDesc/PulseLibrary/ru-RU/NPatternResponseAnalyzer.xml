@@ -1,0 +1,227 @@
+<ClassDescription>
+	<ClassName>NPatternResponseAnalyzer</ClassName>
+	<Header>Анализатор ответа на паттерн</Header>
+	<Description>Сопоставляет стимульный паттерн, метку класса сэмпла и спайк нейрона; пишет CSV избирательности (SelectivityLog/results.csv).</Description>
+	<Properties>
+		<Activity>
+			<Header>Активность</Header>
+			<Description>Включает участие компонента в расчёте.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Activity>
+		<Coord>
+			<Header>Координаты в редакторе</Header>
+			<Description>Позиция узла на диаграмме.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Coord>
+		<StimulusInputs>
+			<Header>Входы стимула</Header>
+			<Description>Выходы генераторов датасета (rising-edge = спайк стимула).</Description>
+			<Type>| ptPubInput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</StimulusInputs>
+		<NeuronOutputs>
+			<Header>Выходы нейрона</Header>
+			<Description>LTZone.Output и др. — детект ответа нейрона.</Description>
+			<Type>| ptPubInput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</NeuronOutputs>
+		<TargetClassInput>
+			<Header>Целевой класс</Header>
+			<Description>Метка сэмпла (DatasetMatrix.CurrentClassMatrix 1×1): 1 — ожидается спайк, 0 — тишина.</Description>
+			<Type>| ptPubInput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</TargetClassInput>
+		<PostPatternWindow>
+			<Header>Окно после паттерна</Header>
+			<Description>Секунды после последнего стимульного спайка для детекта ответа и закрытия trial.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PostPatternWindow>
+		<PulseDetectThreshold>
+			<Header>Порог детекта импульса</Header>
+			<Description>Rising-edge: prev ≤ порог &lt; now.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PulseDetectThreshold>
+		<SavePath>
+			<Header>Каталог CSV</Header>
+			<Description>Относительно data dir проекта (default SelectivityLog).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SavePath>
+		<FileName>
+			<Header>Имя файла CSV</Header>
+			<Description>Имя файла результатов (default results.csv).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</FileName>
+		<AppendMode>
+			<Header>Дописывать CSV</Header>
+			<Description>false — пересоздать файл на Reset.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AppendMode>
+		<Enable>
+			<Header>Включить запись</Header>
+			<Description>Если false, CSV не пишется.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Enable>
+		<TrialIndex>
+			<Header>Индекс trial</Header>
+			<Description>Счётчик закрытых trial (с 0).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</TrialIndex>
+		<LastFired>
+			<Header>Последний: спайк</Header>
+			<Description>1 если нейрон сработал в последнем trial.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastFired>
+		<LastMatch>
+			<Header>Последний: совпадение</Header>
+			<Description>1 если ответ соответствует target_class.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastMatch>
+		<LastNeuronDelay>
+			<Header>Задержка ответа</Header>
+			<Description>t_spike − t_first_stim или −1.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastNeuronDelay>
+		<LastIsi>
+			<Header>ISI trial</Header>
+			<Description>ISI стимульных спайков последнего trial.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastIsi>
+	</Properties>
+	<Favorites>
+		<StimulusInputs>
+			<Path>{CompName}:StimulusInputs</Path>
+		</StimulusInputs>
+		<NeuronOutputs>
+			<Path>{CompName}:NeuronOutputs</Path>
+		</NeuronOutputs>
+		<TargetClassInput>
+			<Path>{CompName}:TargetClassInput</Path>
+		</TargetClassInput>
+		<PostPatternWindow>
+			<Path>{CompName}:PostPatternWindow</Path>
+		</PostPatternWindow>
+		<PulseDetectThreshold>
+			<Path>{CompName}:PulseDetectThreshold</Path>
+		</PulseDetectThreshold>
+		<SavePath>
+			<Path>{CompName}:SavePath</Path>
+		</SavePath>
+		<FileName>
+			<Path>{CompName}:FileName</Path>
+		</FileName>
+		<AppendMode>
+			<Path>{CompName}:AppendMode</Path>
+		</AppendMode>
+		<Enable>
+			<Path>{CompName}:Enable</Path>
+		</Enable>
+		<TrialIndex>
+			<Path>{CompName}:TrialIndex</Path>
+		</TrialIndex>
+		<LastFired>
+			<Path>{CompName}:LastFired</Path>
+		</LastFired>
+		<LastMatch>
+			<Path>{CompName}:LastMatch</Path>
+		</LastMatch>
+		<LastNeuronDelay>
+			<Path>{CompName}:LastNeuronDelay</Path>
+		</LastNeuronDelay>
+		<LastIsi>
+			<Path>{CompName}:LastIsi</Path>
+		</LastIsi>
+	</Favorites>
+</ClassDescription>

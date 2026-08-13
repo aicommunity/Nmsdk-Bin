@@ -69,6 +69,39 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</AdvanceSampleAfterBurst>
+		<LoopSamples>
+			<Header>Зацикливать сэмплы</Header>
+			<Description>Если true, после последнего сэмпла Iteration возвращается к 0. Если false — StateGeneration=0 и воспроизведение останавливается.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LoopSamples>
+		<CurrentClass>
+			<Header>Класс активного сэмпла</Header>
+			<Description>Метка из MatrixClasses(0, Iteration) для текущего воспроизведения.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CurrentClass>
+		<CurrentClassMatrix>
+			<Header>Класс активного сэмпла (матрица)</Header>
+			<Description>1×1 копия CurrentClass для линков на анализаторы.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</CurrentClassMatrix>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -279,6 +312,15 @@
 		<AdvanceSampleAfterBurst>
 			<Path>{CompName}:AdvanceSampleAfterBurst</Path>
 		</AdvanceSampleAfterBurst>
+		<LoopSamples>
+			<Path>{CompName}:LoopSamples</Path>
+		</LoopSamples>
+		<CurrentClass>
+			<Path>{CompName}:CurrentClass</Path>
+		</CurrentClass>
+		<CurrentClassMatrix>
+			<Path>{CompName}:CurrentClassMatrix</Path>
+		</CurrentClassMatrix>
 		<Iteration>
 			<Path>{CompName}:Iteration</Path>
 		</Iteration>
