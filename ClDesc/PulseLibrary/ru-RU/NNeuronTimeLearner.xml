@@ -245,6 +245,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</NeuronClassName>
+		<NormalizationMode>
+			<Header>Режим нормализации</Header>
+			<Description>0 — structural (число tip-синапсов), 1 — parametric (сопротивление tip R, damped-P). По умолчанию 1.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string">0=structural</elem>
+				<elem Type="std::string">1=parametric</elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NormalizationMode>
 		<NumInputDendrite>
 			<Header>Число входных дендритов</Header>
 			<Description>Количество дендритов, к которым подаются входные сигналы.</Description>
@@ -379,7 +390,7 @@
 		</SynapseClassName>
 		<SynapseResistanceStep>
 			<Header>Шаг изменения сопротивления синапса</Header>
-			<Description>Величина, на которую изменяется сопротивление синапса при обучении.</Description>
+			<Description>Величина, на которую изменяется сопротивление синапса при structural-обучении.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -388,6 +399,72 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</SynapseResistanceStep>
+		<SynapseResistanceBase>
+			<Header>Базовое сопротивление tip-синапса</Header>
+			<Description>Стартовое R tip при parametric-нормализации (холодный старт / ResetToUntrained).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseResistanceBase>
+		<ResistanceMin>
+			<Header>Мин. сопротивление tip</Header>
+			<Description>Нижняя граница clamp для TipSynapseResistance при parametric R-tune.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ResistanceMin>
+		<ResistanceMax>
+			<Header>Макс. сопротивление tip</Header>
+			<Description>Верхняя граница clamp для TipSynapseResistance при parametric R-tune.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ResistanceMax>
+		<AttenuationGamma>
+			<Header>Гамма затухания кабеля</Header>
+			<Description>Коэффициент затухания amp по длине дендрита. &lt;0 — автооценка по amp/Initial.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AttenuationGamma>
+		<ResistanceAdjustGain>
+			<Header>Gain подстройки tip R</Header>
+			<Description>Базовый коэффициент damped-P шага R (уменьшать при осцилляции ampDt).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ResistanceAdjustGain>
+		<TipSynapseResistance>
+			<Header>Сопротивление tip-синапсов</Header>
+			<Description>Вектор R tip по дендритам (parametric). Сохраняется в Parameters после обучения.</Description>
+			<Type>| ptPubParameter | | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>259</PropertyType>
+		</TipSynapseResistance>
 		<TimeStep>
 			<Header>Временной шаг</Header>
 			<Description>Длительность шага моделирования, с которой работает компонент.</Description>
@@ -477,6 +554,30 @@
 		<StructureBuildMode>
 			<Path>{CompName}:StructureBuildMode</Path>
 		</StructureBuildMode>
+		<NormalizationMode>
+			<Path>{CompName}:NormalizationMode</Path>
+		</NormalizationMode>
+		<SynapseResistanceBase>
+			<Path>{CompName}:SynapseResistanceBase</Path>
+		</SynapseResistanceBase>
+		<TipSynapseResistance>
+			<Path>{CompName}:TipSynapseResistance</Path>
+		</TipSynapseResistance>
+		<ResistanceAdjustGain>
+			<Path>{CompName}:ResistanceAdjustGain</Path>
+		</ResistanceAdjustGain>
+		<ResistanceMin>
+			<Path>{CompName}:ResistanceMin</Path>
+		</ResistanceMin>
+		<ResistanceMax>
+			<Path>{CompName}:ResistanceMax</Path>
+		</ResistanceMax>
+		<AttenuationGamma>
+			<Path>{CompName}:AttenuationGamma</Path>
+		</AttenuationGamma>
+		<InitialSomaPotential>
+			<Path>{CompName}:InitialSomaPotential</Path>
+		</InitialSomaPotential>
 		<SomaNeuronAmplitude>
 			<Path>{CompName}:SomaNeuronAmplitude</Path>
 		</SomaNeuronAmplitude>
