@@ -12,7 +12,8 @@
 - `NeuronClassName = NSPNeuronGen`
 - `NormalizationMode = 1` (parametric, по умолчанию); structural: `NormalizationMode = 0`
 - `ResistanceAdjustGain = 0.4` (уменьшать до 0.2–0.3 при осцилляции R)
-- Для обучения: `IsNeedToTrain = 1`; сброс: `DendriteLength = 1 1 1 1`, `NumSynapse = 1 1 1 1`, `ResetToUntrainedState = 1`
+- Для обучения: `IsNeedToTrain = 1`
+- Сброс к cold: достаточно `ResetToUntrainedState = 1` + Reset компонента — даже если в `Parameters_00.xml` уже лежат обученные `DendriteLength`/`TipSynapseResistance`/`InitialSomaPotential` (как в этом семпле: `49 41 25 1`). Флаг сбрасывает структуру в `L=1`, tip R = `SynapseResistanceBase`, `Initial=0`. Ручная правка `DendriteLength = 1 1 1 1` не обязательна.
 
 ### Parametric (NormalizationMode=1)
 
