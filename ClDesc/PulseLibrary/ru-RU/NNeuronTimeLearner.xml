@@ -135,6 +135,72 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</FixedLTZThreshold>
+		<AutoCalibrateFixedLTZThreshold>
+			<Header>Автокалибровка FixedLTZThreshold</Header>
+			<Description>После завершения обучения выставить FixedLTZThreshold по min/max LTZ Potential последней синхронизированной итерации.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AutoCalibrateFixedLTZThreshold>
+		<CalibrateLTZThresholdMode>
+			<Header>Режим калибровки порога LTZ</Header>
+			<Description>0 — gap_fraction (min + f*(max-min)); 1 — peak_fraction (max*f).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalibrateLTZThresholdMode>
+		<CalibrateLTZThresholdFraction>
+			<Header>Доля калибровки порога LTZ</Header>
+			<Description>Доля разрыва min/max (mode 0) или доля пика (mode 1). По умолчанию 0.85.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalibrateLTZThresholdFraction>
+		<CalibrateLTZThresholdMin>
+			<Header>Мин. порог после калибровки</Header>
+			<Description>Нижняя граница FixedLTZThreshold после автокалибровки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalibrateLTZThresholdMin>
+		<CalibrateLTZThresholdMax>
+			<Header>Макс. порог после калибровки</Header>
+			<Description>Верхняя граница FixedLTZThreshold после автокалибровки.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</CalibrateLTZThresholdMax>
+		<CalibratedFixedLTZThreshold>
+			<Header>Откалиброванный FixedLTZThreshold</Header>
+			<Description>Результат последней автокалибровки (0 если не выполнялась).</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</CalibratedFixedLTZThreshold>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -524,6 +590,24 @@
 		<FixedLTZThreshold>
 			<Path>{CompName}:FixedLTZThreshold</Path>
 		</FixedLTZThreshold>
+		<AutoCalibrateFixedLTZThreshold>
+			<Path>{CompName}:AutoCalibrateFixedLTZThreshold</Path>
+		</AutoCalibrateFixedLTZThreshold>
+		<CalibrateLTZThresholdMode>
+			<Path>{CompName}:CalibrateLTZThresholdMode</Path>
+		</CalibrateLTZThresholdMode>
+		<CalibrateLTZThresholdFraction>
+			<Path>{CompName}:CalibrateLTZThresholdFraction</Path>
+		</CalibrateLTZThresholdFraction>
+		<CalibrateLTZThresholdMin>
+			<Path>{CompName}:CalibrateLTZThresholdMin</Path>
+		</CalibrateLTZThresholdMin>
+		<CalibrateLTZThresholdMax>
+			<Path>{CompName}:CalibrateLTZThresholdMax</Path>
+		</CalibrateLTZThresholdMax>
+		<CalibratedFixedLTZThreshold>
+			<Path>{CompName}:CalibratedFixedLTZThreshold</Path>
+		</CalibratedFixedLTZThreshold>
 		<NumInputDendrite>
 			<Path>{CompName}:NumInputDendrite</Path>
 		</NumInputDendrite>
