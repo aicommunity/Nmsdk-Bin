@@ -30,12 +30,14 @@ Clamp: `[CalibrateLTZThresholdMin, CalibrateLTZThresholdMax]`, default `f=0.85`,
 | EXP01_preinh_050 | Preinh0_5 | off | нет* | 1 1 1 1 | 0.0115 | 1/8 |
 | EXP01_preinh_050_autothr | Preinh0_5 | on | нет* | 1 1 1 1 | 0.0115† | 1/8 |
 | EXP02_preinh_100 (GUI train) | Preinh | off | да | 49 44 25 1 | 0.0115 | **1/8** |
+| EXP02_preinh_100_gui_autothr | Preinh | on | нет‡ | 49 44 25 1 | 0.0115† | **1/8** |
 | EXP02_preinh_100_autothr | Preinh | on | нет* | 1 1 1 1 | 0.0115† | 1/8 |
 | EXP03_preinh_200 | Preinh2_0 | off | нет* | 1 1 1 1 | 0.0115 | 1/8 |
 | EXP03_preinh_200_autothr | Preinh2_0 | on | нет* | 1 1 1 1 | 0.0115† | 1/8 |
 
 \* Console cold-train PSI: `peakValid=0`, L не растёт (см. [REPORT.md](REPORT.md)). GUI-train EXP02 — успешный эталон.  
-† Калибровка пропущена / clamp min: нет валидного LTZ snapshot (`LastSyncedMaxLTZ≈0`).
+† Калибровка пропущена / clamp min: нет валидного LTZ snapshot (`LastSyncedMaxLTZ≈0`).  
+‡ GUI-веса, `IsNeedToTrain=1`, cold reset off; console `-t` до 600 s, iter=301, `DendStatus=[0,0,0,0]` → Done не достигнут, `EndOfLearning` не вызван.
 
 ## 3. EXP00 — baseline autothr
 
@@ -83,6 +85,26 @@ Manual sweep на тех же весах: thr ∈ {0.0125, 0.0130, 0.0135, 0.014
 
 **Вывод по EXP02:** одной autothr по train-LTZ недостаточно для PSI: baseline LTZ при PSI уже близок к peak; нужен успешный train +, возможно, более высокий fraction или peak_fraction mode. Autothr на cold PSI batch не активируется (train не Done).
 
+## 4b. EXP02 gui_autothr (follow-up)
+
+Скрипт [`scripts/setup_gui_autothr_exp02.sh`](scripts/setup_gui_autothr_exp02.sh): копия GUI-весов EXP02 + `AutoCalibrateFixedLTZThreshold=1`, без cold reset.
+
+| Прогон | `-t` sim | iter | Done | Calibrated thr | Test |
+|--------|---------:|-----:|:----:|---------------:|:----:|
+| 1 | 160 | ~75 | нет | 0.0115 | 1/8 |
+| 2 | 600 | 301 | нет | 0.0115 | 1/8 |
+
+При `peakValid=[1,1,1,1]`, L=`[49,44,25,1]` learner **301 итерацию** держит `DendStatus=[0,0,0,0]` — `AllDendritesSynced()` ложен → snapshot LTZ не пишется → `CalibrateFixedLTZThresholdFromTraining()` не вызывается (нет `EndOfLearning`). Test без калибровки совпадает с fixed thr=0.0115.
+
+**Почему autothr не поднял порог (PSI):**
+
+1. Калибровка — **только в `EndOfLearning()`**, после `AllDendritesSynced() ∧ AllSynapsesNormalized()`.
+2. **Cold PSI (EXP01–03 _autothr):** train не сходится (`peakValid=0`, L=`[1,1,1,1]`) → Done нет → `LastSyncedMinLTZ/MaxLTZ` остаются 0 → early exit: `CalibrateFixedLTZ: skip (no valid min/max LTZ snapshot)`.
+3. **GUI autothr re-run:** веса валидны, но console-цикл **не переводит `DendStatus` в synced** (в отличие от GUI Done) → snapshot не обновляется даже за 600 s sim.
+4. Даже при snapshot: `gap_fraction` с высоким PSI-baseline мог бы дать thr≈0.03+, но до этой стадии console-прогон не доходит.
+
+Сравнение: EXP00 baseline autothr **работает** (Done iter≈27, min≈0, max≈0.0147 → thr=**0.01254**) — train завершён, synced-итерация есть.
+
 ## 5. Сравнение с Phase A
 
 | Метод | EXP00 accuracy | Примечание |
@@ -99,12 +121,15 @@ Autothr gap_fraction воспроизводит идею Phase A (поднять
 - Реализована опциональная пост-обучающая калибровка `FixedLTZThreshold` (gap_fraction / peak_fraction).
 - **Baseline:** autothr работает (thr 0.0115→0.01254), accuracy **не улучшилась** (4/8).
 - **PSI (console cold):** train по-прежнему не сходится → autothr не применяется.
-- **PSI (GUI EXP02):** train OK, но fixed thr даёт mass FP; manual thr до 0.014 не помог — проблема шире порога (timing/selectivity при PSI+высоком baseline).
-- Рекомендация: для PSI повторить GUI-train с `AutoCalibrateFixedLTZThreshold=1` на успешных весах; рассмотреть `peak_fraction` или больший `CalibrateLTZThresholdFraction`; отдельно — стабилизация cold PSI train.
+- **PSI (GUI EXP02):** train OK в GUI, но console re-train + autothr **не активируется** (DendStatus не synced); fixed thr даёт mass FP; manual thr до 0.014 не помог.
+- Рекомендация: калибровку порога для PSI запускать из GUI после Done; либо ослабить условие snapshot (calibrate без полного Done); отдельно — стабилизация cold/console PSI train.
 
 ## Команды
 
 ```bash
 ./scripts/setup_autothr_experiments.sh
 ./scripts/run_autothr_experiments.sh
+./scripts/setup_gui_autothr_exp02.sh
+# GUI-веса: нужен -t 600+ и/или GUI EndOfLearning для активации autothr
+NeuroModelerConsole -c EXP02_preinh_100_gui_autothr/Train/Project.ini -s -t 600 -x -S
 ```
