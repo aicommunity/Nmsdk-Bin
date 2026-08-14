@@ -59,6 +59,12 @@ setup_pair EXP01_preinh_050 NSPNeuronGenPreinh0_5
 setup_pair EXP02_preinh_100 NSPNeuronGenPreinh
 setup_pair EXP03_preinh_200 NSPNeuronGenPreinh2_0
 
+# PSI Train: cold + AutoCalibrateFixedLTZThreshold so GUI Start needs no extra edits
+python3 "$ROOT/scripts/prepare_gui_psi_train.py" \
+  "$ROOT/EXP01_preinh_050/Train/Parameters_00.xml" \
+  "$ROOT/EXP02_preinh_100/Train/Parameters_00.xml" \
+  "$ROOT/EXP03_preinh_200/Train/Parameters_00.xml"
+
 cat > "$ROOT/README.md" << 'MD'
 # SelectivityPresynapticInhib
 
@@ -66,7 +72,9 @@ cat > "$ROOT/README.md" << 'MD'
 
 Прототипы Storage (без правок learner): `NSPNeuronGen` / `NSPNeuronGenPreinh0_5` / `NSPNeuronGenPreinh` / `NSPNeuronGenPreinh2_0`.
 
-Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`). См. [REPORT.md](REPORT.md).
+Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`). См. [REPORT.md](REPORT.md), autothr: [REPORT_autothr.md](REPORT_autothr.md).
+
+PSI Train уже готов к GUI: cold start + `AutoCalibrateFixedLTZThreshold=1`. Открыть `EXP0X_.../Train/Project.ini` в NeuroModeler и Start. После Done порог калибруется сам.
 
 | EXP | NeuronClassName | k |
 |-----|-----------------|--:|
@@ -76,6 +84,7 @@ cat > "$ROOT/README.md" << 'MD'
 | EXP03_preinh_200 | NSPNeuronGenPreinh2_0 | 2.0 |
 
 ```bash
+# GUI: File → Open → .../EXP02_preinh_100/Train/Project.ini → Start
 ./scripts/setup_experiments.sh
 ./scripts/run_experiments.sh
 ```

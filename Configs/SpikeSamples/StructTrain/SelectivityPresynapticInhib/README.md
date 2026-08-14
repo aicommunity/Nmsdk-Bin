@@ -4,24 +4,19 @@
 
 Прототипы Storage (без правок learner): `NSPNeuronGen` / `NSPNeuronGenPreinh0_5` / `NSPNeuronGenPreinh` / `NSPNeuronGenPreinh2_0`.
 
-Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`). См. [REPORT.md](REPORT.md), autothr: [REPORT_autothr.md](REPORT_autothr.md).
+Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`). См. [REPORT.md](REPORT.md), autothr: [REPORT_autothr.md](REPORT_autothr.md), GUI-train: [REPORT_gui_autothr.md](REPORT_gui_autothr.md).
 
-| EXP | NeuronClassName | k | Fixed thr | Autothr | Accuracy |
-|-----|-----------------|--:|-----------|:-------:|:--------:|
-| EXP00_baseline | NSPNeuronGen | — | 0.0115 | off | 4/8 |
-| EXP00_baseline_autothr | NSPNeuronGen | — | →0.01254 | on | 4/8 |
-| EXP01_preinh_050 | NSPNeuronGenPreinh0_5 | 0.5 | 0.0115 | off | 1/8* |
-| EXP01_preinh_050_autothr | … | 0.5 | 0.0115† | on | 1/8* |
-| EXP02_preinh_100 | NSPNeuronGenPreinh | 1.0 | 0.0115 | off | 1/8‡ |
-| EXP02_preinh_100_autothr | … | 1.0 | 0.0115† | on | 1/8* |
-| EXP03_preinh_200 | NSPNeuronGenPreinh2_0 | 2.0 | 0.0115 | off | 1/8* |
-| EXP03_preinh_200_autothr | … | 2.0 | 0.0115† | on | 1/8* |
+**GUI / console train (PSI):** EXP01–03 `Train/` сохранены после Done+autothr (`IsNeedToTrain=0`, выросшие L). Повторный cold start: `./scripts/setup_experiments.sh` (затирает веса).
 
-\* Console cold-train PSI не сошёлся (L=`[1,1,1,1]`).  
-† Autothr не сработал (нет LTZ snapshot).  
-‡ GUI-train OK, L=`[49,44,25,1]`.
+| EXP | NeuronClassName | k | L | Calibrated thr | Test |
+|-----|-----------------|--:|---|---------------:|:----:|
+| EXP00_baseline_autothr | NSPNeuronGen | — | `[49,41,25,1]` | 0.01254 | 4/8 |
+| EXP01_preinh_050 | NSPNeuronGenPreinh0_5 | 0.5 | `[49,41,25,1]` | 0.01978 | 4/8 |
+| EXP02_preinh_100 | NSPNeuronGenPreinh | 1.0 | `[49,44,25,1]` | 0.03015 | 4/8 |
+| EXP03_preinh_200 | NSPNeuronGenPreinh2_0 | 2.0 | `[49,41,25,1]` | 0.02996 | 5/8 |
 
 ```bash
+# GUI: File → Open → .../EXP02_preinh_100/Train/Project.ini → Start
 ./scripts/setup_experiments.sh && ./scripts/run_experiments.sh
 ./scripts/setup_autothr_experiments.sh && ./scripts/run_autothr_experiments.sh
 ```

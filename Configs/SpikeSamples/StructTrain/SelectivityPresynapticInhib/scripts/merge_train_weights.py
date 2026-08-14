@@ -16,6 +16,16 @@ TAGS = [
     "TrainingSynapsisNum",
     "TrainingPhase",
     "ResetToUntrainedState",
+    "FixedLTZThreshold",
+    "UseFixedLTZThreshold",
+    "LTZThreshold",
+    "CalibratedFixedLTZThreshold",
+    "AttenuationGamma",
+    "AutoCalibrateFixedLTZThreshold",
+    "CalibrateLTZThresholdMode",
+    "CalibrateLTZThresholdFraction",
+    "CalibrateLTZThresholdMin",
+    "CalibrateLTZThresholdMax",
 ]
 
 

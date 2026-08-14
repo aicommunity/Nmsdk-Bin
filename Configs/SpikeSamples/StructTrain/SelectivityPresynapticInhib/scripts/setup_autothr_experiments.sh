@@ -3,7 +3,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SCR="$ROOT/scripts/copy_config.sh"
 PATCH_NEU="$ROOT/scripts/patch_neuron_class.py"
-PATCH_AUTO="$ROOT/scripts/patch_autothr.py"
 
 setup_pair() {
   local name="$1"
@@ -16,7 +15,7 @@ setup_pair() {
   sed -i 's|<StructureBuildMode Type="i" PType="257" IoType="17">[0-9]</StructureBuildMode>|<StructureBuildMode Type="i" PType="257" IoType="17">1</StructureBuildMode>|' "$train/Parameters_00.xml"
   sed -i 's|<ResetToUntrainedState Type="b" PType="257" IoType="17">[01]</ResetToUntrainedState>|<ResetToUntrainedState Type="b" PType="257" IoType="17">1</ResetToUntrainedState>|' "$train/Parameters_00.xml" || true
   python3 "$PATCH_NEU" "$train/Parameters_00.xml" "$neu"
-  python3 "$PATCH_AUTO" "$train/Parameters_00.xml"
+  python3 "$ROOT/scripts/prepare_gui_psi_train.py" "$train/Parameters_00.xml"
   python3 - <<PY2
 from pathlib import Path
 import re
