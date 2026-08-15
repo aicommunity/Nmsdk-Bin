@@ -1,12 +1,12 @@
-## EXP04_preinh_250_recheck — Train (обучение структуры + autothr)
+## EXP04_preinh_250_recheck — PSI k-sweep / selectivity
 
-**Путь:** `Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_recheck/Train`  
+**Путь:** `Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_recheck`  
 **Статус:** экспериментальный конфиг StructTrain / SelectivityPresynapticInhib
 
 ### Назначение
 
-Обучает длины дендритов и нормализацию tip-синапсов на целевом ISI-паттерне
-при пресинаптическом торможении (PSI), затем калибрует `FixedLTZThreshold`.
+Пара Train/Test для исследования влияния коэффициента пресинаптического
+торможения `k` на точность детекции паттерна (8 trials).
 
 Регрессионная копия EXP04 после регистрации Preinh2_4/2_6/2_7; оригинал EXP04 не затирался.
 
@@ -38,26 +38,22 @@ flowchart TD
 
 ### Watch-метрики
 
-| Chart | Свойство | Смысл |
-|---|---|---|
-| Dendrite Amplitudes | `DendriteNeuronAmplitude[i]` | `DendriteN_1.SumPotential` |
-| Neuron Sums | `DendriticSumPotential` | avg `SumChannelInput` каналов сомы (`≈/4`) |
-| Neuron Sums | `SomaSumPotential` | avg `Output` каналов сомы |
-
-`DendriticSumPotential ≈ mean(DendriteNeuronAmplitude[1..4]) = DendriteNeuronAmplitude[0]/4`.  
-Подробнее: [корневой README серии](../../README.md).
+`DendriticSumPotential` = avg `SumChannelInput` сомы (`/4`). Сравнивать со средним `DendriteNeuronAmplitude[1..4]`.  
+См. [корневой README](../README.md).
 
 ### Использование
 
 ```bash
+# Train
 NeuroModelerConsole -c Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_recheck/Train/Project.ini -s -t 90 -x -S
-# или GUI: Open → Project.ini → Start
+# sync + Test — см. scripts/copy_config.sh
+NeuroModelerConsole -c Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_recheck/Test/Project.ini -s -t 20 -x
 ```
 
-Родительский обзор: [`../README.md`](../README.md).
+Серия: [`../README.md`](../README.md) · отчёт: [`../REPORT_k_sweep.md`](../REPORT_k_sweep.md).
 
 ### Связанные материалы
 
-- [`REPORT_k_sweep.md`](../../REPORT_k_sweep.md) — сводка k-sweep
-- [`REPORT_gui_autothr.md`](../../REPORT_gui_autothr.md) — GUI/autothr
+- [`REPORT_k_sweep.md`](../REPORT_k_sweep.md) — сводка k-sweep
+- [`REPORT_gui_autothr.md`](../REPORT_gui_autothr.md) — GUI/autothr
 - Компоненты: `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTimeLearner.md`

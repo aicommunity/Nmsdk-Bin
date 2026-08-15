@@ -1,5 +1,59 @@
-# EXP00_baseline_autothr
+## EXP00_baseline_autothr — PSI k-sweep / selectivity
 
-- `NeuronClassName`: `NSPNeuronGen`
-- `AutoCalibrateFixedLTZThreshold=1`, mode=gap_fraction, fraction=0.85
-- Train: cold retrain + `-S`; Test: sync weights + analyzer CSV
+**Путь:** `Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_autothr`  
+**Статус:** экспериментальный конфиг StructTrain / SelectivityPresynapticInhib
+
+### Назначение
+
+Пара Train/Test для исследования влияния коэффициента пресинаптического
+торможения `k` на точность детекции паттерна (8 trials).
+
+Вариант с включённым `AutoCalibrateFixedLTZThreshold` (исторический batch / follow-up).
+
+### Параметры нейрона
+
+- **NeuronClassName:** `NSPNeuronGen`
+- **k (PSI):** нет (baseline без Preinh)
+- **Autothr:** `AutoCalibrateFixedLTZThreshold=1`, mode=`gap_fraction`, fraction=`0.85`, clamp ≈`[0.0115, 0.05]`
+- **Cold train (типично):** `IsNeedToTrain=1`, `ResetToUntrainedState=1`, `StructureBuildMode=1`, стартовые L=`[1,1,1,1]`
+
+### Структура модели
+
+```mermaid
+flowchart TD
+  ds[NDataset / стимул] --> tip[Tip ExcSynapse PSI]
+  tip --> cable[Dendrite cable]
+  cable --> soma[Soma membranes]
+  soma --> ltz[LTZone]
+  ltz --> out[Output spike]
+  learner[NNeuronTimeLearner] --> tip
+  learner --> cable
+```
+
+### Эксперимент
+
+1. Обучение структуры на целевом паттерне (sync длин + нормализация амплитуд).
+2. `EndOfLearning` → `CalibrateFixedLTZThresholdFromTraining` (`thr = min + 0.85·(max−min)` по last synced LTZ).
+3. Тест: 8 trials, метрика `match` в `SelectivityLog/results.csv`.
+
+### Watch-метрики
+
+`DendriticSumPotential` = avg `SumChannelInput` сомы (`/4`). Сравнивать со средним `DendriteNeuronAmplitude[1..4]`.  
+См. [корневой README](../README.md).
+
+### Использование
+
+```bash
+# Train
+NeuroModelerConsole -c Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_autothr/Train/Project.ini -s -t 90 -x -S
+# sync + Test — см. scripts/copy_config.sh
+NeuroModelerConsole -c Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_autothr/Test/Project.ini -s -t 20 -x
+```
+
+Серия: [`../README.md`](../README.md) · отчёт: [`../REPORT_k_sweep.md`](../REPORT_k_sweep.md).
+
+### Связанные материалы
+
+- [`REPORT_k_sweep.md`](../REPORT_k_sweep.md) — сводка k-sweep
+- [`REPORT_gui_autothr.md`](../REPORT_gui_autothr.md) — GUI/autothr
+- Компоненты: `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTimeLearner.md`
