@@ -64,17 +64,20 @@ def grid_for_span(span_ms: float) -> list[dict[str, float]]:
                     "peak0": peak0,
                 }
             )
-    # Prefer: initial-ish, then WIDER SyncTol (stall usually needs more slack),
-    # then other combos. Tiny SyncTol first wasted EXP22 on 50ms.
+    # Done-seeking: never prefer SyncTol below sync0; climb SyncTol with peak≈peak0.
     def key(c: dict[str, float]) -> tuple:
         s, p = c["sync_tol"], c["peak_margin"]
         a0 = max(sync0, min(0.03, peak0))
-        widen = 0 if s + 1e-15 >= sync0 else 1
+        below = 0 if s + 1e-15 >= sync0 - 1e-15 else 1
+        peak_pri = 0 if abs(p - peak0) < 1e-12 else 1
+        agree_pri = 0 if abs(c["agree_min"] - max(s, min(0.03, p))) < 1e-12 else 1
         return (
-            widen,
-            abs(s - sync0) + abs(p - peak0) * 0.25,
+            below,
+            s,
+            peak_pri,
+            abs(p - peak0),
+            agree_pri,
             abs(c["agree_min"] - a0),
-            -s,  # among equals, larger SyncTol first
         )
 
     candidates.sort(key=key)
@@ -90,12 +93,29 @@ def grid_for_span(span_ms: float) -> list[dict[str, float]]:
     return out
 
 
+def next_index_after_sync(span_ms: float, sync_tol: float) -> int | None:
+    """First grid index with SyncTol strictly greater than sync_tol."""
+    grid = grid_for_span(span_ms)
+    cur = float(sync_tol)
+    for i, c in enumerate(grid):
+        # Require a meaningful step (>1e-6 s) so truncated CLI floats match.
+        if c["sync_tol"] - cur > 1e-6:
+            return i
+    return None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("xmls", nargs="*", type=Path)
     ap.add_argument("--span-ms", type=float, required=True)
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--index", type=int, default=None, help="Apply grid[index] to xmls")
+    ap.add_argument(
+        "--next-wider-after-sync",
+        type=float,
+        default=None,
+        help="Print first grid index with SyncTol > given value",
+    )
     ap.add_argument("--sync-tol", type=float, default=None)
     ap.add_argument("--peak-margin", type=float, default=None)
     ap.add_argument("--agree-min", type=float, default=None)
@@ -103,6 +123,10 @@ def main() -> None:
     args = ap.parse_args()
 
     grid = grid_for_span(args.span_ms)
+    if args.next_wider_after_sync is not None:
+        nxt = next_index_after_sync(args.span_ms, args.next_wider_after_sync)
+        print("EMPTY" if nxt is None else nxt)
+        return
     if args.list:
         for i, c in enumerate(grid[: args.limit]):
             print(

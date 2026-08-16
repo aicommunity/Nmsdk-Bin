@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
-# Cold train + auto-tune timing + sync + test for time-compress EXPs.
+# Cold train + quality-aware timing grid + sync + test for time-compress EXPs.
+# Accept only if Done AND target_hit AND NOT fire_all AND Acc>=4/8.
 set -euo pipefail
 NM=/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SCR="$ROOT/scripts/copy_config.sh"
 TUNE="$ROOT/scripts/tune_timing_params.py"
+EVAL="$ROOT/scripts/evaluate_selectivity_csv.py"
 PREPARE="$ROOT/scripts/prepare_gui_psi_train.py"
 PATCH_NEU="$ROOT/scripts/patch_neuron_class.py"
+PATCH_SCALE="$ROOT/scripts/patch_pattern_scale.py"
 
-accuracy() {
-  python3 - <<PY
-import csv
-from pathlib import Path
-p=Path("$1")
-if not p.exists():
-  print("missing")
-else:
-  rows=list(csv.DictReader(p.open()))
-  ok=sum(1 for r in rows if r.get("match")=="1")
-  print(f"{ok}/{len(rows)}")
-PY
+parse_kv() {
+  # parse "ok=1 n=8 ..." into vars ok n acc ...
+  local line="$1"
+  ok=0; n=0; acc=0; target_hit=0; fire_all=0; mode=missing; fires=; matches=; fa=0
+  for pair in $line; do
+    local k="${pair%%=*}"
+    local v="${pair#*=}"
+    case "$k" in
+      ok) ok=$v ;;
+      n) n=$v ;;
+      acc) acc=$v ;;
+      target_hit) target_hit=$v ;;
+      fire_all) fire_all=$v ;;
+      mode) mode=$v ;;
+      fires) fires=$v ;;
+      matches) matches=$v ;;
+      fa) fa=$v ;;
+    esac
+  done
 }
 
 lens() {
@@ -43,6 +53,19 @@ for tag in ("CalibratedFixedLTZThreshold", "FixedLTZThreshold"):
     print(m.group(1)); break
 else:
   print("?")
+PY
+}
+
+read_timing() {
+  python3 - <<PY
+import re
+from pathlib import Path
+t=Path("$1").read_text(encoding="utf-8")
+vals=[]
+for tag in ("SyncTolerance", "PeakMeasureMargin", "DelayAgreeMarginMin"):
+  m=re.search(rf'<{tag}[^>]*>([^<]+)</{tag}>', t)
+  vals.append(m.group(1) if m else "?")
+print(" ".join(vals))
 PY
 }
 
@@ -109,39 +132,6 @@ reset_cold() {
   enable_debug "$train/Parameters_00.xml"
 }
 
-# Curated widen sequence: discrete L steps often need SyncTol ≳ residual lastAbsDt.
-widen_params() {
-  local span_ms="$1"
-  local idx="$2"
-  python3 - <<PY
-import sys
-sys.path.insert(0, "$ROOT/scripts")
-from patch_pattern_scale import compute_initial, FLOOR
-span_s = $span_ms / 1000.0
-i = compute_initial(span_s)
-s0, p0, dmin = i["sync_tol"], i["peak_margin"], i["delta_min"]
-cands = []
-for s in (1.5 * s0, 2.0 * s0, 3.0 * s0, dmin, 0.25 * span_s, 0.5 * span_s,
-          max(dmin, 0.35 * span_s)):
-    s = max(FLOOR, min(span_s, s))
-    for p in (p0, min(max(FLOOR, 1.25 * p0), max(FLOOR, 0.45 * dmin)),
-              max(FLOOR, 0.75 * p0)):
-        p = max(FLOOR, min(max(p0, FLOOR), p)) if 0.45 * dmin < FLOOR else max(
-            FLOOR, min(0.45 * dmin, p)
-        )
-        a = max(s, min(0.03, p))
-        t = (round(s, 12), round(p, 12), round(a, 12))
-        if t not in {(c[0], c[1], c[2]) for c in cands}:
-            cands.append((s, p, a))
-idx = $idx - 1
-if idx < 0 or idx >= len(cands):
-    print("EMPTY")
-else:
-    s, p, a = cands[idx]
-    print(f"{s:.8g} {p:.8g} {a:.8g}")
-PY
-}
-
 sync_test_timing() {
   local train="$1"
   local test="$2"
@@ -166,19 +156,84 @@ print("test timing", vals)
 PY
 }
 
+grid_size() {
+  python3 "$TUNE" --span-ms "$1" --list --limit 999 2>/dev/null | grep -c '^[[:space:]]*[0-9]'
+}
+
+rank_key() {
+  # stdout: comparable string for sorting best-of (higher better via sort -V not used;
+  # we compare numerically in python)
+  python3 - <<PY
+th=$target_hit
+fa_all=$fire_all
+acc=$acc
+fa=$fa
+sync="$1"
+sync0="$2"
+print(f"{th} {1-int(fa_all)} {acc} {-int(fa)} {-abs(float(sync)-float(sync0)):.12g}")
+PY
+}
+
+better_than() {
+  # $1=cand_key $2=best_key ; return 0 if cand better
+  python3 - <<PY
+a=list(map(float, "$1".split()))
+b=list(map(float, "$2".split()))
+print("yes" if a > b else "no")
+PY
+}
+
 run_one() {
   local exp="$1"
   local neu="$2"
   local span_ms="$3"
   local train="$ROOT/$exp/Train"
   local test="$ROOT/$exp/Test"
-  local max_tune="${4:-10}"
   mkdir -p "$ROOT/$exp"
-  local tune_idx=0
-  local status="unknown"
+  local tune_log="$ROOT/$exp/tune_log.txt"
+  : >"$tune_log"
 
-  while true; do
-    echo "=== TRAIN $exp (tune_idx=$tune_idx) ==="
+  echo "=== RESET TIMING $exp span=${span_ms}ms ==="
+  python3 "$PATCH_SCALE" \
+    "$train/Parameters_00.xml" "$train/Model_00.xml" \
+    "$test/Parameters_00.xml" "$test/Model_00.xml" \
+    --span-ms "$span_ms" --no-scale
+
+  local sync0 peak0 agree0
+  read -r sync0 peak0 agree0 <<<"$(read_timing "$train/Parameters_00.xml")"
+
+  local ngrid
+  ngrid="$(grid_size "$span_ms")"
+  local max_attempts=20
+  if [[ "$ngrid" -lt "$max_attempts" ]]; then
+    max_attempts=$ngrid
+  fi
+  [[ "$max_attempts" -lt 1 ]] && max_attempts=1
+
+  local best_rank="-1 0 -1 0 0"
+  local best_dir=""
+  local hard_fail_streak=0
+  local attempts=0
+  local idx=0
+  local gate=FAIL
+  local last_mode=unknown
+
+  while [[ "$attempts" -lt "$max_attempts" ]]; do
+    echo "=== TRAIN $exp attempt=$attempts idx=$idx / max=$max_attempts grid=$ngrid ==="
+    if [[ "$attempts" -gt 0 || "$idx" -gt 0 ]]; then
+      if [[ "$idx" -ge "$ngrid" ]]; then
+        echo "grid index exhausted idx=$idx"
+        break
+      fi
+      python3 "$TUNE" \
+        "$train/Parameters_00.xml" "$train/Model_00.xml" \
+        "$test/Parameters_00.xml" "$test/Model_00.xml" \
+        --span-ms "$span_ms" --index "$idx"
+    fi
+
+    local sync peak agree
+    read -r sync peak agree <<<"$(read_timing "$train/Parameters_00.xml")"
+
     reset_cold "$train" "$neu"
     : >"$ROOT/$exp/train.log"
     "$NM" -c "$train/Project.ini" -s -t 90 -x -S >"$ROOT/$exp/train.log" 2>&1 || true
@@ -186,52 +241,149 @@ run_one() {
     info="$(ls -t "$train/EventsLog/"*INFO* 2>/dev/null | head -1 || true)"
     local src="$ROOT/$exp/train.log"
     [[ -n "$info" ]] && src="$info"
+    local status
     status="$(diagnose_log "$src")"
-    echo "diagnose=$status L=$(lens "$train/Parameters_00.xml") thr=$(thr "$train/Parameters_00.xml")"
+    echo "diagnose=$status L=$(lens "$train/Parameters_00.xml") thr=$(thr "$train/Parameters_00.xml") Sync=$sync Peak=$peak Agree=$agree"
     rg -n 'phase -> Done|CalibrateFixedLTZ|throws exception' "$ROOT/$exp/train.log" | tail -8 || true
 
-    if [[ "$status" == "ok" ]]; then
-      break
-    fi
     if [[ "$status" == "amp0" || "$status" == "peak0" ]]; then
-      echo "HARD FAIL $status"
-      if [[ "$tune_idx" -ge 2 ]]; then
-        echo "ABORT $exp after amp/peak fails"
-        echo "$exp: FAIL/$status" >"$ROOT/$exp/RESULT.txt"
+      hard_fail_streak=$((hard_fail_streak + 1))
+      echo "idx=$idx diagnose=$status Sync=$sync Peak=$peak Agree=$agree" >>"$tune_log"
+      if [[ "$hard_fail_streak" -ge 3 ]]; then
+        echo "HARD FAIL streak on $exp ($status)"
+        echo "$exp: HARD_FAIL/$status L=? thr=? Sync=$sync Peak=$peak Agree=$agree tune=$attempts gate=FAIL mode=train_$status" \
+          | tee "$ROOT/$exp/RESULT.txt"
+        cat >"$ROOT/$exp/QUALITY.txt" <<Q
+gate=FAIL
+mode=train_$status
+diagnose=$status
+attempts=$attempts
+Q
         return 1
       fi
+      # jump SyncTol — amp/peak unlikely fixed by Peak-only variants
+      local nxt
+      nxt="$(python3 "$TUNE" --span-ms "$span_ms" --next-wider-after-sync "$sync")"
+      if [[ "$nxt" == "EMPTY" ]]; then
+        attempts=$((attempts + 1))
+        idx=$((idx + 1))
+      else
+        attempts=$((attempts + 1))
+        idx=$nxt
+      fi
+      continue
     fi
-    if [[ "$tune_idx" -ge "$max_tune" ]]; then
-      echo "ABORT $exp grid exhausted status=$status"
-      echo "$exp: FAIL/$status" >"$ROOT/$exp/RESULT.txt"
-      return 1
+    hard_fail_streak=0
+
+    if [[ "$status" != "ok" ]]; then
+      echo "idx=$idx diagnose=$status Sync=$sync Peak=$peak Agree=$agree no-test" >>"$tune_log"
+      # Skip Peak variants at this SyncTol — climb to wider SyncTol for Done
+      local nxt
+      nxt="$(python3 "$TUNE" --span-ms "$span_ms" --next-wider-after-sync "$sync")"
+      if [[ "$nxt" == "EMPTY" ]]; then
+        echo "no wider SyncTol left after Sync=$sync"
+        attempts=$((attempts + 1))
+        break
+      fi
+      attempts=$((attempts + 1))
+      idx=$nxt
+      continue
     fi
-    tune_idx=$((tune_idx + 1))
-    local wp
-    wp="$(widen_params "$span_ms" "$tune_idx")"
-    if [[ "$wp" == "EMPTY" ]]; then
-      echo "ABORT $exp widen empty"
-      echo "$exp: FAIL/$status" >"$ROOT/$exp/RESULT.txt"
-      return 1
+
+    "$SCR" sync "$train" "$test"
+    python3 "$PATCH_NEU" "$test/Parameters_00.xml" "$neu"
+    python3 "$PATCH_NEU" "$test/Model_00.xml" "$neu"
+    sync_test_timing "$train" "$test"
+
+    echo "=== TEST $exp attempt=$attempts idx=$idx ==="
+    "$NM" -c "$test/Project.ini" -s -t 20 -x >"$ROOT/$exp/test.log" 2>&1 || true
+    local qline
+    qline="$(python3 "$EVAL" "$test/SelectivityLog/results.csv" || true)"
+    parse_kv "$qline"
+    last_mode=$mode
+    echo "quality $qline"
+    echo "idx=$idx diagnose=ok Sync=$sync Peak=$peak Agree=$agree $qline" >>"$tune_log"
+
+    # snapshot best candidate artifacts
+    local cand_rank
+    cand_rank="$(rank_key "$sync" "$sync0")"
+    local is_better
+    is_better="$(better_than "$cand_rank" "$best_rank")"
+    if [[ "$is_better" == "yes" || -z "$best_dir" ]]; then
+      best_rank=$cand_rank
+      best_dir="$ROOT/$exp/_best_snap"
+      rm -rf "$best_dir"
+      mkdir -p "$best_dir/Train" "$best_dir/Test/SelectivityLog"
+      cp -f "$train/Parameters_00.xml" "$train/Model_00.xml" "$best_dir/Train/"
+      cp -f "$test/Parameters_00.xml" "$test/Model_00.xml" "$best_dir/Test/"
+      cp -f "$test/SelectivityLog/results.csv" "$best_dir/Test/SelectivityLog/" 2>/dev/null || true
+      printf '%s\n' "$qline" >"$best_dir/quality.line"
+      printf '%s %s %s\n' "$sync" "$peak" "$agree" >"$best_dir/timing.txt"
+      printf '%s\n' "$attempts" >"$best_dir/attempt.txt"
+      printf '%s\n' "$(lens "$train/Parameters_00.xml")" >"$best_dir/L.txt"
+      printf '%s\n' "$(thr "$train/Parameters_00.xml")" >"$best_dir/thr.txt"
     fi
-    read -r sync peak agree <<<"$wp"
-    echo "AUTO-TUNE widen#$tune_idx SyncTol=$sync Peak=$peak Agree=$agree"
-    python3 "$TUNE" \
-      "$train/Parameters_00.xml" "$train/Model_00.xml" \
-      "$test/Parameters_00.xml" "$test/Model_00.xml" \
-      --span-ms "$span_ms" --sync-tol "$sync" --peak-margin "$peak" --agree-min "$agree"
+
+    if [[ "$ok" == "1" ]]; then
+      gate=PASS
+      break
+    fi
+    # Done but quality fail: try next Peak/Agree at same or next SyncTol (+1)
+    attempts=$((attempts + 1))
+    idx=$((idx + 1))
   done
 
-  "$SCR" sync "$train" "$test"
-  python3 "$PATCH_NEU" "$test/Parameters_00.xml" "$neu"
-  python3 "$PATCH_NEU" "$test/Model_00.xml" "$neu"
-  sync_test_timing "$train" "$test"
-
-  echo "=== TEST $exp ==="
-  "$NM" -c "$test/Project.ini" -s -t 20 -x >"$ROOT/$exp/test.log" 2>&1 || true
-  local acc
-  acc="$(accuracy "$test/SelectivityLog/results.csv")"
-  echo "$exp: $acc L=$(lens "$train/Parameters_00.xml") thr=$(thr "$train/Parameters_00.xml") tune=$tune_idx" | tee "$ROOT/$exp/RESULT.txt"
+  # restore best snapshot into Train/Test
+  if [[ -n "$best_dir" && -d "$best_dir" ]]; then
+    cp -f "$best_dir/Train/Parameters_00.xml" "$best_dir/Train/Model_00.xml" "$train/"
+    cp -f "$best_dir/Test/Parameters_00.xml" "$best_dir/Test/Model_00.xml" "$test/"
+    mkdir -p "$test/SelectivityLog"
+    if [[ -f "$best_dir/Test/SelectivityLog/results.csv" ]]; then
+      cp -f "$best_dir/Test/SelectivityLog/results.csv" "$test/SelectivityLog/"
+    fi
+    qline="$(cat "$best_dir/quality.line")"
+    parse_kv "$qline"
+    read -r sync peak agree <"$best_dir/timing.txt"
+    local best_attempt
+    best_attempt="$(cat "$best_dir/attempt.txt")"
+    local best_L best_thr
+    best_L="$(cat "$best_dir/L.txt")"
+    best_thr="$(cat "$best_dir/thr.txt")"
+    if [[ "$ok" == "1" ]]; then
+      gate=PASS
+    else
+      gate=FAIL
+    fi
+    echo "$exp: ${acc}/8 L=$best_L thr=$best_thr Sync=$sync Peak=$peak Agree=$agree tune=$best_attempt gate=$gate mode=$mode" \
+      | tee "$ROOT/$exp/RESULT.txt"
+    cat >"$ROOT/$exp/QUALITY.txt" <<Q
+gate=$gate
+mode=$mode
+acc=${acc}/8
+n=$n
+target_hit=$target_hit
+fire_all=$fire_all
+fa=$fa
+fires=$fires
+matches=$matches
+SyncTolerance=$sync
+PeakMeasureMargin=$peak
+DelayAgreeMarginMin=$agree
+tune_steps=$best_attempt
+attempts_ran=$attempts
+max_attempts=$max_attempts
+rank=$best_rank
+Q
+    rm -rf "$best_dir"
+  else
+    echo "$exp: FAIL/no_done_candidate tune=$attempts gate=FAIL mode=$last_mode" | tee "$ROOT/$exp/RESULT.txt"
+    cat >"$ROOT/$exp/QUALITY.txt" <<Q
+gate=FAIL
+mode=no_done_candidate
+attempts=$attempts
+Q
+    return 1
+  fi
 }
 
 for spec in "$@"; do

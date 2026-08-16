@@ -5,7 +5,7 @@
 Прототипы Storage: `NSPNeuronGen` / `NSPNeuronGenPreinh*` (k = 0.5…10 и окрестность 2.1–2.7).
 
 Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`).  
-Отчёты: [REPORT.md](REPORT.md), [REPORT_autothr.md](REPORT_autothr.md), [REPORT_gui_autothr.md](REPORT_gui_autothr.md), [REPORT_k_sweep.md](REPORT_k_sweep.md), [REPORT_time_compress.md](REPORT_time_compress.md) (выводы Acc пересмотрены — Erratum; повтор quality-tune).
+Отчёты: [REPORT.md](REPORT.md), [REPORT_autothr.md](REPORT_autothr.md), [REPORT_gui_autothr.md](REPORT_gui_autothr.md), [REPORT_k_sweep.md](REPORT_k_sweep.md), [REPORT_time_compress.md](REPORT_time_compress.md) (Erratum + Run2 quality-tune; gate PASS только EXP21).
 
 **Протокол:** cold train `NeuroModelerConsole -t 90 -x -S` → sync Train→Test → test `-t 20 -x`.  
 Autothr: `AutoCalibrateFixedLTZThreshold=1`, mode `gap_fraction`, fraction `0.85`.
