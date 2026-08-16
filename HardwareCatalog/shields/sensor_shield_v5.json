@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "sensor_shield_v5",
+  "title": "Sensor Shield V5",
+  "compatibleBoards": ["uno", "mega2560"],
+  "formFactor": "uno_r3_shield",
+  "defaultFirmware": "standard_firmata",
+  "layoutAsset": "assets/shields/sensor_shield_v5_layout.svg",
+  "power": {
+    "selJumper": true,
+    "digitalVccRail": "sel_or_external",
+    "analogVccRail": "arduino_5v",
+    "warnings": ["SEL_jumper_servo_external_power", "do_not_feed_gt5v_with_sel_on"]
+  },
+  "ports": {
+    "D0": { "signalPin": "D0", "header": "GVS", "powerRail": "digital_sel", "reserved": "uart_rx" },
+    "D1": { "signalPin": "D1", "header": "GVS", "powerRail": "digital_sel", "reserved": "uart_tx" },
+    "D2": { "signalPin": "D2", "header": "GVS", "powerRail": "digital_sel" },
+    "D3": { "signalPin": "D3", "header": "GVS", "powerRail": "digital_sel" },
+    "D4": { "signalPin": "D4", "header": "GVS", "powerRail": "digital_sel" },
+    "D5": { "signalPin": "D5", "header": "GVS", "powerRail": "digital_sel" },
+    "D6": { "signalPin": "D6", "header": "GVS", "powerRail": "digital_sel" },
+    "D7": { "signalPin": "D7", "header": "GVS", "powerRail": "digital_sel" },
+    "D8": { "signalPin": "D8", "header": "GVS", "powerRail": "digital_sel" },
+    "D9": { "signalPin": "D9", "header": "GVS", "powerRail": "digital_sel" },
+    "D10": { "signalPin": "D10", "header": "GVS", "powerRail": "digital_sel" },
+    "D11": { "signalPin": "D11", "header": "GVS", "powerRail": "digital_sel" },
+    "D12": { "signalPin": "D12", "header": "GVS", "powerRail": "digital_sel" },
+    "D13": { "signalPin": "D13", "header": "GVS", "powerRail": "digital_sel" },
+    "A0": { "signalPin": "A0", "header": "GVS", "powerRail": "arduino_5v" },
+    "A1": { "signalPin": "A1", "header": "GVS", "powerRail": "arduino_5v" },
+    "A2": { "signalPin": "A2", "header": "GVS", "powerRail": "arduino_5v" },
+    "A3": { "signalPin": "A3", "header": "GVS", "powerRail": "arduino_5v" },
+    "A4": { "signalPin": "A4", "header": "GVS", "powerRail": "arduino_5v" },
+    "A5": { "signalPin": "A5", "header": "GVS", "powerRail": "arduino_5v" }
+  },
+  "occupiesPins": [],
+  "extraHeaders": ["I2C", "UART"]
+}
