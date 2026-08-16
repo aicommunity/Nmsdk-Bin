@@ -1,17 +1,20 @@
 {
   "schemaVersion": 1,
   "id": "nmsdk_sensor_hub_v1",
-  "title": "Nmsdk Sensor Hub (stub)",
+  "title": "Nmsdk Sensor Hub",
   "tier": "C",
   "transport": "custom",
-  "available": false,
+  "available": true,
   "runtimeBaud": 57600,
   "boards": ["uno", "mega2560"],
   "compatibleShields": ["sensor_shield_v5"],
   "capabilities": ["dht", "hc_sr04", "analog", "digital"],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_sensor_hub/uno.hex",
+    "mega2560": "nmsdk_sensor_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_sensor_hub_v1",
   "protocolId": "nmsdk_hub_v1",
-  "defaultPins": { "dht": "D2", "echo": "D7" },
-  "legacyManifestId": ""
+  "defaultPins": { "dht": "D2", "echo": "D7", "trig": "D8" },
+  "legacyManifestId": "nmsdk_sensor_hub_v1"
 }

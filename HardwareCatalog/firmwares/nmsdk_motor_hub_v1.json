@@ -1,17 +1,20 @@
 {
   "schemaVersion": 1,
   "id": "nmsdk_motor_hub_v1",
-  "title": "Nmsdk Motor Hub (stub)",
+  "title": "Nmsdk Motor Hub",
   "tier": "C",
   "transport": "custom",
-  "available": false,
+  "available": true,
   "runtimeBaud": 57600,
   "boards": ["uno", "mega2560"],
   "compatibleShields": ["motor_shield_r3", "motor_shield_seeed_v1"],
   "capabilities": ["dc_motor", "pwm"],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_motor_hub/uno.hex",
+    "mega2560": "nmsdk_motor_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_motor_hub_v1",
-  "protocolId": "nmsdk_hub_v1",
-  "defaultPins": {},
-  "legacyManifestId": ""
+  "protocolId": "nmsdk_motor_hub_v1",
+  "defaultPins": { "dir": "D12", "pwm": "D3" },
+  "legacyManifestId": "nmsdk_motor_hub_v1"
 }

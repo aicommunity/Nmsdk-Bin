@@ -17,6 +17,9 @@
 | [11-DeviceIO-Servo](11-DeviceIO-Servo/) | `ArduinoDeviceIO` | standard_firmata | Uno (0) |
 | [12-MotorShield-R3](12-MotorShield-R3/) | `ArduinoDeviceIO` motor | standard_firmata | Uno (0) |
 | [13-Sensors-To-Pulse](13-Sensors-To-Pulse/) | DeviceIO sensors | standard_firmata | Uno (0) |
+| [14-SensorHub](14-SensorHub/) | `ArduinoCustomFirmware` | nmsdk_sensor_hub_v1 | Uno (0) |
+| [15-MotorHub](15-MotorHub/) | `ArduinoCustomFirmware` | nmsdk_motor_hub_v1 | Uno (0) |
+| [16-CustomFirmware-SensorLab](16-CustomFirmware-SensorLab/) | `ArduinoCustomFirmware` | sensor_lab_v1 | Uno (0) |
 
 **BoardProfile:** 0 = Uno, 1 = Mega 2560. Перед Upload на Mega выберите профиль 1 или авто-детект в GUI.
 

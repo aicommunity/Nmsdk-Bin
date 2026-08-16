@@ -351,6 +351,54 @@
 			<PropertyType>257</PropertyType>
 		</FirmwarePath>
 
+		<HardwareSetupPath>
+			<Header>Hardware setup path</Header>
+			<Description>Путь к Hardware Setup JSON (boards/shields/modules).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HardwareSetupPath>
+
+		<HardwareSetupJson>
+			<Header>Hardware setup JSON</Header>
+			<Description>Inline Hardware Setup (перекрывает Path при Apply из Assembly editor).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HardwareSetupJson>
+
+		<HardwareSetupValid>
+			<Header>Hardware setup valid</Header>
+			<Description>State: 1 если последний validate setup успешен.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HardwareSetupValid>
+
+		<HardwareSetupIssues>
+			<Header>Hardware setup issues</Header>
+			<Description>State: список кодов/сообщений validate (PinConflict и др.).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HardwareSetupIssues>
+
 		<ShowDebug>
 			<Header>Show debug</Header>
 			<Description>Отладочный вывод serial session.</Description>
