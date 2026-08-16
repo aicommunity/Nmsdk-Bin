@@ -115,6 +115,14 @@ PY
   python3 "$PATCH_NEU" "$test/Parameters_00.xml" "$neu"
   python3 "$PATCH_NEU" "$test/Model_00.xml" "$neu"
 
+  # Watch Interface: valid XML goldens (broken Test sync had mismatched tab_1/tab_2 tags)
+  local iface_train_src="$ROOT/scripts/golden_train_Interface.xml"
+  local iface_test_src="$ROOT/scripts/golden_test_Interface.xml"
+  if [[ -f "$iface_train_src" && -f "$iface_test_src" ]]; then
+    cp -f "$iface_train_src" "$train/Interface.xml"
+    cp -f "$iface_test_src" "$test/Interface.xml"
+  fi
+
   write_exp_readme "$name" "$neu" "$span_ms" "$k" "$sync" "$peak" "$agree" "$alpha"
   echo "setup ${name} ${neu} span=${span_ms}ms SyncTol=${sync} Peak=${peak} Agree=${agree}"
 }
