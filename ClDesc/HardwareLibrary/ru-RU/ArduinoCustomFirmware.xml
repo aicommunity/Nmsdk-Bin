@@ -1,0 +1,116 @@
+<ClassDescription>
+	<ClassName>ArduinoCustomFirmware</ClassName>
+	<Header>Custom firmware host</Header>
+	<Description>Универсальный хост custom/hub прошивки: upload + Command + protocol plugin.</Description>
+	<Properties>
+		<SendCommand>
+			<Header>Send command</Header>
+			<Description>Edge: отправить Command.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</SendCommand>
+
+		<ClearFrameLog>
+			<Header>Clear frame log</Header>
+			<Description>Edge: очистить FrameLog.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ClearFrameLog>
+
+		<HostPluginId>
+			<Header>Host plugin id</Header>
+			<Description>Override catalog hostPlugin.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HostPluginId>
+
+		<FrameLog>
+			<Header>Frame log</Header>
+			<Description>Ring buffer RX/frames.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</FrameLog>
+
+		<NamedValuesJson>
+			<Header>Named values JSON</Header>
+			<Description>Bag publishNamedFloat.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NamedValuesJson>
+
+		<PluginBound>
+			<Header>Plugin bound</Header>
+			<Description>Найден protocol plugin.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</PluginBound>
+
+		<Command>
+			<Header>Command</Header>
+			<Description>Текстовая команда.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Command>
+
+		<BundledFirmwareId>
+			<Header>Bundled firmware</Header>
+			<Description>Id прошивки каталога.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BundledFirmwareId>
+	</Properties>
+	<Favorites>
+		<HostPluginId>
+			<Path>{CompName}:HostPluginId</Path>
+		</HostPluginId>
+		<Command>
+			<Path>{CompName}:Command</Path>
+		</Command>
+		<PluginBound>
+			<Path>{CompName}:PluginBound</Path>
+		</PluginBound>
+		<FrameLog>
+			<Path>{CompName}:FrameLog</Path>
+		</FrameLog>
+	</Favorites>
+</ClassDescription>
