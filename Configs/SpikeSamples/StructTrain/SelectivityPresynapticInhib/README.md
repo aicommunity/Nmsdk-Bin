@@ -5,7 +5,7 @@
 Прототипы Storage: `NSPNeuronGen` / `NSPNeuronGenPreinh*` (k = 0.5…10 и окрестность 2.1–2.7).
 
 Формула: `Output = C*(1-k*PreOutput)*PreOutput`, `C=4k/R` (пик = `1/R`).  
-Отчёты: [REPORT.md](REPORT.md), [REPORT_autothr.md](REPORT_autothr.md), [REPORT_gui_autothr.md](REPORT_gui_autothr.md), [REPORT_k_sweep.md](REPORT_k_sweep.md), [REPORT_time_compress.md](REPORT_time_compress.md) (Erratum + Run2 quality-tune; gate PASS только EXP21).
+Отчёты: [REPORT.md](REPORT.md), [REPORT_autothr.md](REPORT_autothr.md), [REPORT_gui_autothr.md](REPORT_gui_autothr.md), [REPORT_k_sweep.md](REPORT_k_sweep.md), [REPORT_time_compress.md](REPORT_time_compress.md) (Erratum + Run2), [REPORT_time_expand.md](REPORT_time_expand.md) (span 200/300/400 мс, EXP30–35).
 
 **Протокол:** cold train `NeuroModelerConsole -t 90 -x -S` → sync Train→Test → test `-t 20 -x`.  
 Autothr: `AutoCalibrateFixedLTZThreshold=1`, mode `gap_fraction`, fraction `0.85`.
@@ -48,5 +48,6 @@ DendriticSumPotential
 # GUI: File → Open → .../EXP04_preinh_250/Train/Project.ini → Start
 ./scripts/setup_k_sweep.sh       # k-sweep; не трогает EXP00–03
 ./scripts/setup_time_compress.sh # EXP20–27 сжатие ISI; не трогает EXP00–15
+./scripts/setup_time_expand.sh   # EXP30–35 расширение 200/300/400 мс; не трогает EXP00–27
 NeuroModelerConsole --check-config EXP04_preinh_250/Train/Project.ini
 ```
