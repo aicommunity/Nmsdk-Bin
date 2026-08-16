@@ -51,6 +51,18 @@
 			<PropertyType>265</PropertyType>
 		</UploadFirmware>
 
+		<CancelUpload>
+			<Header>Cancel upload</Header>
+			<Description>Edge: отменить async upload (kill avrdude).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</CancelUpload>
+
 		<ClearLastError>
 			<Header>Clear last error</Header>
 			<Description>Edge: очистить `LastError`.</Description>
@@ -135,6 +147,90 @@
 			<PropertyType>258</PropertyType>
 		</UploadComplete>
 
+		<ConnectionState>
+			<Header>Connection state</Header>
+			<Description>State: 0=Disconnected, 1=Opening, 2=Connected, 3=Error.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</ConnectionState>
+
+		<UploadProgress>
+			<Header>Upload progress</Header>
+			<Description>State: 0..100 прогресс прошивки.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</UploadProgress>
+
+		<UploadLastResult>
+			<Header>Upload last result</Header>
+			<Description>State: `ok` / `uploading` / текст ошибки.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</UploadLastResult>
+
+		<LastError>
+			<Header>Last error</Header>
+			<Description>State: текст последней ошибки порта/upload.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastError>
+
+		<LastActivityMs>
+			<Header>Last activity ms</Header>
+			<Description>State: время последней активности (ms).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastActivityMs>
+
+		<MissedHeartbeats>
+			<Header>Missed heartbeats</Header>
+			<Description>State: пропуски heartbeat.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</MissedHeartbeats>
+
+		<RequestHealthCheck>
+			<Header>Request health check</Header>
+			<Description>State/pulse: запрос health check.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</RequestHealthCheck>
+
 		<PortName>
 			<Header>Port name</Header>
 			<Description>Путь к serial (`/dev/ttyACM0`, `COM3`).</Description>
@@ -161,7 +257,7 @@
 
 		<BoardProfile>
 			<Header>Board profile</Header>
-			<Description>0=Uno, 1=Mega 2560.</Description>
+			<Description>0=Uno, 1=Mega 2560. CH340-клоны: задавайте вручную (AU-10).</Description>
 			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -170,6 +266,18 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</BoardProfile>
+
+		<AutoReconnect>
+			<Header>Auto reconnect</Header>
+			<Description>Автопереподключение при обрыве.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</AutoReconnect>
 
 		<ConnectOnBuild>
 			<Header>Connect on build</Header>
@@ -183,6 +291,42 @@
 			<PropertyType>257</PropertyType>
 		</ConnectOnBuild>
 
+		<HeartbeatEnabled>
+			<Header>Heartbeat enabled</Header>
+			<Description>Включить heartbeat.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HeartbeatEnabled>
+
+		<HeartbeatIntervalMs>
+			<Header>Heartbeat interval ms</Header>
+			<Description>Интервал heartbeat.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HeartbeatIntervalMs>
+
+		<HeartbeatTimeoutMs>
+			<Header>Heartbeat timeout ms</Header>
+			<Description>Таймаут heartbeat.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HeartbeatTimeoutMs>
+
 		<BundledFirmwareId>
 			<Header>Bundled firmware</Header>
 			<Description>ID из manifest (`sensor_lab_v1`, `standard_firmata`).</Description>
@@ -195,17 +339,29 @@
 			<PropertyType>257</PropertyType>
 		</BundledFirmwareId>
 
-		<LastError>
-			<Header>Last error</Header>
-			<Description>State: текст последней ошибки порта/upload.</Description>
-			<Type>| ptPubState | </Type>
+		<FirmwarePath>
+			<Header>Firmware path</Header>
+			<Description>Путь к HEX (пусто = bundled id).</Description>
+			<Type>| ptPubParameter | </Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>258</PropertyType>
-		</LastError>
+			<PropertyType>257</PropertyType>
+		</FirmwarePath>
+
+		<ShowDebug>
+			<Header>Show debug</Header>
+			<Description>Отладочный вывод serial session.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ShowDebug>
 	</Properties>
 			<Favorites>
 		<PortName>

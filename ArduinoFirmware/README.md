@@ -6,7 +6,7 @@ Runtime HEX files for NeuroModeler upload (`../../ArduinoFirmware` relative to `
 
 ## Build
 
-**Windows** (after [SetupArduinoTools.bat](../Platform/Win/SetupArduinoTools.bat) or with `arduino-cli` on PATH):
+**Windows** (preferred: [`Scripts/setup_arduino_tools.ps1`](../../Scripts/setup_arduino_tools.ps1); wrapper [`SetupArduinoTools.bat`](../Platform/Win/SetupArduinoTools.bat) calls the same script):
 
 ```powershell
 .\Scripts\build_arduino_firmware.ps1
@@ -38,7 +38,7 @@ Runtime HEX files for NeuroModeler upload (`../../ArduinoFirmware` relative to `
 
 ## Build
 
-**Windows** (after [SetupArduinoTools.bat](../Platform/Win/SetupArduinoTools.bat) or with `arduino-cli` on PATH):
+**Windows** (preferred: [`Scripts/setup_arduino_tools.ps1`](../../Scripts/setup_arduino_tools.ps1); wrapper [`SetupArduinoTools.bat`](../Platform/Win/SetupArduinoTools.bat) calls the same script):
 
 ```powershell
 .\Scripts\build_arduino_firmware.ps1

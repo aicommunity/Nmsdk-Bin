@@ -4,7 +4,7 @@
 
 ## Назначение
 
-Ручная проверка edge-свойств Board без отдельного железа (порт можно оставить пустым).
+Ручная проверка edge-свойств Board: в XML edges = 0; импульс Connect/UploadFirmware из GUI или Property editor.
 
 ## Перед запуском
 
@@ -22,7 +22,7 @@
 
 ## Компоненты
 
-- `Board` (`ArduinoBoard`) — примеры `<Connect>1</Connect>`, `<UploadFirmware>1</UploadFirmware>`.
+- `Board` (`ArduinoBoard`) — edges по умолчанию 0; пульсируйте `Connect` / `UploadFirmware` вручную.
 
 ## Проверка
 
