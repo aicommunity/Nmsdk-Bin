@@ -443,6 +443,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</SyncTolerance>
+		<PeakMeasureMargin>
+			<Header>Пол окна измерения пика</Header>
+			<Description>Минимальный полуинтервал (сек) вокруг ожидаемого времени пика в MeasureMaxPotentialAndTime. Фактический margin = max(PeakMeasureMargin, 0.5·kMaxLengthStep·EstDelayPerSeg).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PeakMeasureMargin>
+		<DelayAgreeMarginMin>
+			<Header>Пол согласия DelayUseOf</Header>
+			<Description>Нижняя граница agree_margin (сек): max(SyncTolerance, DelayAgreeMarginMin). Используется при выборе delay_meas vs delay_len.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DelayAgreeMarginMin>
 		<SynapseClassName>
 			<Header>Класс синапса</Header>
 			<Description>Имя класса синапса, который соединяет нейроны.</Description>
@@ -626,6 +648,12 @@
 		<SyncTolerance>
 			<Path>{CompName}:SyncTolerance</Path>
 		</SyncTolerance>
+		<PeakMeasureMargin>
+			<Path>{CompName}:PeakMeasureMargin</Path>
+		</PeakMeasureMargin>
+		<DelayAgreeMarginMin>
+			<Path>{CompName}:DelayAgreeMarginMin</Path>
+		</DelayAgreeMarginMin>
 		<TrainingPhase>
 			<Path>{CompName}:TrainingPhase</Path>
 		</TrainingPhase>

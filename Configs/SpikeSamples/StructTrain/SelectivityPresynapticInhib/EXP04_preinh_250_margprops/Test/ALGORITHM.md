@@ -102,8 +102,6 @@ dt = needed - delay_use
 | `InputPattern` | `0.01, 0.08, 0.16, 0.24` |
 | `IterationGap` / `Delay` | 1.5 s |
 | `SyncTolerance` | 0.02 s |
-| `PeakMeasureMargin` | 0.06 s (пол окна пика; `max(PeakMeasureMargin, 0.5·kMaxLengthStep·EstDelayPerSeg)`) |
-| `DelayAgreeMarginMin` | 0.03 s (пол agree в `DelayUseOf`: `max(SyncTolerance, DelayAgreeMarginMin)`) |
 | `NeuronClassName` | `NSPNeuronGen` |
 
 Прогон обучения: `NeuroModelerConsole -c …/Project.ini -s -t 160 -x` (warm на settled L; cold-рост L — отдельный сценарий).
