@@ -3,7 +3,7 @@
 Сжатие ISI-паттерна × `NSPNeuronGen` (baseline) vs `NSPNeuronGenPreinh2_5` (k=2.5).  
 Эталон несжатого: EXP00 **4/8**, EXP04 **6/8**.
 
-## Протокол качества (Run2)
+## Протокол качества
 
 Источник: `Test/SelectivityLog/results.csv` (ровно 8 trials).
 
@@ -15,7 +15,7 @@
 
 Режимы: `selective` | `partial_FA` | `fire_all` | `miss_target` | `silent`.
 
-Tune: cold train → при stall/nodone **climb SyncTol**; после Done — сетка Peak/Agree; accept только PASS. Best-of при исчерпании лимита.
+Tune: cold train → при stall/nodone **climb SyncTol**; после Done — сетка Peak/Agree. **Run3:** без early stop на первом PASS; best-of по `rank_key` (target_hit → ¬fire_all → Acc → −fa → близость к sync₀) до `max_attempts=20` или исчерпания сетки.
 
 Скрипты: `evaluate_selectivity_csv.py`, `run_time_compress.sh`, `tune_timing_params.py` (`--next-wider-after-sync`).
 
@@ -52,7 +52,49 @@ Acc без `neuron_fired` вводил в заблуждение. Run1 «tune» 
 | 25 мс | 0.052 | 1.50 мс | 2.00 мс | 2.00 мс |
 | 10 мс | 0.021 | 1.50 мс | 2.00 мс | 2.00 мс |
 
-## Run2 (quality-tune) — главная таблица
+## Run3 (full-tune, без early stop) — главная таблица
+
+Повтор cold train+test EXP20–27 на тех же масштабированных Sync/Peak/Agree. Скрипт больше не останавливается на первом PASS.
+
+| EXP | T | Neuron | Sync | Peak | Agree | L | thr | Acc | fires | mode | gate | attempts |
+|--|--:|--|--:|--:|--:|--|--:|--:|--|--|--|--:|
+| EXP20 | 100 | baseline | 4.17 мс | 5.83 мс | 5.83 мс | `[12,11,7,1]` | 0.0147 | **2/8** | `11111110` | `partial_FA` | **FAIL** | 20 |
+| EXP21 | 100 | Preinh2.5 | 4.17 мс | 5.83 мс | 5.83 мс | `[11,9,6,1]` | 0.0321 | **5/8** | `11110000` | `partial_FA` | **PASS** | 20 |
+| EXP22 | 50 | baseline | 4.17 мс | 2.92 мс | 4.17 мс | `[7,6,5,1]` | 0.0174 | **1/8** | `11111111` | `fire_all` | **FAIL** | 20 |
+| EXP23 | 50 | Preinh2.5 | 6.25 мс | 2.92 мс | 6.25 мс | `[5,5,4,1]` | 0.0340 | **3/8** | `11111100` | `partial_FA` | **FAIL** | 20 |
+| EXP24 | 25 | baseline | 2.25 мс | 1.88 мс | 2.25 мс | `[4,4,3,1]` | 0.0195 | **3/8** | `11111100` | `partial_FA` | **FAIL** | 20 |
+| EXP25 | 25 | Preinh2.5 | 3.00 мс | 1.88 мс | 3.00 мс | `[5,5,4,1]` | 0.0179 | **1/8** | `11111111` | `fire_all` | **FAIL** | 20 |
+| EXP26 | 10 | baseline | 4.50 мс | 1.50 мс | 4.50 мс | `[3,3,2,1]` | 0.0234 | **1/8** | `11111111` | `fire_all` | **FAIL** | 9† |
+| EXP27 | 10 | Preinh2.5 | 3.00 мс | 1.50 мс | 3.00 мс | `[4,4,3,1]` | 0.0115 | **1/8** | `11111111` | `fire_all` | **FAIL** | 10† |
+
+† сетка 10 мс короче (`max_attempts=13`); выход по climb SyncTol / EMPTY.
+
+Все EXP: `phase -> Done`, 8-row CSV. Best = init (или тот же best, что Run2). Acc **не изменился** относительно Run2: полная сетка не вытянула EXP21 выше 5/8 и не вывела FAIL-конфиги из `fire_all` / Acc&lt;4.
+
+### Run3 vs Run2
+
+| EXP | Run2 Acc / attempts | Run3 Acc / attempts | Δ |
+|--|--|--|--|
+| EXP20 | 2/8 / ~15 | 2/8 / 20 | нет |
+| EXP21 | 5/8 PASS / 0 (early stop) | 5/8 PASS / 20 | Acc тот же; сетка доисследована |
+| EXP22–27 | FAIL (как в таблице Run2) | FAIL, те же Acc/fires | нет |
+
+Вывод: early stop Run2 **не скрывал** лучший Acc. 5/8 на 100 мс Preinh — потолок текущей сетки Peak/Agree, не артефакт протокола.
+
+### Сравнение Run3
+
+Сравнивать Acc **только** где оба не в `{fire_all, miss_target, silent}`:
+
+| T | baseline | Preinh | Сравнение |
+|--:|--|--|--|
+| 100 мс | FAIL Acc2 `partial_FA` | **PASS Acc5** | Preinh лучше (валидно) |
+| 50 мс | FAIL `fire_all` | FAIL Acc3 `partial_FA` | несравнимо / Preinh менее плох |
+| 25 мс | FAIL Acc3 | FAIL `fire_all` | несравнимо / baseline менее плох |
+| 10 мс | FAIL `fire_all` | FAIL `fire_all` | оба провал селективности |
+
+Vs несжатый EXP00/04: сжатие **ломает** quality-gate на всех T кроме Preinh 100 мс.
+
+## Run2 (quality-tune, early stop) — архив
 
 | EXP | T | Neuron | Sync | Peak | Agree | L | thr | Acc | fires | mode | gate | tune |
 |--|--:|--|--:|--:|--:|--|--:|--:|--|--|--|--:|
@@ -76,19 +118,6 @@ Acc без `neuron_fired` вводил в заблуждение. Run1 «tune» 
 - **EXP24:** partial_FA Acc 3/8 FAIL.
 - **EXP25–27:** fire-all Acc 1/8 FAIL (селективности нет).
 
-### Сравнение Run2
-
-Сравнивать Acc **только** где оба не в `{fire_all, miss_target, silent}`:
-
-| T | baseline | Preinh | Сравнение |
-|--:|--|--|--|
-| 100 мс | FAIL Acc2 `partial_FA` | **PASS Acc5** | Preinh лучше (валидно) |
-| 50 мс | FAIL `fire_all` | FAIL Acc3 `partial_FA` | несравнимо / Preinh менее плох |
-| 25 мс | FAIL Acc3 | FAIL `fire_all` | несравнимо / baseline менее плох |
-| 10 мс | FAIL `fire_all` | FAIL `fire_all` | оба провал селективности |
-
-Vs несжатый EXP00/04: сжатие **ломает** quality-gate на всех T кроме Preinh 100 мс.
-
 ## Run1 (Done-only) — архив
 
 | EXP | Acc | tune | mode (оценка) | вердикт |
@@ -111,7 +140,7 @@ Vs несжатый EXP00/04: сжатие **ломает** quality-gate на в
 | EXP00_baseline_margprops | **5/8** | ≥4/8 OK |
 | EXP04_preinh_250_margprops | **6/8** | ≥6/8 OK |
 
-Не переучивались в Run2.
+Не переучивались в Run2/Run3.
 
 ## Блокеры / эскалация
 
@@ -122,5 +151,5 @@ Vs несжатый EXP00/04: сжатие **ломает** quality-gate на в
 
 - Конфиги: `EXP20`…`EXP27` (+ margprops)
 - На EXP: `RESULT.txt`, `QUALITY.txt`, `tune_log.txt`, `Test/SelectivityLog/results.csv`
-- Логи: `run_quality_100_50.log`, `run_quality_50_resume.log`, `run_quality_25_10.log`
+- Логи: `run_fulltune_rerun.log` (Run3), `run_quality_100_50.log`, `run_quality_50_resume.log`, `run_quality_25_10.log`
 - Скрипты: `evaluate_selectivity_csv.py`, `run_time_compress.sh`, `tune_timing_params.py`, `patch_pattern_scale.py`

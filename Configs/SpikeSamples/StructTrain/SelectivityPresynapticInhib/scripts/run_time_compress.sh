@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Cold train + quality-aware timing grid + sync + test for time-compress EXPs.
-# Accept only if Done AND target_hit AND NOT fire_all AND Acc>=4/8.
+# Cold train + quality-aware timing grid + sync + test for time-compress/expand EXPs.
+# Iterate full grid; pick best candidate by rank_key (max Acc among PASS preferred).
+# Final gate PASS only if best snapshot has ok=1 (target_hit, not fire_all, Acc>=4/8).
 set -euo pipefail
 NM=/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -320,15 +321,12 @@ Q
       printf '%s\n' "$qline" >"$best_dir/quality.line"
       printf '%s %s %s\n' "$sync" "$peak" "$agree" >"$best_dir/timing.txt"
       printf '%s\n' "$attempts" >"$best_dir/attempt.txt"
+      printf '%s\n' "$idx" >"$best_dir/best_idx.txt"
       printf '%s\n' "$(lens "$train/Parameters_00.xml")" >"$best_dir/L.txt"
       printf '%s\n' "$(thr "$train/Parameters_00.xml")" >"$best_dir/thr.txt"
     fi
 
-    if [[ "$ok" == "1" ]]; then
-      gate=PASS
-      break
-    fi
-    # Done but quality fail: try next Peak/Agree at same or next SyncTol (+1)
+    # Full grid: do not stop at first PASS; explore until attempts/grid exhausted.
     attempts=$((attempts + 1))
     idx=$((idx + 1))
   done
@@ -344,8 +342,9 @@ Q
     qline="$(cat "$best_dir/quality.line")"
     parse_kv "$qline"
     read -r sync peak agree <"$best_dir/timing.txt"
-    local best_attempt
+    local best_attempt best_idx
     best_attempt="$(cat "$best_dir/attempt.txt")"
+    best_idx="$(cat "$best_dir/best_idx.txt")"
     local best_L best_thr
     best_L="$(cat "$best_dir/L.txt")"
     best_thr="$(cat "$best_dir/thr.txt")"
@@ -370,6 +369,7 @@ SyncTolerance=$sync
 PeakMeasureMargin=$peak
 DelayAgreeMarginMin=$agree
 tune_steps=$best_attempt
+best_idx=$best_idx
 attempts_ran=$attempts
 max_attempts=$max_attempts
 rank=$best_rank
