@@ -242,8 +242,8 @@ QTabWidget::pane {
 QTabBar::tab {
     background-color: #F1F5F9;
     border: 1px solid #E2E8F0;
-    border-bottom: none;
-    padding: 4px 12px 4px 10px;
+    border-bottom: 3px solid transparent;
+    padding: 6px 14px;
     margin-right: 2px;
     margin-left: 0px;
     margin-top: 0px;
@@ -266,7 +266,8 @@ QTabBar::tab:selected {
     margin-right: 2px;
     margin-top: 0px;
     margin-bottom: 0px;
-    font-weight: 600;
+    padding: 6px 14px;
+    font-weight: 500;
 }
 
 QTabBar::tab:hover:!selected {
@@ -296,7 +297,7 @@ QMdiArea QTabBar::tab {
     border: 1px solid #E2E8F0;
     border-top: none;
     border-bottom: 2px solid transparent;
-    padding: 2px 8px;
+    padding: 4px 10px;
     margin-right: 2px;
     margin-left: 0px;
     margin-top: 0px;
@@ -321,8 +322,8 @@ QMdiArea QTabBar::tab:selected {
     margin-right: 2px;
     margin-top: 0px;
     margin-bottom: 0px;
-    padding: 2px 8px;
-    font-weight: 600;
+    padding: 4px 10px;
+    font-weight: 500;
 }
 
 QMdiArea QTabBar::tab:hover:!selected {
@@ -341,7 +342,7 @@ QMdiArea QTabBar::close-button {
 
 /* Специфичные стили для UWatch::tabWidget с треугольными вкладками */
 QTabWidget[objectName="tabWidget"] QTabBar::tab {
-    padding: 4px 20px 4px 10px;
+    padding: 6px 16px;
 }
 
 QTabWidget[objectName="tabWidget"] QTabBar::close-button {
@@ -355,7 +356,7 @@ QTabWidget[objectName="tabWidget"] QTabBar::close-button {
 
 /* Альтернативный селектор для всех треугольных вкладок с кнопками закрытия */
 QTabWidget[tabShape="Triangular"] QTabBar::tab {
-    padding: 4px 20px 4px 10px;
+    padding: 6px 16px;
 }
 
 QTabWidget[tabShape="Triangular"] QTabBar::close-button {
@@ -498,10 +499,10 @@ QPushButton {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:1 #F8FAFC);
     border: 1px solid #D1D5DB;
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 3px 8px;
     color: #374151;
     font-weight: 500;
-    min-width: 70px;
+    min-width: 56px;
 }
 
 QPushButton#breadcrumbButton {
@@ -556,7 +557,7 @@ QLineEdit {
     background-color: #FFFFFF;
     border: 1px solid #D1D5DB;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 4px 8px;
     color: #1F2937;
     selection-background-color: #5B8DEF;
     selection-color: #FFFFFF;
@@ -569,7 +570,7 @@ QLineEdit:hover {
 QLineEdit:focus {
     border-color: #5B8DEF;
     border-width: 2px;
-    padding: 7px 11px;
+    padding: 4px 8px;
 }
 
 QLineEdit:disabled {
@@ -605,9 +606,8 @@ QComboBox {
     background-color: #FFFFFF;
     border: 1px solid #D1D5DB;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 4px 8px;
     color: #1F2937;
-    min-width: 120px;
 }
 
 QComboBox:hover {
@@ -621,7 +621,7 @@ QComboBox:focus {
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 24px;
+    width: 18px;
     border-left: 1px solid #E2E8F0;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -662,7 +662,7 @@ QDoubleSpinBox {
     background-color: #FFFFFF;
     border: 1px solid #D1D5DB;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 4px 8px;
     color: #1F2937;
 }
 
