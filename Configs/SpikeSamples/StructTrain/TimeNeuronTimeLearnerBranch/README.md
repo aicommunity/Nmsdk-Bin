@@ -38,3 +38,13 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
 Входной синапс: `Dendrite1_1.ExcSynapse1` (один на сегмент; активный импульс переключается mute).
 
 Запуск расчёта: Start, время ≥ 20–30 s для двух burst’ов (или `-t 160` из консоли).
+
+## Последний прогон (2026-08-19)
+
+- Выполнен повторный cold-run с очисткой runtime-логов и сохранением проекта через `-S`.
+- По итоговому `Model_00.xml` входные связи от `DatasetMatrix.Generator1` расположены на дендритных сегментах:
+  `Dendrite1_9`, `Dendrite1_17`, `Dendrite1_25`, `Dendrite1_33`, `Dendrite1_41`, `Dendrite1_44`.
+- Итоговые обученные параметры в `Parameters_00.xml`:
+  - `DendriteLength = [1, 44, 26, 1]`
+  - `TipSynapseResistance = [86000000, 100000000000, 100000000000, 86000000]`
+- В `EventsLog` этого прогона строка `phase -> Done` не зафиксирована (обучение осталось в `phase=0`), поэтому состояние рассматривается как частично обученное.
