@@ -113,6 +113,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</ExperimentMode>
+		<EnableNextSegmentInhibition>
+			<Header>Inh на следующем сегменте</Header>
+			<Description>Если true: каждый tip Exc@L[k] дополнительно ведёт Generator на Dendrite1_{L[k]+1}.InhSynapse1 (Type=1, R=SynapseResistanceBase). Кабель = max(L)+1. Mute: 2 links; Done/Calibrate: 2N. По умолчанию false.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</EnableNextSegmentInhibition>
 		<ExperimentNum>
 			<Header>Номер эксперимента</Header>
 			<Description>Идентификатор сценария эксперимента или этапа обучения.</Description>
@@ -666,6 +677,9 @@
 		<StructureBuildMode>
 			<Path>{CompName}:StructureBuildMode</Path>
 		</StructureBuildMode>
+		<EnableNextSegmentInhibition>
+			<Path>{CompName}:EnableNextSegmentInhibition</Path>
+		</EnableNextSegmentInhibition>
 		<NormalizationMode>
 			<Path>{CompName}:NormalizationMode</Path>
 		</NormalizationMode>

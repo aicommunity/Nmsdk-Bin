@@ -20,9 +20,9 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
   -s -t 160 -x
 ```
 
-Ожидание: якорь commit → импульсы 2→1→0; `DendriteLength[3]≥1`; `L0>L1>L2≥1`; одна цепь `Dendrite1_*`; затем **`CalibrateLtz`** (`R×N` + `FixedLTZ=peak×0.99`) → `phase -> Done`.
+Ожидание: якорь commit → импульсы 2→1→0; `DendriteLength[3]≥1`; `L0>L1>L2≥1`; одна цепь `Dendrite1_*`; затем **`CalibrateLtz`** (`R×N×(Initial/I_ref)` amp-eq якоря + `FixedLTZ=peak×0.99`) → `phase -> Done`.
 
-После успешного прогона (пример): `DendriteLength≈[69,42,25,1]`, tip-R уже ×N, `FixedLTZ≈0.066`; BranchTest → **6/8**.
+После успешного прогона (пример): `DendriteLength≈[69,42,25,1]`, tip-R уже с amp-eq×N (проксимальный tip ≫ Base×N), `FixedLTZ` по parallel peak; BranchTest — см. актуальный `SelectivityLog/results.csv`.
 
 ## GUI (графики)
 
