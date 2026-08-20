@@ -39,12 +39,12 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
 
 Запуск расчёта: Start, время ≥ 20–30 s для двух burst’ов (или `-t 160` из консоли).
 
-## Последний прогон (2026-08-19)
+## Последний прогон (2026-08-20)
 
-- Выполнен повторный cold-run с очисткой runtime-логов и сохранением проекта через `-S`.
-- По итоговому `Model_00.xml` входные связи от `DatasetMatrix.Generator1` расположены на дендритных сегментах:
-  `Dendrite1_9`, `Dendrite1_17`, `Dendrite1_25`, `Dendrite1_33`, `Dendrite1_41`, `Dendrite1_44`.
-- Итоговые обученные параметры в `Parameters_00.xml`:
-  - `DendriteLength = [1, 44, 26, 1]`
-  - `TipSynapseResistance = [86000000, 100000000000, 100000000000, 86000000]`
-- В `EventsLog` этого прогона строка `phase -> Done` не зафиксирована (обучение осталось в `phase=0`), поэтому состояние рассматривается как частично обученное.
+- Исправлена линковка `Generator1.Output → ExcSynapse1`: stale links больше не накапливаются при росте кабеля (шаг +8).
+- Cold retrain с `DendriteLength = [1,1,1,1]` до **`phase -> Done`**.
+- Итоговые параметры (`Parameters_00.xml`):
+  - `DendriteLength = [85, 46, 25, 1]` — `L0 > L1 > L2`, якорь на `Dendrite1_1`
+  - `TipSynapseResistance = [1e6, 2.56e7, 2.33e7, 8.6e7]`
+- Итоговые связи в `Model_00.xml` (**ровно 4**):
+  `Dendrite1_85`, `Dendrite1_46`, `Dendrite1_25`, `Dendrite1_1` (импульсы 0..3).

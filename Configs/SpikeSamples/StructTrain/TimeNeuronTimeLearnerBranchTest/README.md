@@ -1,49 +1,30 @@
-# TimeNeuronTimeLearnerBranch
+# TimeNeuronTimeLearnerBranchTest
 
-Минимальный пример `NNeuronTimeLearnerBranch`: **1 сома + 1 дендрит**, импульсы паттерна на разном расстоянии от сомы. Алгоритм: [ALGORITHM.md](ALGORITHM.md).
-
-## Параметры
-
-- `NumInputDendrite = 4` — четыре **импульса** (не четыре дендрита)
-- `DendriteLength` cold: `1, 1, 1, 1` (все импульсы на `Dendrite1_1`; на `Soma1` входов нет)
-- `InputPattern` ISI: `0.01 / 0.08 / 0.16 / 0.24` (исходный паттерн, без time-compress)
-- `IterationGap = 1.5`, `Delay = 1.5`, `SyncTolerance = 0.02`
-- `NormalizationMode = 1`, `NeuronClassName = NSPNeuronGen`
-- Обучение: `IsNeedToTrain = 1`, `TrainingLTZThreshold = 100`
+Тест селективности обученного `NNeuronTimeLearnerBranch` на 8 стимулах (1 целевой + 7 отрицательных). Алгоритм обучения: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../TimeNeuronTimeLearnerBranch/ALGORITHM.md).
 
 ## Прогон
 
 ```bash
-cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroModelerConsole -j$(nproc)
 ./Bin/Platform/Linux/NeuroModelerConsole \
-  -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranch/Project.ini \
+  -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranchTest/Project.ini \
   -s -t 160 -x
 ```
 
-Ожидание: якорь commit → импульсы 2→1→0; `DendriteLength[3]≥1`; `L0>L1>L2≥1`; одна цепь `Dendrite1_*`; `phase -> Done`.
+## Состояние после переноса (2026-08-20)
 
-## GUI (графики)
+Из train-конфига перенесены согласованные `Parameters_00.xml` + `Model_00.xml`:
 
-Открыть в NeuroModeler:
+- `DendriteLength = [85, 46, 25, 1]`
+- `Generator1.Output` → **4** связи: `Dendrite1_85/46/25/1.ExcSynapse1` (без stale `9,17,25,33,41`)
+- `IsNeedToTrain = 0`
 
-`Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranch/Project.ini`
+## Результаты (`SelectivityLog/results.csv`)
 
-Меню **Watch** (две вкладки, как в `TimeNeuronTimeLearner` / EXP00_baseline):
+| trial | target_class | neuron_fired | match |
+|-------|-------------|--------------|-------|
+| 0 | 1 | 1 | 1 |
+| 1–7 | 0 | 1 | 0 |
 
-| Вкладка | Что смотреть |
-|---------|----------------|
-| **tab_1** | ISI-паттерн, `Generator1`, `Neuron.Output`; **Soma Amplitudes** — пики по импульсам |
-| **tab_2** | `DendriteNeuronAmplitude`, суммы нейрона (`SomaSumPotential`, `DendriticSumPotential`, LTZone) |
-
-Входной синапс: `Dendrite1_1.ExcSynapse1` (один на сегмент; активный импульс переключается mute).
-
-Запуск расчёта: Start, время ≥ 20–30 s для двух burst’ов (или `-t 160` из консоли).
-
-## Последний ретест (2026-08-19)
-
-- В `BranchTest` перенесены параметры из последнего train-run:
-  - `DendriteLength = [1, 44, 26, 1]`
-  - `TipSynapseResistance = [86000000, 100000000000, 100000000000, 86000000]`
-- Выполнен повторный тест на 8 стимулах (`SelectivityLog/results.csv`).
-- Наблюдение по результату: нейрон не выдаёт `neuron_fired=1` ни на одном из 8 стимулов, при этом совпадение класса `match=1` есть только для 7 отрицательных примеров.
-- Точность текущего ретеста: `7/8 = 87.5%` (ложный пропуск на целевом классе, trial=0).
+- Целевой паттерн (trial 0): **корректное срабатывание** (`neuron_fired=1`, `match=1`).
+- Отрицательные стимулы: ложные срабатывания (`neuron_fired=1` на всех) → `match=0`.
+- Точность по `match`: **1/8**; топология связей и обучение корректны, селективность требует отдельной настройки LTZ/порога.

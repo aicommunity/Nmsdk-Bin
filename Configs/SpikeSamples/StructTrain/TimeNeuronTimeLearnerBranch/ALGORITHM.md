@@ -30,3 +30,11 @@ Dataset: `NumFeatures=1`, `MaxSpikesPerFeature=N`. `InputPattern` — ISI N×1.
 Done: все `PulseSynced[0..N-2]` и amp в ε (или best-effort).
 
 Ожидаемые позиции: `L0 > L1 > L2 ≥ 1`, якорь `DendriteLength[N-1] ≥ 1` (обычно остаётся на 1).
+
+## Линковка Generator1 → ExcSynapse1
+
+- **Train (mute):** `RebuildGeneratorSynapseLinks` снимает все старые связи Generator→`Dendrite1_*.ExcSynapse1`, затем подключает **только** активный импульс → **ровно 1** link.
+- **Done / recognition:** подключаются все N финальных tip-synapse → **ровно N** links на `{L0,…,L(N−1)}`.
+- При росте кабеля (шаг до `kMaxLengthStep=8`) старый сегмент явно отцепляется (`DetachBranchExcSynapseAtSegment`), иначе на `Generator1.Output` накапливаются stale links (например `1,9,17,25,33,41`).
+- Внешний tap `Generator1.Output → PatternResponseAnalyzer.StimulusInputs` при cleanup **не** удаляется.
+- **Проверка:** после Done число подключённых tip-synapse == N; сегменты уникальны и `L[k] > L[k+1]` для k < N−2.

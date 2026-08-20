@@ -8,15 +8,15 @@
 			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 		</Parameters>
 		<Links Type="ULinksList" Size="360">
-			<elem Type="ULink">
+<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.DatasetMatrix.Generator1</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="StimulusInputs">PatternResponseAnalyzer</Connector>
 			</elem>
-			<elem Type="ULink">
+<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.LTZone</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="NeuronOutputs">PatternResponseAnalyzer</Connector>
 			</elem>
-			<elem Type="ULink">
+<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="CurrentClassMatrix">NeuronTimeLearnerBranch.DatasetMatrix</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="TargetClassInput">PatternResponseAnalyzer</Connector>
 			</elem>
@@ -1493,11 +1493,11 @@
 					<SynapseResistanceBase Type="d" PType="257" IoType="17">86000000</SynapseResistanceBase>
 					<ResistanceMin Type="d" PType="257" IoType="17">1000000</ResistanceMin>
 					<ResistanceMax Type="d" PType="257" IoType="17">100000000000</ResistanceMax>
-					<AttenuationGamma Type="d" PType="257" IoType="17">-1</AttenuationGamma>
+					<AttenuationGamma Type="d" PType="257" IoType="17">0.051058240866683924</AttenuationGamma>
 					<ResistanceAdjustGain Type="d" PType="257" IoType="17">0.40000000000000002</ResistanceAdjustGain>
-					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">1000000 25804100 22060700 86000000</TipSynapseResistance>
+					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">1000000 25639408,991733704 23314540,44970268 86000000</TipSynapseResistance>
 					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">85 46 25 1</DendriteLength>
-					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0,015781400000000001 0,015828600000000002 0,0157815 0,0196426</InitialSomaPotential>
+					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0,015781441626480985 0,015828572406229591 0,015781466599319449 0,019534788925495095</InitialSomaPotential>
 					<NumSynapse Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">1 1 1 1</NumSynapse>
 					<IterationGap Type="d" PType="257" IoType="17">1.5</IterationGap>
 					<SyncTolerance Type="d" PType="257" IoType="17">0.02</SyncTolerance>
@@ -1517,52 +1517,17 @@
 							<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 							<PulseGeneratorClassName Type="std::string" PType="257" IoType="17">NPulseGeneratorTransit</PulseGeneratorClassName>
 							<NumFeatures Type="i" PType="257" IoType="17">1</NumFeatures>
-							<NumSamples Type="i" PType="257" IoType="17">8</NumSamples>
+							<NumSamples Type="i" PType="257" IoType="17">1</NumSamples>
 							<MaxSpikesPerFeature Type="i" PType="257" IoType="17">4</MaxSpikesPerFeature>
-							<MatrixData Type="MDMatrix&lt;d&gt;" Rows="32" Cols="1" PType="257" IoType="17">0.01
+							<MatrixData Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0.01
 0.08
 0.16
-0.24
-0.01
-0.24
-0.16
-0.08
-0.01
-0.16
-0.08
-0.24
-0.01
-0.16
-0.16
-0.16
-0.01
-0.02
-0.22
-0.24
-0.01
-0.24
-0.22
-0.02
-0.01
-0.04
-0.04
-0.40
-0.01
-0.40
-0.04
-0.04</MatrixData>
-							<MatrixClasses Type="MDMatrix&lt;i&gt;" Rows="1" Cols="8" PType="257" IoType="17">1
-0
-0
-0
-0
-0
-0
-0</MatrixClasses>
+0.24</MatrixData>
+							<MatrixClasses Type="MDMatrix&lt;i&gt;" Rows="1" Cols="1" PType="257" IoType="17">0</MatrixClasses>
 							<Iteration Type="i" PType="257" IoType="17">0</Iteration>
 							<Delay Type="d" PType="257" IoType="17">1.5</Delay>
-							<AdvanceSampleAfterBurst Type="b" PType="257" IoType="17">1</AdvanceSampleAfterBurst>
-							<LoopSamples Type="b" PType="257" IoType="17">0</LoopSamples>
+							<AdvanceSampleAfterBurst Type="b" PType="257" IoType="17">0</AdvanceSampleAfterBurst>
+							<LoopSamples Type="b" PType="257" IoType="17">1</LoopSamples>
 						</Parameters>
 						<Components>
 							<Generator1 Class="NPulseGeneratorTransit">
@@ -1614,9 +1579,18 @@
 							<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
 							<NumSomaMembraneParts Type="i" PType="257" IoType="17">1</NumSomaMembraneParts>
 							<NumDendriteMembranePartsVec Type="simplevector" Size="1" elemType="i" PType="257" IoType="33">85</NumDendriteMembranePartsVec>
-							<TrainingPattern Type="MDMatrix&lt;d&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingPattern>
-							<TrainingDendIndexes Type="MDMatrix&lt;i&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingDendIndexes>
-							<TrainingSynapsisNum Type="MDMatrix&lt;i&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingSynapsisNum>
+							<TrainingPattern Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0.01
+0.08
+0.16
+0.24</TrainingPattern>
+							<TrainingDendIndexes Type="MDMatrix&lt;i&gt;" Rows="4" Cols="1" PType="257" IoType="17">85
+46
+25
+1</TrainingDendIndexes>
+							<TrainingSynapsisNum Type="MDMatrix&lt;i&gt;" Rows="4" Cols="1" PType="257" IoType="17">1
+1
+1
+1</TrainingSynapsisNum>
 						</Parameters>
 						<Components>
 							<Dendrite1_85 Class="NPMembraneBio">
@@ -2025,7 +1999,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">9131142.4969568867</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -2785,7 +2759,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">12576968.451141547</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -3545,7 +3519,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">16071611.194160899</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -4305,7 +4279,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">18514645.062708627</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -5065,7 +5039,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">20952458.617429115</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -5350,7 +5324,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">25804100</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">25639408.991733704</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -5825,7 +5799,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">24149623.388155904</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -6585,7 +6559,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">29064646.466462716</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -7345,7 +7319,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">22060700</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">23314540.44970268</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -8105,7 +8079,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">51102047.460552223</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
@@ -8865,7 +8839,7 @@
 											<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 											<Type Type="d" PType="257" IoType="17">-1</Type>
 											<PulseAmplitude Type="d" PType="257" IoType="17">1</PulseAmplitude>
-											<Resistance Type="d" PType="257" IoType="17">86000000</Resistance>
+											<Resistance Type="d" PType="257" IoType="17">72166693.715975538</Resistance>
 											<Weight Type="d" PType="257" IoType="17">1</Weight>
 											<TrainerClassName Type="std::string" PType="257" IoType="17"></TrainerClassName>
 											<SecretionTC Type="d" PType="257" IoType="17">0.001</SecretionTC>
