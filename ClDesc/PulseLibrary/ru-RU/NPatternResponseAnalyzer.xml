@@ -60,7 +60,7 @@
 		</TargetClassInput>
 		<PostPatternWindow>
 			<Header>Окно после паттерна</Header>
-			<Description>Секунды после последнего стимульного спайка для детекта ответа и закрытия trial.</Description>
+			<Description>Секунды после последнего стимульного спайка для neuron_fired/match (вовремя).</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -69,6 +69,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</PostPatternWindow>
+		<LateResponseWindow>
+			<Header>Окно позднего ответа</Header>
+			<Description>Секунды после последнего стимула для late_fired (должно быть ≥ PostPatternWindow). Trial закрывается по этому окну или при следующем паттерне.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LateResponseWindow>
 		<PulseDetectThreshold>
 			<Header>Порог детекта импульса</Header>
 			<Description>Rising-edge: prev ≤ порог &lt; now.</Description>
@@ -137,7 +148,7 @@
 		</TrialIndex>
 		<LastFired>
 			<Header>Последний: спайк</Header>
-			<Description>1 если нейрон сработал в последнем trial.</Description>
+			<Description>1 если нейрон сработал в окне PostPatternWindow.</Description>
 			<Type>| ptPubOutput | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -146,6 +157,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</LastFired>
+		<LastLateFired>
+			<Header>Последний: поздний спайк</Header>
+			<Description>1 если был rising edge после PostPatternWindow до LateResponseWindow.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastLateFired>
+		<LastErrorClass>
+			<Header>Последний: класс ошибки</Header>
+			<Description>ok / fn / fp / late_fn / late_fp.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastErrorClass>
 		<LastMatch>
 			<Header>Последний: совпадение</Header>
 			<Description>1 если ответ соответствует target_class.</Description>
@@ -159,7 +192,7 @@
 		</LastMatch>
 		<LastNeuronDelay>
 			<Header>Задержка ответа</Header>
-			<Description>t_spike − t_first_stim или −1.</Description>
+			<Description>t_spike − t_first_stim (in-window) или −1.</Description>
 			<Type>| ptPubOutput | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -168,6 +201,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</LastNeuronDelay>
+		<LastLateNeuronDelay>
+			<Header>Задержка позднего ответа</Header>
+			<Description>t_late_spike − t_first_stim или −1.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastLateNeuronDelay>
 		<LastIsi>
 			<Header>ISI trial</Header>
 			<Description>ISI стимульных спайков последнего trial.</Description>
@@ -193,6 +237,9 @@
 		<PostPatternWindow>
 			<Path>{CompName}:PostPatternWindow</Path>
 		</PostPatternWindow>
+		<LateResponseWindow>
+			<Path>{CompName}:LateResponseWindow</Path>
+		</LateResponseWindow>
 		<PulseDetectThreshold>
 			<Path>{CompName}:PulseDetectThreshold</Path>
 		</PulseDetectThreshold>
@@ -214,12 +261,21 @@
 		<LastFired>
 			<Path>{CompName}:LastFired</Path>
 		</LastFired>
+		<LastLateFired>
+			<Path>{CompName}:LastLateFired</Path>
+		</LastLateFired>
+		<LastErrorClass>
+			<Path>{CompName}:LastErrorClass</Path>
+		</LastErrorClass>
 		<LastMatch>
 			<Path>{CompName}:LastMatch</Path>
 		</LastMatch>
 		<LastNeuronDelay>
 			<Path>{CompName}:LastNeuronDelay</Path>
 		</LastNeuronDelay>
+		<LastLateNeuronDelay>
+			<Path>{CompName}:LastLateNeuronDelay</Path>
+		</LastLateNeuronDelay>
 		<LastIsi>
 			<Path>{CompName}:LastIsi</Path>
 		</LastIsi>

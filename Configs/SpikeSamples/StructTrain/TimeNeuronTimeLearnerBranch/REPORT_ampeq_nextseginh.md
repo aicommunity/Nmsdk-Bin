@@ -3,7 +3,8 @@
 Date: 2026-08-20  
 Компонент: `NNeuronTimeLearnerBranch` (один дендрит, N импульсов на разных сегментах).  
 Протокол: cold train `NeuroModelerConsole -t 160 -x -S` → sync Train→Test → test `-t 20 -x`.  
-Метрика: `NPatternResponseAnalyzer` → `SelectivityLog/results.csv` (`match` 0/1), 8 trials (1 target + 7 negative).
+Метрика: `NPatternResponseAnalyzer` → `SelectivityLog/results.csv` (`match` 0/1 + `error_class` / `late_fired`), 8 trials (1 target + 7 negative).
+`PostPatternWindow=0.5`, `LateResponseWindow=1.5` (поздние LTZone-спайки вне окна match → `late_fp` / `late_fn`).
 
 Код: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)  
 Алгоритм: [`ALGORITHM.md`](ALGORITHM.md)
@@ -96,46 +97,47 @@ ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/N
 
 ### 5.1 Сводка
 
-| Эксперимент | acc | fn | fp | FixedLTZ | L |
-|-------------|:---:|:--:|:--:|---------:|---|
-| Pre-amp-eq (R×N only, ранее) | **6/8** | 0 | 2 (4,6) | ≈0.066 | `[69,42,25,1]` |
-| **Baseline amp-eq** | **6/8** | 0 | 2 (**2**,6) | 0.0728 | `[85,46,25,1]` |
-| Static NextSegInh (XML, без retrain) | **7/8** | **1** | 0 | ≈0.066 | `[69,42,25,1]`+Inh |
-| **Trained NextSegInh** | **7/8** | **0** | 1 (6) | 0.0650 | `[89,46,25,1]`+Inh |
+| Эксперимент | acc | fn | fp | late_fp | late_fn | FixedLTZ | L |
+|-------------|:---:|:--:|:--:|:-------:|:------:|---------:|---|
+| Pre-amp-eq (R×N only, ранее) | **6/8** | 0 | 2 (4,6) | — | — | ≈0.066 | `[69,42,25,1]` |
+| **Baseline amp-eq** | **6/8** | 0 | 2 (**2**,6) | **2** (1,7) | 0 | 0.0728 | `[85,46,25,1]` |
+| Static NextSegInh (XML, без retrain) | **7/8** | **1** | 0 | — | — | ≈0.066 | `[69,42,25,1]`+Inh |
+| **Trained NextSegInh** | **7/8** | **0** | 1 (6) | **4** (1,2,5,7) | 0 | 0.0650 | `[89,46,25,1]`+Inh |
 
 ### 5.2 Baseline amp-eq — trials
 
 CSV: [`TimeNeuronTimeLearnerBranchTest/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest/SelectivityLog/results.csv)
 
-| trial | class | fired | soma_amp_sum | match |
-|------:|------:|------:|-------------:|------:|
-| 0 | 1 | 1 | 0.0728 | **1** |
-| 1 | 0 | 0 | 0.0426 | **1** |
-| 2 | 0 | 1 | 0.0729 | 0 |
-| 3 | 0 | 0 | 0.0559 | **1** |
-| 4 | 0 | 0 | 0.0719 | **1** |
-| 5 | 0 | 0 | 0.0418 | **1** |
-| 6 | 0 | 1 | 0.0751 | 0 |
-| 7 | 0 | 0 | 0.0431 | **1** |
+| trial | class | fired | late | late_t_rel | soma_amp_sum | match | error_class |
+|------:|------:|------:|-----:|-----------:|-------------:|------:|:-----------:|
+| 0 | 1 | 1 | 0 | — | 0.0728 | **1** | ok |
+| 1 | 0 | 0 | 1 | 1.21 | 0.0728 | **1** | **late_fp** |
+| 2 | 0 | 1 | 0 | — | 0.0729 | 0 | **fp** |
+| 3 | 0 | 0 | 0 | — | 0.0559 | **1** | ok |
+| 4 | 0 | 0 | 0 | — | 0.0719 | **1** | ok |
+| 5 | 0 | 0 | 0 | — | 0.0721 | **1** | ok |
+| 6 | 0 | 1 | 0 | — | 0.0751 | 0 | **fp** |
+| 7 | 0 | 0 | 1 | 1.17 | 0.0728 | **1** | **late_fp** |
 
-FP: trials **2** и **6** (soma ≈ thr / чуть выше).
+In-window FP: trials **2** и **6**. Дополнительно **2× late_fp** (1, 7).
 
 ### 5.3 Trained NextSegInh — trials
 
 CSV: [`TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv)
 
-| trial | class | fired | soma_amp_sum | match |
-|------:|------:|------:|-------------:|------:|
-| 0 | 1 | 1 | 0.0650 | **1** |
-| 1 | 0 | 0 | 0.0340 | **1** |
-| 2 | 0 | 0 | 0.0629 | **1** |
-| 3 | 0 | 0 | 0.0493 | **1** |
-| 4 | 0 | 0 | 0.0637 | **1** |
-| 5 | 0 | 0 | 0.0345 | **1** |
-| 6 | 0 | 1 | 0.0676 | 0 |
-| 7 | 0 | 0 | 0.0329 | **1** |
+| trial | class | fired | late | late_t_rel | soma_amp_sum | match | error_class |
+|------:|------:|------:|-----:|-----------:|-------------:|------:|:-----------:|
+| 0 | 1 | 1 | 0 | — | 0.0650 | **1** | ok |
+| 1 | 0 | 0 | 1 | 1.23 | 0.0650 | **1** | **late_fp** |
+| 2 | 0 | 0 | 1 | 0.99 | 0.0650 | **1** | **late_fp** |
+| 3 | 0 | 0 | 0 | — | 0.0507 | **1** | ok |
+| 4 | 0 | 0 | 0 | — | 0.0637 | **1** | ok |
+| 5 | 0 | 0 | 1 | 1.29 | 0.0650 | **1** | **late_fp** |
+| 6 | 0 | 1 | 0 | — | 0.0676 | 0 | **fp** |
+| 7 | 0 | 0 | 1 | 1.20 | 0.0650 | **1** | **late_fp** |
 
-Target (trial 0) стабильно выше thr; trial 2 стал TN; остался FP trial 6 (soma 0.0676 &gt; 0.065).
+In-window: **7/8** (fn=0, fp=1 на trial 6).  
+Дополнительно: **4× late_fp** (trials 1, 2, 5, 7) — спайк после `PostPatternWindow`, раньше не попадал в `match`/`fired`, но виден в GUI. `late_t_rel` от первого стимула паттерна (~0.5 с после последнего → порог ~0.98 с).
 
 ### 5.4 Static Inh (исторический, для сравнения)
 
@@ -154,9 +156,10 @@ Target (trial 0) стабильно выше thr; trial 2 стал TN; оста�
 ## 6. Выводы
 
 1. **Amp-eq** корректен по формуле и обязателен при перекосе `Initial` (особенно с Inh, где I_ref падает). Сам по себе на baseline cold-прогоне **не улучшил** accuracy (осталось 6/8); сдвинулся набор FP (4→2).
-2. **`EnableNextSegmentInhibition`** в learner воспроизводит ручную схему Exc@L + Inh@L+1, даёт **2N** links после Done и **7/8** без FN.
-3. Лучший текущий Branch-результат: **trained NextSegInh = 7/8** (лучше baseline 6/8; vs static Inh — тот же acc, но без fn).
-4. Оставшийся FP (trial 6) — кандитат на ослабление Inh (↑R), контраст / второй порог или доп. structural constraint — вне текущего scope.
+2. **`EnableNextSegmentInhibition`** в learner воспроизводит ручную схему Exc@L + Inh@L+1, даёт **2N** links после Done и **7/8** без FN по in-window `match`.
+3. Лучший текущий Branch-результат по `match`: **trained NextSegInh = 7/8** (лучше baseline 6/8; vs static Inh — тот же acc, но без fn).
+4. Анализатор теперь отдельно помечает **late_fp / late_fn** (`LateResponseWindow=1.5`). На NextSegInh при «чистых» 7/8 match есть **4 late_fp** — те самые запоздалые спайки, которые раньше пропускались CSV, но видны в GUI (settle ≈0.01×L ≈0.9 с > Post=0.5 с).
+5. Оставшийся in-window FP (trial 6) и late_fp на nontarget — кандидаты на ослабление Inh / контраст / второй порог — вне текущего scope.
 
 ---
 
