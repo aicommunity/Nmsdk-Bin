@@ -29,6 +29,11 @@ Dataset: `NumFeatures=1`, `MaxSpikesPerFeature=N`. `InputPattern` — ISI N×1.
 
 Done: все `PulseSynced[0..N-2]` и amp в ε (или best-effort).
 
+После sync+amp обучение **не** сразу ставит recognition-порог. Два завершающих этапа:
+
+1. **Параллельная нормализация R (1/N):** mute-обученные tip-R рассчитаны на один активный синапс. При recognition все N tip на одной цепи суммируют ток → `TipSynapseResistance[k] *= N` (`ScaleTipResistancesForParallelActivation`), затем все tip подключаются к `Generator1`.
+2. **Калибровка FixedLTZ:** фаза `CalibrateLtz` — один прогон паттерна с `TrainingLTZ` (без раннего спайка). Итерация **ждёт полный cable settle** (не early `all_locked`), иначе пик занижается. Непрерывный max сомы/`LTZ` → `FixedLTZThreshold = peak × CalibrateLTZThresholdFraction` (по умолчанию **0.99**, mode=`peak_fraction`, clamp `[CalibrateLTZThresholdMin, CalibrateLTZThresholdMax]`, max по умолчанию **1.0**). Затем `phase → Done`, `IsNeedToTrain=0`.
+
 Ожидаемые позиции: `L0 > L1 > L2 ≥ 1`, якорь `DendriteLength[N-1] ≥ 1` (обычно остаётся на 1).
 
 ## Линковка Generator1 → ExcSynapse1

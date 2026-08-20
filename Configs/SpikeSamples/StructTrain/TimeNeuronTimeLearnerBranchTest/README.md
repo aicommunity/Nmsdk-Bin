@@ -1,6 +1,6 @@
 # TimeNeuronTimeLearnerBranchTest
 
-Тест селективности обученного `NNeuronTimeLearnerBranch` на 8 стимулах (1 целевой + 7 отрицательных). Алгоритм обучения: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../TimeNeuronTimeLearnerBranch/ALGORITHM.md).
+Тест селективности обученного `NNeuronTimeLearnerBranch` на 8 стимулах (1 целевой + 7 отрицательных). Алгоритм: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../TimeNeuronTimeLearnerBranch/ALGORITHM.md).
 
 ## Прогон
 
@@ -10,44 +10,24 @@
   -s -t 20 -x
 ```
 
-## Состояние модели
+## Состояние модели (после обучения с R×N + CalibrateLtz)
 
-- `DendriteLength = [85, 46, 25, 1]`
-- `Generator1.Output` → 4 связи: `Dendrite1_85/46/25/1.ExcSynapse1`
+- `DendriteLength = [69, 42, 25, 1]`
+- `TipSynapseResistance` — уже после **R×N** (обучение)
+- `FixedLTZThreshold ≈ 0.066` — после **CalibrateLtz** (`peak×0.99`)
 - `IsNeedToTrain = 0`
-- Сопротивления синапсов: `R_test = 4 × R_trained` (нормализация 1/N при параллельной активации)
-- **`FixedLTZThreshold = LTZThreshold = LTZone.Threshold = 0.0724`**
 
-## Подбор порога LTZ
-
-Unconstrained-пики (`thr=1.0`, без спайка):
-
-| trial | class | soma_amp_sum |
-|-------|-------|--------------|
-| 0 | 1 | **0.0730** |
-| 1 | 0 | 0.0425 |
-| 2 | 0 | **0.0751** |
-| 3 | 0 | 0.0559 |
-| 4 | 0 | 0.0718 |
-| 5 | 0 | 0.0417 |
-| 6 | 0 | **0.1070** |
-| 7 | 0 | 0.0431 |
-
-Рабочее окно для 6/8: `thr ∈ (0.0718, 0.0730)` — цель срабатывает, 5 негативов отсекаются; trials 2 и 6 остаются FP (пик выше цели).
-
-Выбрано **`0.0724`**. Артефакты sweep: [`ltz_sweep/`](ltz_sweep/).
-
-## Результаты (`SelectivityLog/results.csv`) — thr=0.0724
+## Результаты (`SelectivityLog/results.csv`)
 
 | trial | target_class | neuron_fired | match | soma_amp_sum |
 |-------|--------------|--------------|-------|--------------|
-| 0 | 1 | 1 | **1** | 0.0724 |
-| 1 | 0 | 0 | **1** | 0.0425 |
-| 2 | 0 | 1 | 0 | 0.0725 |
-| 3 | 0 | 0 | **1** | 0.0559 |
-| 4 | 0 | 0 | **1** | 0.0718 |
-| 5 | 0 | 0 | **1** | 0.0417 |
-| 6 | 0 | 1 | 0 | 0.0750 |
-| 7 | 0 | 0 | **1** | 0.0431 |
+| 0 | 1 | 1 | **1** | 0.0660 |
+| 1 | 0 | 0 | **1** | 0.0468 |
+| 2 | 0 | 0 | **1** | 0.0660 |
+| 3 | 0 | 0 | **1** | 0.0483 |
+| 4 | 0 | 1 | 0 | 0.0661 |
+| 5 | 0 | 0 | **1** | 0.0411 |
+| 6 | 0 | 1 | 0 | 0.0686 |
+| 7 | 0 | 0 | **1** | 0.0426 |
 
-**Точность: 6/8** (FN=0, FP=2: permute mid / early-cluster). Совпадает с лучшим config-only результатом Phase A для классического TimeLearner.
+**Точность: 6/8** (FN=0, FP=2: trials 4 и 6). Достигнуто автоматически этапами Done обучения (без ручного масштаба R / подбора thr).
