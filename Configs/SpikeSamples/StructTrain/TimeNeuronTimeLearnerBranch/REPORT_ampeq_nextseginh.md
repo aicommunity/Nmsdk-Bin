@@ -56,8 +56,10 @@ ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/N
 |------|------|:--------:|:--------:|
 | Train baseline | [`TimeNeuronTimeLearnerBranch`](./) | 0 | — (train) |
 | Test baseline | [`TimeNeuronTimeLearnerBranchTest`](../TimeNeuronTimeLearnerBranchTest/) | 0 | **6/8** |
-| Train NextSegInh | [`TimeNeuronTimeLearnerBranch_NextSegInh`](../TimeNeuronTimeLearnerBranch_NextSegInh/) | 1 | — (train) |
-| Test NextSegInh | [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/) | 1 | **7/8** |
+| Train NextSegInh | [`TimeNeuronTimeLearnerBranch_NextSegInh`](../TimeNeuronTimeLearnerBranch_NextSegInh/) | 1 (seg) | — (train) |
+| Test NextSegInh | [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/) | 1 (seg) | **7/8** |
+| Train PreInh250 | [`TimeNeuronTimeLearnerBranch_PreInh250`](../TimeNeuronTimeLearnerBranch_PreInh250/) | PSI k=2.5 | — (train) |
+| Test PreInh250 | [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../TimeNeuronTimeLearnerBranchTest_PreInh250/) | PSI k=2.5 | **7/8** |
 | Static Inh (ручной XML, до learner-флага) | тот же Test_NextSegInh (старый прогон) | XML-hack | **7/8** (fn=1) |
 
 ---
@@ -91,6 +93,20 @@ ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/N
 
 С Inh mute-амплитуды distal ниже → I_ref падает, amp-eq якоря становится существенным (R tip3 ~ Base×45).
 
+### 4.3 PreInh250 (PSI k=2.5, без NextSegInh)
+
+| Параметр | Значение |
+|----------|----------|
+| `NeuronClassName` | `NSPNeuronGenPreinh2_5` |
+| tip Exc | `NPSynapseBioPreinh2_5` (`UsePresynapticInhibition=1`, `InhibitionCoeff=2.5`) |
+| `DendriteLength` | `[97, 50, 25, 1]` |
+| `InitialSomaPotential` | ≈`[0.0368, 0.0369, 0.0368, 0.224]` |
+| `TipSynapseResistance` | ≈`[4.00e6, 9.83e7, 8.20e7, 2.09e9]` |
+| `FixedLTZThreshold` | **0.1136** (peak×0.99) |
+| gen_links Done | 4 (Exc only) |
+
+PSI меняет форму tip-тока (`C=4k/R`); калибровка FixedLTZ по parallel peak даёт высокий порог (~0.114).
+
 ---
 
 ## 5. Результаты теста (8 trials)
@@ -103,6 +119,7 @@ ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/N
 | **Baseline amp-eq** | **6/8** | 0 | 2 (**2**,6) | **2** (1,7) | 0 | 0.0728 | `[85,46,25,1]` |
 | Static NextSegInh (XML, без retrain) | **7/8** | **1** | 0 | — | — | ≈0.066 | `[69,42,25,1]`+Inh |
 | **Trained NextSegInh** | **7/8** | **0** | 1 (6) | **4** (1,2,5,7) | 0 | 0.0650 | `[89,46,25,1]`+Inh |
+| **PreInh250 (PSI k=2.5)** | **7/8** | **1** (0) | **0** | **0** | 0 | 0.1136 | `[97,50,25,1]` |
 
 ### 5.2 Baseline amp-eq — trials
 
@@ -139,7 +156,24 @@ CSV: [`TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv`](.
 In-window: **7/8** (fn=0, fp=1 на trial 6).  
 Дополнительно: **4× late_fp** (trials 1, 2, 5, 7) — спайк после `PostPatternWindow`, раньше не попадал в `match`/`fired`, но виден в GUI. `late_t_rel` от первого стимула паттерна (~0.5 с после последнего → порог ~0.98 с).
 
-### 5.4 Static Inh (исторический, для сравнения)
+### 5.4 PreInh250 (PSI k=2.5) — trials
+
+CSV: [`TimeNeuronTimeLearnerBranchTest_PreInh250/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest_PreInh250/SelectivityLog/results.csv)
+
+| trial | class | fired | late | soma_amp_sum | match | error_class |
+|------:|------:|------:|-----:|-------------:|------:|:-----------:|
+| 0 | 1 | 0 | 0 | 0.0599 | 0 | **fn** |
+| 1 | 0 | 0 | 0 | 0.0568 | **1** | ok |
+| 2 | 0 | 0 | 0 | 0.0578 | **1** | ok |
+| 3 | 0 | 0 | 0 | 0.0454 | **1** | ok |
+| 4 | 0 | 0 | 0 | 0.0559 | **1** | ok |
+| 5 | 0 | 0 | 0 | 0.0524 | **1** | ok |
+| 6 | 0 | 0 | 0 | 0.0836 | **1** | ok |
+| 7 | 0 | 0 | 0 | 0.0785 | **1** | ok |
+
+**7/8**: fn на target (soma 0.060 &lt; FixedLTZ 0.114); fp=0; late_fp=0. Nontarget trial 6 (soma 0.084) тоже ниже порога — PSI+высокий FixedLTZ глушат и FP, и target.
+
+### 5.5 Static Inh (исторический, для сравнения)
 
 Ручная проводка на весах baseline R×N без amp-eq / без retrain с Inh:
 
@@ -157,9 +191,10 @@ In-window: **7/8** (fn=0, fp=1 на trial 6).
 
 1. **Amp-eq** корректен по формуле и обязателен при перекосе `Initial` (особенно с Inh, где I_ref падает). Сам по себе на baseline cold-прогоне **не улучшил** accuracy (осталось 6/8); сдвинулся набор FP (4→2).
 2. **`EnableNextSegmentInhibition`** в learner воспроизводит ручную схему Exc@L + Inh@L+1, даёт **2N** links после Done и **7/8** без FN по in-window `match`.
-3. Лучший текущий Branch-результат по `match`: **trained NextSegInh = 7/8** (лучше baseline 6/8; vs static Inh — тот же acc, но без fn).
-4. Анализатор теперь отдельно помечает **late_fp / late_fn** (`LateResponseWindow=1.5`). На NextSegInh при «чистых» 7/8 match есть **4 late_fp** — те самые запоздалые спайки, которые раньше пропускались CSV, но видны в GUI (settle ≈0.01×L ≈0.9 с > Post=0.5 с).
-5. Оставшийся in-window FP (trial 6) и late_fp на nontarget — кандидаты на ослабление Inh / контраст / второй порог — вне текущего scope.
+3. **PreInh250** (`NSPNeuronGenPreinh2_5`, k=2.5): тоже **7/8**, но ошибка другая — **fn** (target ниже FixedLTZ≈0.114), зато **fp=0 и late_fp=0**. Порог после CalibrateLtz выглядит завышенным относительно recognition-амплитуд.
+4. Лучший текущий Branch-результат по балансу ошибок: **trained NextSegInh = 7/8 без fn** (есть 1 fp + late_fp); PreInh250 — зеркально (fn без fp/late).
+5. Анализатор отдельно помечает **late_fp / late_fn** (`LateResponseWindow=1.5`).
+6. Кандидаты дальше: подстройка FixedLTZ / k для PreInh; ослабление seg-Inh для NextSegInh FP — вне текущего scope.
 
 ---
 
@@ -180,6 +215,16 @@ cmake --build build/linux-gcc-debug-local \
   -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranchTest_NextSegInh/Project.ini \
   -s -t 20 -x
 
+# PreInh250 test
+./Bin/Platform/Linux/NeuroModelerConsole \
+  -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranchTest_PreInh250/Project.ini \
+  -s -t 20 -x
+
+# Cold retrain PreInh250
+./Bin/Platform/Linux/NeuroModelerConsole \
+  -c Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranch_PreInh250/Project.ini \
+  -s -t 160 -x -S
+
 # Cold retrain NextSegInh (при необходимости)
 # Parameters: EnableNextSegmentInhibition=1, IsNeedToTrain=1, ResetToUntrainedState=1, L=1 1 1 1
 ./Bin/Platform/Linux/NeuroModelerConsole \
@@ -194,4 +239,6 @@ cmake --build build/linux-gcc-debug-local \
 - [`ALGORITHM.md`](ALGORITHM.md) — amp-eq и § EnableNextSegmentInhibition  
 - [`TimeNeuronTimeLearnerBranchTest/README.md`](../TimeNeuronTimeLearnerBranchTest/README.md)  
 - [`TimeNeuronTimeLearnerBranchTest_NextSegInh/README.md`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/README.md)  
-- [`TimeNeuronTimeLearnerBranch_NextSegInh/README.md`](../TimeNeuronTimeLearnerBranch_NextSegInh/README.md)
+- [`TimeNeuronTimeLearnerBranch_NextSegInh/README.md`](../TimeNeuronTimeLearnerBranch_NextSegInh/README.md)  
+- [`TimeNeuronTimeLearnerBranch_PreInh250/README.md`](../TimeNeuronTimeLearnerBranch_PreInh250/README.md)  
+- [`TimeNeuronTimeLearnerBranchTest_PreInh250/README.md`](../TimeNeuronTimeLearnerBranchTest_PreInh250/README.md)
