@@ -465,6 +465,39 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</UseAverageLTZonePotential>
+		<UseElementDefaults>
+			<Header>Переопределять параметры элементов</Header>
+			<Description>Если true, после сборки выставляет MembraneCapacity и SynapseDissociationTC на каналах/синапсах Soma и Dendrite (не LTMembrane). По умолчанию false — поведение старых классов без изменений.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseElementDefaults>
+		<MembraneCapacity>
+			<Header>Ёмкость мембраны (override)</Header>
+			<Description>Capacity Exc/Inh каналов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MembraneCapacity>
+		<SynapseDissociationTC>
+			<Header>Постоянная диссоциации синапса (override)</Header>
+			<Description>DissociationTC Exc/Inh синапсов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseDissociationTC>
 	</Properties>
 		<Favorites>
 		<StructureBuildMode>
@@ -500,6 +533,15 @@
 		<UseAverageLTZonePotential>
 			<Path>{CompName}:UseAverageLTZonePotential</Path>
 		</UseAverageLTZonePotential>
+		<UseElementDefaults>
+			<Path>{CompName}:UseElementDefaults</Path>
+		</UseElementDefaults>
+		<MembraneCapacity>
+			<Path>{CompName}:MembraneCapacity</Path>
+		</MembraneCapacity>
+		<SynapseDissociationTC>
+			<Path>{CompName}:SynapseDissociationTC</Path>
+		</SynapseDissociationTC>
 		<TrainingPattern>
 			<Path>{CompName}:TrainingPattern</Path>
 		</TrainingPattern>
