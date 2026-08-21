@@ -7,6 +7,9 @@
 - Tip Exc: `NPSynapseBioPreinh2_5` (`UsePresynapticInhibition=1`, `InhibitionCoeff=2.5`)
 - `DendriteLength = [97, 50, 25, 1]`, `FixedLTZ ≈ 0.1136`
 - Analyzer: `PostPatternWindow=0.5`, `LateResponseWindow=1.5`
+- Watch (`Interface.xml` tab_1 верхний): Pattern / Dendritic / Soma / `LTZone.Potential (вход)`
+
+Исследование порога: [`../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md`](../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md).
 
 ## Прогон
 
@@ -16,24 +19,28 @@
   -s -t 20 -x
 ```
 
-## Метрики
+## Sync checklist (обязательно после Train)
+
+Копировать с Train не только Neuron/TipR/FixedLTZ, но и learner-якоря (`MembraneClassName`, PSI, `AttenuationGamma`, …), **Generator→ExcSynapse** на сегменты `L[i]`, Dataset/Analyzer оставить тестовые.
+
+## Метрики (после полного sync)
 
 | | baseline amp-eq | NextSegInh | **PreInh250** |
 |--|:---:|:---:|:---:|
 | **acc (match)** | 6/8 | 7/8 | **7/8** |
-| fn | 0 | 0 | **1** (trial 0) |
-| fp | 2 | 1 | **0** |
-| late_fp | 2 | 4 | **0** |
+| fn | 0 | 0 | **0** |
+| fp | 2 | 1 | **1** (trial 6) |
+| late_fp | 2 | 4 | **3** (1, 2, 7) |
 
 | trial | class | fired | late | soma_sum | match | error_class |
 |------:|------:|------:|-----:|---------:|------:|:-----------:|
-| 0 | 1 | 0 | 0 | 0.0599 | 0 | fn |
-| 1 | 0 | 0 | 0 | 0.0568 | 1 | ok |
-| 2 | 0 | 0 | 0 | 0.0578 | 1 | ok |
-| 3 | 0 | 0 | 0 | 0.0454 | 1 | ok |
-| 4 | 0 | 0 | 0 | 0.0559 | 1 | ok |
-| 5 | 0 | 0 | 0 | 0.0524 | 1 | ok |
-| 6 | 0 | 0 | 0 | 0.0836 | 1 | ok |
-| 7 | 0 | 0 | 0 | 0.0785 | 1 | ok |
+| 0 | 1 | 1 | 0 | 0.1137 | 1 | ok |
+| 1 | 0 | 0 | 1 | 0.1136 | 1 | late_fp |
+| 2 | 0 | 0 | 1 | 0.1136 | 1 | late_fp |
+| 3 | 0 | 0 | 0 | 0.0868 | 1 | ok |
+| 4 | 0 | 0 | 0 | 0.1062 | 1 | ok |
+| 5 | 0 | 0 | 0 | 0.1047 | 1 | ok |
+| 6 | 0 | 1 | 0 | 0.1180 | 0 | fp |
+| 7 | 0 | 0 | 1 | 0.1140 | 1 | late_fp |
 
-Target soma (0.060) &lt; FixedLTZ (0.114) → FN; nontargets все ниже порога (в т.ч. trial 6). Late-спайков нет.
+Target soma ≈ FixedLTZ → детекция есть. Ошибки — fp/late_fp (как у NextSegInh), не FN от «завышенного» thr.

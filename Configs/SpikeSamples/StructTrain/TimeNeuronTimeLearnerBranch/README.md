@@ -34,8 +34,8 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
 
 | Вкладка | Что смотреть |
 |---------|----------------|
-| **tab_1** | ISI-паттерн, `Generator1`, `Neuron.Output`; **Soma Amplitudes** — пики по импульсам |
-| **tab_2** | `DendriteNeuronAmplitude`, суммы нейрона (`SomaSumPotential`, `DendriticSumPotential`, LTZone) |
+| **tab_1** (верхний) | `InputPattern`, `Generator1.Output`, `Neuron.DendriticSumPotential`, `Neuron.SomaSumPotential`, `LTZone.Potential (вход)`; нижний — **Soma Amplitudes** |
+| **tab_2** | `DendriteNeuronAmplitude`; **Neuron Sums** — `Output`, `SomaSumPotential`, `DendriticSumPotential`, `LTZone.Output` |
 
 Входной синапс: `Dendrite1_1.ExcSynapse1` (один на сегмент; активный импульс переключается mute).
 

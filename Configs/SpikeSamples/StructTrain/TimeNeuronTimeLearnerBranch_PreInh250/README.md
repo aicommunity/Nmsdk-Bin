@@ -23,4 +23,7 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
 | tip Exc class | `NPSynapseBioPreinh2_5` (Use=1, k=2.5) |
 | gen_links | 4 |
 
-Test: [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../TimeNeuronTimeLearnerBranchTest_PreInh250/) → **7/8** (fn=1, fp=0, late_fp=0).
+Test: [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../TimeNeuronTimeLearnerBranchTest_PreInh250/) → **7/8** (fn=0, fp=1, late_fp=3) после полного sync.  
+Порог: [`../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md`](../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md).
+
+Watch (верхний tab_1): `InputPattern`, `Generator1`, `DendriticSumPotential`, `SomaSumPotential`, `LTZone.Potential (вход)`.

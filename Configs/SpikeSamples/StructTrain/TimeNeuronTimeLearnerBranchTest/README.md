@@ -4,6 +4,8 @@
 
 Analyzer: `PostPatternWindow=0.5`, `LateResponseWindow=1.5`.
 
+Watch (`Interface.xml` tab_1 верхний): `InputPattern`, `Generator1.Output`, `Neuron.DendriticSumPotential`, `Neuron.SomaSumPotential`, `LTZone.Potential (вход)`.
+
 ## Прогон
 
 ```bash

@@ -7,7 +7,7 @@
 			<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
 			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 		</Parameters>
-		<Links Type="ULinksList" Size="361">
+		<Links Type="ULinksList" Size="409">
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.DatasetMatrix.Generator1</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="StimulusInputs">PatternResponseAnalyzer</Connector>
@@ -24,7 +24,6 @@
 				<Item Type="ULinkSide" Index="-1" Name="SomaNeuronAmplitude">NeuronTimeLearnerBranch</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="SomaAmplitudeInput">PatternResponseAnalyzer</Connector>
 			</elem>
-
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="AmpDtTrace">NeuronTimeLearnerBranch</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
@@ -63,10 +62,210 @@
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.DatasetMatrix.Generator1</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.ExcSynapse1</Connector>
-				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_46.ExcSynapse1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.ExcSynapse1</Connector>
+				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_50.ExcSynapse1</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_25.ExcSynapse1</Connector>
 				<Connector Type="ULinkSide" Index="-1" Name="Input">NeuronTimeLearnerBranch.Neuron.Dendrite1_1.ExcSynapse1</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.NegGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.PosGenerator</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_97.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_96.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_95.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_94.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_93.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_92.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_91.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_90.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_89.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_88.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_87.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.ExcSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.InhSynapse1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.InhChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.ExcChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.ExcChannel</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_86.InhChannel</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.ExcSynapse1</Item>
@@ -77,16 +276,8 @@
 				<Connector Type="ULinkSide" Index="-1" Name="SynapticInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.NegGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.ExcChannel</Connector>
-			</elem>
-			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.ExcChannel</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_84.ExcChannel</Connector>
-			</elem>
-			<elem Type="ULink">
-				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.PosGenerator</Item>
-				<Connector Type="ULinkSide" Index="-1" Name="ChannelInputs">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.InhChannel</Connector>
 			</elem>
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearnerBranch.Neuron.Dendrite1_85.InhChannel</Item>
@@ -1483,7 +1674,7 @@
 0
 0
 0</AdditionalInputPattern>
-					<LTZThreshold Type="d" PType="257" IoType="17">0.072807885788295543</LTZThreshold>
+					<LTZThreshold Type="d" PType="257" IoType="17">0.11357959727394464</LTZThreshold>
 					<FixedLTZThreshold Type="d" PType="257" IoType="17">0.11357959727394464</FixedLTZThreshold>
 					<TrainingLTZThreshold Type="d" PType="257" IoType="17">100</TrainingLTZThreshold>
 					<UseFixedLTZThreshold Type="b" PType="257" IoType="17">1</UseFixedLTZThreshold>
@@ -1497,11 +1688,11 @@
 					<SynapseResistanceBase Type="d" PType="257" IoType="17">86000000</SynapseResistanceBase>
 					<ResistanceMin Type="d" PType="257" IoType="17">1000000</ResistanceMin>
 					<ResistanceMax Type="d" PType="257" IoType="17">100000000000</ResistanceMax>
-					<AttenuationGamma Type="d" PType="257" IoType="17">0.05104001766356317</AttenuationGamma>
+					<AttenuationGamma Type="d" PType="257" IoType="17">0.11149328764989455</AttenuationGamma>
 					<ResistanceAdjustGain Type="d" PType="257" IoType="17">0.40000000000000002</ResistanceAdjustGain>
-					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">3995997.119386632 98332713.198566526 81981776.81797421 2094952254.6523354</TipSynapseResistance>
+					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">3995997,119386632 98332713,198566526 81981776,81797421 2094952254,6523354</TipSynapseResistance>
 					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">97 50 25 1</DendriteLength>
-					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0.036800573128298431 0.036911105784667719 0.036800632369021424 0.22433916248744246</InitialSomaPotential>
+					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0,036800573128298431 0,036911105784667719 0,036800632369021424 0,22433916248744246</InitialSomaPotential>
 					<NumSynapse Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">1 1 1 1</NumSynapse>
 					<IterationGap Type="d" PType="257" IoType="17">1.5</IterationGap>
 					<SyncTolerance Type="d" PType="257" IoType="17">0.02</SyncTolerance>
@@ -1510,6 +1701,7 @@
 					<ExperimentNum Type="i" PType="257" IoType="17">0</ExperimentNum>
 					<ExperimentMode Type="b" PType="257" IoType="17">0</ExperimentMode>
 					<EnableDebug Type="b" PType="257" IoType="17">1</EnableDebug>
+					<EnableNextSegmentInhibition Type="b" PType="257" IoType="17">0</EnableNextSegmentInhibition>
 				</Parameters>
 				<Components>
 					<DatasetMatrix Class="NDatasetMatrix">
@@ -10985,7 +11177,7 @@
 				</Parameters>
 				<Components/>
 			</StatisticDoubleMatrix>
-			<PatternResponseAnalyzer Class="NPatternResponseAnalyzer">
+		<PatternResponseAnalyzer Class="NPatternResponseAnalyzer">
 				<Parameters>
 					<Activity Type="b" PType="257" IoType="17">1</Activity>
 					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
