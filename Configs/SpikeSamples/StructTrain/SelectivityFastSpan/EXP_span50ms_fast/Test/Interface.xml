@@ -132,7 +132,7 @@
 		<RowSplitter_1_0>100</RowSplitter_1_0>
 		<graph_0>
 			<VizKind>TimeSeries</VizKind>
-			<ChartTitle>Pattern and Trigger</ChartTitle>
+			<ChartTitle>Pattern: ISI + Stimulus</ChartTitle>
 			<AxisXName>time, sec</AxisXName>
 			<AxisYName>Output parameter</AxisYName>
 			<AxisYmin>-0.10000000000000001</AxisYmin>
@@ -147,11 +147,11 @@
 			<UpdateIntervalMs>200</UpdateIntervalMs>
 			<SeriesCount>6</SeriesCount>
 			<serie_0>
-				<SerieName>InputPattern(0,0)</SerieName>
+				<SerieName>ISI dend1</SerieName>
 				<SerieWidth>1</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-10777105</SerieColor>
-				<SerieYShift>0</SerieYShift>
+				<SerieYShift>0.15</SerieYShift>
 				<SerieEnabled>1</SerieEnabled>
 				<SerieChannel>0</SerieChannel>
 				<SerieWindowSize>22016</SerieWindowSize>
@@ -175,11 +175,11 @@
 				<SerieYSlice>0</SerieYSlice>
 			</serie_0>
 			<serie_1>
-				<SerieName>InputPattern(1,0)</SerieName>
+				<SerieName>ISI dend2</SerieName>
 				<SerieWidth>1</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-15681151</SerieColor>
-				<SerieYShift>0</SerieYShift>
+				<SerieYShift>0.3</SerieYShift>
 				<SerieEnabled>1</SerieEnabled>
 				<SerieChannel>0</SerieChannel>
 				<SerieWindowSize>22016</SerieWindowSize>
@@ -203,11 +203,11 @@
 				<SerieYSlice>0</SerieYSlice>
 			</serie_1>
 			<serie_2>
-				<SerieName>InputPattern(2,0)</SerieName>
+				<SerieName>ISI dend3</SerieName>
 				<SerieWidth>1</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-7643914</SerieColor>
-				<SerieYShift>0</SerieYShift>
+				<SerieYShift>0.45</SerieYShift>
 				<SerieEnabled>1</SerieEnabled>
 				<SerieChannel>0</SerieChannel>
 				<SerieWindowSize>22016</SerieWindowSize>
@@ -231,11 +231,11 @@
 				<SerieYSlice>0</SerieYSlice>
 			</serie_2>
 			<serie_3>
-				<SerieName>InputPattern(3,0)</SerieName>
+				<SerieName>ISI dend4</SerieName>
 				<SerieWidth>1</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-16337196</SerieColor>
-				<SerieYShift>0</SerieYShift>
+				<SerieYShift>0.6</SerieYShift>
 				<SerieEnabled>1</SerieEnabled>
 				<SerieChannel>0</SerieChannel>
 				<SerieWindowSize>22016</SerieWindowSize>
@@ -259,8 +259,8 @@
 				<SerieYSlice>0</SerieYSlice>
 			</serie_3>
 			<serie_4>
-				<SerieName>Generator1.Output</SerieName>
-				<SerieWidth>1</SerieWidth>
+				<SerieName>Stimulus</SerieName>
+				<SerieWidth>2</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-1096636</SerieColor>
 				<SerieYShift>0</SerieYShift>
@@ -287,7 +287,7 @@
 				<SerieYSlice>0</SerieYSlice>
 			</serie_4>
 			<serie_5>
-				<SerieName>Neuron.Output</SerieName>
+				<SerieName>Neuron spike</SerieName>
 				<SerieWidth>1</SerieWidth>
 				<SerieLineType>1</SerieLineType>
 				<SerieColor>-6750055</SerieColor>
@@ -490,7 +490,7 @@
 		<RowSplitter_1_0>1097</RowSplitter_1_0>
 		<graph_0>
 			<VizKind>TimeSeries</VizKind>
-			<ChartTitle>Dendrite Amplitudes</ChartTitle>
+			<ChartTitle>Dendrite Amplitudes + Stimulus</ChartTitle>
 			<AxisXName>time, sec</AxisXName>
 			<AxisYName>Output parameter</AxisYName>
 			<AxisYmin>-0.01</AxisYmin>
@@ -503,7 +503,7 @@
 			<TrackLatest>1</TrackLatest>
 			<InteractionMode>0</InteractionMode>
 			<UpdateIntervalMs>200</UpdateIntervalMs>
-			<SeriesCount>5</SeriesCount>
+			<SeriesCount>7</SeriesCount>
 			<serie_0>
 				<SerieName>DendriteAmplitude(sum)</SerieName>
 				<SerieWidth>1</SerieWidth>
@@ -644,6 +644,63 @@
 				<SerieYJy>0</SerieYJy>
 				<SerieYSlice>0</SerieYSlice>
 			</serie_4>
+			<serie_5>
+				<SerieName>Stimulus</SerieName>
+				<SerieWidth>2</SerieWidth>
+				<SerieLineType>1</SerieLineType>
+				<SerieColor>-16777216</SerieColor>
+				<SerieYShift>0</SerieYShift>
+				<SerieEnabled>1</SerieEnabled>
+				<SerieChannel>0</SerieChannel>
+				<SerieWindowSize>22016</SerieWindowSize>
+				<SerieXyMinIntervalMs>0</SerieXyMinIntervalMs>
+				<SerieXyMinDistance>0</SerieXyMinDistance>
+				<SerieNameComponent>NeuronTimeLearner.DatasetMatrix.Generator1</SerieNameComponent>
+				<SerieNameProperty>Output</SerieNameProperty>
+				<SerieJx>0</SerieJx>
+				<SerieJy>0</SerieJy>
+				<SerieXKind>0</SerieXKind>
+				<SerieXComponent></SerieXComponent>
+				<SerieXProperty></SerieXProperty>
+				<SerieXJx>-1</SerieXJx>
+				<SerieXJy>-1</SerieXJy>
+				<SerieXSlice>0</SerieXSlice>
+				<SerieYKind>1</SerieYKind>
+				<SerieYComponent>NeuronTimeLearner.DatasetMatrix.Generator1</SerieYComponent>
+				<SerieYProperty>Output</SerieYProperty>
+				<SerieYJx>0</SerieYJx>
+				<SerieYJy>0</SerieYJy>
+				<SerieYSlice>0</SerieYSlice>
+			</serie_5>
+			<serie_6>
+				<SerieName>Neuron spike</SerieName>
+				<SerieWidth>1</SerieWidth>
+				<SerieLineType>1</SerieLineType>
+				<SerieColor>-6750055</SerieColor>
+				<SerieYShift>0</SerieYShift>
+				<SerieEnabled>1</SerieEnabled>
+				<SerieChannel>0</SerieChannel>
+				<SerieWindowSize>22016</SerieWindowSize>
+				<SerieXyMinIntervalMs>0</SerieXyMinIntervalMs>
+				<SerieXyMinDistance>0</SerieXyMinDistance>
+				<SerieNameComponent>NeuronTimeLearner.Neuron</SerieNameComponent>
+				<SerieNameProperty>Output</SerieNameProperty>
+				<SerieJx>0</SerieJx>
+				<SerieJy>0</SerieJy>
+				<SerieXKind>0</SerieXKind>
+				<SerieXComponent></SerieXComponent>
+				<SerieXProperty></SerieXProperty>
+				<SerieXJx>-1</SerieXJx>
+				<SerieXJy>-1</SerieXJy>
+				<SerieXSlice>0</SerieXSlice>
+				<SerieYKind>1</SerieYKind>
+				<SerieYComponent>NeuronTimeLearner.Neuron</SerieYComponent>
+				<SerieYProperty>Output</SerieYProperty>
+				<SerieYJx>0</SerieYJx>
+				<SerieYJy>0</SerieYJy>
+				<SerieYSlice>0</SerieYSlice>
+			</serie_6>
+
 		</graph_0>
 		<graph_1>
 			<VizKind>TimeSeries</VizKind>
