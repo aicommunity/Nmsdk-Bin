@@ -112,3 +112,16 @@ SelectivityFastSpan 100/50/25 × fast (± Preinh с UseElementDefaults).
 
 ### Commit
 (ниже)
+
+---
+
+## 2026-08-22 — FastSpan D/C fix + valid re-run
+
+### Цель
+Закрыть артефакт: Preinh без UploadClass D/C; R1 Test Model не из Train.
+
+### Исправления
+- `NSPNeuronGenPreinh2_5D002C25e11`; tip Build → `ApplyElementDefaults`; fail-hard sync + verify.
+
+### Результат
+Verify PASS (D=0.002, C=2.5e-10 на всех 8 Train/Test). Селективность: снова **все fire_all**. Старый R1 invalidated. См. `SelectivityFastSpan/REPORT.md`.

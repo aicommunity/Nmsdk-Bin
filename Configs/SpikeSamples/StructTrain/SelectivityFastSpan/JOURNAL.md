@@ -64,3 +64,25 @@ Cold: TipR=86e6×4, L=1, ResistanceAdjustGain=0.4, Delay=1.5, ResetToUntrainedSt
 
 ### Вывод
 На 25 мс разные ISI не дают различимой амплитуды на соме после обучения — нужна другая метрика/механика селективности, не только C/D и SyncTol.
+
+---
+
+## 2026-08-22 — Fix D/C + valid re-run (все 8 EXP)
+
+### Цель
+Устранить Bio defaults у Preinh и битый Train→Test sync; перепрогнать с verify.
+
+### Изменения
+- UploadClass `NSPNeuronGenPreinh2_5D002C25e11` (Preinh mem + UED D=0.002 C=2.5e-10).
+- `ApplyElementDefaults` после tip/`ChangeSynapseNumber` Build; метод public.
+- `setup_fastspan.sh`: 8 EXP, новый класс, ts10k, ProjectName/README; inject cold Test.
+- `merge_train_weights`: +NeuronClassName/UED/D/C; `run_fastspan.sh`: fail-hard sync + verify.
+
+### Verify
+Все Train/Test Model: Dissoc=0.002, Cap=2.5e-10; preinh InhCoeff=2.5; L Train≡Test.
+
+### Результаты (`grid_summary.csv`)
+Все 8: Acc 1/8, fire_all, gate FAIL (target_hit=1, fp=7).
+
+### Вывод
+При **валидных** узких EPSP на Train+Test гипотеза «только узкий EPSP» недостаточна для селективности на span ≤100 мс. Старый R1 invalidated (см. REPORT).

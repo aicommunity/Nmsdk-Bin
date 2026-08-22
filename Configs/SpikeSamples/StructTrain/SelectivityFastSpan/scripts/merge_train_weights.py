@@ -26,6 +26,10 @@ TAGS = [
     "CalibrateLTZThresholdFraction",
     "CalibrateLTZThresholdMin",
     "CalibrateLTZThresholdMax",
+    "NeuronClassName",
+    "UseElementDefaults",
+    "MembraneCapacity",
+    "SynapseDissociationTC",
 ]
 
 

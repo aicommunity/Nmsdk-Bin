@@ -2,7 +2,10 @@
 
 ## Вердикт
 
-Корректной сходимости селективности для **span паттерна** 100 / 50 / 25 мс (после сжатия эталона 0.48 с) добиться не удалось, кроме Preinh@100 мс (Acc 5/8) в старых PresynapticInhib прогонах. На 50/25 мс доминирует перестрел (`fire_all`) при завершённом обучении. Ускорение EPSP (SelectivityFastResponse) на несжатом паттерне не закрыло сжатые span (SelectivityFastSpan — все EXP fire_all).
+Корректной сходимости селективности для **span паттерна** 100 / 50 / 25 мс (после сжатия эталона 0.48 с) добиться не удалось.  
+**SelectivityFastSpan re-run 2026-08-22** (D=0.002, C=2.5e-10 на Train+Test, Preinh=`NSPNeuronGenPreinh2_5D002C25e11`, verify PASS): все 8 EXP — `fire_all`.  
+Старый FastSpan R1 **невалиден** (Preinh на Bio EPSP; R1 Test Model не из Train). Подробности: `StructTrain/SelectivityFastSpan/REPORT.md`.  
+Ускорение EPSP (SelectivityFastResponse) на несжатом паттерне также не дало селективности (fp=7).
 
 ## Эталон и сжатие
 
@@ -38,10 +41,10 @@
 | Мембрана τ | `NeuralElements/ChannelRcSweep/` | `cells/3a_C*`, `3b_C*` | C ∈ {1e-9…1e-10}, D=5 мс / 1 мс |
 | Dual-pulse | `NeuralElements/TipEpsCombined/` | `cells/D*_ISI*`, `CH_D001_C*_ISI25` | sep на ISI 16.7/8.3/4.2 мс |
 | Сетка D×C | `StructTrain/SelectivityFastResponse/` | `EXP00CtrlExp04`, `EXPD00{5,2,1}C*` | несжатый паттерн, latency |
-| Сжатые span | `StructTrain/SelectivityFastSpan/` | `EXP_span{100,50,25}ms_fast[_preinh][_ts10k]` | quality-gate селективности |
+| Сжатые span | `StructTrain/SelectivityFastSpan/` | `EXP_span{100,50,25}ms_fast[_preinh][_ts10k]` | quality-gate; Preinh=`…Preinh2_5D002C25e11` |
 
-Рабочая пара после бенчей: **D=0.002, C=2.5e-10** → `NSPNeuronGenD002C25e11`  
-(детали параметров — в `…/REPORT.md` каждого набора).
+Рабочая пара после бенчей: **D=0.002, C=2.5e-10** → `NSPNeuronGenD002C25e11` / `NSPNeuronGenPreinh2_5D002C25e11`.  
+После фикса UploadClass+sync (2026-08-22) gate всё ещё FAIL — см. FastSpan REPORT.
 
 ## Gate для элементных бенчей (до SyncTol-tune)
 

@@ -1,18 +1,20 @@
-## EXP20_span100ms_baseline — Test
+## EXP_span100ms_fast — Test
 
-**Путь:** `Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP20_span100ms_baseline/Test`  
-**Статус:** экспериментальный конфиг SelectivityPresynapticInhib (time-compress)
+**Путь:** `Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/EXP_span100ms_fast/Test`
 
 ### Параметры
 
-- **NeuronClassName:** `NSPNeuronGen`
-- **span:** 100 мс (α=0.208333)
-- **SyncTolerance / PeakMeasureMargin / DelayAgreeMarginMin:** 0.00416667 / 0.00583333 / 0.00583333
+- **NeuronClassName:** `NSPNeuronGenD002C25e11`
+- **kind:** fast
+- **span:** 100 мс
+- **GlobalTimeStep:** 2000
+- **Element defaults:** DissociationTC=0.002, MembraneCapacity=2.5e-10 (UseElementDefaults via UploadClass)
 
 ### Использование
 
 ```bash
-NeuroModelerConsole -c /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP20_span100ms_baseline/Test/Project.ini -s -t 20 -x
+NeuroModelerConsole -c Project.ini -s -t 160 -x -S   # Train
+NeuroModelerConsole -c Project.ini -s -t 20 -x       # Test
 ```
 
-Родитель: [`../README.md`](../README.md) · [`../../REPORT_time_compress.md`](../../REPORT_time_compress.md).
+Родитель: [`../../REPORT.md`](../../REPORT.md).
