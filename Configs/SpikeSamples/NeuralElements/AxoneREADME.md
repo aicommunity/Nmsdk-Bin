@@ -10,7 +10,7 @@ Smoke / compare configs for PulseLib axon models (`NAxone*`).
 
 Общий вход: `NPGenerator` 10 Hz, pulse 1 ms. `DefaultTimeStep=2000`.
 
-**Регенеративный сегмент:** `Inertial` (`Bias=-1`) → ExcChannel; `PosGenerator`(+1) → InhChannel; `LTZone` ↔ `Soma` feedback (как минимальный нейрон). `LTZone.Threshold=0.0115` (не дефолт класса `1e-5`).
+**Регенеративный сегмент:** `Inertial` (`Bias=-1`) → ExcChannel; `PosGenerator`(+1) → InhChannel; `LTZone` ↔ `Soma` feedback (как минимальный нейрон). `LTZone.Threshold=0.03` (не дефолт класса `1e-5`; для минимального сегмента без синапсов значение StructTrain `0.0115` слишком низко — LTZ срабатывает на первом шаге импульса).
 
 Раскладка на схеме: Inertial (2,6.5), PosGenerator (2,2), Soma (8,4.5), LTZone (14,4.5); в Chain сегменты с шагом 18 по X; в ChainAndDelay — зазоры 2 (0.5 блока) между Segment(~16) и Delay(~4), period=24.
 
