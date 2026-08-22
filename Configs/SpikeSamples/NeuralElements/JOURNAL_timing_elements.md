@@ -34,6 +34,8 @@
 
 ### Конфиги / параметры
 - `SynapseBioTcSweep/cells/D005|D002|D001|D0005`
+  - общие: `NPSynapseBio`, SecretionTC=0.001, Delay=0.05, Frequency=2 Hz, GlobalTimeStep=2000
+  - `D005`: Dissoc=0.005; `D002`: 0.002; `D001`: 0.001; `D0005`: 0.0005
 - `MAX_JOBS=4`, `SIM_T=3`, `NeuroModelerConsole -s -t 3 -x`
 
 ### Наблюдения
@@ -55,6 +57,11 @@ ChannelRcSweep 3a (D=0.005 фикс) и 3b (D=0.001).
 ### Цель
 Связать Capacity с мембранной τ при Bio FB=1e7.
 
+### Конфиги / параметры
+- `ChannelRcSweep/cells/3a_C{1e9,5e10,25e11,1e10}` — Dissoc=0.005, FBResistance=1e7
+- `ChannelRcSweep/cells/3b_C{1e9,5e10,25e11,1e10}` — Dissoc=0.001, те же C
+- общие: `NPExcChannelBio`, SecretionTC=0.001, Delay=0.05, Frequency=2, GlobalTimeStep=2000
+
 ### Наблюдения
 τ_fit ≈ C·1e7: при C=1e-9 → 9.75 мс; C=2.5e-10 → 2.24 мс; C=1e-10 → 0.72 мс. Dissoc на τ до импульса не влияет.
 
@@ -71,6 +78,10 @@ TipEps dual-pulse.
 ### Цель
 Separability двух EPSP синапса на ISI 16.7/8.3/4.2 мс.
 
+### Конфиги / параметры
+- синапс: `TipEpsCombined/cells/D{005,002,001}_ISI{100,50,25}` — Dissoc×ISI, Frequency=1/ISI, Delay=0.05, SecretionTC=0.001
+- канал (справ.): `cells/CH_D001_C{1e9,5e10,25e11,1e10}_ISI25` — C×ISI25, Delay=0.2, FB=1e7
+
 ### Наблюдения
 Все D×ISI прошли sep≥0.30; на ISI25 Bio D=5 мс sep=0.47 (впритык), D=0.001 sep=0.98. Два независимых Gen на один Input не сработали — используем Frequency=1/ISI.
 
@@ -86,6 +97,12 @@ SelectivityFastSpan 100/50/25 × fast (± Preinh с UseElementDefaults).
 
 ### Цель
 Закрыть петлю: элементы → обучение на 100/50/25 мс → эскалация Peak/dt.
+
+### Конфиги / параметры
+- R1: `SelectivityFastSpan/EXP_span{100,50,25}ms_fast` — `NSPNeuronGenD002C25e11`, UED=1, D=0.002, C=2.5e-10, TS=2000
+- R1 Preinh: `EXP_span{100,50,25}ms_fast_preinh` — `NSPNeuronGenPreinh2_5`, k=2.5, intent D/C как у fast
+- escalate: `EXP_span25ms_fast[_preinh]_ts10k` — GlobalTimeStep=10000, FixedLTZ=0.04
+- детали: `SelectivityFastSpan/REPORT.md`
 
 ### Наблюдения
 Рабочая пара D=0.002, C=2.5e-10 подтверждена бенчами. FastSpan все EXP — fire_all. Peak floor fix и TimeStep=10k+thr0.04 не дали селективности; soma_amp_sum одинаков на всех trials.
