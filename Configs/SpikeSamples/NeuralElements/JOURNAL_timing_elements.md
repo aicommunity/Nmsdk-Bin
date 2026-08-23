@@ -32,3 +32,9 @@
 
 ### Вывод
 Узкий EPSP необходим, но недостаточен для селективности на сжатых span при текущем learner. Следующий этап — алгоритм / Preinh / tip, не повторный sweep без новой гипотезы.
+
+---
+
+## 2026-08-23 — SelectivityLtzCalibrate (structural learning analysis)
+
+Глубокий анализ train↔test gap и LTZ readout: [`SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`](../StructTrain/SelectivityLtzCalibrate/ANALYSIS_structural_learning.md).
