@@ -610,3 +610,55 @@ Warm/smoke доказывает целостность sync. Tier 0 провер
 **Вывод historical:** корень — batch train stall / AutoCalibrate не вызван; sync pipeline после fix валиден.
 
 **Sync fix:** `merge_train_model.py` + inject in-place + `--test` merge + `StructureBuildMode=1` на test D002.
+
+---
+
+## Tier 0 results (2026-08-23, protocol lock)
+
+**Gate:** warm/smoke PASS — [REGRESSION.md](REGRESSION.md). Протокол: `USE_FRESH_MODEL=1`, `verify_train_done.py`, `TRAIN_T=160`, `ALLOW_PARTIAL_TRAIN=1` для диагностики.
+
+### Pilot span100 gen (TRAIN_T sweep)
+
+| TRAIN_T | NeedTrain | L | FixedLTZ | verify |
+|---------|-----------|---|----------|--------|
+| 160 | 1 | 23 19 13 1 | 0.0115 | FAIL |
+| 320 | 1 | 23 19 12 1 | 0.0115 | FAIL |
+| 480 | 1 | 23 19 12 1 | 0.0115 | FAIL |
+
+**Вывод:** увеличение `-t` не доводит classic TimeLearner до Done на D002 span100.
+
+### FastSpanLtzCal grid (classic TimeLearner)
+
+| EXP | acc | mode | L | FixedLTZ |
+|-----|-----|------|---|----------|
+| span100 gen | 1/8 | fire_all | 23 19 13 1 | 0.0115 |
+| span100 preinh | 1/8 | fire_all | 23 20 11 1 | 0.0115 |
+| span50 gen/preinh | 1/8 | fire_all | ~12 10 7 1 | 0.0115 |
+| span25 gen/preinh | 1/8 | fire_all | ~6 6/5 4 1 | 0.0115 |
+
+**P1-soft:** train не Done на classic → AutoCalibrate не вызван → mass `fire_all` при FixedLTZ=0.0115.
+
+### Separability / A1 sweep
+
+- **ISI exact template (offline):** 8/8 на всех 6 EXP → проблема readout/LTZ gate, не отсутствие separability в soma.
+- **LTZ sweep:** span25 preinh offline **6/8** при `thr≈0.0144`, `target_hit=1` (при train Done порог был бы близок).
+
+### BranchFastSpan (TimeNeuronTimeLearnerBranch)
+
+| EXP | train Done | FixedLTZ | test acc |
+|-----|------------|----------|----------|
+| span100 gen | ✅ | 0.10 | 1/8 fire_all |
+| span25 gen | ✅ | 0.029 | **4/8** partial |
+
+**Вывод:** Branch learner **достигает Done + CalibrateLtz** на D002; classic — нет. Tier 0b classic C++ **отложен**; приоритет — Branch path или исследование stall classic.
+
+### Закрытие sprint
+
+| Долг | Статус |
+|------|--------|
+| P0 sync + warm gate | ✅ |
+| verify_train_done + protocol | ✅ |
+| Tier 0 classic acc | 🔴 P1-soft (documented); acc → backlog B1 |
+| Tier 0b classic C++ | ⏸ skipped (train not Done) |
+| Branch train+test | 🟡 span25 4/8; span100 fire_all |
+| A1 sweep | ✅ выполнен |

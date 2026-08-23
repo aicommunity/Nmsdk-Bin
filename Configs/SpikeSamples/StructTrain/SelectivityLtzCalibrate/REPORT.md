@@ -2,32 +2,43 @@
 
 Кампания глубокого анализа структурного обучения на коротких ISI. Полный план: [ANALYSIS_structural_learning.md](ANALYSIS_structural_learning.md).
 
-## Статус (2026-08-23)
+## Статус (2026-08-23, sprint close)
 
 | Этап | Статус |
 |------|--------|
 | Sync pipeline (merge_train_model + inject in-place) | ✅ |
-| Sync gate (smoke + warm golden) | ✅ — [REGRESSION.md](REGRESSION.md) |
-| RegressionFull480 cold retrain | ➖ **не gate** (новые syn/dend params могут не сходиться на Bio full480) |
-| FastSpanLtzCal grid | ✅ прогнан — см. [grid_summary.csv](grid_summary.csv) |
-| BranchFastSpan setup | ✅ конфиги готовы |
-| C++ MatchMode / PatternRecognition | ✅ (rebuild NeuroModeler) |
+| Warm/smoke gate | ✅ — [REGRESSION.md](REGRESSION.md) |
+| `verify_train_done.py` + fresh Model protocol | ✅ |
+| Cold Bio baseline retrain | ➖ не gate |
+| FastSpanLtzCal classic grid | 🟡 P1-soft — 6/6 fire_all (train not Done) |
+| BranchFastSpan grid | 🟡 span25 **4/8** partial; span100 1/8 fire_all |
+| Tier 0b classic C++ | ⏸ skipped (classic train stall) |
+| A1 LTZ sweep + separability | ✅ |
 
-## Regression PASS (sync fix)
+## Regression (sync fix)
 
-- **Корневая причина fire_all:** `inject_analyzer.py` заменял test Model train Model (stale L=97).
-- **Исправление:** `merge_train_model.py` мержит только weight-теги; inject in-place; не трогать `StructureBuildMode=1` в test Model.
-- **Warm gate:** `run_regression_warm.sh` — golden Parameters → sync → test (5/8 gen, 6/8 preinh).
-- Эталоны fires обновлены под текущий NeuroModeler: `10101010` / `10001010`.
+- Warm gate: golden → sync → test **5/8 + 6/8** (`verify_regression.py --mode warm`).
+- Cold Bio retrain optional; не блокирует grid.
+
+## Tier 0 classic (TimeLearner + D002)
+
+Pilot span100: TRAIN_T 160/320/480 — train **не Done**, FixedLTZ=0.0115.
+
+Grid (6 EXP, `-t 160`): все **fire_all**, FixedLTZ cold. Root cause: classic learner не завершает structural sync на D002 в batch.
+
+Separability: offline ISI template **8/8**; LTZ sweep span25 preinh до **6/8** при ручном thr.
+
+## Branch (TimeNeuronTimeLearnerBranch + D002)
+
+Train **Done** + AutoCalibrate на обоих EXP. Test: span25 gen **4/8** (partial), span100 gen 1/8 fire_all.
+
+## Backlog
+
+- Classic train stall на D002 (GUI vs batch, EndOfLearning conditions).
+- B1 template readout (offline 8/8 → wiring MatchMode).
+- Branch span100 readout; amp-eq / NextSegInh из Branch REPORT.
+- B3, C1–C4, Tier D — см. JOURNAL.
 
 ## Data hygiene
 
-- Источник весов: **Train/Parameters_00.xml** (не stale Train Model).
-- Runtime: см. [.gitignore](.gitignore).
-
-## Tier 0 / Branch
-
-- Grid: [grid_summary.csv](grid_summary.csv) — 5/6 fire_all; span25 gen 7/8 silent.
-- Separability: [separability_tier0.csv](separability_tier0.csv)
-- BranchFastSpan: train+sync+test завершён (2 EXP)
-- Append Tier 0: [ANALYSIS §Tier 0 results](ANALYSIS_structural_learning.md)
+Runtime артефакты не коммитятся — см. [.gitignore](.gitignore). Источник весов: **Train/Parameters_00.xml**.

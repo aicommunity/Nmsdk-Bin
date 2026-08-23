@@ -1,4 +1,4 @@
-# Regression verification
+# Regression verification (warm)
 
 ## EXP_baseline_gen (EXP00_baseline_margprops) — **PASS**
 - Train L: `49 41 25 1` | FixedLTZ: `0.01281123537910517` | Calibrated: `None`

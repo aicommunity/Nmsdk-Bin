@@ -42,8 +42,12 @@ t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
 t = set_tag(t, "UseElementDefaults", "1", 0)
 t = set_tag(t, "MembraneCapacity", "2.5e-10", 0)
 t = set_tag(t, "SynapseDissociationTC", "0.002", 0)
-if re.search(r"<ResetToUntrainedState\b", t):
-    t = set_tag(t, "ResetToUntrainedState", "1", 1)
+def ensure_tag(text, tag, typ, value, anchor):
+    if re.search(rf"<{tag}\b", text):
+        return set_tag(text, tag, value, 0)
+    ins = f'\t\t\t\t\t<{tag} Type="{typ}" PType="257" IoType="17">{value}</{tag}>'
+    return re.sub(rf"(<{anchor}\b[^>]*>[^<]*</{anchor}>)", rf"\1\n{ins}", text, count=1)
+t = ensure_tag(t, "ResetToUntrainedState", "b", "1", "IsNeedToTrain")
 params_path.write_text(t, encoding="utf-8")
 m = model_path.read_text(encoding="utf-8")
 m = re.sub(r'(<Neuron Class=")[^"]+(">)', rf'\g<1>{neuron}\2', m, count=1)

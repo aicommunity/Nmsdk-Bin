@@ -34,26 +34,43 @@
 - «доказать, что AutoCalibrate на Bio full480 воспроизводит golden» через cold retrain;
 - блокировка Tier 0 / C++ diff из‑за несходимости cold baseline.
 
-**Актуальные долги (по плану §8):**
+## 2026-08-23 — sprint close (protocol lock + grid)
 
-| ID | Долг | Статус |
-|----|------|--------|
-| **P0 sync** | merge_train_model + inject in-place + `--test` merge | ✅ закрыт |
-| **Tier 0 config** | AutoCalibrate в FastSpanLtzCal, полный sync LTZ-тегов | ✅ скрипты; grid прогнан |
-| **Tier 0 результат** | уйти из `fire_all` на **fast span + D002** (не Bio baseline) | 🔴 5/6 fire_all; span25 gen 7/8 silent |
-| **Tier 0 train** | batch train до Done + AutoCalibrate на **новых** params | 🔴 train не Done / FixedLTZ=0.0115 на большинстве EXP |
-| **Tier 0b** | post-Done burst / Branch CalibrateLtz в classic | ⏸ отложен до train Done на fast grid |
-| **Branch** | readout + sync parity | 🟡 grid 1/8; в отдельных отчётах до 7/8 на warm Branch |
-| **A1** | fallback LTZ sweep по CSV | backlog |
-| **B1–B3, C1–C4, D** | readout / contrastive / физика | backlog |
+### Pilot span100 gen
 
-## 2026-08-23 — Phase 1 gate align
+| TRAIN_T | L | FixedLTZ | Done |
+|---------|---|----------|------|
+| 160 | 23 19 13 1 | 0.0115 | FAIL |
+| 320 | 23 19 12 1 | 0.0115 | FAIL |
+| 480 | 23 19 12 1 | 0.0115 | FAIL |
 
-- ANALYSIS §14/§13.6: warm/smoke gate; cold Bio → optional `REGRESSION_COLD.md`.
-- `verify_regression.py --mode warm|cold`; grid scripts block only on warm FAIL.
-- ALGORITHM.md: Gate + verify_train_done before sync.
+### FastSpanLtzCal grid (classic)
+
+6/6 fire_all, FixedLTZ=0.0115 — train not Done. P1-soft закрыт документированием + A1 sweep.
+
+### BranchFastSpan
+
+- span100: Done, FixedLTZ=0.10, test 1/8 fire_all
+- span25: Done, FixedLTZ=0.029, test **4/8** partial
+
+### Tier 0b
+
+Classic C++ port **skipped** — train не Done. Branch path достигает Done+CalibrateLtz.
+
+### Обновлённые долги
+
+| ID | Статус |
+|----|--------|
+| P0 sync + warm gate | ✅ |
+| verify_train_done + setup | ✅ |
+| Tier 0 classic acc | 🔴 → backlog B1 (ISI template 8/8 offline) |
+| Classic train Done | 🔴 → исследование stall / GUI |
+| Branch readout | 🟡 span25 4/8 |
+| A1 sweep | ✅ |
 
 ## Backlog (вне sprint)
 
-- B3 двухпорог LTZ; B1b soma-profile readout; C1 full PatternRecognition; C2–C4 contrastive/order readout; Tier D Exc/Inh/PeakMargin/TS10k; A1 fallback sweep при fail autocal.
-- RegressionFull480 cold train — **опциональный** эксперимент, не gate; `setup_regression.sh` / `run_regression.sh` оставлены для ручных прогонов.
+- Classic D002 train stall (EndOfLearning / sync margins на fast span).
+- B1 template/ISI readout wiring; B3 двухпорог LTZ; C1–C4; Tier D.
+- A1 automation: apply best thr from sweep to test patch.
+- RegressionFull480 cold — optional research only.
