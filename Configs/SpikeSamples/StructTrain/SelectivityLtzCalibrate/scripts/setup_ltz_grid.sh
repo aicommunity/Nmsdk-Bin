@@ -9,6 +9,9 @@ LTZ_TRAIN="$ROOT/scripts/patch_ltz_calibrate_train.py"
 VERIFY="$ROOT/scripts/verify_pattern_span.py"
 WATCH_PATCH="$ROOT/scripts/patch_watch_pattern_legend.py"
 META="$ROOT/grid_cells.tsv"
+# copy_config train already rsyncs TimeNeuronTimeLearner template (fresh Model).
+USE_FRESH_MODEL="${USE_FRESH_MODEL:-1}"
+TEMPLATE_MODEL="$ROOT/../TimeNeuronTimeLearner/Model_00.xml"
 
 PREINH="NSPNeuronGenPreinh2_5D002C25e11"
 FAST="NSPNeuronGenD002C25e11"
@@ -43,8 +46,14 @@ t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
 t = set_tag(t, "UseElementDefaults", use_def, 0)
 t = set_tag(t, "MembraneCapacity", cap, 0)
 t = set_tag(t, "SynapseDissociationTC", dissoc, 0)
-if re.search(r"<ResetToUntrainedState\b", t):
-    t = set_tag(t, "ResetToUntrainedState", "1", 1)
+def ensure_tag(text, tag, typ, value, anchor):
+    if re.search(rf"<{tag}\b", text):
+        return set_tag(text, tag, value, 0)
+    ins = f'\t\t\t\t\t<{tag} Type="{typ}" PType="257" IoType="17">{value}</{tag}>'
+    return re.sub(rf"(<{anchor}\b[^>]*>[^<]*</{anchor}>)", rf"\1\n{ins}", text, count=1)
+t = ensure_tag(t, "ResetToUntrainedState", "b", "1", "IsNeedToTrain")
+if re.search(r"<TrainingPhase\b", t):
+    t = set_tag(t, "TrainingPhase", "0", 0)
 params_path.write_text(t, encoding="utf-8")
 m = model_path.read_text(encoding="utf-8")
 m = re.sub(r'(<Neuron Class=")[^"]+(">)', rf'\g<1>{neuron}\2', m, count=1)
@@ -82,6 +91,9 @@ for cell in "${CELLS[@]}"; do
   mkdir -p "$train" "$test"
   "$COPY" train "$train" "${exp}_Train"
   "$COPY" test "$test" "${exp}_Test"
+  if [[ "$USE_FRESH_MODEL" == "1" ]]; then
+    cp "$TEMPLATE_MODEL" "$train/Model_00.xml"
+  fi
   cold_patch_fast "$train/Parameters_00.xml" "$train/Model_00.xml" "$neuron" "1" "0.002" "2.5e-10"
   if [[ "$kind" == *preinh* ]]; then
     python3 "$LTZ_TRAIN" --preinh "$train/Parameters_00.xml"

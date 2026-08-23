@@ -92,6 +92,22 @@ else
   echo "SKIP_TRAIN=1 — using existing Train Parameters"
 fi
 
+echo "=== VERIFY train Done ==="
+fail_done=0
+for exp in "${EXPS[@]}"; do
+  if ! python3 "$ROOT/scripts/verify_train_done.py" "$GRID/$exp/Train/Parameters_00.xml"; then
+    echo "TRAIN_NOT_DONE $exp"
+    fail_done=1
+  fi
+done
+if (( fail_done )) && [[ "${ALLOW_PARTIAL_TRAIN:-0}" != "1" ]]; then
+  echo "Abort sync/test: train not Done. Increase TRAIN_T or fix protocol. (ALLOW_PARTIAL_TRAIN=1 to continue)"
+  exit 1
+fi
+if (( fail_done )); then
+  echo "WARN: ALLOW_PARTIAL_TRAIN=1 — continuing despite train not Done"
+fi
+
 echo "=== VERIFY Train models ==="
 for exp in "${EXPS[@]}"; do
   neuron=$(awk -F'\t' -v e="$exp" '$1==e{print $2;exit}' "$META")
