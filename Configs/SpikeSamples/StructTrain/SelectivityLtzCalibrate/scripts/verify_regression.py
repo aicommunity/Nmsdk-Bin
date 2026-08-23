@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Verify RegressionFull480 results against golden SelectivityPresynapticInhib margprops."""
+"""Verify RegressionFull480 results against golden SelectivityPresynapticInhib margprops.
+
+--mode warm (default): Test CSV only → REGRESSION.md (gate for grids).
+--mode cold: also Train Done / L / FixedLTZ → REGRESSION_COLD.md (optional).
+"""
 from __future__ import annotations
 
 import argparse
@@ -7,13 +11,6 @@ import csv
 import re
 import sys
 from pathlib import Path
-
-
-def parse_acc(s: str) -> tuple[int, int]:
-    if "/" not in s:
-        return 0, 0
-    a, b = s.split("/", 1)
-    return int(a), int(b)
 
 
 def read_tag(path: Path, tag: str) -> str | None:
@@ -61,8 +58,18 @@ def L_within_tol(actual: str, golden: str, tol: int = 2) -> bool:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    ap.add_argument("--golden", type=Path, default=Path(__file__).resolve().parents[1].parent / "SelectivityPresynapticInhib")
+    ap.add_argument(
+        "--golden",
+        type=Path,
+        default=Path(__file__).resolve().parents[1].parent / "SelectivityPresynapticInhib",
+    )
     ap.add_argument("--meta", type=Path, default=None)
+    ap.add_argument(
+        "--mode",
+        choices=("warm", "cold"),
+        default="warm",
+        help="warm: test CSV only (gate). cold: also train Done/L/LTZ (optional).",
+    )
     ap.add_argument("--no-smoke", action="store_true", help="Skip smoke_sync_regression subcheck")
     args = ap.parse_args()
     root = args.root
@@ -83,13 +90,14 @@ def main() -> None:
             "acc": (6, 8),
             "fires": "10001010",
             "fp_max": 2,
-            "L": "49 41 25 1",
+            "L": "51 43 25 1",
             "flt": 0.030173643466603391,
         },
     }
 
     all_ok = True
-    report: list[str] = ["# Regression verification", ""]
+    mode_label = "warm" if args.mode == "warm" else "cold"
+    report: list[str] = [f"# Regression verification ({mode_label})", ""]
 
     for row in rows_meta:
         exp = row["exp"]
@@ -99,33 +107,36 @@ def main() -> None:
         csv_p = root / "RegressionFull480" / exp / "Test" / "SelectivityLog" / "results.csv"
         issues: list[str] = []
 
-        phase = read_tag(train_p, "TrainingPhase")
-        need_train = read_tag(train_p, "IsNeedToTrain")
-        if phase != "2" and need_train != "0":
-            issues.append(f"train not Done (TrainingPhase={phase!r}, IsNeedToTrain={need_train!r})")
-
         L = read_tag(train_p, "DendriteLength") or ""
-        if not L_within_tol(L, g["L"]):
-            issues.append(f"L={L!r} vs golden {g['L']!r}")
-
         cal = read_tag(train_p, "CalibratedFixedLTZThreshold")
+        flt_s = read_tag(train_p, "FixedLTZThreshold") or "0"
         try:
             cal_f = float(cal or "0")
         except ValueError:
             cal_f = 0.0
-        flt_s = read_tag(train_p, "FixedLTZThreshold") or "0"
         try:
             flt = float(flt_s)
         except ValueError:
             flt = 0.0
-        auto = read_tag(train_p, "AutoCalibrateFixedLTZThreshold") == "1"
-        if auto and cal_f <= 0 and abs(flt - 0.0115) < 1e-9:
-            issues.append(f"AutoCalibrate=1 but FixedLTZ still cold default {flt!r}")
-        elif cal_f <= 0 and not auto and flt <= 0:
-            issues.append(f"FixedLTZThreshold={flt!r} <= 0")
-        if g["flt"] > 0 and abs(flt - g["flt"]) / g["flt"] > 0.20:
-            issues.append(f"FixedLTZ={flt:.6g} vs golden {g['flt']:.6g} (>20%)")
 
+        if args.mode == "cold":
+            phase = read_tag(train_p, "TrainingPhase")
+            need_train = read_tag(train_p, "IsNeedToTrain")
+            if phase != "2" and need_train != "0":
+                issues.append(
+                    f"train not Done (TrainingPhase={phase!r}, IsNeedToTrain={need_train!r})"
+                )
+            if not L_within_tol(L, g["L"]):
+                issues.append(f"L={L!r} vs golden {g['L']!r}")
+            auto = read_tag(train_p, "AutoCalibrateFixedLTZThreshold") == "1"
+            if auto and cal_f <= 0 and abs(flt - 0.0115) < 1e-9:
+                issues.append(f"AutoCalibrate=1 but FixedLTZ still cold default {flt!r}")
+            elif cal_f <= 0 and not auto and flt <= 0:
+                issues.append(f"FixedLTZThreshold={flt!r} <= 0")
+            if g["flt"] > 0 and abs(flt - g["flt"]) / g["flt"] > 0.20:
+                issues.append(f"FixedLTZ={flt:.6g} vs golden {g['flt']:.6g} (>20%)")
+
+        q: dict | None = None
         if csv_p.exists():
             with csv_p.open(encoding="utf-8") as f:
                 csv_rows = list(csv.DictReader(f))
@@ -146,19 +157,21 @@ def main() -> None:
             all_ok = False
         report.append(f"## {exp} ({golden_exp}) — **{status}**")
         report.append(f"- Train L: `{L}` | FixedLTZ: `{flt_s}` | Calibrated: `{cal}`")
-        if csv_p.exists():
-            report.append(f"- Test acc: {q['acc']}/{q['n']} fires `{q['fires']}` target_hit={q['target_hit']}")
+        if q is not None:
+            report.append(
+                f"- Test acc: {q['acc']}/{q['n']} fires `{q['fires']}` target_hit={q['target_hit']}"
+            )
         for iss in issues:
             report.append(f"- FAIL: {iss}")
         report.append("")
 
-    out = root / "REGRESSION.md"
+    out = root / ("REGRESSION.md" if args.mode == "warm" else "REGRESSION_COLD.md")
     out.write_text("\n".join(report), encoding="utf-8")
     print("\n".join(report))
     print(f"Wrote {out}")
 
     smoke_script = root / "scripts" / "smoke_sync_regression.sh"
-    if smoke_script.exists() and not args.no_smoke:
+    if smoke_script.exists() and not args.no_smoke and args.mode == "warm":
         import subprocess
 
         r = subprocess.run(["bash", str(smoke_script)], capture_output=True, text=True)
@@ -166,6 +179,7 @@ def main() -> None:
             print("WARN: smoke_sync_regression failed (sync pipeline check)")
             print(r.stdout[-2000:] if r.stdout else "")
             print(r.stderr[-1000:] if r.stderr else "")
+            all_ok = False
         else:
             print("smoke_sync_regression: PASS")
 

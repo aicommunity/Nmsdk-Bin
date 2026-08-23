@@ -47,6 +47,12 @@
 | **A1** | fallback LTZ sweep по CSV | backlog |
 | **B1–B3, C1–C4, D** | readout / contrastive / физика | backlog |
 
+## 2026-08-23 — Phase 1 gate align
+
+- ANALYSIS §14/§13.6: warm/smoke gate; cold Bio → optional `REGRESSION_COLD.md`.
+- `verify_regression.py --mode warm|cold`; grid scripts block only on warm FAIL.
+- ALGORITHM.md: Gate + verify_train_done before sync.
+
 ## Backlog (вне sprint)
 
 - B3 двухпорог LTZ; B1b soma-profile readout; C1 full PatternRecognition; C2–C4 contrastive/order readout; Tier D Exc/Inh/PeakMargin/TS10k; A1 fallback sweep при fail autocal.

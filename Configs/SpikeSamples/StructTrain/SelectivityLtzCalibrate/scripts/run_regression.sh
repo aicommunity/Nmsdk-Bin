@@ -56,5 +56,5 @@ for exp in "${EXPS[@]}"; do
   fi
 done
 
-python3 "$ROOT/scripts/verify_regression.py" --root "$ROOT"
+python3 "$ROOT/scripts/verify_regression.py" --root "$ROOT" --mode cold --no-smoke
 echo "Regression run complete."

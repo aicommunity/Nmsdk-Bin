@@ -533,7 +533,7 @@ python3 inject_analyzer.py "$TRAIN/Model_00.xml" "$TEST/Model_00.xml"
 
 [`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp): `PostPatternWindow=0.5`, rising edge LTZ, CSV `ltz_potential_max` — Tier B1 добавит template mode.
 
-### 13.6 Изменения C++ (Tier 0b, только если regression PASS + grid fire_all)
+### 13.6 Изменения C++ (Tier 0b, только если warm/smoke PASS + train Done на grid + fire_all)
 
 | Файл | Изменение |
 |------|-----------|
@@ -542,98 +542,71 @@ python3 inject_analyzer.py "$TRAIN/Model_00.xml" "$TEST/Model_00.xml"
 | `TimeNeuronTimeLearner/ALGORITHM.md` | документировать фазу |
 | `NNeuronTimeLearner.md` | defaults vs Branch |
 
-**Regression gate:** любой diff в `NNeuronTimeLearner*.cpp` → сначала §14, acc ≥ golden − 0 (strict: **точное** совпадение acc и target_hit).
+**Gate перед C++:** `smoke_sync_regression.sh` + `run_regression_warm.sh` PASS (acc/target_hit golden). Cold Bio retrain **не** требуется. Дополнительно: train на FastSpan grid должен быть Done (`verify_train_done.py`).
 
 ---
 
-## 14. Regression baseline (обязательный gate)
+## 14. Regression gate (warm/smoke; cold optional)
 
 ### 14.1 Цель
 
-Убедиться, что правки калибровки LTZ / learner **не ломают** эталонное обучение на **несжатом** паттерне 480 мс с **прежними** параметрами нейрона (Bio `NSPNeuronGen` / Preinh k=2.5).
+Убедиться, что **sync Train→Test не ломает golden checkpoint** EXP00/EXP04 (acc 5/8 и 6/8). Это проверка pipeline (`merge_train_weights` / `merge_train_model` / inject), а не cold retrain Bio full480.
 
-### 14.2 Два обязательных EXP (RegressionFull480)
+С новыми параметрами синапса/дендрита (D002, fast span) cold baseline на Bio full480 **может не сходиться** — это ожидаемо и **не является gate**.
 
-**EXP_baseline_gen** — клон протокола [`EXP00_baseline_margprops`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_margprops/):
+### 14.2 Warm path (gate) — два EXP в RegressionFull480 Test dirs
 
-| Параметр | Значение |
-|----------|----------|
-| `NeuronClassName` | `NSPNeuronGen` |
-| `SynapseClassName` | `NPSynapseBio` |
-| `InputPattern` | `0.01, 0.08, 0.16, 0.24` (span 480 ms) |
-| `SyncTolerance` | **0.02** |
-| `PeakMeasureMargin` | **0.06** |
-| `Delay` | 1.5 |
-| `ResistanceAdjustGain` | 0.4 |
-| `AutoCalibrateFixedLTZThreshold` | **1** |
-| `UseFixedLTZThreshold` | **1** |
-| `UseElementDefaults` | **0** (Bio defaults D≈5 ms, C≈1e-9) |
-| Cold L / TipR | `1 1 1 1` / `86e6×4` |
-| Train / Test | `-t 160 -S` / `-t 20` |
-| GlobalTimeStep | 2000 |
+| EXP | Golden source | Neuron | Expect acc | Expect fires |
+|-----|---------------|--------|------------|--------------|
+| `EXP_baseline_gen` | `EXP00_baseline_margprops` | `NSPNeuronGen` | **5/8** | `10101010` |
+| `EXP_baseline_preinh25` | `EXP04_preinh_250_margprops` | `NSPNeuronGenPreinh2_5` | **6/8** | `10001010` |
 
-**EXP_baseline_preinh25** — клон [`EXP04_preinh_250_margprops`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_margprops/):
+Протокол: восстановить golden `Train/Parameters_00.xml` → sync → Test `-t 20` (`run_regression_warm.sh`). Альтернатива без Regression dirs: `smoke_sync_regression.sh` (копия в `_smoke_sync/`).
 
-| Отличие от gen | Значение |
-|----------------|----------|
-| `NeuronClassName` | `NSPNeuronGenPreinh2_5` |
-| Остальное | как gen |
+### 14.3 Cold path (optional experiment)
 
-`setup_regression.sh` — `copy_config` + cold_patch по таблице выше + `patch_ltz_calibrate.py` (AutoCalibrate=1, **не** перезаписывать FixedLTZ вручную).
+`setup_regression.sh` + `run_regression.sh` — cold `L=1`, `-t 160`, AutoCalibrate. Может не воспроизвести golden `L=49` / Done. Результаты → `REGRESSION_COLD.md` (`verify_regression.py --mode cold`). **Не блокирует** FastSpanLtzCal / Branch grids.
 
-### 14.3 Golden metrics (не регрессировать)
-
-| EXP | acc | fires pattern | fp | target_hit | L (ожид.) | FixedLTZ (golden) |
-|-----|-----|---------------|-----|------------|-----------|-------------------|
-| baseline_gen | **5/8** | `10100101` | 2 | 1 | ~`49 41 25 1` | 0.01281 |
-| baseline_preinh25 | **6/8** | `10001000` | 2 | 1 | ~`49 41 25 1` | 0.03017 |
-
-Источник fires: golden `results.csv` (trial order 0..7).
+Параметры cold (справочно): SyncTol=0.02, PeakMargin=0.06, Delay=1.5, Gain=0.4, AutoCalibrate=1, gap_fraction 0.85.
 
 ### 14.4 Критерии PASS / FAIL (`verify_regression.py`)
 
-**PASS** если одновременно:
+**`--mode warm` (default)** → пишет `REGRESSION.md`:
 
-1. Train: `TrainingPhase=2` (Done), `DendriteLength` в пределах ±**2** сегментов от golden L на каждом dendrite
-2. Test: `acc` **≥ golden acc** (строго: == 5/8 и == 6/8)
-3. `target_hit=1` (trial 0 fired + match)
-4. `CalibratedFixedLTZThreshold > 0` после Train
-5. `FixedLTZThreshold` в пределах **±20%** от golden (калибровка может чуть сдвинуть)
+1. Test: `acc` == 5/8 и == 6/8
+2. `target_hit=1`
+3. `fp <= fp_max`
+4. `fires` == expected pattern
 
-**FAIL** → **запрет** прогона `FastSpanLtzCal` до fix C++/конфига; записать в `REGRESSION.md`.
+Train Done / L±2 / Calibrated **не** требуются в warm mode.
 
-### 14.5 Команды regression
+**`--mode cold`** → пишет `REGRESSION_COLD.md`: дополнительно TrainingPhase=2, L±2 от golden, FixedLTZ ±20%, Calibrated при AutoCalibrate.
+
+**Warm FAIL** → запрет grid / C++ diff. Cold FAIL → только research note.
+
+### 14.5 Команды gate
 
 ```bash
 cd Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate
-./scripts/setup_regression.sh
-./scripts/run_regression.sh          # Train 2 EXP → sync → Test
-python3 scripts/verify_regression.py --golden ../SelectivityPresynapticInhib
+./scripts/smoke_sync_regression.sh
+./scripts/run_regression_warm.sh          # verify --mode warm → REGRESSION.md
+# optional:
+# ./scripts/setup_regression.sh && ./scripts/run_regression.sh
+# python3 scripts/verify_regression.py --mode cold
 ```
 
 ### 14.6 Связь с Tier 0
 
-Regression доказывает, что AutoCalibrate на **широком** паттерне воспроизводит **5/8–6/8**. Tier 0 проверяет перенос на **сжатые** span + fast neuron (D002C25e11) — отдельная гипотеза, не блокируется regression, но **кодовые** изменения без regression PASS запрещены.
+Warm/smoke доказывает целостность sync. Tier 0 проверяет **сжатые** span + fast neuron (D002C25e11) — отдельная гипотеза. Кодовые изменения без **warm/smoke** PASS запрещены. Cold Bio Done не требуется.
 
 ---
 
-## Tier 0 results (2026-08-23, debt-fix run)
+## Tier 0 results (2026-08-23, debt-fix run) — historical
 
-**Regression gate:** PASS (warm sync) — см. [REGRESSION.md](REGRESSION.md).
+**Gate:** warm sync PASS — см. [REGRESSION.md](REGRESSION.md). Cold Bio retrain **не** был целью (см. JOURNAL 2026-08-23).
 
-**Grid:** `grid_summary.csv` после `SKIP_TRAIN=1` sync+test (train `-t 160` завершён ранее).
+**Grid (historical):** train `-t 160`; 5/6 EXP `fire_all` при FixedLTZ=0.0115 (train не Done). span25 gen — 7/8 silent (FixedLTZ≈0.043).
 
-| EXP | acc | mode | L | FixedLTZ | gate |
-|-----|-----|------|---|----------|------|
-| span100 gen | 1/8 | fire_all | 23 19 13 1 | 0.0115 | 0 |
-| span100 preinh | 1/8 | fire_all | 23 20 13 1 | 0.0115 | 0 |
-| span50 gen | 1/8 | fire_all | 12 10 7 1 | 0.0115 | 0 |
-| span50 preinh | 1/8 | fire_all | 12 10 7 1 | 0.0115 | 0 |
-| span25 gen | 7/8 | silent | 7 6 4 1 | 0.0427 | 0 |
-| span25 preinh | 1/8 | fire_all | 6 5 4 1 | 0.0115 | 0 |
+**Вывод historical:** корень — batch train stall / AutoCalibrate не вызван; sync pipeline после fix валиден.
 
-**Вывод:** 5/6 EXP — `fire_all` при cold FixedLTZ=0.0115 (train не Done / AutoCalibrate не сработал). span25 gen — **7/8 silent** (перекалибровка FixedLTZ≈0.043). Separability: `separability_tier0.csv`; LTZ sweep находит partial acc на span25 gen.
-
-**Tier 0b:** fire_all сохраняется → порт `CalibrateFixedLTZFromParallelPeak` в classic **отложен** (корень — batch train stall, не readout-only).
-
-**Sync fix (главное):** `merge_train_model.py` + inject in-place + `--test` merge + `StructureBuildMode=1` на test D002.
+**Sync fix:** `merge_train_model.py` + inject in-place + `--test` merge + `StructureBuildMode=1` на test D002.

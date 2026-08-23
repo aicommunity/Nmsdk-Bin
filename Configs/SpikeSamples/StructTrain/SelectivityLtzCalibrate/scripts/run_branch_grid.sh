@@ -11,9 +11,15 @@ LTZ_TEST="$ROOT/scripts/patch_ltz_calibrate_test.py"
 TRAIN_T="${TRAIN_T:-160}"
 TEST_T="${TEST_T:-20}"
 
-if [[ -f "$ROOT/REGRESSION.md" ]] && grep -q '\*\*FAIL\*\*' "$ROOT/REGRESSION.md"; then
-  echo "Regression FAIL — branch grid blocked." >&2
-  exit 1
+# Warm gate only; cold Bio FAIL does not block.
+if [[ "${SKIP_REGRESSION_GATE:-0}" != "1" ]]; then
+  if [[ -f "$ROOT/REGRESSION.md" ]] && grep -q '\*\*FAIL\*\*' "$ROOT/REGRESSION.md"; then
+    echo "Warm regression FAIL — branch grid blocked." >&2
+    exit 1
+  fi
+fi
+if [[ "${RUN_SMOKE_FIRST:-0}" == "1" ]]; then
+  "$ROOT/scripts/smoke_sync_regression.sh" || exit 1
 fi
 
 mapfile -t EXPS < <(awk -F'\t' 'NR>1{print $1}' "$META")

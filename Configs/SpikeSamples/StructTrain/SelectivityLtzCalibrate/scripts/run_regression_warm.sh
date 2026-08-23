@@ -72,5 +72,5 @@ for pair in "${EXPS[@]}"; do
   fi
 done
 
-python3 "$ROOT/scripts/verify_regression.py" --root "$ROOT"
+python3 "$ROOT/scripts/verify_regression.py" --root "$ROOT" --mode warm
 echo "Warm regression complete."

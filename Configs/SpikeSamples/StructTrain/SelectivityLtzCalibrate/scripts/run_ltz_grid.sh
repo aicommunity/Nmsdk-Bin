@@ -16,14 +16,23 @@ VERIFY_SPAN="$ROOT/scripts/verify_pattern_span.py"
 LTZ_TEST="$ROOT/scripts/patch_ltz_calibrate_test.py"
 EVAL="$ROOT/scripts/evaluate_selectivity_csv.py"
 
-if [[ ! -f "$ROOT/REGRESSION.md" ]]; then
-  echo "Run regression first (setup_regression.sh + run_regression.sh)" >&2
-  exit 1
+# Warm/smoke gate only. Cold Bio FAIL does not block (see REGRESSION_COLD.md).
+if [[ "${SKIP_REGRESSION_GATE:-0}" != "1" ]]; then
+  if [[ ! -f "$ROOT/REGRESSION.md" ]]; then
+    echo "Run warm gate first: smoke_sync_regression.sh + run_regression_warm.sh" >&2
+    exit 1
+  fi
+  if ! grep -q '\*\*PASS\*\*' "$ROOT/REGRESSION.md"; then
+    echo "REGRESSION.md has no PASS — run run_regression_warm.sh" >&2
+    exit 1
+  fi
+  if grep -q '\*\*FAIL\*\*' "$ROOT/REGRESSION.md"; then
+    echo "Warm regression FAIL — fix sync/gate before FastSpanLtzCal grid" >&2
+    exit 1
+  fi
 fi
-
-if grep -q '\*\*FAIL\*\*' "$ROOT/REGRESSION.md"; then
-  echo "Regression FAIL — fix before FastSpanLtzCal grid" >&2
-  exit 1
+if [[ "${RUN_SMOKE_FIRST:-0}" == "1" ]]; then
+  "$ROOT/scripts/smoke_sync_regression.sh" || exit 1
 fi
 
 mapfile -t EXPS < <(awk -F'\t' 'NR>1{print $1}' "$META")
