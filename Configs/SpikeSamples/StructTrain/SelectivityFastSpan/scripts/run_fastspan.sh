@@ -10,6 +10,7 @@ META="$ROOT/grid_cells.tsv"
 OUT="$ROOT/grid_summary.csv"
 LOG="$ROOT/run_fastspan_rerun.log"
 VERIFY="$ROOT/scripts/verify_element_params.py"
+VERIFY_SPAN="$ROOT/scripts/verify_pattern_span.py"
 COPY="$ROOT/scripts/copy_config.sh"
 
 if [[ ! -f "$META" ]]; then
@@ -62,6 +63,11 @@ run_wave() {
 }
 
 exec > >(tee "$LOG") 2>&1
+
+echo "=== VERIFY pattern spans (pre-run) ==="
+python3 "$VERIFY_SPAN" --meta "$META" \
+  "$ROOT"/EXP_*/Train/Parameters_00.xml \
+  "$ROOT"/EXP_*/Test/Parameters_00.xml
 
 echo "=== TRAIN wave MAX_JOBS=$MAX_JOBS t=$TRAIN_T ==="
 if ! run_wave train "$TRAIN_T"; then
@@ -124,6 +130,10 @@ if lt != lte:
 print(f"L match: {lt}")
 PY
 done
+
+echo "=== VERIFY pattern spans (post-sync) ==="
+python3 "$VERIFY_SPAN" --meta "$META" \
+  "$ROOT"/EXP_*/Test/Parameters_00.xml
 
 echo "=== TEST wave MAX_JOBS=$MAX_JOBS t=$TEST_T ==="
 if ! run_wave test "$TEST_T"; then

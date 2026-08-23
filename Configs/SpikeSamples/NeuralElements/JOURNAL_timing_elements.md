@@ -1,127 +1,34 @@
-# Журнал: временные характеристики NeuralElements
+# Журнал timing / элементы (NeuralElements + StructTrain)
 
-Живой журнал экспериментов по плану «тайминги 100/50/25 мс».
-
----
-
-## 2026-08-21 21:46 — Фаза 0 / фиксация диагноза
-
-### Цель
-Зафиксировать числа несовместимости EPSP vs ISI до любых прогонов.
-
-### Конфиги / параметры
-- Документ: `ANALYSIS_timing_mismatch.md`
-- Эталон span 0.48 с; цели T=100/50/25 мс; Bio Dissoc=5 мс, RC≈10 мс
-
-### Наблюдения
-По отчётам time_compress: PASS только Preinh@100 мс; на 50/25 — fire_all / Acc&lt;4. FastResponse дал t_peak≈30 мс, но fp=7 на несжатом паттерне.
-
-### Вывод
-Гипотеза «EPSP шире целевых ISI» согласуется с отчётами; сначала бенчи синапса/мембраны, не SyncTol-grid.
-
-### Следующий шаг
-Инфраструктура scripts + SynapseBioTcSweep R1.
-
-### Commit
-(после коммита фазы 0+infra)
+Хронология работ по сжатию паттернов и ускорению EPSP. Актуальные результаты — только в linked REPORT; старые FastSpan прогоны с broken pattern (~5 мс) **невалидны**.
 
 ---
 
-## 2026-08-21 21:50 — Фаза 2 / SynapseBioTcSweep R1
+## 2026-08-21 — TipEpsCombined / dual-pulse gate
 
 ### Цель
-Измерить FWHM Output синапса Bio при DissociationTC ∈ {5, 2, 1, 0.5} мс.
-
-### Конфиги / параметры
-- `SynapseBioTcSweep/cells/D005|D002|D001|D0005`
-  - общие: `NPSynapseBio`, SecretionTC=0.001, Delay=0.05, Frequency=2 Hz, GlobalTimeStep=2000
-  - `D005`: Dissoc=0.005; `D002`: 0.002; `D001`: 0.001; `D0005`: 0.0005
-- `MAX_JOBS=4`, `SIM_T=3`, `NeuroModelerConsole -s -t 3 -x`
+Проверить separability двух EPSP на ISI, соответствующих span 100/50/25 мс.
 
 ### Наблюдения
-FWHM: 4.5 → 2.5 → 2.0 → 1.5 мс при уменьшении D. Gate 2.1 мс проходят D001 и D0005; у D0005 всего 1 шаг на τ (численно опасно). Peak Output ~8.7e-9 (масштаб 1/R Bio).
-
-### Вывод
-Гипотеза подтверждена: Bio D=5 мс слишком широк. Рабочий D=**0.001 с**. Тренд монотонный; R2 расширение вниз не нужно (упёрлись в steps_per_tau).
-
-### Следующий шаг
-ChannelRcSweep 3a (D=0.005 фикс) и 3b (D=0.001).
-
-### Commit
-(ниже)
-
----
-
-## 2026-08-21 21:52 — Фаза 3 / ChannelRcSweep 3a+3b
-
-### Цель
-Связать Capacity с мембранной τ при Bio FB=1e7.
-
-### Конфиги / параметры
-- `ChannelRcSweep/cells/3a_C{1e9,5e10,25e11,1e10}` — Dissoc=0.005, FBResistance=1e7
-- `ChannelRcSweep/cells/3b_C{1e9,5e10,25e11,1e10}` — Dissoc=0.001, те же C
-- общие: `NPExcChannelBio`, SecretionTC=0.001, Delay=0.05, Frequency=2, GlobalTimeStep=2000
-
-### Наблюдения
-τ_fit ≈ C·1e7: при C=1e-9 → 9.75 мс; C=2.5e-10 → 2.24 мс; C=1e-10 → 0.72 мс. Dissoc на τ до импульса не влияет.
-
-### Вывод
-Для вклада мембраны ≲2.1 мс нужно C ≤ 2.5e-10. Watch Y: сигнал −1…0, стартовые −0.01…0.05 малы — при GUI rescale до −1.1…0.1.
-
-### Следующий шаг
-TipEps dual-pulse.
-
----
-
-## 2026-08-21 21:55 — Фаза 4 / TipEpsCombined R1
-
-### Цель
-Separability двух EPSP синапса на ISI 16.7/8.3/4.2 мс.
-
-### Конфиги / параметры
-- синапс: `TipEpsCombined/cells/D{005,002,001}_ISI{100,50,25}` — Dissoc×ISI, Frequency=1/ISI, Delay=0.05, SecretionTC=0.001
-- канал (справ.): `cells/CH_D001_C{1e9,5e10,25e11,1e10}_ISI25` — C×ISI25, Delay=0.2, FB=1e7
-
-### Наблюдения
-Все D×ISI прошли sep≥0.30; на ISI25 Bio D=5 мс sep=0.47 (впритык), D=0.001 sep=0.98. Два независимых Gen на один Input не сработали — используем Frequency=1/ISI.
+Все D×ISI прошли sep≥0.30; на ISI25 Bio D=5 мс sep=0.47 (впритык), D=0.001 sep=0.98.
 
 ### Вывод
 Синапс готов к 25 мс при D≤0.002. Мембрана — узкое место по τ. Рабочий набор: D=0.002, C=2.5e-10 (`NSPNeuronGenD002C25e11`).
 
-### Следующий шаг
-SelectivityFastSpan 100/50/25 × fast (± Preinh с UseElementDefaults).
-
 ---
 
-## 2026-08-21 23:05 — Фазы 5–7 / FastSpan + эскалация
+## 2026-08-23 — FastSpan pattern fix + valid rerun
 
-### Цель
-Закрыть петлю: элементы → обучение на 100/50/25 мс → эскалация Peak/dt.
-
-### Конфиги / параметры
-- R1: `SelectivityFastSpan/EXP_span{100,50,25}ms_fast` — `NSPNeuronGenD002C25e11`, UED=1, D=0.002, C=2.5e-10, TS=2000
-- R1 Preinh: `EXP_span{100,50,25}ms_fast_preinh` — `NSPNeuronGenPreinh2_5`, k=2.5, intent D/C как у fast
-- escalate: `EXP_span25ms_fast[_preinh]_ts10k` — GlobalTimeStep=10000, FixedLTZ=0.04
-- детали: `SelectivityFastSpan/REPORT.md`
-
-### Наблюдения
-Рабочая пара D=0.002, C=2.5e-10 подтверждена бенчами. FastSpan все EXP — fire_all. Peak floor fix и TimeStep=10k+thr0.04 не дали селективности; soma_amp_sum одинаков на всех trials.
-
-### Вывод
-Гипотеза «только узкий EPSP» недостаточна для сходимости селективности на коротких span. Нужен следующий этап по алгоритму различения / Preinh / tip, не новый TC-sweep.
-
-### Commit
-(ниже)
-
----
-
-## 2026-08-22 — FastSpan D/C fix + valid re-run
-
-### Цель
-Закрыть артефакт: Preinh без UploadClass D/C; R1 Test Model не из Train.
+### Проблема
+Обнаружена системная ошибка масштабирования: все 8 FastSpan EXP имели learner span ~4–6 мс при метках 25/50/100 мс (in-place scale + floor 1.5 ms). Предыдущие выводы по fire_all на FastSpan относились к неверному стимулу.
 
 ### Исправления
-- `NSPNeuronGenPreinh2_5D002C25e11`; tip Build → `ApplyElementDefaults`; fail-hard sync + verify.
+Идемпотентный `patch_pattern_scale.py`, fresh `copy_config` в `setup_fastspan.sh`, `verify_pattern_span.py`.
 
-### Результат
-Verify PASS (D=0.002, C=2.5e-10 на всех 8 Train/Test). Селективность: снова **все fire_all**. Старый R1 invalidated. См. `SelectivityFastSpan/REPORT.md`.
+### Результат (valid patterns)
+- TS=2000 (6 EXP): fire_all, gate FAIL — см. [`SelectivityFastSpan/REPORT.md`](../StructTrain/SelectivityFastSpan/REPORT.md)
+- TS=10000 (2 EXP): silent, target_hit=0 — нужна калибровка LTZ
+- FastResponse: контрольный аудит паттернов 9/9 OK, span 480 мс
+
+### Вывод
+Узкий EPSP необходим, но недостаточен для селективности на сжатых span при текущем learner. Следующий этап — алгоритм / Preinh / tip, не повторный sweep без новой гипотезы.

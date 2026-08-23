@@ -1,88 +1,74 @@
 # SelectivityFastSpan — REPORT
 
-Проверка сжатых span **100 / 50 / 25 мс** с парой **(DissociationTC=0.002, Capacity=2.5e-10)** на Train **и** Test.  
+Сжатые span **100 / 50 / 25 мс** с парой **(DissociationTC=0.002, Capacity=2.5e-10)** на Train и Test.  
 Каталог: `Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/`.  
 Мета: `grid_cells.tsv`, сводка: `grid_summary.csv`, лог: `run_fastspan_rerun.log`.
 
-## Invalidation (прогон до 2026-08-22)
+## Invalidation
 
-Предыдущие цифры R1 **не использовать**:
+Все прогоны FastSpan **до 2026-08-23** невалидны: `patch_pattern_scale.py` масштабировал паттерн in-place с floor 1.5 мс, фактический learner span был ~4–6 мс при метках 25/50/100 мс. Таблицы Acc/mode из тех прогонов не использовать.
 
-| Проблема | Следствие |
-|----------|-----------|
-| `NSPNeuronGenPreinh2_5` без UED/D/C | Preinh Train/Test считали Bio EPSP (D=5 мс, C=1e-9), только k=2.5 |
-| R1 Test Model не из Train (inject/sync ломался) | чужой L (напр. `12 11 7 1`) + Bio Dissoc на Test |
-| `sync \|\| true` | ошибки глотались |
+## Протокол
 
-После фикса: UploadClass `NSPNeuronGenPreinh2_5D002C25e11`, fail-hard sync, `verify_element_params.py` (все Dissoc=0.002, Cap=2.5e-10).
-
-## Общий протокол (rerun)
-
-| Параметр | Cold / протокол |
-|----------|-----------------|
-| Эталон | `[0.01, 0.08, 0.16, 0.24]` с → α=T/0.48, floor ISI 1.5 мс |
+| Параметр | Значение |
+|----------|----------|
+| Эталон | `[0.01, 0.08, 0.16, 0.24]` с → α = T/0.48, scale из канона (идемпотентно) |
+| Floor ISI | **0.5 мс** (`FLOOR_SEC=0.0005`) |
 | Cold TipR / L | `86e6×4` / `1 1 1 1` |
 | `ResistanceAdjustGain` | 0.4 |
 | `Delay` (learner) | 1.5 |
 | Train / Test | `-t 160 -S` / `-t 20` |
 | Gate | target_hit + Acc≥4 + не fire_all |
+| Verify | `verify_pattern_span.py` (16/16 PASS), `verify_element_params.py` (D/C) |
 
-Сжатые паттерны:
+Setup: fresh `copy_config` из `TimeNeuronTimeLearner` / `TimeNeuronTimeLearnerTest` → `setup_fastspan.sh`.
+
+## InputPattern после fix (verify PASS)
+
+Learner span = sum(rows 1..3). Test MatrixData: 8 образцов с тем же span на sample.
 
 | span T | InputPattern (с) | SyncTol | PeakMeasureMargin |
 |--------|------------------|---------|-------------------|
-| 100 мс | `0.0015, 0.003472, 0.006944, 0.010417` | 0.004167 | 0.005833 |
-| 50 мс | `0.0015, 0.001736, 0.003472, 0.005208` | 0.002083 | 0.002917 |
-| 25 мс | `0.0015, 0.0015, 0.001736, 0.002604` | 0.0015 | 0.002 |
+| 100 мс | `0.00208, 0.01667, 0.03333, 0.05` | 0.00417 | 0.00583 |
+| 50 мс | `0.00104, 0.00833, 0.01667, 0.025` | 0.00208 | 0.00292 |
+| 25 мс | `0.00052, 0.00417, 0.00833, 0.0125` | 0.00104 | 0.002 |
 
-## Классы нейронов (факт UploadClass)
+## Классы нейронов
 
 ### `NSPNeuronGenD002C25e11` (fast / fast_ts10k)
 
-| Параметр | Значение |
-|----------|----------|
-| `UseElementDefaults` | true |
-| `SynapseDissociationTC` | **0.002** с |
-| `MembraneCapacity` | **2.5e-10** |
-| Мембрана | `NPMembraneBio` |
-| Tip-синапсы | `NPSynapseBio` |
+Dissoc=0.002 с, Cap=2.5e-10, `UseElementDefaults=true`, Bio membrane/synapse.
 
 ### `NSPNeuronGenPreinh2_5D002C25e11` (preinh / preinh_ts10k)
 
-| Параметр | Значение |
-|----------|----------|
-| `MembraneClassName` | `NPMembraneBioPreinh2_5` |
-| Tip-синапсы | `NPSynapseBioPreinh2_5`, `InhibitionCoeff=2.5` |
-| `UseElementDefaults` | true |
-| `SynapseDissociationTC` | **0.002** с |
-| `MembraneCapacity` | **2.5e-10** |
+Preinh k=2.5, Dissoc=0.002 с, Cap=2.5e-10, `UseElementDefaults=true`.
 
-Verify после Train/sync (все 8 EXP): Dissoc×N=0.002, Cap×N=2.5e-10; preinh — InhCoeff=2.5; L Train≡Test Model.
-
-## Каталог EXP и результаты (rerun 2026-08-22)
+## Результаты (rerun 2026-08-23, valid patterns)
 
 | EXP | NeuronClass | span | GlobalTS | FixedLTZ | Acc | mode | gate | L после Train |
 |-----|-------------|------|----------|----------|-----|------|------|---------------|
-| `EXP_span100ms_fast` | `NSPNeuronGenD002C25e11` | 100 | 2000 | ~0.0147 | 1/8 | fire_all | FAIL | 2 1 2 1 |
-| `EXP_span100ms_fast_preinh` | `…Preinh2_5D002C25e11` | 100 | 2000 | ~0.0144 | 1/8 | fire_all | FAIL | 3 1 3 1 |
-| `EXP_span50ms_fast` | `NSPNeuronGenD002C25e11` | 50 | 2000 | 0.05 | 1/8 | fire_all | FAIL | 2 1 1 1 |
-| `EXP_span50ms_fast_preinh` | `…Preinh2_5D002C25e11` | 50 | 2000 | ~0.0185 | 1/8 | fire_all | FAIL | 3 1 1 1 |
-| `EXP_span25ms_fast` | `NSPNeuronGenD002C25e11` | 25 | 2000 | ~0.0147 | 1/8 | fire_all | FAIL | 3 1 1 1 |
-| `EXP_span25ms_fast_preinh` | `…Preinh2_5D002C25e11` | 25 | 2000 | ~0.032 | 1/8 | fire_all | FAIL | 3 1 1 1 |
-| `EXP_span25ms_fast_ts10k` | `NSPNeuronGenD002C25e11` | 25 | **10000** | **0.04** | 1/8 | fire_all | FAIL | 3 1 1 1 |
-| `EXP_span25ms_fast_preinh_ts10k` | `…Preinh2_5D002C25e11` | 25 | **10000** | **0.04** | 1/8 | fire_all | FAIL | 3 1 1 1 |
+| `EXP_span100ms_fast` | `NSPNeuronGenD002C25e11` | 100 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 23 19 13 1 |
+| `EXP_span100ms_fast_preinh` | `…Preinh2_5D002C25e11` | 100 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 23 20 13 1 |
+| `EXP_span50ms_fast` | `NSPNeuronGenD002C25e11` | 50 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 12 10 7 1 |
+| `EXP_span50ms_fast_preinh` | `…Preinh2_5D002C25e11` | 50 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 12 10 7 1 |
+| `EXP_span25ms_fast` | `NSPNeuronGenD002C25e11` | 25 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 7 6 4 1 |
+| `EXP_span25ms_fast_preinh` | `…Preinh2_5D002C25e11` | 25 | 2000 | 0.0115 | 1/8 | fire_all | FAIL | 6 5 4 1 |
+| `EXP_span25ms_fast_ts10k` | `NSPNeuronGenD002C25e11` | 25 | **10000** | **0.04** | 7/8 | silent | FAIL | 6 6 4 1 |
+| `EXP_span25ms_fast_preinh_ts10k` | `…Preinh2_5D002C25e11` | 25 | **10000** | **0.04** | 7/8 | silent | FAIL | 7 6 4 1 |
 
-Target hit есть (fp=7): после обучения сома отвечает на все короткие паттерны.
+При TS=2000: target_hit=1, fp=7 (fire_all) — селективность не достигнута, но паттерн и margins согласованы.  
+При TS=10000: target не срабатывает (silent, target_hit=0) — порог 0.04 / dt=0.1 мс требует отдельной калибровки.
+
+Контрольная группа паттернов: `SelectivityFastResponse` — аудит 2026-08-23, 9/9 EXP, span 480 мс OK.
 
 ## Вывод
 
-Даже при **подтверждённых** узких EPSP (D=0.002, C=2.5e-10) на Train и Test, с Preinh k=2.5 и при dt=0.1 мс (ts10k), quality-gate селективности на span ≤100 мс **не** достигается (`fire_all`). Ускорение синапса/мембраны необходимо, но недостаточно для текущего learner+tip протокола.
-
-Следующие направления: различение по форме/таймингу пиков (не только sum), сильнее Preinh k, другой tip R / число дендритов, или смена задачи селективности под короткие span.
+После исправления масштабирования паттернов quality-gate селективности на span ≤100 мс при TS=2000 по-прежнему не достигается (fire_all). Это уже не артеfact broken pattern (~5 мс). Узкий EPSP (D=0.002, C=2.5e-10) необходим, но недостаточен для текущего learner+tip протокола на сжатых span.
 
 ## Команды
 
 ```bash
 ./scripts/setup_fastspan.sh
-MAX_JOBS=4 ./scripts/run_fastspan.sh   # verify D/C после Train и после sync
+python3 scripts/verify_pattern_span.py --meta grid_cells.tsv EXP_*/Train/Parameters_00.xml EXP_*/Test/Parameters_00.xml
+MAX_JOBS=4 ./scripts/run_fastspan.sh
 ```

@@ -2,22 +2,22 @@
 
 ## Вердикт
 
-Корректной сходимости селективности для **span паттерна** 100 / 50 / 25 мс (после сжатия эталона 0.48 с) добиться не удалось.  
-**SelectivityFastSpan re-run 2026-08-22** (D=0.002, C=2.5e-10 на Train+Test, Preinh=`NSPNeuronGenPreinh2_5D002C25e11`, verify PASS): все 8 EXP — `fire_all`.  
-Старый FastSpan R1 **невалиден** (Preinh на Bio EPSP; R1 Test Model не из Train). Подробности: `StructTrain/SelectivityFastSpan/REPORT.md`.  
-Ускорение EPSP (SelectivityFastResponse) на несжатом паттерне также не дало селективности (fp=7).
+Корректной сходимости селективности для **span паттерна** 100 / 50 / 25 мс (после сжатия эталона 0.48 с) при TS=2000 добиться не удалось.  
+**SelectivityFastSpan rerun 2026-08-23** (valid patterns, D=0.002, C=2.5e-10, verify pattern+D/C PASS): 6 EXP TS=2000 — `fire_all`; 2 EXP ts10k — `silent`.  
+Ускорение EPSP (SelectivityFastResponse) на несжатом паттерне также не дало селективности (fp=7).  
+Контроль: FastResponse аудит 2026-08-23 — 9/9 EXP, span 480 мс OK.
 
 ## Эталон и сжатие
 
 Эталон `InputPattern = [0.01, 0.08, 0.16, 0.24]` (с) → span 1→4 ≈ **0.48 с**.
 
-Сжатие: `α = T / 0.48`, floor ISI = **1.5 мс** (`StructTrain/SelectivityFastSpan/scripts/patch_pattern_scale.py`).
+Сжатие: `α = T / 0.48`, scale **из канона** (идемпотентно), floor ISI = **0.5 мс** (`FLOOR_SEC=0.0005` в `patch_pattern_scale.py`).
 
-| T (span) | α | min ISI (оценка, 0.08·α с floor) | SyncTol₀ | Peak floor learner (~40 мс) |
-|----------|---|----------------------------------|----------|----------------------------|
-| 100 мс | 0.2083 | ~16.7 мс | ~4.2 мс | перекрывает T |
-| 50 мс | 0.1042 | ~8.3 мс | ~2.1 мс | перекрывает |
-| 25 мс | 0.0521 | ~4.2 мс | 1.5 мс | перекрывает |
+| T (span) | α | min ISI (0.08·α) | SyncTol₀ | PeakMargin₀ |
+|----------|---|------------------|----------|-------------|
+| 100 мс | 0.2083 | ~16.7 мс | ~4.2 мс | ~5.8 мс |
+| 50 мс | 0.1042 | ~8.3 мс | ~2.1 мс | ~2.9 мс |
+| 25 мс | 0.0521 | ~4.2 мс | ~1.0 мс | ~2.0 мс |
 
 ## Элементные постоянные времени (Bio)
 
@@ -43,8 +43,7 @@
 | Сетка D×C | `StructTrain/SelectivityFastResponse/` | `EXP00CtrlExp04`, `EXPD00{5,2,1}C*` | несжатый паттерн, latency |
 | Сжатые span | `StructTrain/SelectivityFastSpan/` | `EXP_span{100,50,25}ms_fast[_preinh][_ts10k]` | quality-gate; Preinh=`…Preinh2_5D002C25e11` |
 
-Рабочая пара после бенчей: **D=0.002, C=2.5e-10** → `NSPNeuronGenD002C25e11` / `NSPNeuronGenPreinh2_5D002C25e11`.  
-После фикса UploadClass+sync (2026-08-22) gate всё ещё FAIL — см. FastSpan REPORT.
+Рабочая пара после бенчей: **D=0.002, C=2.5e-10** → `NSPNeuronGenD002C25e11` / `NSPNeuronGenPreinh2_5D002C25e11`.
 
 ## Gate для элементных бенчей (до SyncTol-tune)
 

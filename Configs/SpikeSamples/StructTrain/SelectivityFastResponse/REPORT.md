@@ -4,6 +4,8 @@
 Каталог: `Bin/Configs/SpikeSamples/StructTrain/SelectivityFastResponse/`.  
 Мета: `grid_cells.tsv`, сводка: `grid_summary.csv`. Setup: `scripts/setup_grid.sh`, прогон: `scripts/run_grid.sh`.
 
+**Контрольный аудит паттернов (2026-08-23):** все 9 EXP Train/Test — `InputPattern = [0.01, 0.08, 0.16, 0.24]` с, learner span 480 мс; ошибок масштабирования нет (в отличие от FastSpan до fix).
+
 ## API (PulseLib)
 
 На `NPulseNeuron` (opt-in, default off):

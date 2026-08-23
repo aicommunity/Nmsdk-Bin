@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# Cold-patch FastSpan EXPs: neuron class, L=1 tips, span scale, timing margins.
+# Cold-patch FastSpan EXPs: fresh copy, neuron class, L=1 tips, span scale, timing margins.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PY_PATCH="$ROOT/scripts/patch_pattern_scale.py"
 INJECT="$ROOT/scripts/inject_analyzer.py"
+COPY="$ROOT/scripts/copy_config.sh"
+VERIFY="$ROOT/scripts/verify_pattern_span.py"
+WATCH_PATCH="$ROOT/scripts/patch_watch_pattern_legend.py"
+META="$ROOT/grid_cells.tsv"
 
 PREINH_FAST="NSPNeuronGenPreinh2_5D002C25e11"
 FAST="NSPNeuronGenD002C25e11"
@@ -22,7 +26,20 @@ set_timestep() {
 }
 
 write_readme() {
-  local dir="$1" role="$2" exp="$3" neuron="$4" span="$5" kind="$6" gts="$7" ltz_note="$8"
+  local dir="$1" role="$2" exp="$3" neuron="$4" span="$5" kind="$6" gts="$7" ltz_note="$8" params="$9"
+  local pattern_note
+  pattern_note="$(python3 - "$params" <<'PY'
+import re, sys
+from pathlib import Path
+t = Path(sys.argv[1]).read_text(encoding="utf-8")
+m = re.search(r"<InputPattern[^>]*>(.*?)</InputPattern>", t, re.S)
+vals = [float(x) for x in m.group(1).split()] if m else []
+span_ms = sum(vals[1:]) * 1000 if len(vals) > 1 else 0
+ip = ", ".join(f"{v:.6g}" for v in vals)
+print(f"- **InputPattern (s):** `{ip}`")
+print(f"- **Learner span:** {span_ms:.3f} ms")
+PY
+)"
   cat >"$dir/README.md" <<EOF
 ## ${exp} — ${role}
 
@@ -32,9 +49,10 @@ write_readme() {
 
 - **NeuronClassName:** \`${neuron}\`
 - **kind:** ${kind}
-- **span:** ${span} мс
+- **span (target):** ${span} ms
 - **GlobalTimeStep:** ${gts}
 - **Element defaults:** DissociationTC=0.002, MembraneCapacity=2.5e-10 (UseElementDefaults via UploadClass)
+${pattern_note}
 ${ltz_note}
 ### Использование
 
@@ -108,7 +126,6 @@ p.write_text(t2, encoding="utf-8")
 PY
 }
 
-META="$ROOT/grid_cells.tsv"
 printf "exp\tneuron\tspan_ms\tkind\n" > "$META"
 
 declare -a CELLS=(
@@ -129,11 +146,13 @@ for cell in "${CELLS[@]}"; do
   test="$ROOT/$exp/Test"
   mkdir -p "$train" "$test"
 
+  "$COPY" train "$train" "${exp}_Train"
+  "$COPY" test "$test" "${exp}_Test"
+
   cold_patch "$train/Parameters_00.xml" "$train/Model_00.xml" "$neuron" "$use_def" "$dissoc" "$cap"
   python3 "$PY_PATCH" "$train/Parameters_00.xml" "$train/Model_00.xml" \
     "$test/Parameters_00.xml" "$test/Model_00.xml" --span-ms "$span"
 
-  # Cold Test Model = Train Model + analyzer (avoid stale Bio Test shells)
   python3 "$INJECT" "$train/Model_00.xml" "$test/Model_00.xml"
 
   python3 - "$test/Parameters_00.xml" "$neuron" "$use_def" "$dissoc" "$cap" <<'PY'
@@ -168,11 +187,20 @@ PY
   if [[ -n "$fixed_ltz" ]]; then
     ltz_note="- **FixedLTZThreshold:** ${fixed_ltz}"$'\n'
   fi
-  write_readme "$train" "Train" "$exp" "$neuron" "$span" "$kind" "$gts" "$ltz_note"
-  write_readme "$test" "Test" "$exp" "$neuron" "$span" "$kind" "$gts" "$ltz_note"
+  write_readme "$train" "Train" "$exp" "$neuron" "$span" "$kind" "$gts" "$ltz_note" "$train/Parameters_00.xml"
+  write_readme "$test" "Test" "$exp" "$neuron" "$span" "$kind" "$gts" "$ltz_note" "$test/Parameters_00.xml"
 
   printf "%s\t%s\t%s\t%s\n" "$exp" "$neuron" "$span" "$kind" >> "$META"
+  python3 "$VERIFY" --meta "$META" "$train/Parameters_00.xml" "$test/Parameters_00.xml"
 done
+
+echo "=== patch Watch Interface (16 files) ==="
+python3 "$WATCH_PATCH"
+
+echo "=== final verify all Parameters ==="
+python3 "$VERIFY" --meta "$META" \
+  "$ROOT"/EXP_*/Train/Parameters_00.xml \
+  "$ROOT"/EXP_*/Test/Parameters_00.xml
 
 echo "FastSpan setup done. Meta: $META"
 cat "$META"

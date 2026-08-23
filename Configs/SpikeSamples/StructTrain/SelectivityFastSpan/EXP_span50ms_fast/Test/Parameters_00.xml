@@ -25,16 +25,16 @@
 					<SpikesFrequency Type="d" PType="257" IoType="17">1.5</SpikesFrequency>
 					<NumInputDendrite Type="i" PType="257" IoType="17">4</NumInputDendrite>
 					<MaxDendriteLength Type="i" PType="257" IoType="17">100</MaxDendriteLength>
-					<InputPattern Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0.0015
-0.0015
-0.0015
-0.0015</InputPattern>
+					<InputPattern Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0.00104167
+0.00833333
+0.0166667
+0.025</InputPattern>
 					<AdditionalInputPattern Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0
 0
 0
 0</AdditionalInputPattern>
 					<LTZThreshold Type="d" PType="257" IoType="17">100</LTZThreshold>
-					<FixedLTZThreshold Type="d" PType="257" IoType="17">0.050000000000000003</FixedLTZThreshold>
+					<FixedLTZThreshold Type="d" PType="257" IoType="17">0.0115</FixedLTZThreshold>
 					<TrainingLTZThreshold Type="d" PType="257" IoType="17">100</TrainingLTZThreshold>
 					<UseFixedLTZThreshold Type="b" PType="257" IoType="17">0</UseFixedLTZThreshold>
 					<SynapseResistanceStep Type="d" PType="257" IoType="17">1000000000</SynapseResistanceStep>
@@ -42,11 +42,11 @@
 					<SynapseResistanceBase Type="d" PType="257" IoType="17">86000000</SynapseResistanceBase>
 					<ResistanceMin Type="d" PType="257" IoType="17">1000000</ResistanceMin>
 					<ResistanceMax Type="d" PType="257" IoType="17">100000000000</ResistanceMax>
-					<AttenuationGamma Type="d" PType="257" IoType="17">0.089664828856842502</AttenuationGamma>
+					<AttenuationGamma Type="d" PType="257" IoType="17">0.038182244490095316</AttenuationGamma>
 					<ResistanceAdjustGain Type="d" PType="257" IoType="17">0.40000000000000002</ResistanceAdjustGain>
-					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">26016570.077750474 86000000 86000000 86000000</TipSynapseResistance>
-					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">2 1 1 1</DendriteLength>
-					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0.126379528951167 0 0 0.0685152500954892</InitialSomaPotential>
+					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">864457632.44808662 44479326.185976125 22056516.846771248 86000000</TipSynapseResistance>
+					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">12 10 7 1</DendriteLength>
+					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0.024799795694318783 0.031662624596208722 0.025105771190681248 0.024813196852879527</InitialSomaPotential>
 					<NumSynapse Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">1 1 1 1</NumSynapse>
 					<IterationGap Type="d" PType="257" IoType="17">1.5</IterationGap>
 					<SyncTolerance Type="d" PType="257" IoType="17">0.00208333</SyncTolerance>
@@ -68,38 +68,38 @@
 							<NumFeatures Type="i" PType="257" IoType="17">1</NumFeatures>
 							<NumSamples Type="i" PType="257" IoType="17">8</NumSamples>
 							<MaxSpikesPerFeature Type="i" PType="257" IoType="17">4</MaxSpikesPerFeature>
-							<MatrixData Type="MDMatrix&lt;d&gt;" Rows="32" Cols="1" PType="257" IoType="17">0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015
-0.0015</MatrixData>
+							<MatrixData Type="MDMatrix&lt;d&gt;" Rows="32" Cols="1" PType="257" IoType="17">0.00104167
+0.00833333
+0.0166667
+0.025
+0.00104167
+0.025
+0.0166667
+0.00833333
+0.00104167
+0.0166667
+0.00833333
+0.025
+0.00104167
+0.0166667
+0.0166667
+0.0166667
+0.00104167
+0.00208333
+0.0229167
+0.025
+0.00104167
+0.025
+0.0229167
+0.00208333
+0.00104167
+0.00416667
+0.00416667
+0.0416667
+0.00104167
+0.0416667
+0.00416667
+0.00416667</MatrixData>
 							<MatrixClasses Type="MDMatrix&lt;i&gt;" Rows="1" Cols="8" PType="257" IoType="17">1
 0
 0
@@ -163,19 +163,10 @@
 							<ExcGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronPosCGenerator</ExcGeneratorClassName>
 							<InhGeneratorClassName Type="std::string" PType="257" IoType="17">NPNeuronNegCGenerator</InhGeneratorClassName>
 							<NumSomaMembraneParts Type="i" PType="257" IoType="17">4</NumSomaMembraneParts>
-							<NumDendriteMembranePartsVec Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">2 1 1 1</NumDendriteMembranePartsVec>
-							<TrainingPattern Type="MDMatrix&lt;d&gt;" Rows="4" Cols="1" PType="257" IoType="17">0.0015
-0.0015
-0.0015
-0.0015</TrainingPattern>
-							<TrainingDendIndexes Type="MDMatrix&lt;i&gt;" Rows="4" Cols="1" PType="257" IoType="17">4
-3
-3
-1</TrainingDendIndexes>
-							<TrainingSynapsisNum Type="MDMatrix&lt;i&gt;" Rows="4" Cols="1" PType="257" IoType="17">1
-1
-1
-1</TrainingSynapsisNum>
+							<NumDendriteMembranePartsVec Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">12 10 7 1</NumDendriteMembranePartsVec>
+							<TrainingPattern Type="MDMatrix&lt;d&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingPattern>
+							<TrainingDendIndexes Type="MDMatrix&lt;i&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingDendIndexes>
+							<TrainingSynapsisNum Type="MDMatrix&lt;i&gt;" Rows="0" Cols="0" PType="257" IoType="17"></TrainingSynapsisNum>
 						</Parameters>
 						<Components>
 							<Dendrite1_49 Class="NPMembraneBio">

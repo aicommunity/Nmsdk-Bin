@@ -1,88 +1,30 @@
 # Журнал SelectivityFastSpan
 
----
+## 2026-08-23 — Pattern scale fix + valid rerun
 
-## 2026-08-21 22:08 — FastSpan R1 (D002C25e11 × span 100/50/25)
+### Проблема
 
-### Цель
-Проверить, даёт ли узкий EPSP quality-gate на сжатых паттернах.
+`patch_pattern_scale.py` масштабировал ISI in-place с floor 1.5 ms без reset из эталона `[0.01, 0.08, 0.16, 0.24]`. Во всех 8 EXP фактический learner span был ~4–6 мс вместо заявленных 25/50/100 мс; margins (SyncTol, Peak) были рассчитаны под целевой span. Все предыдущие прогоны FastSpan — невалидны.
 
-### Конфиги
-6 EXP, MAX_JOBS=4, TRAIN_T=160, TEST_T=20. Каталог параметров — `REPORT.md`.
+### Исправления
 
-| EXP | NeuronClass | span | D/C / Preinh | GlobalTS | SyncTol | PeakMargin |
-|-----|-------------|------|--------------|----------|---------|------------|
-| `EXP_span100ms_fast` | `NSPNeuronGenD002C25e11` | 100 | 0.002 / 2.5e-10 | 2000 | 0.004167 | 0.005833 |
-| `EXP_span100ms_fast_preinh` | `NSPNeuronGenPreinh2_5` | 100 | k=2.5 + intent D/C | 2000 | 0.004167 | 0.005833 |
-| `EXP_span50ms_fast` | `NSPNeuronGenD002C25e11` | 50 | 0.002 / 2.5e-10 | 2000 | 0.002083 | 0.002917 |
-| `EXP_span50ms_fast_preinh` | `NSPNeuronGenPreinh2_5` | 50 | k=2.5 + intent D/C | 2000 | 0.002083 | 0.002917 |
-| `EXP_span25ms_fast` | `NSPNeuronGenD002C25e11` | 25 | 0.002 / 2.5e-10 | 2000 | 0.0015 | 0.002 |
-| `EXP_span25ms_fast_preinh` | `NSPNeuronGenPreinh2_5` | 25 | k=2.5 + intent D/C | 2000 | 0.0015 | 0.002 |
+- `patch_pattern_scale.py`: идемпотентный scale из канона (Train + Test MatrixData 32 val), `FLOOR_SEC=0.0005`
+- `setup_fastspan.sh`: `copy_config` → cold_patch → scale → `verify_pattern_span.py`; re-patch Watch (16 Interface)
+- `run_fastspan.sh`: verify span до Train и после sync
 
-Cold: TipR=86e6×4, L=1, ResistanceAdjustGain=0.4, Delay=1.5, ResetToUntrainedState=1.
+### Прогон
 
-### Наблюдения
-Все 6: target_hit=1, fires=8/8, Acc=1/8, gate FAIL (fire_all).
+MAX_JOBS=4, Train t=160, Test t=20. Verify pattern 16/16 PASS, verify D/C PASS.
 
-### Вывод
-Быстрые элементы не сняли перестрел на коротких span.
+| EXP | span | Acc | mode | gate |
+|-----|------|-----|------|------|
+| span100ms_fast[_preinh] | 100 | 1/8 | fire_all | FAIL |
+| span50ms_fast[_preinh] | 50 | 1/8 | fire_all | FAIL |
+| span25ms_fast[_preinh] | 25 | 1/8 | fire_all | FAIL |
+| span25ms_*_ts10k | 25 | 7/8 | silent | FAIL |
 
-### Следующий шаг
-Эскалация Peak floor в PulseLib.
-
----
-
-## 2026-08-21 22:35 — Escalate Peak floor
-
-### Цель
-Не давать cable floor ~40 мс перекрывать PeakMeasureMargin на коротких T.
-
-### Изменения
-`NNeuronTimeLearner(.Branch)`: margin = XML Peak, если он уже cable floor; `kDelayPerSegDefault=0.005`.
-
-### Наблюдения
-Повтор 25/50: снова fire_all.
+Полная таблица: [`REPORT.md`](REPORT.md).
 
 ### Вывод
-Блокер не только Peak floor.
 
----
-
-## 2026-08-21 23:03 — Escalate TimeStep 10k + thr 0.04
-
-### Цель
-Тонкая дискретизация и выше порог на span25.
-
-### Конфиги
-| EXP | NeuronClass | GlobalTS | FixedLTZ | Sync/Peak | паттерн |
-|-----|-------------|----------|----------|-----------|---------|
-| `EXP_span25ms_fast_ts10k` | `NSPNeuronGenD002C25e11` | 10000 | 0.04 | 0.0015 / 0.002 | как span25 |
-| `EXP_span25ms_fast_preinh_ts10k` | `NSPNeuronGenPreinh2_5` | 10000 | 0.04 | 0.0015 / 0.002 | как span25 |
-
-### Наблюдения
-Снова fire_all. soma_amp_sum почти одинаков на target и distractors (~0.16–0.17).
-
-### Вывод
-На 25 мс разные ISI не дают различимой амплитуды на соме после обучения — нужна другая метрика/механика селективности, не только C/D и SyncTol.
-
----
-
-## 2026-08-22 — Fix D/C + valid re-run (все 8 EXP)
-
-### Цель
-Устранить Bio defaults у Preinh и битый Train→Test sync; перепрогнать с verify.
-
-### Изменения
-- UploadClass `NSPNeuronGenPreinh2_5D002C25e11` (Preinh mem + UED D=0.002 C=2.5e-10).
-- `ApplyElementDefaults` после tip/`ChangeSynapseNumber` Build; метод public.
-- `setup_fastspan.sh`: 8 EXP, новый класс, ts10k, ProjectName/README; inject cold Test.
-- `merge_train_weights`: +NeuronClassName/UED/D/C; `run_fastspan.sh`: fail-hard sync + verify.
-
-### Verify
-Все Train/Test Model: Dissoc=0.002, Cap=2.5e-10; preinh InhCoeff=2.5; L Train≡Test.
-
-### Результаты (`grid_summary.csv`)
-Все 8: Acc 1/8, fire_all, gate FAIL (target_hit=1, fp=7).
-
-### Вывод
-При **валидных** узких EPSP на Train+Test гипотеза «только узкий EPSP» недостаточна для селективности на span ≤100 мс. Старый R1 invalidated (см. REPORT).
+С корректными паттернами при TS=2000 селективность не достигнута (fire_all). ts10k: silent (target_hit=0) — отдельная задача калибровки LTZ. Следующие направления: алгоритм различения, Preinh k, tip R, не повторный TC-sweep без новой гипотезы.
