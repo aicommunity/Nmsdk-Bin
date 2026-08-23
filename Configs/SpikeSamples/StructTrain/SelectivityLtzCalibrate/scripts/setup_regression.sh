@@ -4,9 +4,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REG="$ROOT/RegressionFull480"
 PREINH="$ROOT/../SelectivityPresynapticInhib"
-COPY="$ROOT/scripts/copy_config.sh"
-LTZ_PATCH="$ROOT/scripts/patch_ltz_calibrate.py"
-INJECT="$ROOT/scripts/inject_analyzer.py"
+TEMPLATE_MODEL="$ROOT/../TimeNeuronTimeLearner/Model_00.xml"
+USE_FRESH_MODEL="${USE_FRESH_MODEL:-0}"
+LTZ_TRAIN="$ROOT/scripts/patch_ltz_calibrate_train.py"
 META="$ROOT/grid_regression.tsv"
 EXCLUDE=(--exclude='EventsLog' --exclude='StatisticLog' --exclude='History.xml'
          --exclude='settings.qt' --exclude='SelectivityLog')
@@ -46,7 +46,12 @@ t = set_tag(t, "DendriteLength", "1 1 1 1", 1)
 t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
 t = set_tag(t, "UseElementDefaults", "0", 0)
 t = set_tag(t, "LTZThreshold", "100", 1)
+t = set_tag(t, "UseFixedLTZThreshold", "0", 1)
 t = set_tag(t, "FixedLTZThreshold", "0.0115", 1)
+t = ensure_tag(t, "AttenuationGamma", "d", "-1", "FixedLTZThreshold")
+t = ensure_tag(t, "ResetToUntrainedState", "b", "1", "IsNeedToTrain")
+if re.search(r"<TrainingPhase\b", t):
+    t = set_tag(t, "TrainingPhase", "0", 0)
 params_path.write_text(t, encoding="utf-8")
 
 m = model_path.read_text(encoding="utf-8")
@@ -73,11 +78,13 @@ setup_exp() {
   mkdir -p "$train" "$test"
   rsync -a "${EXCLUDE[@]}" "$golden_train/" "$train/"
   rsync -a "${EXCLUDE[@]}" "$golden_test/" "$test/"
+  if [[ "$USE_FRESH_MODEL" == "1" ]]; then
+    cp "$TEMPLATE_MODEL" "$train/Model_00.xml"
+  fi
   sed -i "s|<ProjectName>[^<]*</ProjectName>|<ProjectName>${exp}_Train</ProjectName>|" "$train/Project.ini"
   sed -i "s|<ProjectName>[^<]*</ProjectName>|<ProjectName>${exp}_Test</ProjectName>|" "$test/Project.ini"
   cold_patch_baseline "$train/Parameters_00.xml" "$train/Model_00.xml" "$neuron"
-  python3 "$LTZ_PATCH" "$train/Parameters_00.xml"
-  python3 "$INJECT" "$train/Model_00.xml" "$test/Model_00.xml"
+  python3 "$LTZ_TRAIN" --gap-fraction "$train/Parameters_00.xml"
   python3 - "$test/Parameters_00.xml" "$neuron" <<'PY'
 import re, sys
 from pathlib import Path

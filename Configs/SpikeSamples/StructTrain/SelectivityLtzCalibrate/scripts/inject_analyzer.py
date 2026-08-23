@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Copy trained Model into Test and inject PatternResponseAnalyzer links."""
+"""Add PatternResponseAnalyzer to test Model in-place (do not replace test Model from train)."""
 import re
 import sys
 from pathlib import Path
-
 
 ANALYZER_LINKS = """			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearner.DatasetMatrix.Generator1</Item>
@@ -50,11 +49,6 @@ def inject(model_text: str) -> str:
         old = int(m.group(1))
         model_text = model_text.replace(
             f'<Links Type="ULinksList" Size="{old}">',
-            f'<Links Type="ULinksList" Size="{old + 4}">',
-            1,
-        )
-        model_text = model_text.replace(
-            f'<Links Type="ULinksList" Size="{old + 4}">',
             f'<Links Type="ULinksList" Size="{old + 4}">\n' + ANALYZER_LINKS,
             1,
         )
@@ -63,21 +57,29 @@ def inject(model_text: str) -> str:
             ANALYZER_COMPONENT + "\t\t</Components>\n\t</Model>",
             1,
         )
-    elif "SomaAmplitudeInput" not in model_text:
-        from patch_test_model import patch_model  # noqa: F401 — fallback via file rewrite
     return model_text
 
 
-def main():
-    train_model = Path(sys.argv[1])
-    test_model = Path(sys.argv[2])
-    text = train_model.read_text(encoding="utf-8")
-    text = inject(text)
+def main() -> None:
+    args = sys.argv[1:]
+    if not args:
+        raise SystemExit("Usage: inject_analyzer.py <test/Model_00.xml>  OR  inject_analyzer.py <train/Model> <test/Model>")
+
+    if len(args) == 1:
+        test_model = Path(args[0])
+    else:
+        test_model = Path(args[1])
+
+    text = inject(test_model.read_text(encoding="utf-8"))
     test_model.write_text(text, encoding="utf-8")
+
     if "SomaAmplitudeInput" not in text:
         sys.path.insert(0, str(Path(__file__).parent))
         from patch_test_model import patch_model
+
         patch_model(test_model)
+
+    print(f"injected PatternResponseAnalyzer in-place: {test_model}")
 
 
 if __name__ == "__main__":

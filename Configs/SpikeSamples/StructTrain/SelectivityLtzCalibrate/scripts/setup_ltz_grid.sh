@@ -5,8 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 GRID="$ROOT/FastSpanLtzCal"
 COPY="$ROOT/scripts/copy_config.sh"
 PY_PATCH="$ROOT/scripts/patch_pattern_scale.py"
-LTZ_PATCH="$ROOT/scripts/patch_ltz_calibrate.py"
-INJECT="$ROOT/scripts/inject_analyzer.py"
+LTZ_TRAIN="$ROOT/scripts/patch_ltz_calibrate_train.py"
 VERIFY="$ROOT/scripts/verify_pattern_span.py"
 WATCH_PATCH="$ROOT/scripts/patch_watch_pattern_legend.py"
 META="$ROOT/grid_cells.tsv"
@@ -84,10 +83,13 @@ for cell in "${CELLS[@]}"; do
   "$COPY" train "$train" "${exp}_Train"
   "$COPY" test "$test" "${exp}_Test"
   cold_patch_fast "$train/Parameters_00.xml" "$train/Model_00.xml" "$neuron" "1" "0.002" "2.5e-10"
-  python3 "$LTZ_PATCH" "$train/Parameters_00.xml" "$train/Model_00.xml"
+  if [[ "$kind" == *preinh* ]]; then
+    python3 "$LTZ_TRAIN" --preinh "$train/Parameters_00.xml"
+  else
+    python3 "$LTZ_TRAIN" "$train/Parameters_00.xml"
+  fi
   python3 "$PY_PATCH" "$train/Parameters_00.xml" "$train/Model_00.xml" \
     "$test/Parameters_00.xml" "$test/Model_00.xml" --span-ms "$span"
-  python3 "$INJECT" "$train/Model_00.xml" "$test/Model_00.xml"
   python3 - "$test/Parameters_00.xml" "$neuron" <<'PY'
 import re, sys
 from pathlib import Path

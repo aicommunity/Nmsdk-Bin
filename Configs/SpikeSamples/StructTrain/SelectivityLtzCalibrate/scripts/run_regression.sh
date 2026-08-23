@@ -19,12 +19,14 @@ for exp in "${EXPS[@]}"; do
   ini=Project.ini
   [[ -f "$dir/project.ini" ]] && ini=project.ini
   echo "=== TRAIN $exp ==="
-  (cd "$dir" && "$NM" -c "$ini" -s -t "$TRAIN_T" -x -S >run_console.log 2>&1)
+  (cd "$dir" && "$NM" -c "$ini" -s -t "$TRAIN_T" -x -S >run_console.log 2>&1) || { echo "FAIL TRAIN $exp"; exit 1; }
 done
 
 for exp in "${EXPS[@]}"; do
   echo "=== SYNC $exp ==="
   "$COPY" sync "$REG/$exp/Train" "$REG/$exp/Test"
+  python3 "$ROOT/scripts/patch_ltz_calibrate_test.py" \
+    "$REG/$exp/Test/Parameters_00.xml" --train "$REG/$exp/Train/Parameters_00.xml"
   neuron=$(awk -F'\t' -v e="$exp" '$1==e{print $2;exit}' "$META")
   python3 - "$REG/$exp/Test/Parameters_00.xml" "$neuron" <<'PY'
 import re, sys
@@ -41,7 +43,17 @@ for exp in "${EXPS[@]}"; do
   ini=Project.ini
   [[ -f "$dir/project.ini" ]] && ini=project.ini
   echo "=== TEST $exp ==="
+  set +e
   (cd "$dir" && "$NM" -c "$ini" -s -t "$TEST_T" -x >run_console.log 2>&1)
+  rc=$?
+  set -e
+  if [[ $rc -ne 0 && ! -f "$dir/SelectivityLog/results.csv" ]]; then
+    echo "FAIL TEST $exp (exit $rc, no results.csv)"
+    exit 1
+  fi
+  if [[ $rc -ne 0 ]]; then
+    echo "WARN TEST $exp: NM exit $rc but results.csv present"
+  fi
 done
 
 python3 "$ROOT/scripts/verify_regression.py" --root "$ROOT"

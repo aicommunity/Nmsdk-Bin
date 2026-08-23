@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inject PatternResponseAnalyzer into Branch test Model (NeuronTimeLearnerBranch links)."""
+"""Add PatternResponseAnalyzer to Branch test Model in-place."""
 import re
 import sys
 from pathlib import Path
@@ -44,7 +44,6 @@ ANALYZER_COMPONENT = """			<PatternResponseAnalyzer Class="NPatternResponseAnaly
 
 
 def inject(model_text: str) -> str:
-    model_text = model_text.replace("NeuronTimeLearner", "NeuronTimeLearnerBranch")
     if "PatternResponseAnalyzer" in model_text:
         return model_text
     m = re.search(r'<Links Type="ULinksList" Size="(\d+)">', model_text)
@@ -64,11 +63,14 @@ def inject(model_text: str) -> str:
     return model_text
 
 
-def main():
-    train_model = Path(sys.argv[1])
-    test_model = Path(sys.argv[2])
-    text = inject(train_model.read_text(encoding="utf-8"))
+def main() -> None:
+    args = sys.argv[1:]
+    if not args:
+        raise SystemExit("Usage: inject_analyzer_branch.py <test/Model_00.xml>  OR  ... <train> <test>")
+    test_model = Path(args[-1])
+    text = inject(test_model.read_text(encoding="utf-8"))
     test_model.write_text(text, encoding="utf-8")
+    print(f"injected Branch PatternResponseAnalyzer in-place: {test_model}")
 
 
 if __name__ == "__main__":

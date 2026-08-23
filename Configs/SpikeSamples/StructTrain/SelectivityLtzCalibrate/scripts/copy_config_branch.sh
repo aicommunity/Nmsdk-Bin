@@ -33,8 +33,9 @@ copy_test() {
 sync_train_to_test() {
   local train="$1"
   local test="$2"
-  python3 "$(dirname "$0")/merge_train_weights.py" "$train/Parameters_00.xml" "$test/Parameters_00.xml"
-  python3 "$(dirname "$0")/inject_analyzer_branch.py" "$train/Model_00.xml" "$test/Model_00.xml"
+  python3 "$(dirname "$0")/merge_train_weights.py" --test "$train/Parameters_00.xml" "$test/Parameters_00.xml"
+  python3 "$(dirname "$0")/merge_train_model.py" "$train" "$test"
+  python3 "$(dirname "$0")/inject_analyzer_branch.py" "$test/Model_00.xml"
 }
 
 case "${1:-}" in

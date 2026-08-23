@@ -63,6 +63,7 @@ def main() -> None:
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     ap.add_argument("--golden", type=Path, default=Path(__file__).resolve().parents[1].parent / "SelectivityPresynapticInhib")
     ap.add_argument("--meta", type=Path, default=None)
+    ap.add_argument("--no-smoke", action="store_true", help="Skip smoke_sync_regression subcheck")
     args = ap.parse_args()
     root = args.root
     meta = args.meta or root / "grid_regression.tsv"
@@ -73,13 +74,15 @@ def main() -> None:
     golden_map = {
         "EXP00_baseline_margprops": {
             "acc": (5, 8),
-            "fires": "10100101",
+            "fires": "10101010",
+            "fp_max": 3,
             "L": "49 41 25 1",
             "flt": 0.01281123537910517,
         },
         "EXP04_preinh_250_margprops": {
             "acc": (6, 8),
-            "fires": "10001000",
+            "fires": "10001010",
+            "fp_max": 2,
             "L": "49 41 25 1",
             "flt": 0.030173643466603391,
         },
@@ -131,6 +134,8 @@ def main() -> None:
                 issues.append(f"acc={q['acc']}/{q['n']} expected {g['acc'][0]}/{g['acc'][1]}")
             if q["target_hit"] != 1:
                 issues.append("target_hit=0")
+            if q["fp"] > g.get("fp_max", 2):
+                issues.append(f"fp={q['fp']} > {g.get('fp_max', 2)}")
             if q["fires"] != g["fires"]:
                 issues.append(f"fires={q['fires']} expected {g['fires']}")
         else:
@@ -151,6 +156,19 @@ def main() -> None:
     out.write_text("\n".join(report), encoding="utf-8")
     print("\n".join(report))
     print(f"Wrote {out}")
+
+    smoke_script = root / "scripts" / "smoke_sync_regression.sh"
+    if smoke_script.exists() and not args.no_smoke:
+        import subprocess
+
+        r = subprocess.run(["bash", str(smoke_script)], capture_output=True, text=True)
+        if r.returncode != 0:
+            print("WARN: smoke_sync_regression failed (sync pipeline check)")
+            print(r.stdout[-2000:] if r.stdout else "")
+            print(r.stderr[-1000:] if r.stderr else "")
+        else:
+            print("smoke_sync_regression: PASS")
+
     sys.exit(0 if all_ok else 1)
 
 

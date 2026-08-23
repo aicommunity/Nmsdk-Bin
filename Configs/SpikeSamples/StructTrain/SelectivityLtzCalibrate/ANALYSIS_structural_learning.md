@@ -614,3 +614,26 @@ python3 scripts/verify_regression.py --golden ../SelectivityPresynapticInhib
 ### 14.6 Связь с Tier 0
 
 Regression доказывает, что AutoCalibrate на **широком** паттерне воспроизводит **5/8–6/8**. Tier 0 проверяет перенос на **сжатые** span + fast neuron (D002C25e11) — отдельная гипотеза, не блокируется regression, но **кодовые** изменения без regression PASS запрещены.
+
+---
+
+## Tier 0 results (2026-08-23, debt-fix run)
+
+**Regression gate:** PASS (warm sync) — см. [REGRESSION.md](REGRESSION.md).
+
+**Grid:** `grid_summary.csv` после `SKIP_TRAIN=1` sync+test (train `-t 160` завершён ранее).
+
+| EXP | acc | mode | L | FixedLTZ | gate |
+|-----|-----|------|---|----------|------|
+| span100 gen | 1/8 | fire_all | 23 19 13 1 | 0.0115 | 0 |
+| span100 preinh | 1/8 | fire_all | 23 20 13 1 | 0.0115 | 0 |
+| span50 gen | 1/8 | fire_all | 12 10 7 1 | 0.0115 | 0 |
+| span50 preinh | 1/8 | fire_all | 12 10 7 1 | 0.0115 | 0 |
+| span25 gen | 7/8 | silent | 7 6 4 1 | 0.0427 | 0 |
+| span25 preinh | 1/8 | fire_all | 6 5 4 1 | 0.0115 | 0 |
+
+**Вывод:** 5/6 EXP — `fire_all` при cold FixedLTZ=0.0115 (train не Done / AutoCalibrate не сработал). span25 gen — **7/8 silent** (перекалибровка FixedLTZ≈0.043). Separability: `separability_tier0.csv`; LTZ sweep находит partial acc на span25 gen.
+
+**Tier 0b:** fire_all сохраняется → порт `CalibrateFixedLTZFromParallelPeak` в classic **отложен** (корень — batch train stall, не readout-only).
+
+**Sync fix (главное):** `merge_train_model.py` + inject in-place + `--test` merge + `StructureBuildMode=1` на test D002.

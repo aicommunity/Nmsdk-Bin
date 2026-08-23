@@ -5,17 +5,12 @@ import sys
 from pathlib import Path
 
 
-TAGS = [
+WEIGHT_TAGS = [
     "TipSynapseResistance",
     "DendriteLength",
     "InitialSomaPotential",
     "NumSynapse",
     "NumDendriteMembranePartsVec",
-    "TrainingPattern",
-    "TrainingDendIndexes",
-    "TrainingSynapsisNum",
-    "TrainingPhase",
-    "ResetToUntrainedState",
     "FixedLTZThreshold",
     "UseFixedLTZThreshold",
     "LTZThreshold",
@@ -26,11 +21,21 @@ TAGS = [
     "CalibrateLTZThresholdFraction",
     "CalibrateLTZThresholdMin",
     "CalibrateLTZThresholdMax",
+]
+
+TRAIN_ONLY_TAGS = [
+    "TrainingPattern",
+    "TrainingDendIndexes",
+    "TrainingSynapsisNum",
+    "TrainingPhase",
+    "ResetToUntrainedState",
     "NeuronClassName",
     "UseElementDefaults",
     "MembraneCapacity",
     "SynapseDissociationTC",
 ]
+
+TAGS = WEIGHT_TAGS + TRAIN_ONLY_TAGS
 
 
 def extract_tag(text: str, tag: str) -> str | None:
@@ -46,13 +51,13 @@ def replace_tag(text: str, tag: str, block: str) -> str:
     return text
 
 
-def merge(train_path: Path, test_path: Path) -> None:
+def merge(train_path: Path, test_path: Path, *, test_mode: bool = False) -> None:
     train = train_path.read_text(encoding="utf-8")
     test = test_path.read_text(encoding="utf-8")
-    for tag in TAGS:
+    tags = WEIGHT_TAGS if test_mode else TAGS
+    for tag in tags:
         block = extract_tag(train, tag)
         if block:
-            block = block.replace(",", ".")
             test = replace_tag(test, tag, block)
     # ensure inference mode on test learner
     test = re.sub(
@@ -71,4 +76,8 @@ def merge(train_path: Path, test_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    merge(Path(sys.argv[1]), Path(sys.argv[2]))
+    test_mode = "--test" in sys.argv
+    args = [a for a in sys.argv[1:] if a != "--test"]
+    if len(args) != 2:
+        raise SystemExit(f"Usage: {sys.argv[0]} [--test] <train_params> <test_params>")
+    merge(Path(args[0]), Path(args[1]), test_mode=test_mode)

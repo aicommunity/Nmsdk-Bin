@@ -7,7 +7,8 @@ from pathlib import Path
 
 def patch_model(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
-    text = text.replace("NeuronTimeLearner", "NeuronTimeLearnerBranch")
+    if "NeuronTimeLearnerBranch" not in text:
+        text = text.replace("NeuronTimeLearner", "NeuronTimeLearnerBranch")
     if "SomaAmplitudeInput" in text:
         path.write_text(text, encoding="utf-8")
         return

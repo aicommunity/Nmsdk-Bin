@@ -13,7 +13,7 @@ LOG="$ROOT/run_ltz_grid.log"
 COPY="$ROOT/scripts/copy_config.sh"
 VERIFY="$ROOT/scripts/verify_element_params.py"
 VERIFY_SPAN="$ROOT/scripts/verify_pattern_span.py"
-INJECT="$ROOT/scripts/inject_analyzer.py"
+LTZ_TEST="$ROOT/scripts/patch_ltz_calibrate_test.py"
 EVAL="$ROOT/scripts/evaluate_selectivity_csv.py"
 
 if [[ ! -f "$ROOT/REGRESSION.md" ]]; then
@@ -77,7 +77,11 @@ python3 "$VERIFY_SPAN" --meta "$META" \
   "$GRID"/EXP_*/Test/Parameters_00.xml
 
 echo "=== TRAIN ==="
-run_wave train "$TRAIN_T"
+if [[ "${SKIP_TRAIN:-0}" != "1" ]]; then
+  run_wave train "$TRAIN_T" || exit 1
+else
+  echo "SKIP_TRAIN=1 — using existing Train Parameters"
+fi
 
 echo "=== VERIFY Train models ==="
 for exp in "${EXPS[@]}"; do
@@ -91,18 +95,35 @@ for exp in "${EXPS[@]}"; do
   neuron=$(awk -F'\t' -v e="$exp" '$1==e{print $2;exit}' "$META")
   echo "sync $exp"
   "$COPY" sync "$GRID/$exp/Train" "$GRID/$exp/Test"
-  python3 "$INJECT" "$GRID/$exp/Train/Model_00.xml" "$GRID/$exp/Test/Model_00.xml"
+  python3 "$LTZ_TEST" "$GRID/$exp/Test/Parameters_00.xml" --train "$GRID/$exp/Train/Parameters_00.xml"
+  python3 - "$GRID/$exp/Test/Model_00.xml" "$neuron" <<'PY'
+import re, sys
+from pathlib import Path
+mp, neuron = Path(sys.argv[1]), sys.argv[2]
+m = mp.read_text(encoding="utf-8")
+m = re.sub(r'(<Neuron Class=")[^"]+(">)', rf'\g<1>{neuron}\2', m, count=1)
+def set_tag(text, tag, value, count=0):
+    pat = rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)"
+    return re.sub(pat, rf"\g<1>{value}\2", text, count=count or 0)
+m = set_tag(m, "NeuronClassName", neuron, 0)
+m = set_tag(m, "UseElementDefaults", "1", 0)
+m = set_tag(m, "MembraneCapacity", "2.5e-10", 0)
+m = set_tag(m, "SynapseDissociationTC", "0.002", 0)
+m = set_tag(m, "StructureBuildMode", "1", 0)
+m = set_tag(m, "IsNeedToTrain", "0", 0)
+mp.write_text(m, encoding="utf-8")
+PY
   python3 - "$GRID/$exp/Test/Parameters_00.xml" "$neuron" <<'PY'
 import re, sys
 from pathlib import Path
-p = Path(sys.argv[1]); neuron = sys.argv[2]
+p, neuron = Path(sys.argv[1]), sys.argv[2]
 t = p.read_text(encoding="utf-8")
-for tag, val in [("NeuronClassName", neuron), ("UseElementDefaults", "1"),
-                 ("MembraneCapacity", "2.5e-10"), ("SynapseDissociationTC", "0.002")]:
-    t = re.sub(rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)", rf"\g<1>{val}\2", t, count=0 if tag != "NeuronClassName" else 1)
+def set_tag(text, tag, value, count=0):
+    return re.sub(rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)", rf"\g<1>{value}\2", text, count=count or 0)
+for tag, val in [("NeuronClassName", neuron), ("UseElementDefaults", "1"), ("MembraneCapacity", "2.5e-10"), ("SynapseDissociationTC", "0.002"), ("StructureBuildMode", "1"), ("IsNeedToTrain", "0")]:
+    t = set_tag(t, tag, val, count=1 if tag == "NeuronClassName" else 0)
 p.write_text(t, encoding="utf-8")
 PY
-  verify_model "$GRID/$exp/Test/Model_00.xml" "$neuron" "$(awk -F'\t' -v e="$exp" '$1==e{print $4;exit}' "$META")"
 done
 
 echo "=== TEST ==="
