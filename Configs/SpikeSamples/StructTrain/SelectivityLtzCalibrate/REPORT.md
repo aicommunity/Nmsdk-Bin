@@ -7,9 +7,9 @@
 | Этап | Статус |
 |------|--------|
 | Sync pipeline (merge_train_model + inject in-place) | ✅ |
-| RegressionFull480 gate | ✅ **PASS** — [REGRESSION.md](REGRESSION.md) |
-| Cold train batch `-t 160` | ⚠️ L stall 97→49 не сходится; gate через warm golden + sync |
-| FastSpanLtzCal grid | 🔄 в прогоне |
+| Sync gate (smoke + warm golden) | ✅ — [REGRESSION.md](REGRESSION.md) |
+| RegressionFull480 cold retrain | ➖ **не gate** (новые syn/dend params могут не сходиться на Bio full480) |
+| FastSpanLtzCal grid | ✅ прогнан — см. [grid_summary.csv](grid_summary.csv) |
 | BranchFastSpan setup | ✅ конфиги готовы |
 | C++ MatchMode / PatternRecognition | ✅ (rebuild NeuroModeler) |
 
