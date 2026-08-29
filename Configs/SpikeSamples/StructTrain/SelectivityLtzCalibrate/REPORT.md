@@ -32,10 +32,14 @@ Separability: offline ISI template **8/8**; LTZ sweep span25 preinh до **6/8**
 
 Train **Done** + AutoCalibrate на обоих EXP. Test: span25 gen **4/8** (partial), span100 gen 1/8 fire_all.
 
+## AsymRmLtzCal (2026-08-27 — repair 2026-08-28)
+
+Repair protocol (parity setup + cold reset + TRAIN_T 80→160→320): **1/6 Done+calibrated** — `span25 gen` FixedLTZ=**0.0885**, test **6/8 gate PASS**. Остальные 5/6 stall (amp-sync). §4 fallback — без эффекта. См. [`AsymRmLtzCal/REPORT.md`](AsymRmLtzCal/REPORT.md).
+
 ## Backlog
 
 - Classic train stall на D002 (GUI vs batch, EndOfLearning conditions).
-- B1 template readout (offline 8/8 → wiring MatchMode).
+- B1 offline dual-thr / FP diagnostics vs distractors (`MatchMode=1` = ISI oracle — **не** neuron gate).
 - Branch span100 readout; amp-eq / NextSegInh из Branch REPORT.
 - B3, C1–C4, Tier D — см. JOURNAL.
 

@@ -2,16 +2,18 @@
 
 ## 1. Краткий вердикт
 
-После исправления масштабирования паттернов (16/16 verify PASS, span 25/50/100 мс совпадает с меткой) **селективность по-прежнему не достигается**: 6 EXP при TS=2000 — `fire_all` (acc=1/8, fp=7); 2 EXP ts10k — `silent` (acc=7/8, target_hit=0).
+**Цель этапа (канон):** нейрон стреляет на **обученном** ISI-паттерне и **молчит** без стимула / на чужих входах (**pattern vs silence**). Восемь сэмплов Test — это **1 target + 7 distractors** (проба FP), а не классификация «какой из 8 порядков». Роли distractors — [`TimeNeuronTimeLearnerTest/README.md`](../TimeNeuronTimeLearnerTest/README.md): reverse / permute mid / uniform / early-late pairs / clusters. Gate: `target_hit ∧ ¬fire_all ∧ Acc≥4`. **Не цель:** order-ID / exact permutation classification / `MatchMode=1` (ISI oracle).
 
-**Главный вывод:** уменьшение инерции синапса/мембраны (D=0.002, C=2.5e-10) решает задачу **быстрого EPSP и сходимости обучения длин**, но **не решает задачу различения перестановок ISI**, потому что:
+После исправления масштабирования паттернов (16/16 verify PASS, span 25/50/100 мс совпадает с меткой) **gate pattern-vs-silence по-прежнему не достигается**: 6 EXP при TS=2000 — `fire_all` (acc=1/8, fp=7); 2 EXP ts10k — `silent` (acc=7/8, target_hit=0).
 
-1. Обучение (`NNeuronTimeLearner`) настраивает **один** целевой порядок импульсов, а тест содержит **8 перестановок** того же multiset ISI.
-2. Инференс — **бинарный порог LTZ** (`FixedLTZThreshold=0.0115`), а не сравнение с `TrainingPattern` или профилем пиков.
-3. `PatternRecognition()` — **заглушка** (`return true`) в [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) и Branch-варианте.
-4. При fast EPSP все 8 паттернов дают схожий `ltz_potential_max` (0.017–0.026), **выше** порога 0.0115 → перестрел; порог 0.04 (ts10k) — **выше** пиков target (~0.023) → промах.
+**Главный вывод:** уменьшение инерции синапса/мембраны (D=0.002, C=2.5e-10) решает задачу **быстрого EPSP и сходимости обучения длин**, но **не решает задачу fire trained + silence на distractors**, потому что:
 
-Проблема **не только** в span/паттерне (это уже исправлено), а в **разрыве train ↔ test** и **недостаточной гибкости readout/алгоритма**.
+1. Обучение (`NNeuronTimeLearner`) выравнивает coincidence на **training order**; Test прогоняет target + 7 FP-проб (не «8 перестановок одного multiset» как order-ID задачу).
+2. Инференс — **бинарный порог LTZ** (`FixedLTZThreshold=0.0115`), а не dual-thr vs max(distractor). `MatchMode=1` (ISI vs TrainingPattern) — oracle, **не** operational gate.
+3. `PatternRecognition()` — **заглушка** (`return true`) в [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) и Branch-варианте; **не вызывается** из Training loop.
+4. При fast EPSP target и многие distractors дают схожий `ltz_potential_max` (0.017–0.026), **выше** порога 0.0115 → fire_all; порог 0.04 (ts10k) — **выше** пиков target (~0.023) → silent.
+
+Проблема **не только** в span/паттерне (это уже исправлено), а в **пороге LTZ без калибровки** и узком LTZ-gap target↔distractor на short span.
 
 ---
 
@@ -83,18 +85,18 @@ flowchart LR
     D4 --> Soma
     Soma --> LTZ[LTZone average]
   end
-  subgraph test [Test 8 permutations]
+  subgraph test [Test target plus 7 distractors]
     Gen2[Same fan-out] --> Same[Same L and TipR]
     Same --> LTZ2[LTZ threshold only]
   end
 ```
 
-- **Fan-out:** один Generator → все дендриты получают **все 4 импульса**. Обучение выравнивает пики для **training order**; при **перестановке** импульсы всё равно приходят, EPSP суммируются в LTZ.
+- **Fan-out:** один Generator → все дендриты получают **все 4 импульса**. Обучение выравнивает пики для **training order**; на distractor-ISI вклады разъезжаются, но сумма часто всё ещё выше низкого FixedLTZ.
 - **Нормализация amp:** каждый дендрит → `InitialSomaPotential[i]` — **равный вклад** независимо от качества совпадения фаз.
-- **LTZ:** `UseAverageLTZonePotential=true` — readout по **среднему/сумме** потенциала, **без** чувствительности к порядку ISI.
-- **Узкий EPSP** сжимает t_peak, но при 4 импульсах за 25 мс **любая** перестановка даёт 4 вклада ≈ порог.
+- **LTZ:** `UseAverageLTZonePotential=true` — readout по **среднему/сумме** потенциала (`MatchMode=0`); TrainingPattern в decision не участвует.
+- **Узкий EPSP** сжимает t_peak, но при 4 импульсах за 25 мс gap target↔distractor часто **0–15%** — окно для thr узкое.
 
-**Вывод:** ускорение элементов — **необходимое** условие для коротких ISI (иначе smear, см. старый REPORT_time_compress §блокеры), но **недостаточное** для order-selectivity при текущем readout.
+**Вывод:** ускорение элементов — **необходимое** условие для коротких ISI (иначе smear, см. старый REPORT_time_compress §блокеры), но **недостаточное** для pattern-vs-silence при legacy FixedLTZ=0.0115.
 
 ---
 
@@ -123,7 +125,7 @@ flowchart LR
 
 - **Temporal alignment** одного фиксированного ISI-вектора (training order).
 - **Amplitude equalization** на soma per dendrite.
-- **Не оптимизирует:** подавление других перестановок, различимость LTZ(target) vs LTZ(distractor), timing vector на readout.
+- **Не оптимизирует:** подавление distractors, различимость LTZ(target) vs LTZ(distractor), dual-thr / ROC по FP-пробам.
 
 ### 4.4 Известные ограничения (из ALGORITHM.md + код)
 
@@ -165,7 +167,7 @@ flowchart LR
 | **Задача train** | один order, без negative examples | **Ограничение алгоритма** |
 | **Readout** | бинарный LTZ, игнор soma profile / ISI | **Ограничение протокола** |
 | **Stub API** | `PatternRecognition()` | **Недореализация** |
-| **Физика fan-out** | любая перестановка → 4 EPSP → LTZ↑ | **Архитектурное** |
+| **Физика fan-out** | distractor-ISI → 4 EPSP → LTZ↑ (узкий gap) | **Архитектурное** |
 | **Элементная инерция** | smear при D=5 мс, ISI&lt;5 мс | **Снято** D=0.002; не главный блокер сейчас |
 | **Preinh (fast)** | не улучшает fire_all на FastSpan | **Гипотеза не подтвердилась** в этом протоколе |
 
@@ -175,13 +177,13 @@ flowchart LR
 
 **Инерция элементов** задаёт **ширину одного EPSP** и минимальный разрешимый ISI на **одном** канале.
 
-**Структурное обучение + тест** требуют:
+**Структурное обучение + тест (pattern vs silence)** требуют:
 
-1. Совместить 4 EPSP в **заданном порядке** (обучение делает через L).
-2. **Отвергнуть** другие порядки с теми же ISI (обучение **не** делает).
-3. **Readout** должен быть order-sensitive (LTZ threshold **не** order-sensitive).
+1. Совместить 4 EPSP на **training order** (обучение делает через L — coincidence).
+2. На distractors сумма LTZ обычно ниже (misalignment), но gap часто узкий.
+3. **Readout** — порог LTZ (`MatchMode=0`): thr должен лежать между peak(target) и max(distractor); legacy 0.0115 этого не делает.
 
-Аналогия: настроить задержки в PA-системе для **одной** мелодии ≠ распознавать **перестановки нот** по общей громкости.
+Аналогия: coincidence настраивает громкость целевой мелодии; fire/silence решает порог громкости, а не распознавание «какой трек».
 
 ---
 
@@ -205,7 +207,7 @@ flowchart LR
 
 ### Tier 0 — калибровка порога LTZ у учителя (ПЕРВЫЙ ШАГ)
 
-**Ожидание:** не решит order-selectivity в общем случае, но может **вернуть acc к уровню широкого паттерна** (EXP04 Preinh **6/8**, span100 Preinh **5/8** в legacy-протоколе), убрав артеfact `fire_all` от legacy `FixedLTZ=0.0115` при fast EPSP (пики ~0.02–0.03).
+**Ожидание:** не гарантирует Acc=8/8 (узкий LTZ-gap на short span), но может **вернуть acc к уровню широкого паттерна** (EXP04 Preinh **6/8**, span100 Preinh **5/8** в legacy-протоколе), убрав артеfact `fire_all` от legacy `FixedLTZ=0.0115` при fast EPSP (пики ~0.02–0.03).
 
 #### 8.0.1 Что уже реализовано в C++
 
@@ -254,7 +256,7 @@ Classic learner измеряет LTZ на **training** wiring (fan-out, Training
 **Критерий успеха Tier 0**
 
 - TS=2000: уйти из `fire_all` → `partial_FA` или лучше; target span100 preinh ≥ **5/8** (как legacy EXP21).
-- Не ожидать acc=8/8 без order-sensitive readout (см. §2: overlap LTZ target/distractor на span25).
+- Не ожидать acc=8/8 при узком LTZ-gap target/distractor на span25 (см. §2); FP на части distractors — ожидаемый промежуточный результат.
 
 ```mermaid
 flowchart TD
@@ -289,10 +291,10 @@ flowchart TD
 
 ### Tier B — доработка readout (умеренный C++ / конфиг)
 
-**B1. Расширить `NPatternResponseAnalyzer`**
+**B1. Offline диагностика / dual-thr vs distractors (не MatchMode=1 gate)**
 
-- Режим `match_mode=template`: сравнение ISI trial с `Neuron.TrainingPattern` (L1 distance / exact order).
-- Или: `match` по `soma_amp` vector vs stored training profile (записывать при Done).
+- `MatchMode=1` (`IsIsiTemplateMatch`) — ISI oracle, **игнорирует** `neuron_fired`; offline 8/8 показывает separability в ISI-пространстве, **не** operational neuron gate. **Не включать** MatchMode=1 в gate.
+- Практично: dual-thr / ROC по `ltz_potential_max` target vs max(distractor); offline soma-vector классификатор; опционально dual-log MatchMode=0 vs template **только для JOURNAL**.
 
 **B2. Включить Branch + CalibrateLtz**
 
@@ -318,9 +320,9 @@ flowchart TD
 
 - Отказ от fan-out: импульс k → только dendrite k (как Branch mute-phase), чтобы перестановка **меняла** какие задержки engaged.
 
-**C4. Order-sensitive readout на soma**
+**C4. Peak-timing gate на soma (FP-reject)**
 
-- Coincidence: fire только если `|t_peak_i - t_expected_i| < ε` для всех i (требует peak tracking per dendrite, не только LTZ sum).
+- Fire только если `|t_peak_i - t_expected_i| < ε` для всех i (peak tracking per dendrite, не только LTZ sum) — усиливает silence на distractors.
 
 ### Tier D — физика / параметры модели
 
@@ -438,7 +440,7 @@ SelectivityLtzCalibrate/
 ### 12.1 Шаблоны и copy
 
 - **Источник Train:** [`../TimeNeuronTimeLearner/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/) через `copy_config.sh train`
-- **Источник Test:** [`../TimeNeuronTimeLearnerTest/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerTest/) — `MatrixData` 32×1, 8 перестановок ([`patch_pattern_scale.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/patch_pattern_scale.py) `REF_TEST_MATRIX`)
+- **Источник Test:** [`../TimeNeuronTimeLearnerTest/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerTest/) — `MatrixData` 32×1, 1 target + 7 distractors ([`patch_pattern_scale.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/patch_pattern_scale.py) `REF_TEST_MATRIX`; роли — Test README)
 - **Train pattern (full480):** `InputPattern = [0.01, 0.08, 0.16, 0.24]` — **без** `--span-ms`
 - **FastSpanLtzCal:** `--span-ms {100|50|25}` как в FastSpan, floor 0.5 ms
 
@@ -531,7 +533,7 @@ python3 inject_analyzer.py "$TRAIN/Model_00.xml" "$TEST/Model_00.xml"
 
 ### 13.5 NPatternResponseAnalyzer (без изменений в Tier 0)
 
-[`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp): `PostPatternWindow=0.5`, rising edge LTZ, CSV `ltz_potential_max` — Tier B1 добавит template mode.
+[`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp): `PostPatternWindow=0.5`, rising edge LTZ, CSV `ltz_potential_max` — operational MatchMode=0; B1 = offline dual-thr / диагностика, не MatchMode=1 gate.
 
 ### 13.6 Изменения C++ (Tier 0b, только если warm/smoke PASS + train Done на grid + fire_all)
 
@@ -658,7 +660,7 @@ Warm/smoke доказывает целостность sync. Tier 0 провер
 |------|--------|
 | P0 sync + warm gate | ✅ |
 | verify_train_done + protocol | ✅ |
-| Tier 0 classic acc | 🔴 P1-soft (documented); acc → backlog B1 |
+| Tier 0 classic acc | 🔴 P1-soft (documented); acc → backlog B1 (offline dual-thr / FP diagnostics; не MatchMode=1) |
 | Tier 0b classic C++ | ⏸ skipped (train not Done) |
 | Branch train+test | 🟡 span25 4/8; span100 fire_all |
 | A1 sweep | ✅ выполнен |

@@ -38,6 +38,11 @@
 
 ## Backlog
 
+- B1: offline dual-thr / FP diagnostics vs distractors (`MatchMode=1` = ISI oracle — не neuron gate)
 - B3: двухпороговая LTZ (target vs distractor ROC)
-- C2–C4: contrastive training, per-dendrite wiring, order-sensitive soma readout
+- C2–C4: contrastive training, per-dendrite wiring, peak-timing FP-reject на soma
 - Tier D: Exc/Inh split, adaptive PeakMargin, TS10k sweep
+
+## Цель этапа (канон)
+
+Pattern vs silence: trial0 (trained) → fire; trials 1–7 (distractors) → silence. Gate: `target_hit ∧ Acc≥4 ∧ ¬fire_all`. Operational MatchMode=0.

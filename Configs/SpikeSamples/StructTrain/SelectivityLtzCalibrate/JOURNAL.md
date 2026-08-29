@@ -63,14 +63,25 @@ Classic C++ port **skipped** — train не Done. Branch path достигает
 |----|--------|
 | P0 sync + warm gate | ✅ |
 | verify_train_done + setup | ✅ |
-| Tier 0 classic acc | 🔴 → backlog B1 (ISI template 8/8 offline) |
+| Tier 0 classic acc | 🔴 → backlog B1 (offline dual-thr / FP diagnostics; MatchMode=1 = ISI oracle, не gate) |
 | Classic train Done | 🔴 → исследование stall / GUI |
 | Branch readout | 🟡 span25 4/8 |
 | A1 sweep | ✅ |
 
-## Backlog (вне sprint)
+## 2026-08-28 — AsymRmLtzCal protocol repair (выполнен)
+
+- Parity setup + `reset_asymrm_ltzcal_cold.sh` + TRAIN_T 80→160→320 continue на 6 EXP.
+- **1/6 Done:** `EXP_span25ms_packA_gen` — FixedLTZ=0.0885, test **6/8 gate PASS** (selective, не fire_all).
+- 5/6 stall (span100/50 + span25 preinh); §4 two-phase fallback — без эффекта.
+- Детали: `AsymRmLtzCal/JOURNAL.md`, `PROTOCOL_REPAIR.md`.
+
+## 2026-08-27 — AsymRmLtzCal + Branch fallback
+
+- `AsymRmLtzCal/`: classic TimeLearner, Pack A, GTS=10000, AutoCalibrate — **6/6 train stall** (L↑, FixedLTZ=0.0115). См. `AsymRmLtzCal/REPORT.md`.
+- `AsymRmLtzCalBranch/`: Branch + Pack A — **6/6 stall** (GTS 10000/2000, TRAIN_T 160/480). Контроль BranchFastSpan D002 span25: Done, FixedLTZ≈0.029.
+- Offline sweep AsymRm baseline: span100 preinh acc **5/8** при thr≈0.0205 (target_hit=1, fp=3) — подтверждает gap при калибровке thr.
 
 - Classic D002 train stall (EndOfLearning / sync margins на fast span).
-- B1 template/ISI readout wiring; B3 двухпорог LTZ; C1–C4; Tier D.
+- B1 offline dual-thr / FP diagnostics (`MatchMode=1` не operational gate); B3 двухпорог LTZ; C1–C4; Tier D.
 - A1 automation: apply best thr from sweep to test patch.
 - RegressionFull480 cold — optional research only.

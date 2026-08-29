@@ -35,6 +35,39 @@
 
 ---
 
+## 2026-08-27 — AsymRmSettle (Exc-only C+Rm+Rsyn)
+
+### Цель
+Подобрать (C, ExcRm, ExcRsyn) с settle ≪ ISI25 (~4.17 мс) при gen off, без Inh.
+
+### Наблюдения
+- GTS=2000 + C≤2.5e-11 → численная осцилляция канала (Ti·TS≲0.5). Рабочий шаг: **GTS=20000**.
+- Pack A (2.5e-11, 1e7, 8.6e7): τ=0.25 мс, settle5%=0.70 мс.
+- Pack B (1e-11, 1e7, 5e7): settle=0.25 мс.
+- Pack C = (2.5e-11, **5e6**, 8.6e7), не C=5e-12 (osc).
+- ctrl FastResponse C=2.5e-10: settle=7.45 мс — не проходит ISI25.
+
+### Вывод
+Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh=10×Exc). См. [`AsymRmSettle/REPORT.md`](AsymRmSettle/REPORT.md).
+
+---
+
+## 2026-08-27 — SelectivityAsymRm grid
+
+18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  
+**Все fire_all** при FixedLTZ=0.0115 — см. [`SelectivityAsymRm/REPORT.md`](../StructTrain/SelectivityAsymRm/REPORT.md).  
+Мембранный settle OK; селективность упирается в LTZ/learner, не в C/Rm.
+
+---
+
 ## 2026-08-23 — SelectivityLtzCalibrate (structural learning analysis)
 
 Глубокий анализ train↔test gap и LTZ readout: [`SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`](../StructTrain/SelectivityLtzCalibrate/ANALYSIS_structural_learning.md).
+
+## 2026-08-27 — Phase1b AsymRm gen-on dip check
+
+Cold L=1 rebuild of EXPD001C25e11 template with `NSPNeuronGenAsymRmD001C25e12` (GTS=20000):
+- verify_element_params: Cap=2.5e-11, ExcR=1e7, InhR=1e8, InhRsyn=8.6e8, Dissoc/Secr=0.001 — OK.
+- StatisticLog кампанейронных кампаний не пишет SomaSumPotential (только learner traces); количественный dip-diff vs EXPD001 отложен на Watch/GUI при прогоне SelectivityAsymRm.
+- Асимметрия Inh τ=10×Exc зафиксирована в UploadClass Pack A/B/C.
+

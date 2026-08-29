@@ -8,6 +8,10 @@
 
 Все прогоны FastSpan **до 2026-08-23** невалидны: `patch_pattern_scale.py` масштабировал паттерн in-place с floor 1.5 мс, фактический learner span был ~4–6 мс при метках 25/50/100 мс. Таблицы Acc/mode из тех прогонов не использовать.
 
+## Протокол цели
+
+Цель: trial0 (trained) → fire; trials 1–7 (distractors: reverse / permute / clusters / uniform) → silence. Gate: target_hit ∧ Acc≥4 ∧ ¬fire_all. Acc=1/8 + fp=7 = fire_all (порог слишком низкий или нет gap).
+
 ## Протокол
 
 | Параметр | Значение |

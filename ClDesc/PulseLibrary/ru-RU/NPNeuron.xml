@@ -467,7 +467,7 @@
 		</UseAverageLTZonePotential>
 		<UseElementDefaults>
 			<Header>Переопределять параметры элементов</Header>
-			<Description>Если true, после сборки выставляет MembraneCapacity и SynapseDissociationTC на каналах/синапсах Soma и Dendrite (не LTMembrane). По умолчанию false — поведение старых классов без изменений.</Description>
+			<Description>Если true, после сборки выставляет MembraneCapacity, Exc/InhMembraneResistance, Exc/InhSynapseResistance, SynapseDissociationTC и SynapseSecretionTC на каналах/синапсах Soma и Dendrite (не LTMembrane). По умолчанию false — поведение старых классов без изменений.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -498,6 +498,61 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</SynapseDissociationTC>
+		<ExcMembraneResistance>
+			<Header>Rm возбуждающего канала (override)</Header>
+			<Description>Resistance и RestingResistance ExcChannel Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ExcMembraneResistance>
+		<InhMembraneResistance>
+			<Header>Rm тормозного канала (override)</Header>
+			<Description>Resistance и RestingResistance InhChannel Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InhMembraneResistance>
+		<ExcSynapseResistance>
+			<Header>Rsyn возбуждающих синапсов (override)</Header>
+			<Description>Resistance ExcSynapse* Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ExcSynapseResistance>
+		<InhSynapseResistance>
+			<Header>Rsyn тормозных синапсов (override)</Header>
+			<Description>Resistance InhSynapse* Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InhSynapseResistance>
+		<SynapseSecretionTC>
+			<Header>Постоянная секреции синапса (override)</Header>
+			<Description>SecretionTC Exc/Inh синапсов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseSecretionTC>
 	</Properties>
 		<Favorites>
 		<StructureBuildMode>
@@ -542,6 +597,21 @@
 		<SynapseDissociationTC>
 			<Path>{CompName}:SynapseDissociationTC</Path>
 		</SynapseDissociationTC>
+		<ExcMembraneResistance>
+			<Path>{CompName}:ExcMembraneResistance</Path>
+		</ExcMembraneResistance>
+		<InhMembraneResistance>
+			<Path>{CompName}:InhMembraneResistance</Path>
+		</InhMembraneResistance>
+		<ExcSynapseResistance>
+			<Path>{CompName}:ExcSynapseResistance</Path>
+		</ExcSynapseResistance>
+		<InhSynapseResistance>
+			<Path>{CompName}:InhSynapseResistance</Path>
+		</InhSynapseResistance>
+		<SynapseSecretionTC>
+			<Path>{CompName}:SynapseSecretionTC</Path>
+		</SynapseSecretionTC>
 		<TrainingPattern>
 			<Path>{CompName}:TrainingPattern</Path>
 		</TrainingPattern>
