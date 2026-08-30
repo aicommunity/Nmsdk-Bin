@@ -17,7 +17,27 @@ def read_tag(path: Path, tag: str) -> str | None:
     return m.group(1).strip() if m else None
 
 
-def check_params(path: Path, *, require_calibrated: bool = False) -> dict:
+def parse_ints(s: str) -> list[int]:
+    return [int(float(x.replace(",", "."))) for x in re.split(r"\s+", s.strip()) if x]
+
+
+def load_l_target_json(path: Path) -> dict[str, list[int]]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        out: dict[str, list[int]] = {}
+        for row in data:
+            exp = row.get("exp") or Path(row.get("params", "")).parent.parent.name
+            out[exp] = row.get("L_target", [])
+        return out
+    return data
+
+
+def check_params(
+    path: Path,
+    *,
+    require_calibrated: bool = False,
+    l_target: list[int] | None = None,
+) -> dict:
     fails: list[str] = []
     warns: list[str] = []
     need = read_tag(path, "IsNeedToTrain")
@@ -47,6 +67,12 @@ def check_params(path: Path, *, require_calibrated: bool = False) -> dict:
         fails.append(f"FixedLTZThreshold still cold default {COLD_FIXED_LTZ}")
     if L.strip() == "1 1 1 1":
         fails.append(f"DendriteLength still cold {L!r}")
+    if l_target is not None:
+        l_actual = parse_ints(L)
+        if l_actual != l_target:
+            fails.append(
+                f"DendriteLength {l_actual} != L_target {l_target}"
+            )
     if require_calibrated or cal_s is not None:
         if cal <= 0 and abs(flt - COLD_FIXED_LTZ) < 1e-9:
             fails.append("CalibratedFixedLTZThreshold missing/<=0 with cold FixedLTZ")
@@ -84,8 +110,16 @@ def main() -> None:
     ap.add_argument("--grid", type=Path, default=None, help="Grid root with EXP_*/Train")
     ap.add_argument("--strict", action="store_true", help="Treat warns as fails")
     ap.add_argument("--require-calibrated", action="store_true")
+    ap.add_argument("--diagnose", action="store_true", help="Run analyze_train_stall on FAIL")
+    ap.add_argument("--L-target", type=Path, default=None, help="JSON from check_timing_feasibility")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
+
+    l_targets: dict[str, list[int]] = {}
+    if args.L_target and args.L_target.exists():
+        l_targets = load_l_target_json(args.L_target)
+
+    diagnose_script = Path(__file__).resolve().parents[1].parent / "SelectivityAsymRm/scripts/analyze_train_stall.py"
 
     paths: list[Path] = list(args.params)
     if args.meta and args.grid:
@@ -105,7 +139,9 @@ def main() -> None:
         if not p.exists():
             r = {"path": str(p), "ok": False, "fails": ["missing file"], "warns": []}
         else:
-            r = check_params(p, require_calibrated=args.require_calibrated)
+            exp = p.parent.parent.name
+            lt = l_targets.get(exp)
+            r = check_params(p, require_calibrated=args.require_calibrated, l_target=lt)
             if args.strict and r["warns"]:
                 r["fails"].extend(r["warns"])
                 r["warns"] = []
@@ -113,6 +149,13 @@ def main() -> None:
         results.append(r)
         if not r["ok"]:
             exit_fail = True
+            if args.diagnose and diagnose_script.is_file() and p.exists():
+                import subprocess
+
+                subprocess.run(
+                    [sys.executable, str(diagnose_script), str(p.parent)],
+                    check=False,
+                )
         status = "OK" if r["ok"] else "FAIL"
         print(f"{status} {p}")
         print(f"  L={r.get('DendriteLength')} FixedLTZ={r.get('FixedLTZThreshold')} "
