@@ -43,6 +43,13 @@ def load_l_target_json(path: Path) -> dict[str, list[int]]:
     return data
 
 
+def load_l_reference_json(path: Path) -> dict[str, list[int]]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(data, dict) and all(isinstance(v, list) for v in data.values()):
+        return data
+    return {}
+
+
 def check_params(
     path: Path,
     *,
@@ -50,6 +57,7 @@ def check_params(
     l_target: list[int] | None = None,
     require_sync_ok: bool = False,
     l_sync_peak: list[int] | None = None,
+    l_reference: list[int] | None = None,
 ) -> dict:
     fails: list[str] = []
     warns: list[str] = []
@@ -102,6 +110,13 @@ def check_params(
         l_actual = parse_ints(L)
         if l_actual != l_sync_peak:
             warns.append(f"DendriteLength {l_actual} != L_sync_peak {l_sync_peak}")
+    if l_reference is not None:
+        l_actual = parse_ints(L)
+        for i, (la, lr) in enumerate(zip(l_actual, l_reference)):
+            if i >= 3:
+                break
+            if la < lr:
+                warns.append(f"DendriteLength dend{i}={la} < L_reference={lr}")
     if require_calibrated or cal_s is not None:
         if cal <= 0 and abs(flt - COLD_FIXED_LTZ) < 1e-9:
             fails.append("CalibratedFixedLTZThreshold missing/<=0 with cold FixedLTZ")
@@ -143,13 +158,17 @@ def main() -> None:
     ap.add_argument("--require-sync-ok", action="store_true", help="Require all non-ref LastAbsDt sync_ok")
     ap.add_argument("--peak-sync", type=Path, default=None, help="JSON from analyze_peak_sync.py")
     ap.add_argument("--L-target", type=Path, default=None, help="JSON from check_timing_feasibility")
+    ap.add_argument("--L-reference", type=Path, default=None, help="JSON from patch_l_reference.py --export")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     l_targets: dict[str, list[int]] = {}
+    l_references: dict[str, list[int]] = {}
     peak_sync: dict[str, dict] = {}
     if args.L_target and args.L_target.exists():
         l_targets = load_l_target_json(args.L_target)
+    if args.L_reference and args.L_reference.exists():
+        l_references = load_l_reference_json(args.L_reference)
     if args.peak_sync and args.peak_sync.exists():
         peak_sync = load_peak_sync_json(args.peak_sync)
 
@@ -175,6 +194,7 @@ def main() -> None:
         else:
             exp = p.parent.parent.name
             lt = l_targets.get(exp)
+            lr = l_references.get(exp)
             ps = peak_sync.get(exp, {})
             lsp = ps.get("L_sync_peak") or ps.get("L_actual")
             r = check_params(
@@ -183,6 +203,7 @@ def main() -> None:
                 l_target=lt,
                 require_sync_ok=args.require_sync_ok,
                 l_sync_peak=lsp,
+                l_reference=lr,
             )
             if args.strict and r["warns"]:
                 r["fails"].extend(r["warns"])

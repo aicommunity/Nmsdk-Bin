@@ -15,6 +15,8 @@ META="$ROOT/grid_cells.tsv"
 GTS="${GTS:-20000}"
 RESET_TEST="${RESET_TEST:-1}"
 PILOT_EXPS="${PILOT_EXPS:-}"
+L_REFERENCE="${L_REFERENCE:-}"
+L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
 
 set_project_name() {
   local ini="$1" name="$2"
@@ -103,5 +105,10 @@ while IFS=$'\t' read -r exp neuron span kind pack cap exc_rm exc_rsyn; do
   set_timestep "$train/Project.ini" "$GTS"
   set_timestep "$test/Project.ini" "$GTS"
 done < "$META"
+
+if [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]]; then
+  python3 "$ROOT/scripts/patch_l_reference.py" --export "$L_REF_JSON"
+  echo "Exported L reference to $L_REF_JSON"
+fi
 
 echo "Cold reset done."

@@ -48,3 +48,10 @@ AsymRm (быстрее settle + Inh τ=10×) **не снял fire_all** при �
 bash scripts/setup_asymrm.sh
 MAX_JOBS=4 TRAIN_T=80 TEST_T=15 bash scripts/run_asymrm.sh
 ```
+
+## Pilot v3 (2026-08-31, в процессе)
+
+- **Протокол:** GTS=20000, adaptive LENGTH_STEPS=80…2560, span100 +5120, `L_REFERENCE=ltzcal`, `l_train_guard.py`
+- **Диагностика:** [`SYNC_TOL_REPORT.md`](SYNC_TOL_REPORT.md), [`PILOT_REPORT.md`](PILOT_REPORT.md)
+- **Лог:** `pilot_v3.log`
+- **Масштабирование:** `bash scripts/scale_asymrm.sh` (gate ≥2/3 Done) — см. [`SCALE_DEFERRED.md`](SCALE_DEFERRED.md)

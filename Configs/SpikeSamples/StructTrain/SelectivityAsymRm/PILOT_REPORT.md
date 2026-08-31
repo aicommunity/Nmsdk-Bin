@@ -44,6 +44,35 @@
 
 ## Вывод
 
-Масштабирование Pack A / 18 EXP **не запускалось** (нужно ≥2/3 pilot Done). Следующий шаг: `sweep_asymrm_amp.sh` (PeakMargin / Gain) или B.7 margin на dend1 PEAK_MISALIGNED.
+Масштабирование Pack A / 18 EXP **не запускалось** (нужно ≥2/3 pilot Done). Следующий шаг: pilot v3 с L-floor + extended LENGTH_STEPS.
 
-См. также: [`AMP_REPORT.md`](AMP_REPORT.md), [`PEAK_SYNC_REPORT.md`](PEAK_SYNC_REPORT.md), [`CPP_FALLBACK.md`](CPP_FALLBACK.md).
+См. также: [`AMP_REPORT.md`](AMP_REPORT.md), [`PEAK_SYNC_REPORT.md`](PEAK_SYNC_REPORT.md), [`CPP_FALLBACK.md`](CPP_FALLBACK.md), [`SYNC_TOL_REPORT.md`](SYNC_TOL_REPORT.md).
+
+---
+
+## Диагноз v3 (offline audit + timeline)
+
+### Классификация (decision tree)
+
+| EXP | overall_class | интервенция |
+|-----|---------------|-------------|
+| span25 gen | **L_FORMULA_OFF** | L-floor dend2: 4 (не 3); l_train_guard rollback |
+| span25 preinh | **MISALIGNED** | dend1 1.95×tol; margin sweep если v3 fail |
+| span100 preinh | **LENGTH_UNDER** | LENGTH_STEPS +5120 для span100 |
+
+### Timeline dend2 (span25 gen): 4→3 ухудшил sync
+
+| StatisticLog | iter | L dend2 | last_abs_dt[2] | dt/tol |
+|--------------|------|---------|----------------|--------|
+| 13-13-12 | 419 | **4** | 0.00025 | 0.24× |
+| 17-31-54 | 837 | **3** | **0.00270** | **2.59×** |
+
+Offline tol sweep: trace sync fail при tol×1.5; model sync только при tol×2 или L_dend2=4 → **не tol**, а L.
+
+### Протокол pilot v3
+
+- `L_REFERENCE=ltzcal`, `LENGTH_STEPS=80 160 320 640 1280 2560`
+- span100: `LENGTH_STEPS_SPAN100=... 5120`
+- `l_train_guard.py`: rollback L↓ при росте dt; L-floor 6 5 4 1
+
+**Статус (запущен 2026-08-31):** обучение в фоне — `pilot_v3.log`. Мониторинг: `bash scripts/pilot_status.sh`

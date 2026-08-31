@@ -10,7 +10,7 @@ OUT_DIR="$ROOT/timing_sweep"
 PILOT_EXPS="${PILOT_EXPS:-EXP_span25ms_packA_gen EXP_span25ms_packA_preinh EXP_span100ms_packA_preinh}"
 MAX_JOBS="${MAX_JOBS:-3}"
 TRAIN_T="${TRAIN_T:-80}"
-ADAPTIVE_TRAIN="${ADAPTIVE_TRAIN:-0}"
+ADAPTIVE_TRAIN="${ADAPTIVE_TRAIN:-1}"
 
 mkdir -p "$OUT_DIR"
 

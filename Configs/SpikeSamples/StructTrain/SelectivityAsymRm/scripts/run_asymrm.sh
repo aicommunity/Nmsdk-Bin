@@ -21,8 +21,14 @@ FEAS="$ROOT/scripts/check_timing_feasibility.py"
 PILOT_EXPS="${PILOT_EXPS:-}"
 PACK_A_EXPS="${PACK_A_EXPS:-}"
 ADAPTIVE_TRAIN="${ADAPTIVE_TRAIN:-1}"
-LENGTH_STEPS="${LENGTH_STEPS:-80 160 320 640 1280}"
+LENGTH_STEPS="${LENGTH_STEPS:-80 160 320 640 1280 2560}"
+LENGTH_STEPS_SPAN25="${LENGTH_STEPS_SPAN25:-}"
+LENGTH_STEPS_SPAN50="${LENGTH_STEPS_SPAN50:-}"
+LENGTH_STEPS_SPAN100="${LENGTH_STEPS_SPAN100:-80 160 320 640 1280 2560 5120}"
 AMP_TRAIN_STEPS="${AMP_TRAIN_STEPS:-320 640 1280}"
+L_REFERENCE="${L_REFERENCE:-}"
+L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
+L_TRAIN_GUARD="$ROOT/scripts/l_train_guard.py"
 TRAIN_STEPS="${TRAIN_STEPS:-$LENGTH_STEPS}"
 PEAK_SYNC_JSON="${PEAK_SYNC_JSON:-$ROOT/peak_sync_report.json}"
 SKIP_TRAIN="${SKIP_TRAIN:-0}"
@@ -48,6 +54,37 @@ done
 
 exp_meta() {
   awk -F'\t' -v e="$1" -v c="$2" '$1==e{print $c;exit}' "$META"
+}
+
+length_steps_for_exp() {
+  local exp="$1"
+  local span
+  span=$(exp_meta "$exp" 3)
+  case "$span" in
+    25) [[ -n "$LENGTH_STEPS_SPAN25" ]] && echo "$LENGTH_STEPS_SPAN25" && return ;;
+    50) [[ -n "$LENGTH_STEPS_SPAN50" ]] && echo "$LENGTH_STEPS_SPAN50" && return ;;
+    100) [[ -n "$LENGTH_STEPS_SPAN100" ]] && echo "$LENGTH_STEPS_SPAN100" && return ;;
+  esac
+  echo "$LENGTH_STEPS"
+}
+
+prepare_l_reference() {
+  if [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]]; then
+    python3 "$ROOT/scripts/patch_l_reference.py" --export "$L_REF_JSON"
+    echo "L_reference exported to $L_REF_JSON"
+  fi
+}
+
+l_guard_save() {
+  local exp="$1"
+  python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --state "/tmp/asym_lstate_${exp}.json" --save-before
+}
+
+l_guard_after() {
+  local exp="$1"
+  local flags=()
+  [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]] && flags+=(--l-reference)
+  python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --state "/tmp/asym_lstate_${exp}.json" "${flags[@]}" --json
 }
 
 verify_model() {
@@ -177,18 +214,22 @@ adaptive_train_exp() {
     return $?
   fi
 
-  local -a length_steps=($LENGTH_STEPS)
+  local -a length_steps=($(length_steps_for_exp "$exp"))
   local -a amp_steps=($AMP_TRAIN_STEPS)
   local cumulative=0
   local blocker="UNKNOWN"
   local phase="length"
   local -a verify_flags=()
   [[ -f "$PEAK_SYNC_JSON" ]] && verify_flags+=(--peak-sync "$PEAK_SYNC_JSON")
+  [[ -f "$L_REF_JSON" ]] && verify_flags+=(--L-reference "$L_REF_JSON")
+
+  l_guard_save "$exp"
 
   for step in "${length_steps[@]}"; do
     echo "=== phase=length train $exp step=$step (cumulative +$step) ==="
     train_one_exp "$exp" "$step" || return 1
     cumulative=$((cumulative + step))
+    l_guard_after "$exp" || true
     if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
         "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
       echo "DONE $exp after length phase T=$cumulative"
@@ -209,6 +250,27 @@ adaptive_train_exp() {
     blocker=$(get_stall_blocker "$exp")
     if has_amp_stall "$blocker"; then
       phase="amp"
+    fi
+  fi
+
+  # Partial sync: keep length phase if amp stall but not all dendrites sync_ok
+  if [[ "$phase" == "amp" ]] && ! all_dendrites_sync_ok "$exp"; then
+    if has_amp_stall "$blocker"; then
+      echo "partial sync on $exp (blocker=$blocker) — extend length before amp-continue"
+      for step in "${length_steps[@]: -2}"; do
+        echo "=== phase=length-extend $exp step=$step ==="
+        train_one_exp "$exp" "$step" || return 1
+        cumulative=$((cumulative + step))
+        l_guard_after "$exp" || true
+        if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
+            "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
+          echo "DONE $exp after length-extend T=$cumulative"
+          return 0
+        fi
+        if all_dendrites_sync_ok "$exp"; then
+          break
+        fi
+      done
     fi
   fi
 
@@ -262,7 +324,8 @@ adaptive_train_all() {
 
 exec > >(tee "$LOG") 2>&1
 
-echo "=== EXP count=${#EXPS[@]} TRAIN_T start=$TRAIN_T ADAPTIVE=$ADAPTIVE_TRAIN ==="
+echo "=== EXP count=${#EXPS[@]} TRAIN_T start=$TRAIN_T ADAPTIVE=$ADAPTIVE_TRAIN L_REFERENCE=$L_REFERENCE ==="
+prepare_l_reference
 echo "=== LTZ train patch ==="
 apply_ltz_train_patch
 
@@ -295,6 +358,7 @@ fail_done=0
 for exp in "${EXPS[@]}"; do
   if ! python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok --diagnose \
       ${PEAK_SYNC_JSON:+--peak-sync "$PEAK_SYNC_JSON"} \
+      ${L_REF_JSON:+--L-reference "$L_REF_JSON"} \
       "$ROOT/$exp/Train/Parameters_00.xml"; then
     echo "TRAIN_NOT_DONE_OR_UNCALIBRATED $exp"
     fail_done=1

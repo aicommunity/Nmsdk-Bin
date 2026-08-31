@@ -31,6 +31,14 @@ patch_peak_margin() {
   done
 }
 
+patch_sync_tol() {
+  local exp="$1" tol="$2"
+  for f in "$ROOT/$exp/Train/Parameters_00.xml" "$ROOT/$exp/Train/Model_00.xml" \
+           "$ROOT/$exp/Test/Parameters_00.xml" "$ROOT/$exp/Test/Model_00.xml"; do
+    [[ -f "$f" ]] && patch_train_param "$f" "SyncTolerance" "$tol"
+  done
+}
+
 run_case() {
   local tag="$1" gain="$2" igap="$3" pmargin="${4:-}"
   local out="$GRID/$tag"
@@ -64,5 +72,25 @@ run_case "gain_high" "0.8" "1.5" ""
 run_case "faster_iter" "0.4" "1.0" ""
 run_case "margin_wide" "0.4" "1.5" "0.003"
 run_case "margin_narrow" "0.4" "1.5" "0.001458"
+run_case_tol() {
+  local tag="$1" tol="$2"
+  local out="$GRID/$tag"
+  mkdir -p "$out"
+  echo "======== AMP SWEEP $tag SyncTolerance=$tol ========"
+  GTS="$GTS" PILOT_EXPS="$PILOT_EXPS" RESET_TEST=0 bash "$RESET"
+  for exp in $PILOT_EXPS; do
+    patch_sync_tol "$exp" "$tol"
+  done
+  ALLOW_PARTIAL_TRAIN=1 MAX_JOBS="$MAX_JOBS" GTS="$GTS" PILOT_EXPS="$PILOT_EXPS" \
+    ADAPTIVE_TRAIN=1 L_REFERENCE=ltzcal bash "$RUN" 2>&1 | tee "$out/run.log" || true
+  cp "$ROOT/stall_latest.csv" "$out/stall.csv" 2>/dev/null || true
+  cp "$ROOT/feasibility_latest.csv" "$out/feasibility.csv" 2>/dev/null || true
+  python3 "$ROOT/scripts/analyze_peak_sync.py" \
+    $(for e in $PILOT_EXPS; do echo "$ROOT/$e/Train"; done) \
+    -o "$out/peak_sync.json" --md "$out/PEAK_SYNC.md" || true
+}
+
+run_case_tol "tol_x125" "0.001302"
+run_case_tol "tol_x150" "0.001562"
 
 echo "Amp sweep done. Results in $GRID/"

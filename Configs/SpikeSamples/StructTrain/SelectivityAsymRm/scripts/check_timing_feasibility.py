@@ -32,7 +32,14 @@ def verdict(
     iter_budget: int,
     sync_tol: float,
     last_abs_dt: list[float] | None,
+    l_reference: list[int] | None = None,
 ) -> str:
+    if l_reference and len(l_reference) == len(l_actual):
+        for i, (la, lr) in enumerate(zip(l_actual, l_reference)):
+            if i == REF_DENDRITE:
+                continue
+            if la < lr and la == l_target[i]:
+                return "L_BELOW_REFERENCE"
     if l_vectors_match(l_actual, l_target):
         if need_train == "0":
             return "SYNC_OK"
@@ -89,6 +96,14 @@ def analyze_one(
     except Exception:
         pass
 
+    l_reference = None
+    try:
+        from patch_l_reference import get_reference_l
+
+        l_reference = get_reference_l(params_path.parent.parent.name)
+    except Exception:
+        pass
+
     v = verdict(
         l_actual,
         l_target,
@@ -97,6 +112,7 @@ def analyze_one(
         iter_budget=iter_budget,
         sync_tol=p["SyncTolerance"],
         last_abs_dt=traces.get("last_abs_dt"),
+        l_reference=l_reference,
     )
 
     delta = [a - t for a, t in zip(l_actual, l_target)]
@@ -126,6 +142,7 @@ def analyze_one(
         "SyncTolerance": p["SyncTolerance"],
         "GTS": gts,
         "IsNeedToTrain": p["IsNeedToTrain"],
+        "L_reference": l_reference,
     }
 
 
