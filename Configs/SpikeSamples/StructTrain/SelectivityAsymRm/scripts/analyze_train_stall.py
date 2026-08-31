@@ -12,14 +12,17 @@ from typing import Any
 from asymrm_train_common import (
     K_NUM_DENDRITES,
     REF_DENDRITE,
+    all_non_ref_sync_ok,
     compute_iter_budget,
     compute_l_target,
     diagnose_console_log,
     estimate_est_delay_from_l,
     length_sync_ok,
+    list_statistic_dirs,
     load_meta_exps,
     load_train_params,
     load_trace_vectors,
+    load_trace_vectors_at,
     parse_console_iterations,
     l_vectors_match,
 )
@@ -98,7 +101,7 @@ def detect_length_plateau(iters: list[dict[str, Any]], dend: int) -> bool:
     return lens[-1] == lens[0] and lens[0] <= 1 and dend > 0
 
 
-def analyze_exp(train_dir: Path, *, train_t: float | None = None) -> dict[str, Any]:
+def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path | None = None) -> dict[str, Any]:
     params_path = train_dir / "Parameters_00.xml"
     p = load_train_params(params_path)
     feas = analyze_one(params_path, mode="post", est_delay=None, train_t=train_t)
@@ -106,7 +109,7 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None) -> dict[str, A
     l_actual = p["DendriteLength"]
     iter_budget = feas["iter_budget_required"]
 
-    traces = load_trace_vectors(train_dir)
+    traces = load_trace_vectors(train_dir, stat_dir=stat_dir)
     log_path = train_dir / "run_console.log"
     iters = parse_console_iterations(log_path)
     iter_count = iters[-1]["iter"] + 1 if iters else feas.get("iter_count")
@@ -180,6 +183,7 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None) -> dict[str, A
     return {
         "exp": train_dir.parent.name,
         "train_dir": str(train_dir),
+        "stat_dir": str(stat_dir) if stat_dir else None,
         "blocker": overall,
         "log_status": log_status,
         "L_actual": l_actual,
@@ -190,8 +194,32 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None) -> dict[str, A
         "feasibility_verdict": feas["verdict"],
         "IsNeedToTrain": p["IsNeedToTrain"],
         "FixedLTZ": p["FixedLTZThreshold"],
+        "all_non_ref_sync_ok": all_non_ref_sync_ok(
+            traces.get("LastAbsDtTrace", []), p["SyncTolerance"]
+        ),
         "dendrites": dend_rows,
     }
+
+
+def analyze_timeline(train_dir: Path, *, tail_rows: int = 0) -> list[dict[str, Any]]:
+    """Per StatisticLog subdir snapshot (uses last row of each trace)."""
+    out: list[dict[str, Any]] = []
+    for stat in list_statistic_dirs(train_dir):
+        traces = load_trace_vectors_at(train_dir, stat)
+        row: dict[str, Any] = {
+            "exp": train_dir.parent.name,
+            "stat_dir": stat.name,
+            "L": traces.get("DendriteLengthTrace"),
+            "last_abs_dt": traces.get("LastAbsDtTrace"),
+            "tip_R": traces.get("TipSynapseResistanceTrace"),
+            "no_improve": traces.get("NoImproveResistanceTrace"),
+            "amp_dt": traces.get("AmpDtTrace"),
+            "iter": None,
+        }
+        if "StimulusIterTrace" in traces and traces["StimulusIterTrace"]:
+            row["iter"] = int(traces["StimulusIterTrace"][0])
+        out.append(row)
+    return out
 
 
 def main() -> None:
@@ -201,6 +229,8 @@ def main() -> None:
     ap.add_argument("--grid", type=Path)
     ap.add_argument("--train-t", type=float, default=None)
     ap.add_argument("-o", "--output", type=Path)
+    ap.add_argument("--timeline", action="store_true", help="Emit per-StatisticLog snapshots")
+    ap.add_argument("--tail-rows", type=int, default=0)
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
@@ -213,11 +243,14 @@ def main() -> None:
         ap.error("provide train dirs or --meta + --grid")
 
     results = []
+    timeline_rows: list[dict[str, Any]] = []
     for d in dirs:
         if not (d / "Parameters_00.xml").exists():
             results.append({"train_dir": str(d), "blocker": "MISSING", "error": "no Parameters"})
             continue
         results.append(analyze_exp(d, train_t=args.train_t))
+        if args.timeline:
+            timeline_rows.extend(analyze_timeline(d, tail_rows=args.tail_rows))
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -244,6 +277,25 @@ def main() -> None:
             args.output.with_suffix(".json").write_text(
                 json.dumps(results, indent=2), encoding="utf-8"
             )
+        if args.timeline and timeline_rows:
+            tl_path = args.output.with_name(args.output.stem + "_timeline.csv")
+            with tl_path.open("w", encoding="utf-8", newline="") as f:
+                w = csv.DictWriter(
+                    f,
+                    fieldnames=["exp", "stat_dir", "iter", "L", "last_abs_dt", "tip_R", "no_improve", "amp_dt"],
+                    extrasaction="ignore",
+                )
+                w.writeheader()
+                for tr in timeline_rows:
+                    row = dict(tr)
+                    for k in ("L", "last_abs_dt", "tip_R", "no_improve", "amp_dt"):
+                        if isinstance(row.get(k), list):
+                            row[k] = " ".join(str(x) for x in row[k])
+                    w.writerow(row)
+
+    if args.timeline and not args.output:
+        print(json.dumps(timeline_rows, indent=2))
+        return
 
     if not args.json:
         for r in results:

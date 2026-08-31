@@ -19,8 +19,12 @@ VERIFY_DONE="$LTZCAL_SCRIPTS/verify_train_done.py"
 STALL="$ROOT/scripts/analyze_train_stall.py"
 FEAS="$ROOT/scripts/check_timing_feasibility.py"
 PILOT_EXPS="${PILOT_EXPS:-}"
+PACK_A_EXPS="${PACK_A_EXPS:-}"
 ADAPTIVE_TRAIN="${ADAPTIVE_TRAIN:-1}"
-TRAIN_STEPS="${TRAIN_STEPS:-80 160 320 640}"
+LENGTH_STEPS="${LENGTH_STEPS:-80 160 320 640 1280}"
+AMP_TRAIN_STEPS="${AMP_TRAIN_STEPS:-320 640 1280}"
+TRAIN_STEPS="${TRAIN_STEPS:-$LENGTH_STEPS}"
+PEAK_SYNC_JSON="${PEAK_SYNC_JSON:-$ROOT/peak_sync_report.json}"
 SKIP_TRAIN="${SKIP_TRAIN:-0}"
 ALLOW_PARTIAL_TRAIN="${ALLOW_PARTIAL_TRAIN:-0}"
 
@@ -29,8 +33,16 @@ ALLOW_PARTIAL_TRAIN="${ALLOW_PARTIAL_TRAIN:-0}"
 mapfile -t ALL_EXPS < <(awk -F'\t' 'NR>1{print $1}' "$META")
 EXPS=()
 for e in "${ALL_EXPS[@]}"; do
-  if [[ -z "$PILOT_EXPS" ]]; then EXPS+=("$e"); continue; fi
-  for p in $PILOT_EXPS; do [[ "$p" == "$e" ]] && EXPS+=("$e"); done
+  if [[ -n "$PILOT_EXPS" ]]; then
+    for p in $PILOT_EXPS; do [[ "$p" == "$e" ]] && EXPS+=("$e"); done
+    continue
+  fi
+  if [[ -n "$PACK_A_EXPS" ]]; then
+    pack=$(awk -F'\t' -v e="$e" '$1==e{print $5;exit}' "$META")
+    [[ "$pack" == "A" ]] && EXPS+=("$e")
+    continue
+  fi
+  EXPS+=("$e")
 done
 ((${#EXPS[@]})) || { echo "No EXP selected (PILOT_EXPS=$PILOT_EXPS)" >&2; exit 1; }
 
@@ -104,7 +116,22 @@ train_one_exp() {
   local dir="$ROOT/$exp/Train"
   local ini=Project.ini
   [[ -f "$dir/project.ini" ]] && ini=project.ini
-  ( cd "$dir"; "$NM" -c "$ini" -s -t "$tlim" -x -S >run_console.log 2>&1 )
+  ( cd "$dir"; "$NM" -c "$ini" -s -t "$tlim" -x -S >>run_console.log 2>&1; echo "Project saved." >>run_console.log )
+}
+
+all_dendrites_sync_ok() {
+  python3 - "$ROOT/$1/Train" "$ROOT/scripts" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from asymrm_train_common import all_non_ref_sync_ok, load_trace_vectors, load_train_params
+train_dir = Path(sys.argv[1])
+p = load_train_params(train_dir / "Parameters_00.xml")
+tr = load_trace_vectors(train_dir)
+last = tr.get("LastAbsDtTrace", [])
+ok = all_non_ref_sync_ok(last, p["SyncTolerance"])
+sys.exit(0 if ok else 1)
+PY
 }
 
 get_stall_blocker() {
@@ -115,31 +142,103 @@ print(d[0].get('blocker','UNKNOWN') if d else 'UNKNOWN')
 " 2>/dev/null || echo "UNKNOWN"
 }
 
+patch_continue_train() {
+  local exp="$1"
+  python3 - "$ROOT/$exp/Train/Parameters_00.xml" <<'PY'
+import re, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+t = p.read_text(encoding="utf-8")
+def set_tag(text, tag, value, count=0):
+    return re.sub(rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)", rf"\g<1>{value}\2", text, count=count or 0)
+t = set_tag(t, "ResetToUntrainedState", "0", 0)
+t = set_tag(t, "IsNeedToTrain", "1", 1)
+t = set_tag(t, "StructureBuildMode", "1", 1)
+p.write_text(t, encoding="utf-8")
+print("continue_train", p)
+PY
+}
+
+has_length_stall() {
+  local blocker="$1"
+  [[ "$blocker" == "LENGTH_STALL" || "$blocker" == "TIME_BUDGET" || "$blocker" == "PEAK_INVALID" ]]
+}
+
+has_amp_stall() {
+  local blocker="$1"
+  [[ "$blocker" == "AMP_AT_RMIN" || "$blocker" == "AMP_OSCILLATION" || "$blocker" == "AMP_PENDING" ]]
+}
+
 adaptive_train_exp() {
   local exp="$1"
-  local -a steps=($TRAIN_STEPS)
+  : >"$ROOT/$exp/Train/run_console.log"
   if [[ "$ADAPTIVE_TRAIN" != "1" ]]; then
     train_one_exp "$exp" "$TRAIN_T"
     return $?
   fi
+
+  local -a length_steps=($LENGTH_STEPS)
+  local -a amp_steps=($AMP_TRAIN_STEPS)
   local cumulative=0
-  for step in "${steps[@]}"; do
-    echo "=== adaptive train $exp step=$step (cumulative +$step) ==="
+  local blocker="UNKNOWN"
+  local phase="length"
+  local -a verify_flags=()
+  [[ -f "$PEAK_SYNC_JSON" ]] && verify_flags+=(--peak-sync "$PEAK_SYNC_JSON")
+
+  for step in "${length_steps[@]}"; do
+    echo "=== phase=length train $exp step=$step (cumulative +$step) ==="
     train_one_exp "$exp" "$step" || return 1
     cumulative=$((cumulative + step))
-    if python3 "$VERIFY_DONE" --require-calibrated "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
-      echo "DONE $exp after cumulative T=$cumulative"
+    if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
+        "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
+      echo "DONE $exp after length phase T=$cumulative"
       return 0
     fi
     blocker=$(get_stall_blocker "$exp")
-    echo "stall $exp blocker=$blocker after T=$cumulative"
-    case "$blocker" in
-      TIME_BUDGET|LENGTH_STALL) continue ;;
-      PEAK_INVALID) echo "route PEAK_INVALID — stop adaptive for $exp"; return 0 ;;
-      AMP_AT_RMIN|AMP_OSCILLATION|AMP_PENDING) echo "route AMP — stop adaptive for $exp"; return 0 ;;
-      *) continue ;;
-    esac
+    echo "stall $exp blocker=$blocker after length T=$cumulative"
+    if has_length_stall "$blocker"; then
+      continue
+    fi
+    if has_amp_stall "$blocker"; then
+      phase="amp"
+      break
+    fi
   done
+
+  if [[ "$phase" != "amp" ]] && ! has_amp_stall "$blocker"; then
+    blocker=$(get_stall_blocker "$exp")
+    if has_amp_stall "$blocker"; then
+      phase="amp"
+    fi
+  fi
+
+  if [[ "$phase" == "amp" ]] && all_dendrites_sync_ok "$exp"; then
+    echo "=== phase=amp-continue $exp (sync_ok all non-ref) ==="
+    patch_continue_train "$exp"
+    for step in "${amp_steps[@]}"; do
+      echo "=== phase=amp train $exp step=$step (cumulative +$step) ==="
+      train_one_exp "$exp" "$step" || return 1
+      cumulative=$((cumulative + step))
+      if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
+          "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
+        echo "DONE $exp after amp phase T=$cumulative"
+        return 0
+      fi
+      blocker=$(get_stall_blocker "$exp")
+      echo "stall $exp blocker=$blocker after amp T=$cumulative"
+      case "$blocker" in
+        AMP_PENDING|AMP_OSCILLATION) continue ;;
+        AMP_AT_RMIN) echo "AMP_AT_RMIN — stop amp-continue for $exp"; break ;;
+        LENGTH_STALL|TIME_BUDGET)
+          echo "length stall returned during amp — stop for $exp"
+          break ;;
+        *) break ;;
+      esac
+    done
+  elif [[ "$phase" == "amp" ]]; then
+    echo "skip amp-continue $exp: not all dendrites sync_ok"
+  fi
+
   return 0
 }
 
@@ -180,6 +279,11 @@ if [[ "$SKIP_TRAIN" != "1" ]]; then
   fi
 fi
 
+echo "=== Peak sync snapshot ==="
+python3 "$ROOT/scripts/analyze_peak_sync.py" \
+  $(for e in "${EXPS[@]}"; do echo "$ROOT/$e/Train"; done) \
+  -o "$ROOT/peak_sync_latest.json" --md "$ROOT/PEAK_SYNC_REPORT.md" || true
+
 echo "=== Feasibility + stall snapshot ==="
 python3 "$FEAS" --post $(for e in "${EXPS[@]}"; do echo "$ROOT/$e/Train/Parameters_00.xml"; done) \
   -o "$ROOT/feasibility_latest.csv"
@@ -189,7 +293,8 @@ python3 "$STALL" $(for e in "${EXPS[@]}"; do echo "$ROOT/$e/Train"; done) \
 echo "=== VERIFY train Done + calibrated ==="
 fail_done=0
 for exp in "${EXPS[@]}"; do
-  if ! python3 "$VERIFY_DONE" --require-calibrated --diagnose \
+  if ! python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok --diagnose \
+      ${PEAK_SYNC_JSON:+--peak-sync "$PEAK_SYNC_JSON"} \
       "$ROOT/$exp/Train/Parameters_00.xml"; then
     echo "TRAIN_NOT_DONE_OR_UNCALIBRATED $exp"
     fail_done=1

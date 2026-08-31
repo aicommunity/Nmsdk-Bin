@@ -57,6 +57,8 @@ def load_train_params(path: Path) -> dict[str, Any]:
         "DendriteLength": parse_ints(l_s),
         "SyncTolerance": float(read_tag(text, "SyncTolerance") or "0.02"),
         "PeakMeasureMargin": float(read_tag(text, "PeakMeasureMargin") or "0.06"),
+        "DelayAgreeMarginMin": float(read_tag(text, "DelayAgreeMarginMin") or "0.03"),
+        "ResistanceAdjustGain": float(read_tag(text, "ResistanceAdjustGain") or "0.4"),
         "IterationGap": float(read_tag(text, "IterationGap") or "1.5"),
         "ResistanceMin": float(read_tag(text, "ResistanceMin") or str(RESISTANCE_MIN_DEFAULT)),
         "ResistanceMax": float(read_tag(text, "ResistanceMax") or "1e11"),
@@ -138,11 +140,15 @@ def iter_count_from_train_t(train_t: float, iteration_gap: float = 1.5, max_l: i
 
 
 def find_latest_statistic_dir(train_dir: Path) -> Path | None:
+    subs = list_statistic_dirs(train_dir)
+    return subs[-1] if subs else None
+
+
+def list_statistic_dirs(train_dir: Path) -> list[Path]:
     stat_root = train_dir / "StatisticLog"
     if not stat_root.is_dir():
-        return None
-    subs = sorted([p for p in stat_root.iterdir() if p.is_dir()], key=lambda p: p.name)
-    return subs[-1] if subs else None
+        return []
+    return sorted([p for p in stat_root.iterdir() if p.is_dir()], key=lambda p: p.name)
 
 
 def parse_trace_last_row(trace_path: Path) -> tuple[float, list[float]] | None:
@@ -176,25 +182,155 @@ def parse_trace_last_row(trace_path: Path) -> tuple[float, list[float]] | None:
         return None
 
 
-def load_trace_vectors(train_dir: Path, prefix: str = "NeuronTimeLearner") -> dict[str, list[float]]:
-    stat = find_latest_statistic_dir(train_dir)
+TRACE_NAMES = [
+    "DendriteLengthTrace",
+    "LastAbsDtTrace",
+    "ResistanceStatusTrace",
+    "NoImproveResistanceTrace",
+    "AmpDtTrace",
+    "TipSynapseResistanceTrace",
+    "SomaNeuronAmplitude",
+    "StimulusIterTrace",
+    "EffectiveGainTrace",
+]
+
+
+def resolve_trace_path(stat_dir: Path, name: str, prefix: str = "NeuronTimeLearner") -> Path | None:
+    for cand in (stat_dir / f"{prefix}.{name}.txt", stat_dir / f"{name}.txt"):
+        if cand.is_file():
+            return cand
+    return None
+
+
+def parse_trace_tail_rows(trace_path: Path, *, tail_rows: int = 500) -> list[tuple[float, list[float]]]:
+    if not trace_path.is_file():
+        return []
+    try:
+        with trace_path.open("rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            if size == 0:
+                return []
+            chunk = min(size, max(65536, tail_rows * 256))
+            f.seek(-chunk, 2)
+            tail = f.read().decode("utf-8", errors="replace")
+    except OSError:
+        return []
+    lines = [ln.strip() for ln in tail.splitlines() if ln.strip()]
+    if tail_rows > 0:
+        lines = lines[-tail_rows:]
+    rows: list[tuple[float, list[float]]] = []
+    for line in lines:
+        parts = re.split(r"\s+", line)
+        if len(parts) < 3:
+            continue
+        try:
+            t = float(parts[1].replace(",", "."))
+            vals = [float(x.replace(",", ".")) for x in parts[2:]]
+            rows.append((t, vals))
+        except ValueError:
+            continue
+    return rows
+
+
+def load_trace_vectors(
+    train_dir: Path,
+    prefix: str = "NeuronTimeLearner",
+    *,
+    stat_dir: Path | None = None,
+) -> dict[str, list[float]]:
+    stat = stat_dir or find_latest_statistic_dir(train_dir)
     if not stat:
         return {}
-    names = [
-        "DendriteLengthTrace",
-        "LastAbsDtTrace",
-        "ResistanceStatusTrace",
-        "NoImproveResistanceTrace",
-        "AmpDtTrace",
-        "TipSynapseResistanceTrace",
-    ]
     out: dict[str, list[float]] = {}
-    for name in names:
-        for cand in (stat / f"{prefix}.{name}.txt", stat / f"{name}.txt"):
+    for name in TRACE_NAMES:
+        cand = resolve_trace_path(stat, name, prefix)
+        if cand:
             row = parse_trace_last_row(cand)
             if row:
                 out[name] = row[1]
-                break
+    return out
+
+
+def load_trace_vectors_at(
+    train_dir: Path,
+    stat_dir: Path,
+    prefix: str = "NeuronTimeLearner",
+) -> dict[str, list[float]]:
+    return load_trace_vectors(train_dir, prefix, stat_dir=stat_dir)
+
+
+def delay_len_of(l_seg: int, est_delay: float) -> float:
+    return max(0.0, (l_seg - 1) * est_delay)
+
+
+def delay_agree_margin(sync_tol: float, agree_min: float) -> float:
+    return max(sync_tol, agree_min)
+
+
+def compute_l_sync_peak(
+    expected: list[float],
+    est_delay: float,
+    ref_peak: float | None = None,
+) -> list[int]:
+    return compute_l_target(expected, est_delay, ref_peak)
+
+
+def all_non_ref_sync_ok(
+    last_abs_dt: list[float],
+    sync_tol: float,
+    *,
+    n_dend: int = K_NUM_DENDRITES,
+    ref: int = REF_DENDRITE,
+) -> bool:
+    if not last_abs_dt:
+        return False
+    for i in range(min(n_dend - 1, len(last_abs_dt))):
+        if i == ref:
+            continue
+        if not length_sync_ok(last_abs_dt[i], sync_tol):
+            return False
+    return True
+
+
+def analyze_peak_shape(
+    rows: list[tuple[float, list[float]]],
+    *,
+    n_dend: int = K_NUM_DENDRITES,
+) -> list[dict[str, Any]]:
+    """Per-dendrite peak shape from SomaNeuronAmplitude tail samples."""
+    if not rows:
+        return [{"peak_shape": "invalid", "max_amp": 0.0, "plateau_ratio": 0.0} for _ in range(n_dend)]
+
+    out: list[dict[str, Any]] = []
+    for d in range(n_dend):
+        amps = [vals[d] for _, vals in rows if len(vals) > d]
+        if not amps:
+            out.append({"peak_shape": "invalid", "max_amp": 0.0, "plateau_ratio": 0.0})
+            continue
+        mx = max(amps)
+        if mx <= 1e-12:
+            out.append({"peak_shape": "invalid", "max_amp": mx, "plateau_ratio": 0.0})
+            continue
+        thresh = 0.5 * mx
+        above = sum(1 for a in amps if a >= thresh)
+        plateau_ratio = above / len(amps)
+        mean_a = sum(amps) / len(amps)
+        sharpness = mx / mean_a if mean_a > 1e-12 else 0.0
+        if plateau_ratio > 0.3:
+            shape = "plateau"
+        elif sharpness > 3.0:
+            shape = "sharp"
+        else:
+            shape = "moderate"
+        out.append(
+            {
+                "peak_shape": shape,
+                "max_amp": mx,
+                "plateau_ratio": plateau_ratio,
+                "sharpness": sharpness,
+            }
+        )
     return out
 
 

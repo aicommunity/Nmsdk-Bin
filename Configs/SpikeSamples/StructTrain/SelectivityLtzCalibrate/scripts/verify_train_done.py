@@ -21,6 +21,17 @@ def parse_ints(s: str) -> list[int]:
     return [int(float(x.replace(",", "."))) for x in re.split(r"\s+", s.strip()) if x]
 
 
+def load_peak_sync_json(path: Path) -> dict[str, dict]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, list):
+        return data
+    out: dict[str, dict] = {}
+    for row in data:
+        exp = row.get("exp") or Path(row.get("train_dir", "")).parent.name
+        out[exp] = row
+    return out
+
+
 def load_l_target_json(path: Path) -> dict[str, list[int]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(data, list):
@@ -37,6 +48,8 @@ def check_params(
     *,
     require_calibrated: bool = False,
     l_target: list[int] | None = None,
+    require_sync_ok: bool = False,
+    l_sync_peak: list[int] | None = None,
 ) -> dict:
     fails: list[str] = []
     warns: list[str] = []
@@ -73,6 +86,22 @@ def check_params(
             fails.append(
                 f"DendriteLength {l_actual} != L_target {l_target}"
             )
+    if require_sync_ok:
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parents[1].parent / "SelectivityAsymRm/scripts"))
+            from asymrm_train_common import all_non_ref_sync_ok, load_trace_vectors
+
+            traces = load_trace_vectors(path.parent)
+            sync_tol = float(read_tag(path, "SyncTolerance") or "0.02")
+            last_dt = traces.get("LastAbsDtTrace", [])
+            if not all_non_ref_sync_ok(last_dt, sync_tol):
+                fails.append(f"Not all non-ref dendrites sync_ok (LastAbsDt={last_dt})")
+        except Exception as exc:
+            warns.append(f"sync_ok check failed: {exc}")
+    if l_sync_peak is not None:
+        l_actual = parse_ints(L)
+        if l_actual != l_sync_peak:
+            warns.append(f"DendriteLength {l_actual} != L_sync_peak {l_sync_peak}")
     if require_calibrated or cal_s is not None:
         if cal <= 0 and abs(flt - COLD_FIXED_LTZ) < 1e-9:
             fails.append("CalibratedFixedLTZThreshold missing/<=0 with cold FixedLTZ")
@@ -111,13 +140,18 @@ def main() -> None:
     ap.add_argument("--strict", action="store_true", help="Treat warns as fails")
     ap.add_argument("--require-calibrated", action="store_true")
     ap.add_argument("--diagnose", action="store_true", help="Run analyze_train_stall on FAIL")
+    ap.add_argument("--require-sync-ok", action="store_true", help="Require all non-ref LastAbsDt sync_ok")
+    ap.add_argument("--peak-sync", type=Path, default=None, help="JSON from analyze_peak_sync.py")
     ap.add_argument("--L-target", type=Path, default=None, help="JSON from check_timing_feasibility")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     l_targets: dict[str, list[int]] = {}
+    peak_sync: dict[str, dict] = {}
     if args.L_target and args.L_target.exists():
         l_targets = load_l_target_json(args.L_target)
+    if args.peak_sync and args.peak_sync.exists():
+        peak_sync = load_peak_sync_json(args.peak_sync)
 
     diagnose_script = Path(__file__).resolve().parents[1].parent / "SelectivityAsymRm/scripts/analyze_train_stall.py"
 
@@ -141,7 +175,15 @@ def main() -> None:
         else:
             exp = p.parent.parent.name
             lt = l_targets.get(exp)
-            r = check_params(p, require_calibrated=args.require_calibrated, l_target=lt)
+            ps = peak_sync.get(exp, {})
+            lsp = ps.get("L_sync_peak") or ps.get("L_actual")
+            r = check_params(
+                p,
+                require_calibrated=args.require_calibrated,
+                l_target=lt,
+                require_sync_ok=args.require_sync_ok,
+                l_sync_peak=lsp,
+            )
             if args.strict and r["warns"]:
                 r["fails"].extend(r["warns"])
                 r["warns"] = []

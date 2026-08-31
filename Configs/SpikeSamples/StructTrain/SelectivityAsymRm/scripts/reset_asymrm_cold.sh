@@ -12,7 +12,7 @@ PY_PATCH="$ROOT/scripts/patch_pattern_scale.py"
 LTZ_TRAIN="$LTZCAL_SCRIPTS/patch_ltz_calibrate_train.py"
 INJECT="$ROOT/scripts/inject_analyzer.py"
 META="$ROOT/grid_cells.tsv"
-GTS="${GTS:-10000}"
+GTS="${GTS:-20000}"
 RESET_TEST="${RESET_TEST:-1}"
 PILOT_EXPS="${PILOT_EXPS:-}"
 

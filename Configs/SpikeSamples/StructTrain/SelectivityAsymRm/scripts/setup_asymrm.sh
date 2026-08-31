@@ -9,7 +9,7 @@ VERIFY="$ROOT/scripts/verify_pattern_span.py"
 VERIFY_EL="$ROOT/scripts/verify_element_params.py"
 WATCH_PATCH="$ROOT/scripts/patch_watch_pattern_legend.py"
 META="$ROOT/grid_cells.tsv"
-GTS=10000
+GTS=20000
 
 set_project_name() {
   local ini="$1" name="$2"

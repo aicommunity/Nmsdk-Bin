@@ -102,6 +102,14 @@ def analyze_one(
     delta = [a - t for a, t in zip(l_actual, l_target)]
     gts = read_gts_from_ini(train_dir)
 
+    l_sync_peak = l_target
+    try:
+        from asymrm_train_common import compute_l_target as clt
+
+        l_sync_peak = clt(expected, est, ref_peak=expected[-1] if expected else None)
+    except Exception:
+        pass
+
     return {
         "exp": params_path.parent.parent.name,
         "params": str(params_path),
@@ -109,6 +117,7 @@ def analyze_one(
         "EstDelayPerSeg": est,
         "Expected": expected,
         "L_target": l_target,
+        "L_sync_peak": l_sync_peak,
         "L_actual": l_actual,
         "delta_L": delta,
         "iter_budget_required": iter_budget,
