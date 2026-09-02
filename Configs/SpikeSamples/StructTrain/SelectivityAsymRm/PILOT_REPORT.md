@@ -1,78 +1,67 @@
-# Pilot retrain v2 — Pack A (3 EXP)
+# Pilot v3 — итог (остановлен 2026-09-02)
 
-Протокол: GTS=20000, 3-phase adaptive (`LENGTH_STEPS=80 160 320 640 1280`, cumulative T=2480), amp-continue не запускался (нет `all_sync_ok`).
+Pilot v3 остановлен вручную на span100 step +5120 (~36% sim, ~13ч без улучшения dend0).
 
-## Результаты train
+## Gate: 0/3 Done
 
-| EXP | L (после) | L_formula | NeedTrain | FixedLTZ | blocker | sync_all |
-|-----|-----------|-----------|-----------|----------|---------|----------|
-| span25 gen | **6 5 3 1** | 6 5 3 1 | 1 | 0.0115 | LENGTH_STALL | no |
-| span25 preinh | 6 5 4 1 | 6 5 3 1 | 1 | 0.0115 | LENGTH_STALL | no |
-| span100 preinh | 9 17 12 1 | 20 17 11 1 | 1 | 0.0115 | LENGTH_STALL | no |
+| EXP | L | L_effective | Blocker | Следующий шаг |
+|-----|---|-------------|---------|---------------|
+| span25 gen | 6 5 4 1 | 6 5 4 1 | LENGTH_STALL* | `finish_pilot_lref.sh` |
+| span25 preinh | 6 5 4 1 | 6 5 4 1 | LENGTH_STALL* | `finish_pilot_lref.sh` |
+| span100 preinh | 9 17 12 1 | 20 17 11 1 | LENGTH_UNDER | **вне pilot** — отдельный протокол |
 
-**Прогресс vs v1:** span25 gen — dend2 **4→3** (совпал с L_formula); узкое место сместилось на dend2.
+\* traces устарели (gen: stat при L=3 dend2; preinh: dt=1.501 sentinel после disk full).
 
-**Итог:** **0/3 Done** (gate fail-hard). Sync/test не запускались. Amp-phase пропущена: `skip amp-continue` (нет `all_non_ref_sync_ok`).
+## Ключевые выводы
 
-## Порог синхронизации (`tol`)
+1. **L=`6 5 4 1` — правильная cable-цель** для span25 (LtzCal Done). Formula `6 5 3 1` off-by-one на dend2: измеренный d2 2.7 ms (L=3) vs 0.25 ms (L=4).
+2. **L-guard работал** — rollback 6 5 3 1 → 6 5 4 1.
+3. **span100 dend0** — L=9 при need L=20, gap **14× tol**, plateau; step +5120 бессмысленен (~50ч wall).
+4. **Параллельный pilot** — span25 ждали span100; после length subprocess span25 не получили L-ref refresh (старый процесс).
 
-`tol` = **`SyncTolerance`** в `Parameters_00.xml` (learner: `DendLastAbsDt ≤ SyncTolerance` → `sync_ok`).
+## Изменения в скриптах (2026-09-02)
 
-| span | SyncTolerance (`tol`) | DelayAgreeMarginMin | PeakMeasureMargin | формула |
-|------|----------------------|---------------------|-------------------|---------|
-| 25 ms | **0.00104167 s** (≈1.04 ms) | 0.002 s | 0.002 s | `max(0.5ms, 0.02·α)`, α=span/480 |
-| 50 ms | 0.002083 s (≈2.08 ms) | — | — | то же |
-| 100 ms | **0.004167 s** (≈4.17 ms) | — | — | то же |
+| Компонент | Изменение |
+|-----------|-----------|
+| `effective_l_target` | Цель = L_reference, не formula |
+| `length_step_guard.py` | skip/abort: plateau, hopeless UNDER, max step |
+| `run_asymrm.sh` | guard перед каждым length step; span100 default без 5120 |
+| `LENGTH_MAX_STEP` | default **2560** (5120 только явно) |
+| `finish_pilot_lref.sh` | span25 only: refresh 320 + amp |
 
-Эталон LtzCal Done (span25 gen) использует **тот же** `SyncTolerance=0.00104167` и достигает `sync_ok` на всех non-ref при L=`6 5 4 1`. Значит порог **не завышен абсолютно** — при тех же tol Done достижим. Отказ пилота v2 — **рассогласование пика/кабеля** (`last_abs_dt`), не обязательно «слишком жёсткий tol».
+### Правила guard
 
-## Per-dendrite last_abs_dt (span25 gen, pilot v2)
+- `skip_step`: step > LENGTH_MAX_STEP, или hopeless UNDER + step ≥1280, или plateau + step ≥2560
+- `abort_length`: at L_reference → refresh + amp; hopeless UNDER + plateau
 
-`tol = 0.00104167 s`. `sync_ok ⇔ last_abs_dt ≤ tol`.
+## План дальше
 
-| dend | L | last_abs_dt | dt / tol | sync_ok |
-|:----:|:-:|:-----------:|:--------:|:-------:|
-| 0 | 6 | 0.00020 s | 0.19× | yes |
-| 1 | 5 | 0.00103 s | **0.99×** | yes (на грани) |
-| 2 | 3 | **0.00270 s** | **2.59×** | **no** ← блокирует `all_sync_ok` |
+### Фаза A — span25 (сейчас)
 
-После уменьшения L dend2 (4→3) `last_abs_dt` на dend2 **вырос** (было ~0.00025 при L=4 в v1). Гипотеза: L=3 по формуле не согласован с измеренным пиком; LtzCal Done держал L=4 при том же tol.
+```bash
+bash scripts/finish_pilot_amp.sh   # лог: finish_pilot_amp.log (AMP_ONLY)
+bash scripts/pilot_status.sh
+```
 
-## span100 preinh (кратко)
+Запущено 2026-09-02: amp phase (320→640→1280) с `AMP_PARTIAL_AT_L_REF` + `AMP_FORCE_AT_L_REF`, L-floor перед каждым шагом.
 
-`tol = 0.004167 s`. Блокер: dend0 `last_abs_dt=0.0612 s` (**15× tol**), не «пограничный» случай.
+### Фаза B — span100 (отложено)
 
-## Вывод
+- dend0 LENGTH_UNDER: нужен другой budget/протокол (warm-start L, extended steps с guard, не blind +5120)
+- В pilot v3 **исключён** до отдельного sweep
 
-Масштабирование Pack A / 18 EXP **не запускалось** (нужно ≥2/3 pilot Done). Следующий шаг: pilot v3 с L-floor + extended LENGTH_STEPS.
+### Фаза C — масштабирование
 
-См. также: [`AMP_REPORT.md`](AMP_REPORT.md), [`PEAK_SYNC_REPORT.md`](PEAK_SYNC_REPORT.md), [`CPP_FALLBACK.md`](CPP_FALLBACK.md), [`SYNC_TOL_REPORT.md`](SYNC_TOL_REPORT.md).
+При gate ≥2/3: `bash scripts/scale_asymrm.sh`
 
----
+При fail span25 после finish: `sweep_asymrm_amp.sh` (margin/gain)
 
-## Диагноз v3 (offline audit + timeline)
+## Мониторинг
 
-### Классификация (decision tree)
+```bash
+tail -f finish_pilot_lref.log
+bash scripts/pilot_status.sh
+python3 scripts/length_step_guard.py EXP_.../Train --next-step 5120 --cumulative 5040 --json
+```
 
-| EXP | overall_class | интервенция |
-|-----|---------------|-------------|
-| span25 gen | **L_FORMULA_OFF** | L-floor dend2: 4 (не 3); l_train_guard rollback |
-| span25 preinh | **MISALIGNED** | dend1 1.95×tol; margin sweep если v3 fail |
-| span100 preinh | **LENGTH_UNDER** | LENGTH_STEPS +5120 для span100 |
-
-### Timeline dend2 (span25 gen): 4→3 ухудшил sync
-
-| StatisticLog | iter | L dend2 | last_abs_dt[2] | dt/tol |
-|--------------|------|---------|----------------|--------|
-| 13-13-12 | 419 | **4** | 0.00025 | 0.24× |
-| 17-31-54 | 837 | **3** | **0.00270** | **2.59×** |
-
-Offline tol sweep: trace sync fail при tol×1.5; model sync только при tol×2 или L_dend2=4 → **не tol**, а L.
-
-### Протокол pilot v3
-
-- `L_REFERENCE=ltzcal`, `LENGTH_STEPS=80 160 320 640 1280 2560`
-- span100: `LENGTH_STEPS_SPAN100=... 5120`
-- `l_train_guard.py`: rollback L↓ при росте dt; L-floor 6 5 4 1
-
-**Статус (запущен 2026-08-31):** обучение в фоне — `pilot_v3.log`. Мониторинг: `bash scripts/pilot_status.sh`
+См. [`SYNC_TOL_REPORT.md`](SYNC_TOL_REPORT.md), [`AMP_REPORT.md`](AMP_REPORT.md).

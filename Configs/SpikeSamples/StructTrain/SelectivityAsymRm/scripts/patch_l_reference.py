@@ -48,6 +48,27 @@ def get_reference_l(exp: str) -> list[int] | None:
     return build_reference_map().get(exp)
 
 
+def effective_l_target(l_formula: list[int], l_reference: list[int] | None) -> list[int]:
+    """Cable sync target: L_reference overrides formula on non-ref dendrites when set."""
+    if not l_reference or len(l_reference) != len(l_formula):
+        return list(l_formula)
+    out = list(l_formula)
+    for i in range(min(len(out), len(l_reference))):
+        if i >= 3:
+            break
+        out[i] = l_reference[i]
+    return out
+
+
+def at_l_reference(l_actual: list[int], l_reference: list[int] | None) -> bool:
+    if not l_reference or len(l_reference) != len(l_actual):
+        return False
+    for i in range(min(len(l_actual), 3)):
+        if l_actual[i] != l_reference[i]:
+            return False
+    return True
+
+
 def export_reference_json(path: Path) -> dict[str, list[int]]:
     data = build_reference_map()
     path.write_text(json.dumps(data, indent=2), encoding="utf-8")

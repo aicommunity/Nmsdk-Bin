@@ -40,6 +40,14 @@ def verdict(
                 continue
             if la < lr and la == l_target[i]:
                 return "L_BELOW_REFERENCE"
+        if l_vectors_match(l_actual, l_reference):
+            if need_train == "0":
+                return "SYNC_OK"
+            if last_abs_dt and any(
+                d > sync_tol + 1e-12 for i, d in enumerate(last_abs_dt) if i != REF_DENDRITE
+            ):
+                return "AMP_PENDING"
+            return "AMP_PENDING"
     if l_vectors_match(l_actual, l_target):
         if need_train == "0":
             return "SYNC_OK"

@@ -24,10 +24,16 @@ ADAPTIVE_TRAIN="${ADAPTIVE_TRAIN:-1}"
 LENGTH_STEPS="${LENGTH_STEPS:-80 160 320 640 1280 2560}"
 LENGTH_STEPS_SPAN25="${LENGTH_STEPS_SPAN25:-}"
 LENGTH_STEPS_SPAN50="${LENGTH_STEPS_SPAN50:-}"
-LENGTH_STEPS_SPAN100="${LENGTH_STEPS_SPAN100:-80 160 320 640 1280 2560 5120}"
+LENGTH_STEPS_SPAN100="${LENGTH_STEPS_SPAN100:-80 160 320 640 1280 2560}"
+LENGTH_MAX_STEP="${LENGTH_MAX_STEP:-2560}"
+LENGTH_HOPELESS_TOL_MULT="${LENGTH_HOPELESS_TOL_MULT:-5}"
+LENGTH_STEP_GUARD="$ROOT/scripts/length_step_guard.py"
 AMP_TRAIN_STEPS="${AMP_TRAIN_STEPS:-320 640 1280}"
 L_REFERENCE="${L_REFERENCE:-}"
 L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
+L_REF_REFRESH="${L_REF_REFRESH:-320}"
+AMP_PARTIAL_AT_L_REF="${AMP_PARTIAL_AT_L_REF:-0}"
+AMP_FORCE_AT_L_REF="${AMP_FORCE_AT_L_REF:-0}"
 L_TRAIN_GUARD="$ROOT/scripts/l_train_guard.py"
 TRAIN_STEPS="${TRAIN_STEPS:-$LENGTH_STEPS}"
 PEAK_SYNC_JSON="${PEAK_SYNC_JSON:-$ROOT/peak_sync_report.json}"
@@ -85,6 +91,43 @@ l_guard_after() {
   local flags=()
   [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]] && flags+=(--l-reference)
   python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --state "/tmp/asym_lstate_${exp}.json" "${flags[@]}" --json
+}
+
+l_guard_floor_before() {
+  local exp="$1"
+  [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]] || return 0
+  python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --apply-floor --l-reference --json 2>/dev/null || true
+}
+
+ready_for_amp() {
+  local exp="$1"
+  if all_dendrites_sync_ok "$exp"; then
+    return 0
+  fi
+  if [[ "$AMP_FORCE_AT_L_REF" == "1" ]] && at_l_reference "$exp"; then
+    return 0
+  fi
+  [[ "$AMP_PARTIAL_AT_L_REF" == "1" ]] || return 1
+  at_l_reference "$exp" || return 1
+  python3 - "$ROOT/$exp/Train" "$ROOT/scripts" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from asymrm_train_common import load_train_params, load_trace_vectors, length_sync_ok, REF_DENDRITE
+train_dir = Path(sys.argv[1])
+p = load_train_params(train_dir / "Parameters_00.xml")
+tr = load_trace_vectors(train_dir)
+last = tr.get("LastAbsDtTrace", [])
+tol = p["SyncTolerance"]
+ok_n = 0
+for i in range(3):
+    if i == REF_DENDRITE:
+        continue
+    if i < len(last) and last[i] < 1.0 and length_sync_ok(last[i], tol):
+        ok_n += 1
+# at L_ref: allow amp if >=2 non-ref sync_ok, or any sync_ok + AMP pending on another
+sys.exit(0 if ok_n >= 2 else 1)
+PY
 }
 
 verify_model() {
@@ -150,6 +193,7 @@ apply_ltz_train_patch() {
 
 train_one_exp() {
   local exp="$1" tlim="$2"
+  l_guard_floor_before "$exp"
   local dir="$ROOT/$exp/Train"
   local ini=Project.ini
   [[ -f "$dir/project.ini" ]] && ini=project.ini
@@ -179,6 +223,21 @@ print(d[0].get('blocker','UNKNOWN') if d else 'UNKNOWN')
 " 2>/dev/null || echo "UNKNOWN"
 }
 
+at_l_reference() {
+  python3 - "$ROOT/$1/Train/Parameters_00.xml" "$ROOT/scripts" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from asymrm_train_common import load_train_params
+from patch_l_reference import at_l_reference, get_reference_l
+p = Path(sys.argv[1])
+pr = load_train_params(p)
+exp = p.parent.parent.name
+ok = at_l_reference(pr["DendriteLength"], get_reference_l(exp))
+sys.exit(0 if ok else 1)
+PY
+}
+
 patch_continue_train() {
   local exp="$1"
   python3 - "$ROOT/$exp/Train/Parameters_00.xml" <<'PY'
@@ -206,6 +265,31 @@ has_amp_stall() {
   [[ "$blocker" == "AMP_AT_RMIN" || "$blocker" == "AMP_OSCILLATION" || "$blocker" == "AMP_PENDING" ]]
 }
 
+length_step_decision() {
+  local exp="$1" step="$2" cumulative="$3"
+  python3 "$LENGTH_STEP_GUARD" "$ROOT/$exp/Train" \
+    --next-step "$step" --cumulative "$cumulative" \
+    --max-length-step "$LENGTH_MAX_STEP" \
+    --hopeless-tol-mult "$LENGTH_HOPELESS_TOL_MULT" --json 2>/dev/null || echo '{"action":"proceed"}'
+}
+
+should_skip_length_step() {
+  local exp="$1" step="$2" cumulative="$3"
+  local decision action reason
+  decision=$(length_step_decision "$exp" "$step" "$cumulative")
+  action=$(echo "$decision" | python3 -c "import json,sys; print(json.load(sys.stdin).get('action','proceed'))")
+  reason=$(echo "$decision" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason',''))")
+  if [[ "$action" == "skip_step" ]]; then
+    echo "SKIP length $exp step=$step: $reason"
+    return 0
+  fi
+  if [[ "$action" == "abort_length" ]]; then
+    echo "ABORT length schedule $exp before step=$step: $reason"
+    return 2
+  fi
+  return 1
+}
+
 adaptive_train_exp() {
   local exp="$1"
   : >"$ROOT/$exp/Train/run_console.log"
@@ -215,6 +299,10 @@ adaptive_train_exp() {
   fi
 
   local -a length_steps=($(length_steps_for_exp "$exp"))
+  if [[ "${L_REF_ONLY:-}" == "1" ]] && at_l_reference "$exp"; then
+    length_steps=()
+    echo "=== L_REF_ONLY $exp — skip length schedule, refresh + amp ==="
+  fi
   local -a amp_steps=($AMP_TRAIN_STEPS)
   local cumulative=0
   local blocker="UNKNOWN"
@@ -224,8 +312,28 @@ adaptive_train_exp() {
   [[ -f "$L_REF_JSON" ]] && verify_flags+=(--L-reference "$L_REF_JSON")
 
   l_guard_save "$exp"
+  l_guard_floor_before "$exp"
 
+  if [[ "${AMP_ONLY:-}" == "1" ]]; then
+    echo "=== AMP_ONLY $exp — skip length schedule ==="
+    if [[ "${AMP_SKIP_REFRESH:-}" != "1" ]]; then
+      local refresh="${L_REF_REFRESH:-160}"
+      echo "=== AMP_ONLY pre-refresh $exp T=$refresh ==="
+      train_one_exp "$exp" "$refresh" || return 1
+      cumulative=$((cumulative + refresh))
+      l_guard_after "$exp" || true
+    fi
+    phase="amp"
+    blocker=$(get_stall_blocker "$exp")
+  else
   for step in "${length_steps[@]}"; do
+    if should_skip_length_step "$exp" "$step" "$cumulative"; then
+      rc=$?
+      if (( rc == 2 )); then
+        break
+      fi
+      continue
+    fi
     echo "=== phase=length train $exp step=$step (cumulative +$step) ==="
     train_one_exp "$exp" "$step" || return 1
     cumulative=$((cumulative + step))
@@ -253,8 +361,30 @@ adaptive_train_exp() {
     fi
   fi
 
+  # L_reference (e.g. 6 5 4 1): formula 6 5 3 1 is off-by-one on dend2; refresh + amp
+  if [[ "$phase" != "amp" ]] && at_l_reference "$exp"; then
+    blocker=$(get_stall_blocker "$exp")
+    if has_length_stall "$blocker"; then
+      echo "=== L at reference $exp — refresh traces + amp (L_formula overridden) ==="
+      local refresh="${L_REF_REFRESH:-320}"
+      train_one_exp "$exp" "$refresh" || return 1
+      cumulative=$((cumulative + refresh))
+      l_guard_after "$exp" || true
+      if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
+          "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
+        echo "DONE $exp after L-ref refresh T=$cumulative"
+        return 0
+      fi
+      blocker=$(get_stall_blocker "$exp")
+      if ready_for_amp "$exp" || has_amp_stall "$blocker"; then
+        phase="amp"
+      fi
+    fi
+  fi
+  fi
+
   # Partial sync: keep length phase if amp stall but not all dendrites sync_ok
-  if [[ "$phase" == "amp" ]] && ! all_dendrites_sync_ok "$exp"; then
+  if [[ "$phase" == "amp" ]] && ! ready_for_amp "$exp"; then
     if has_amp_stall "$blocker"; then
       echo "partial sync on $exp (blocker=$blocker) — extend length before amp-continue"
       for step in "${length_steps[@]: -2}"; do
@@ -267,14 +397,14 @@ adaptive_train_exp() {
           echo "DONE $exp after length-extend T=$cumulative"
           return 0
         fi
-        if all_dendrites_sync_ok "$exp"; then
+        if ready_for_amp "$exp"; then
           break
         fi
       done
     fi
   fi
 
-  if [[ "$phase" == "amp" ]] && all_dendrites_sync_ok "$exp"; then
+  if [[ "$phase" == "amp" ]] && ready_for_amp "$exp"; then
     echo "=== phase=amp-continue $exp (sync_ok all non-ref) ==="
     patch_continue_train "$exp"
     for step in "${amp_steps[@]}"; do

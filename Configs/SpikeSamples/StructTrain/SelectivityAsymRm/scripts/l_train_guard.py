@@ -110,14 +110,41 @@ def patch_continue_train(params_path: Path) -> None:
     params_path.write_text(text, encoding="utf-8")
 
 
+def apply_l_reference_floor(train_dir: Path, *, use_l_reference: bool) -> list[int] | None:
+    if not use_l_reference:
+        return None
+    params = train_dir / "Parameters_00.xml"
+    exp = train_dir.parent.name
+    l_ref = get_reference_l(exp)
+    if not l_ref:
+        return None
+    before = load_train_params(params)["DendriteLength"]
+    after = patch_params_floor(params, l_ref)
+    if after != before:
+        patch_continue_train(params)
+    return after
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("train_dir", type=Path)
-    ap.add_argument("--state", type=Path, required=True, help="JSON state file (prev snapshot)")
+    ap.add_argument("--state", type=Path, default=None, help="JSON state file (prev snapshot)")
     ap.add_argument("--save-before", action="store_true", help="Save current state only")
+    ap.add_argument("--apply-floor", action="store_true", help="Raise L to L_reference before train")
     ap.add_argument("--l-reference", action="store_true")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
+
+    if args.apply_floor:
+        after = apply_l_reference_floor(args.train_dir, use_l_reference=args.l_reference)
+        if args.json:
+            print(json.dumps({"action": "floor", "L_after": after}))
+        else:
+            print(f"floor L -> {after}")
+        return
+
+    if not args.state:
+        ap.error("--state required unless --apply-floor")
 
     if args.save_before:
         write_state(args.state, read_state(args.train_dir))

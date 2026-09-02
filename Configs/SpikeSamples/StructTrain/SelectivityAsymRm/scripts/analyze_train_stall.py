@@ -106,6 +106,18 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path
     p = load_train_params(params_path)
     feas = analyze_one(params_path, mode="post", est_delay=None, train_t=train_t)
     l_target = feas["L_target"]
+    l_reference = feas.get("L_reference")
+    try:
+        from patch_l_reference import effective_l_target
+
+        l_reference = l_reference or None
+        if l_reference is None:
+            from patch_l_reference import get_reference_l
+
+            l_reference = get_reference_l(train_dir.parent.name)
+        l_target = effective_l_target(l_target, l_reference)
+    except Exception:
+        pass
     l_actual = p["DendriteLength"]
     iter_budget = feas["iter_budget_required"]
 
@@ -188,6 +200,8 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path
         "log_status": log_status,
         "L_actual": l_actual,
         "L_target": l_target,
+        "L_formula": feas["L_target"],
+        "L_reference": l_reference,
         "EstDelayPerSeg": est,
         "iter_count": iter_count,
         "iter_budget_required": iter_budget,
