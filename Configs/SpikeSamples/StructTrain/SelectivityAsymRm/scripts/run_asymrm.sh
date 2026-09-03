@@ -28,6 +28,10 @@ LENGTH_STEPS_SPAN100="${LENGTH_STEPS_SPAN100:-80 160 320 640 1280 2560}"
 LENGTH_MAX_STEP="${LENGTH_MAX_STEP:-2560}"
 LENGTH_HOPELESS_TOL_MULT="${LENGTH_HOPELESS_TOL_MULT:-5}"
 LENGTH_STEP_GUARD="$ROOT/scripts/length_step_guard.py"
+TIME_BUDGET="$ROOT/scripts/train_time_budget.py"
+SIGNAL_FIDELITY="$ROOT/scripts/analyze_signal_fidelity.py"
+SIGNAL_REF_JSON="${SIGNAL_REF_JSON:-$ROOT/signal_reference_span25.json}"
+WALL_BUDGET_CHECK="${WALL_BUDGET_CHECK:-1}"
 AMP_TRAIN_STEPS="${AMP_TRAIN_STEPS:-320 640 1280}"
 L_REFERENCE="${L_REFERENCE:-}"
 L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
@@ -279,6 +283,17 @@ should_skip_length_step() {
   decision=$(length_step_decision "$exp" "$step" "$cumulative")
   action=$(echo "$decision" | python3 -c "import json,sys; print(json.load(sys.stdin).get('action','proceed'))")
   reason=$(echo "$decision" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason',''))")
+  if [[ "$WALL_BUDGET_CHECK" == "1" && -f "$TIME_BUDGET" ]]; then
+    local wall_dec
+    wall_dec=$(python3 "$TIME_BUDGET" check-step "$ROOT/$exp/Train" \
+      --next-step "$step" --campaign-root "$ROOT" 2>/dev/null || echo '{"action":"proceed"}')
+    local wall_action
+    wall_action=$(echo "$wall_dec" | python3 -c "import json,sys; print(json.load(sys.stdin).get('action','proceed'))")
+    if [[ "$wall_action" == "abort" ]]; then
+      echo "ABORT wall budget $exp step=$step: $(echo "$wall_dec" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason',''))")"
+      return 2
+    fi
+  fi
   if [[ "$action" == "skip_step" ]]; then
     echo "SKIP length $exp step=$step: $reason"
     return 0
@@ -288,6 +303,31 @@ should_skip_length_step() {
     return 2
   fi
   return 1
+}
+
+signal_fidelity_snapshot() {
+  local exp="$1" label="$2"
+  [[ -f "$SIGNAL_FIDELITY" ]] || return 0
+  local ref_args=()
+  [[ -f "$SIGNAL_REF_JSON" ]] && ref_args=(--reference "$SIGNAL_REF_JSON")
+  local snap="$ROOT/signal_fidelity_${exp}_${label}.json"
+  python3 "$SIGNAL_FIDELITY" "$ROOT/$exp/Train" "${ref_args[@]}" --json-out "$snap" >/dev/null 2>&1 || true
+  if [[ -f "$snap" ]]; then
+    local ok
+    ok=$(python3 -c "import json; d=json.load(open('$snap')); print(d[0].get('fidelity',{}).get('signal_fidelity_ok','?') if isinstance(d,list) else d.get('fidelity',{}).get('signal_fidelity_ok','?'))" 2>/dev/null || echo "?")
+    echo "signal_fidelity $exp $label ok=$ok -> $snap"
+  fi
+}
+
+signal_fidelity_gate() {
+  local exp="$1"
+  [[ -f "$SIGNAL_FIDELITY" && -f "$SIGNAL_REF_JSON" ]] || return 0
+  if ! python3 "$SIGNAL_FIDELITY" "$ROOT/$exp/Train" --reference "$SIGNAL_REF_JSON" 2>/dev/null | \
+      python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('fidelity',{}).get('signal_fidelity_ok',False))" | grep -q True; then
+    echo "BLOCK amp $exp: signal_fidelity gate failed"
+    return 1
+  fi
+  return 0
 }
 
 adaptive_train_exp() {
@@ -338,6 +378,7 @@ adaptive_train_exp() {
     train_one_exp "$exp" "$step" || return 1
     cumulative=$((cumulative + step))
     l_guard_after "$exp" || true
+    signal_fidelity_snapshot "$exp" "length_${step}"
     if python3 "$VERIFY_DONE" --require-calibrated --require-sync-ok "${verify_flags[@]}" \
         "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
       echo "DONE $exp after length phase T=$cumulative"
@@ -405,6 +446,7 @@ adaptive_train_exp() {
   fi
 
   if [[ "$phase" == "amp" ]] && ready_for_amp "$exp"; then
+    signal_fidelity_gate "$exp" || return 1
     echo "=== phase=amp-continue $exp (sync_ok all non-ref) ==="
     patch_continue_train "$exp"
     for step in "${amp_steps[@]}"; do

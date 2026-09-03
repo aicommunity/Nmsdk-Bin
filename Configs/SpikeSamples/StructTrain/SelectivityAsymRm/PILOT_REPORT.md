@@ -65,3 +65,40 @@ python3 scripts/length_step_guard.py EXP_.../Train --next-step 5120 --cumulative
 ```
 
 См. [`SYNC_TOL_REPORT.md`](SYNC_TOL_REPORT.md), [`AMP_REPORT.md`](AMP_REPORT.md).
+
+---
+
+# Pilot v4 — инфраструктура и прогон (2026-09-02)
+
+## Выполнено
+
+| Фаза | Артефакт |
+|------|----------|
+| 0a | `statisticlog_manifest.json`, `inventory_statisticlog.sh` |
+| 0b | `prune_statisticlog.sh` — ~38 GB удалено, protected preinh/span100 сохранены |
+| 1 | `analyze_signal_fidelity.py`, `signal_reference_span25.json`, `SIGNAL_FIDELITY_REPORT.md` |
+| 2 | `train_time_budget.py`, `check_timing_feasibility` + pattern_span |
+| 3.1 | `audit_l_oscillation.py`, `L_OSCILLATION_AUDIT.md` |
+| 3.2 | C++ fix: `peak_synced hold` + length settle skip в `NNeuronTimeLearner.cpp` |
+| 4a | `PREINH_INTEGRITY_REPORT.md` — verdict **CORRUPT** → cold reset |
+
+## Активные прогоны
+
+```bash
+tail -f pilot_v4_gen.log      # span25 gen
+tail -f pilot_span100.log     # span100 (отдельный pilot)
+```
+
+После gen Done:
+```bash
+bash scripts/run_pilot_v4_preinh.sh
+bash scripts/run_pilot_span50.sh
+bash scripts/run_gate_scale.sh
+```
+
+## C++ fix (универсальный)
+
+- Нет hardcode L в learner
+- При `peak_valid` и `|needed−delay_meas| ≤ SyncTolerance` — не менять L
+- Контрольные `6 5 4 1` только в `l_reference.json` / verify scripts
+

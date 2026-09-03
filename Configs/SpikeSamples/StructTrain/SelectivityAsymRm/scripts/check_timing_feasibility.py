@@ -85,9 +85,10 @@ def analyze_one(
     l_target = compute_l_target(expected, est)
     iter_budget = compute_iter_budget(l_target)
     iter_count = None
+    span = sum(expected) if expected else 0.025
     if train_t is not None:
         max_l = max(l_actual) if l_actual else 1
-        iter_count = iter_count_from_train_t(train_t, p["IterationGap"], max_l)
+        iter_count = iter_count_from_train_t(train_t, p["IterationGap"], max_l, span)
     elif (train_dir / "run_console.log").is_file():
         from asymrm_train_common import parse_console_iterations
 
@@ -125,7 +126,7 @@ def analyze_one(
 
     delta = [a - t for a, t in zip(l_actual, l_target)]
     gts = read_gts_from_ini(train_dir)
-
+    span = sum(expected) if expected else 0.025
     l_sync_peak = l_target
     try:
         from asymrm_train_common import compute_l_target as clt
@@ -133,6 +134,7 @@ def analyze_one(
         l_sync_peak = clt(expected, est, ref_peak=expected[-1] if expected else None)
     except Exception:
         pass
+    amp_budget_default = iter_count_from_train_t(320.0, p["IterationGap"], max(l_actual) if l_actual else 1, span)
 
     return {
         "exp": params_path.parent.parent.name,
@@ -140,11 +142,14 @@ def analyze_one(
         "mode": mode,
         "EstDelayPerSeg": est,
         "Expected": expected,
+        "pattern_span_sec": span,
         "L_target": l_target,
         "L_sync_peak": l_sync_peak,
         "L_actual": l_actual,
         "delta_L": delta,
         "iter_budget_required": iter_budget,
+        "amp_iter_budget_default": amp_budget_default,
+        "total_sim_budget_hint": iter_budget + amp_budget_default,
         "iter_count": iter_count,
         "verdict": v,
         "SyncTolerance": p["SyncTolerance"],

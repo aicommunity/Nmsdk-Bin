@@ -128,15 +128,29 @@ def compute_iter_budget(
     return 1 + length_iters * n_non_ref
 
 
-def effective_iteration_gap_sec(iteration_gap: float = 1.5, max_l: int = 1) -> float:
+def effective_iteration_gap_sec(
+    iteration_gap: float = 1.5,
+    max_l: int = 1,
+    pattern_span: float | None = None,
+) -> float:
     settle = max(0.08, K_DELAY_PER_SEG_DEFAULT * max_l)
-    pattern_span = 0.025  # negligible for short spans vs IterationGap
-    return max(iteration_gap, pattern_span + settle + 0.05)
+    span = pattern_span if pattern_span is not None else 0.025
+    return max(iteration_gap, span + settle + 0.05)
 
 
-def iter_count_from_train_t(train_t: float, iteration_gap: float = 1.5, max_l: int = 1) -> int:
-    gap = effective_iteration_gap_sec(iteration_gap, max_l)
+def iter_count_from_train_t(
+    train_t: float,
+    iteration_gap: float = 1.5,
+    max_l: int = 1,
+    pattern_span: float | None = None,
+) -> int:
+    gap = effective_iteration_gap_sec(iteration_gap, max_l, pattern_span)
     return max(1, int(train_t / gap))
+
+
+def pattern_span_sec(params: dict[str, Any]) -> float:
+    pat = params.get("InputPattern") or []
+    return sum(pat) if pat else 0.025
 
 
 def find_latest_statistic_dir(train_dir: Path) -> Path | None:

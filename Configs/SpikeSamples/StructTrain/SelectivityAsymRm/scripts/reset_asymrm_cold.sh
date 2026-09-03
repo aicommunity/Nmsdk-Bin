@@ -69,6 +69,28 @@ while IFS=$'\t' read -r exp neuron span kind pack cap exc_rm exc_rsyn; do
   asymrm_ltzcal_clear_runtime "$train"
   asymrm_ltzcal_clear_runtime "$test"
 
+  # Preserve StatisticLog dirs listed in manifest (audit phases 3–4).
+  MANIFEST="${STATISTICLOG_MANIFEST:-$ROOT/statisticlog_manifest.json}"
+  if [[ -f "$MANIFEST" ]]; then
+    python3 - "$ROOT" "$exp" "$MANIFEST" <<'PY'
+import json, shutil, sys
+from pathlib import Path
+root, exp, manifest = Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3])
+doc = json.loads(manifest.read_text())
+tmpdir = root / ".statisticlog_preserve" / exp
+tmpdir.mkdir(parents=True, exist_ok=True)
+for e in doc.get("protected", []):
+    if e.get("exp") != exp:
+        continue
+    src = root / e["path"]
+    if src.is_dir():
+        dst = tmpdir / src.name
+        if dst.exists():
+            shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+PY
+  fi
+
   "$COPY" train "$train" "${exp}_Train"
   if [[ "$RESET_TEST" == "1" ]]; then
     "$COPY" test "$test" "${exp}_Test"
@@ -104,6 +126,12 @@ while IFS=$'\t' read -r exp neuron span kind pack cap exc_rm exc_rsyn; do
   set_project_name "$test/Project.ini" "${exp}_Test"
   set_timestep "$train/Project.ini" "$GTS"
   set_timestep "$test/Project.ini" "$GTS"
+
+  # Restore preserved StatisticLog snapshots after clear.
+  if [[ -d "$ROOT/.statisticlog_preserve/$exp" ]]; then
+    mkdir -p "$train/StatisticLog"
+    cp -a "$ROOT/.statisticlog_preserve/$exp/"* "$train/StatisticLog/" 2>/dev/null || true
+  fi
 done < "$META"
 
 if [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]]; then
