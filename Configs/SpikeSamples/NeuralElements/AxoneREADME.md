@@ -7,6 +7,7 @@ Smoke / compare configs for PulseLib axon models (`NAxone*`).
 | [AxoneTypesCompare](AxoneTypesCompare/) | Delay vs Chain vs ChainAndDelay |
 | [AxoneDelaySweep](AxoneDelaySweep/) | DelayTime 1 / 5 / 10 ms |
 | [AxoneChainLengthSweep](AxoneChainLengthSweep/) | NumSegments 1 / 3 / 5 |
+| [AxoneLengthDelayStudy](AxoneLengthDelayStudy/) | delay vs length (15 cells, metrics + plots) |
 
 Общий вход: `NPGenerator` 10 Hz, pulse 1 ms. `DefaultTimeStep=2000`.
 
