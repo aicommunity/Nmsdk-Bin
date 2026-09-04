@@ -4,9 +4,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export PILOT_EXPS="${PILOT_SPAN100_EXPS:-EXP_span100ms_packA_preinh}"
 export ADAPTIVE_TRAIN=1
+export SEED_INITIAL="${SEED_INITIAL:-1}"
+export INITIAL_SOURCE="${INITIAL_SOURCE:-ltzcal}"
 export LENGTH_STEPS_SPAN100="${LENGTH_STEPS_SPAN100:-80 160 320 640 1280 2560}"
 export LENGTH_MAX_STEP="${LENGTH_MAX_STEP:-2560}"
 export WALL_BUDGET_CHECK=1
+export SKIP_COLD_RESET="${SKIP_COLD_RESET:-1}"
 REPORT="$ROOT/PILOT_SPAN100_REPORT.md"
 
 echo "=== Pilot span100 ==="

@@ -12,6 +12,22 @@ K_DELAY_PER_SEG_DEFAULT = 0.005
 K_NUM_DENDRITES = 4
 REF_DENDRITE = 3
 RESISTANCE_MIN_DEFAULT = 1e6
+REF_INITIAL_ANOMALY = 1.0e6
+
+
+def initials_ready(initial: list[float]) -> bool:
+    """Non-ref dendrites need Initial>0 before L-floor or amp-continue."""
+    for i in range(3):
+        if i >= len(initial) or initial[i] <= 0.0:
+            return False
+    return True
+
+
+def ref_initial_anomalous(initial: list[float]) -> bool:
+    if REF_DENDRITE >= len(initial):
+        return False
+    v = initial[REF_DENDRITE]
+    return v <= 0.0 or v > REF_INITIAL_ANOMALY
 
 
 def read_tag(text: str, tag: str) -> str | None:

@@ -45,6 +45,7 @@ def classify_dendrite(
     iter_count: int | None,
     iter_budget: int,
     length_plateau: bool,
+    initial_soma: float = 0.0,
 ) -> str:
     if peak_valid is not None and peak_valid == 0 and L <= 1 and i != REF_DENDRITE:
         return "PEAK_INVALID"
@@ -55,6 +56,8 @@ def classify_dendrite(
     if L >= l_target and not length_sync_ok(last_abs_dt, sync_tol):
         return "LENGTH_STALL"
     if L >= l_target and length_sync_ok(last_abs_dt, sync_tol):
+        if i != REF_DENDRITE and initial_soma <= 0.0:
+            return "AMP_NO_INITIAL"
         if tip_r <= r_min * (1 + 1e-6) and no_improve >= 3:
             return "AMP_AT_RMIN"
         if no_improve >= 3 and abs(amp_dt) < 0.005:
@@ -74,6 +77,7 @@ def overall_blocker(dend_blockers: list[str], need_train: str | None, log_status
         return "DONE"
     priority = [
         "PEAK_INVALID",
+        "AMP_NO_INITIAL",
         "LENGTH_STALL",
         "TIME_BUDGET",
         "AMP_AT_RMIN",
@@ -147,6 +151,7 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path
         no_improve = traces.get("NoImproveResistanceTrace", [0] * 4)[i] if traces else 0.0
         amp_dt = traces.get("AmpDtTrace", [0] * 4)[i] if traces else 0.0
         tip_r = p["TipSynapseResistance"][i] if i < len(p["TipSynapseResistance"]) else 0.0
+        init_soma = p["InitialSomaPotential"][i] if i < len(p["InitialSomaPotential"]) else 0.0
 
         peak_valid = None
         if iters and i < len(iters[-1].get("peak_valid", [])):
@@ -169,6 +174,7 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path
             iter_count=iter_count,
             iter_budget=iter_budget,
             length_plateau=plateau,
+            initial_soma=init_soma,
         )
         if i == REF_DENDRITE and blocker not in ("DONE",):
             blocker = "DONE" if L == 1 else blocker
@@ -184,6 +190,7 @@ def analyze_exp(train_dir: Path, *, train_t: float | None = None, stat_dir: Path
                 "no_improve": no_improve,
                 "amp_dt": amp_dt,
                 "tip_R": tip_r,
+                "initial_soma": init_soma,
                 "blocker": blocker,
             }
         )

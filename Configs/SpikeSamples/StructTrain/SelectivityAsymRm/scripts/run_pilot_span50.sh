@@ -4,8 +4,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export PILOT_EXPS="${PILOT_SPAN50_EXPS:-EXP_span50ms_packA_gen EXP_span50ms_packA_preinh}"
 export L_REFERENCE="${L_REFERENCE:-ltzcal}"
+export SEED_INITIAL="${SEED_INITIAL:-1}"
+export INITIAL_SOURCE="${INITIAL_SOURCE:-ltzcal}"
 export ADAPTIVE_TRAIN=1
 export WALL_BUDGET_CHECK="${WALL_BUDGET_CHECK:-1}"
+export SIGNAL_REF_JSON="${SIGNAL_REF_JSON:-$ROOT/signal_reference_span50.json}"
 REPORT="$ROOT/PILOT_SPAN50_REPORT.md"
 
 echo "=== Pilot span50 Pack A ==="

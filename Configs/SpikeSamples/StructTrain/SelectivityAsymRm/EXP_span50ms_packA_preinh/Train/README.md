@@ -1,3 +1,1 @@
-## EXP_span50ms_packA_preinh — Train
-NeuronClass=`NSPNeuronGenPreinh2_5AsymRmD001C25e12` pack=A kind=preinh span=50ms GTS=20000
-C=2.5e-11 ExcRm=1e7 InhRm=1e8 ExcRsyn=8.6e7 InhRsyn=8.6e8
+Конфиг для EXP_span50ms_packA_preinh_Train (Train). Родитель: /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/EXP_span50ms_packA_preinh/README.md

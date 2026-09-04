@@ -34,8 +34,14 @@ done
 } >>"$REPORT"
 
 if (( DONE >= 2 )); then
-  echo "=== Gate passed — scale_asymrm.sh Pack B/C span25 ==="
-  PACK_A_EXPS="" PILOT_EXPS="" "$ROOT/scripts/scale_asymrm.sh" 2>&1 || true
+  echo "=== Gate passed (train Done $DONE/${#GATE_EXPS[@]}) ==="
+  # Default: do not auto-scale (protects Done weights / concurrent pilots).
+  if [[ "${SKIP_SCALE:-1}" == "1" ]]; then
+    echo "SKIP_SCALE=1 — not launching scale_asymrm.sh (set SKIP_SCALE=0 to scale)"
+  else
+    PACK_A_EXPS="" PILOT_EXPS="EXP_span25ms_packA_gen EXP_span25ms_packA_preinh" \
+      SKIP_SWEEP=1 "$ROOT/scripts/scale_asymrm.sh" 2>&1 || true
+  fi
 fi
 
 exit $(( DONE >= 2 ? 0 : 1 ))

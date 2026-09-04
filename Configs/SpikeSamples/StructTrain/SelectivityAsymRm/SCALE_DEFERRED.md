@@ -1,36 +1,28 @@
-# Phase 4 — отложенное масштабирование
+# Scale deferred / notes (2026-09-04)
 
-**Gate:** ≥2/3 pilot EXP с `IsNeedToTrain=0` + `--require-sync-ok`.
+## Train Done gate (span25 Pack A)
 
-## Запуск после pilot v3
+`run_gate_scale.sh` reports **GATE OK** for:
+
+- `EXP_span25ms_packA_gen` — Done, FixedLTZ≈0.0869
+- `EXP_span25ms_packA_preinh` — Done, FixedLTZ≈0.0516
+
+## Why Pack B/C scale did not auto-run earlier
+
+1. `scale_asymrm.sh` previously used a broken `VERIFY` path (`$ROOT/../../SelectivityLtzCalibrate/...`), so Done count was wrongly **0/3**.
+2. Default `PILOT_EXPS` included span100 (LENGTH_STALL), which is **not** a span25 gate blocker.
+3. Amp sweep inside scale does **cold reset** of pilot — would destroy Done weights. Now `SKIP_SWEEP=1` by default.
+
+## How to scale Pack B/C span25 (manual)
 
 ```bash
-cd Bin/Configs/SpikeSamples/StructTrain/SelectivityAsymRm
-bash scripts/scale_asymrm.sh
+# Preserve Done pilot; only train remaining Pack A / B / C as needed:
+SKIP_SWEEP=1 PILOT_EXPS="EXP_span25ms_packA_gen EXP_span25ms_packA_preinh" \
+  bash scripts/scale_asymrm.sh
+
+# Or selective Pack B/C only:
+PILOT_EXPS="EXP_span25ms_packB_gen EXP_span25ms_packB_preinh ..." \
+  L_REFERENCE=ltzcal SEED_INITIAL=1 ADAPTIVE_TRAIN=1 bash scripts/run_asymrm.sh
 ```
 
-Скрипт [`scripts/scale_asymrm.sh`](scripts/scale_asymrm.sh):
-1. Проверяет gate (default ≥2/3 pilot Done)
-2. `sweep_asymrm_amp.sh` — 8 cases (включая tol_x125/x150)
-3. Pack A оставшиеся 3 EXP (`PACK_A_EXPS=1`)
-4. При ≥4/6 Pack A Done — полный run 18 EXP
-5. `grid_summary.csv` + обновить `REPORT.md`
-
-## Текущий статус
-
-Pilot v3 запущен (`pilot_v3.log`). До завершения обучения gate **не проверяется**.
-
-## Pack A EXP (6)
-
-| EXP | pilot v3 |
-|-----|----------|
-| span25 gen | да |
-| span25 preinh | да |
-| span100 preinh | да |
-| span50 gen | phase 4.2 |
-| span50 preinh | phase 4.2 |
-| span100 gen | phase 4.2 |
-
-## C++ fallback
-
-Только при `INFEASIBLE` после 4.1–4.4 — см. [`CPP_FALLBACK.md`](CPP_FALLBACK.md).
+Test selectivity gate (fire_all / partial_FA) is separate from train Done and may need LTZ / pattern follow-up after scale.

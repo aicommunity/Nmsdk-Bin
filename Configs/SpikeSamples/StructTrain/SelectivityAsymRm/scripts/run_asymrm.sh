@@ -39,12 +39,25 @@ L_REF_REFRESH="${L_REF_REFRESH:-320}"
 AMP_PARTIAL_AT_L_REF="${AMP_PARTIAL_AT_L_REF:-0}"
 AMP_FORCE_AT_L_REF="${AMP_FORCE_AT_L_REF:-0}"
 L_TRAIN_GUARD="$ROOT/scripts/l_train_guard.py"
+SEED_INITIAL_SCRIPT="$ROOT/scripts/seed_initial_from_ltzcal.py"
 TRAIN_STEPS="${TRAIN_STEPS:-$LENGTH_STEPS}"
 PEAK_SYNC_JSON="${PEAK_SYNC_JSON:-$ROOT/peak_sync_report.json}"
 SKIP_TRAIN="${SKIP_TRAIN:-0}"
 ALLOW_PARTIAL_TRAIN="${ALLOW_PARTIAL_TRAIN:-0}"
+SEED_INITIAL="${SEED_INITIAL:-}"
+INITIAL_SOURCE="${INITIAL_SOURCE:-ltzcal}"
+CAPTURE_T="${CAPTURE_T:-80}"
 
 [[ -f "$META" ]] || { echo "Run setup_asymrm.sh first" >&2; exit 1; }
+
+# Default SEED_INITIAL=1 when using LtzCal L reference floors.
+if [[ -z "$SEED_INITIAL" ]]; then
+  if [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]]; then
+    SEED_INITIAL=1
+  else
+    SEED_INITIAL=0
+  fi
+fi
 
 mapfile -t ALL_EXPS < <(awk -F'\t' 'NR>1{print $1}' "$META")
 EXPS=()
@@ -101,6 +114,63 @@ l_guard_floor_before() {
   local exp="$1"
   [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]] || return 0
   python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --apply-floor --l-reference --json 2>/dev/null || true
+}
+
+initials_ready_exp() {
+  local exp="$1"
+  python3 - "$ROOT/$exp/Train/Parameters_00.xml" "$ROOT/scripts" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from asymrm_train_common import initials_ready, load_train_params
+p = load_train_params(Path(sys.argv[1]))
+sys.exit(0 if initials_ready(p.get("InitialSomaPotential") or []) else 1)
+PY
+}
+
+patch_capture_cold_l() {
+  local exp="$1"
+  python3 - "$ROOT/$exp/Train/Parameters_00.xml" <<'PY'
+import re, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+t = p.read_text(encoding="utf-8")
+def set_tag(text, tag, value, count=0):
+    return re.sub(rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)", rf"\g<1>{value}\2", text, count=count or 0)
+t = set_tag(t, "DendriteLength", "1 1 1 1", 1)
+t = set_tag(t, "ResetToUntrainedState", "1", 1)
+t = set_tag(t, "IsNeedToTrain", "1", 1)
+t = set_tag(t, "StructureBuildMode", "1", 1)
+p.write_text(t, encoding="utf-8")
+print("capture_cold_l", p)
+PY
+}
+
+ensure_initial_ready() {
+  local exp="$1"
+  if initials_ready_exp "$exp"; then
+    return 0
+  fi
+  if [[ "$SEED_INITIAL" == "1" && -f "$SEED_INITIAL_SCRIPT" ]]; then
+    echo "=== seed Initial from LtzCal $exp ==="
+    python3 "$SEED_INITIAL_SCRIPT" "$ROOT/$exp/Train" || return 1
+    if initials_ready_exp "$exp"; then
+      return 0
+    fi
+  fi
+  if [[ "$INITIAL_SOURCE" == "capture" ]]; then
+    echo "=== capture Initial at L=1 $exp T=$CAPTURE_T ==="
+    patch_capture_cold_l "$exp"
+    train_one_exp "$exp" "$CAPTURE_T" || return 1
+    if initials_ready_exp "$exp"; then
+      echo "capture Initial OK $exp"
+      return 0
+    fi
+    echo "capture Initial failed $exp" >&2
+    return 1
+  fi
+  echo "Initial not ready for $exp (set SEED_INITIAL=1 or INITIAL_SOURCE=capture)" >&2
+  return 1
 }
 
 ready_for_amp() {
@@ -185,6 +255,11 @@ run_wave() {
 
 apply_ltz_train_patch() {
   for exp in "${EXPS[@]}"; do
+    # Do not re-patch Done trains (resets FixedLTZ to cold).
+    if python3 "$VERIFY_DONE" "$ROOT/$exp/Train/Parameters_00.xml" >/dev/null 2>&1; then
+      echo "skip LTZ train patch (already Done): $exp"
+      continue
+    fi
     kind=$(exp_meta "$exp" 4)
     p="$ROOT/$exp/Train/Parameters_00.xml"
     if [[ "$kind" == *preinh* ]]; then
@@ -269,6 +344,11 @@ has_amp_stall() {
   [[ "$blocker" == "AMP_AT_RMIN" || "$blocker" == "AMP_OSCILLATION" || "$blocker" == "AMP_PENDING" ]]
 }
 
+has_amp_no_initial() {
+  local blocker="$1"
+  [[ "$blocker" == "AMP_NO_INITIAL" ]]
+}
+
 length_step_decision() {
   local exp="$1" step="$2" cumulative="$3"
   python3 "$LENGTH_STEP_GUARD" "$ROOT/$exp/Train" \
@@ -321,7 +401,11 @@ signal_fidelity_snapshot() {
 
 signal_fidelity_gate() {
   local exp="$1"
+  [[ "${AMP_ONLY:-}" == "1" ]] && return 0
   [[ -f "$SIGNAL_FIDELITY" && -f "$SIGNAL_REF_JSON" ]] || return 0
+  if all_dendrites_sync_ok "$exp" || ready_for_amp "$exp"; then
+    return 0
+  fi
   if ! python3 "$SIGNAL_FIDELITY" "$ROOT/$exp/Train" --reference "$SIGNAL_REF_JSON" 2>/dev/null | \
       python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('fidelity',{}).get('signal_fidelity_ok',False))" | grep -q True; then
     echo "BLOCK amp $exp: signal_fidelity gate failed"
@@ -352,6 +436,7 @@ adaptive_train_exp() {
   [[ -f "$L_REF_JSON" ]] && verify_flags+=(--L-reference "$L_REF_JSON")
 
   l_guard_save "$exp"
+  ensure_initial_ready "$exp" || return 1
   l_guard_floor_before "$exp"
 
   if [[ "${AMP_ONLY:-}" == "1" ]]; then
@@ -446,6 +531,10 @@ adaptive_train_exp() {
   fi
 
   if [[ "$phase" == "amp" ]] && ready_for_amp "$exp"; then
+    if ! initials_ready_exp "$exp"; then
+      echo "BLOCK amp $exp: AMP_NO_INITIAL (Initial dend0-2 <= 0)"
+      return 1
+    fi
     signal_fidelity_gate "$exp" || return 1
     echo "=== phase=amp-continue $exp (sync_ok all non-ref) ==="
     patch_continue_train "$exp"
@@ -462,8 +551,14 @@ adaptive_train_exp() {
       echo "stall $exp blocker=$blocker after amp T=$cumulative"
       case "$blocker" in
         AMP_PENDING|AMP_OSCILLATION) continue ;;
+        AMP_NO_INITIAL) echo "AMP_NO_INITIAL — stop amp-continue for $exp"; return 1 ;;
         AMP_AT_RMIN) echo "AMP_AT_RMIN — stop amp-continue for $exp"; break ;;
         LENGTH_STALL|TIME_BUDGET)
+          # At L_reference slight desync must not abort amp (R-tune already active).
+          if at_l_reference "$exp"; then
+            echo "length stall at L_ref during amp — continue amp for $exp"
+            continue
+          fi
           echo "length stall returned during amp — stop for $exp"
           break ;;
         *) break ;;

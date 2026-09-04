@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from asymrm_train_common import (
     K_NUM_DENDRITES,
     REF_DENDRITE,
+    initials_ready,
     load_train_params,
     load_trace_vectors,
 )
@@ -82,12 +83,16 @@ def guard_after_step(
     if use_l_reference:
         l_ref = get_reference_l(exp)
         if l_ref:
-            before = list(cur["L"])
-            after = patch_params_floor(params, l_ref)
-            if after != before:
-                patch_continue_train(params)
-                result["action"] = "l_floor" if result["action"] == "none" else result["action"] + "+l_floor"
-                result["L_after"] = after
+            p = load_train_params(params)
+            if initials_ready(p.get("InitialSomaPotential") or []):
+                before = list(cur["L"])
+                after = patch_params_floor(params, l_ref)
+                if after != before:
+                    patch_continue_train(params)
+                    result["action"] = "l_floor" if result["action"] == "none" else result["action"] + "+l_floor"
+                    result["L_after"] = after
+            elif result["action"] == "none":
+                result["action"] = "floor_skipped_no_initial"
 
     write_state(prev_state_path, read_state(train_dir))
     return result
@@ -110,19 +115,28 @@ def patch_continue_train(params_path: Path) -> None:
     params_path.write_text(text, encoding="utf-8")
 
 
-def apply_l_reference_floor(train_dir: Path, *, use_l_reference: bool) -> list[int] | None:
+def apply_l_reference_floor(train_dir: Path, *, use_l_reference: bool) -> dict:
+    """Raise L to L_reference floor when non-ref Initial anchors are ready."""
     if not use_l_reference:
-        return None
+        return {"action": "none", "L_after": None}
     params = train_dir / "Parameters_00.xml"
     exp = train_dir.parent.name
     l_ref = get_reference_l(exp)
     if not l_ref:
-        return None
-    before = load_train_params(params)["DendriteLength"]
+        return {"action": "none", "L_after": None}
+    p = load_train_params(params)
+    if not initials_ready(p.get("InitialSomaPotential") or []):
+        return {
+            "action": "floor_skipped_no_initial",
+            "exp": exp,
+            "L_after": list(p["DendriteLength"]),
+        }
+    before = p["DendriteLength"]
     after = patch_params_floor(params, l_ref)
     if after != before:
         patch_continue_train(params)
-    return after
+        return {"action": "l_floor", "exp": exp, "L_after": after}
+    return {"action": "none", "exp": exp, "L_after": after}
 
 
 def main() -> None:
@@ -136,11 +150,11 @@ def main() -> None:
     args = ap.parse_args()
 
     if args.apply_floor:
-        after = apply_l_reference_floor(args.train_dir, use_l_reference=args.l_reference)
+        r = apply_l_reference_floor(args.train_dir, use_l_reference=args.l_reference)
         if args.json:
-            print(json.dumps({"action": "floor", "L_after": after}))
+            print(json.dumps(r))
         else:
-            print(f"floor L -> {after}")
+            print(f"{r.get('action', 'floor')}: L -> {r.get('L_after')}")
         return
 
     if not args.state:

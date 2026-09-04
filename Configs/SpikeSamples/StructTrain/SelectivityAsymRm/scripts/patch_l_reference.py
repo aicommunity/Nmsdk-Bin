@@ -7,10 +7,12 @@ import re
 import sys
 from pathlib import Path
 
-# Done-state L from AsymRmLtzCal (Pack A span25). span100: no Done ref yet.
+# Done-state L from AsymRmLtzCal (Pack A). span100: formula + optional warm-start.
 REFERENCE_L: dict[str, list[int]] = {
     "EXP_span25ms_packA_gen": [6, 5, 4, 1],
     "EXP_span25ms_packA_preinh": [6, 5, 4, 1],
+    "EXP_span50ms_packA_gen": [9, 9, 7, 1],
+    "EXP_span50ms_packA_preinh": [9, 9, 6, 1],
 }
 
 LTZCAL_ROOT = Path(__file__).resolve().parents[2] / "SelectivityLtzCalibrate" / "AsymRmLtzCal"
@@ -26,21 +28,35 @@ def load_l_from_params(path: Path) -> list[int] | None:
     return [int(float(x.replace(",", "."))) for x in m.group(1).split() if x.strip()]
 
 
+def is_need_to_train(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8", errors="replace")
+    m = re.search(r"<IsNeedToTrain\b[^>]*>([^<]*)</IsNeedToTrain>", text)
+    return m.group(1).strip() if m else None
+
+
 def build_reference_map() -> dict[str, list[int]]:
     out = dict(REFERENCE_L)
-    if LTZCAL_ROOT.is_dir():
-        for exp_dir in LTZCAL_ROOT.iterdir():
-            if not exp_dir.is_dir():
+    if not LTZCAL_ROOT.is_dir():
+        return out
+    for exp_dir in LTZCAL_ROOT.iterdir():
+        if not exp_dir.is_dir() or not exp_dir.name.startswith("EXP_"):
+            continue
+        exp = exp_dir.name
+        if exp in out:
+            continue
+        for sub in ("Train", "Test"):
+            p = exp_dir / sub / "Parameters_00.xml"
+            if not p.is_file():
                 continue
-            p = exp_dir / "Train" / "Parameters_00.xml"
+            need = is_need_to_train(p)
+            if need != "0":
+                continue
             l = load_l_from_params(p)
-            if l and exp_dir.name.startswith("EXP_"):
-                # Only use if Done (IsNeedToTrain=0) or explicit in REFERENCE_L
-                text = p.read_text(encoding="utf-8", errors="replace")
-                if 'IsNeedToTrain Type="b"' in text or "<IsNeedToTrain" in text:
-                    m = re.search(r"<IsNeedToTrain\b[^>]*>([^<]*)</IsNeedToTrain>", text)
-                    if m and m.group(1).strip() == "0":
-                        out[exp_dir.name] = l
+            if l:
+                out[exp] = l
+                break
     return out
 
 
