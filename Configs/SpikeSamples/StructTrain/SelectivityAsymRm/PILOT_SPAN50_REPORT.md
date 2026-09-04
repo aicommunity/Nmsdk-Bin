@@ -1,12 +1,12 @@
 # Pilot span50 Report
 
-Generated: 2026-09-04T04:36:09Z
+Generated: 2026-09-04T12:14:29Z
 
-## EXP_span50ms_packA_gen
-EXP_span50ms_packA_gen: L_BELOW_REFERENCE est=0.005000003 L_target=11 9 6 1 L_actual=11 9 6 1 budget=10 iter=None
-sync_ok=True need_train=1
+## Summary
 
-## EXP_span50ms_packA_preinh
-EXP_span50ms_packA_preinh: SYNC_OK est=0.005000003 L_target=11 9 6 1 L_actual=11 9 6 1 budget=10 iter=None
-sync_ok=True need_train=0
+| EXP | Done | L | FixedLTZ | Notes |
+|-----|------|---|----------|-------|
+| EXP_span50ms_packA_gen | **yes** | 11 9 7 1 | 0.100 | Done after amp4 T=640 (SyncTol=0.005, L≥L_ref) |
+| EXP_span50ms_packA_preinh | **yes** | 11 9 6 1 | ≈0.068 | Done after initial pilot amp T=400 |
 
+Protocol: `SEED_INITIAL=1` from LtzCal → L-floor → amp. Test selectivity still `fire_all` / gate=0 (train Done ≠ test gate).

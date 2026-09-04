@@ -77,10 +77,11 @@ def effective_l_target(l_formula: list[int], l_reference: list[int] | None) -> l
 
 
 def at_l_reference(l_actual: list[int], l_reference: list[int] | None) -> bool:
+    """True when every non-ref dendrite is at least L_reference (growth above floor is OK)."""
     if not l_reference or len(l_reference) != len(l_actual):
         return False
     for i in range(min(len(l_actual), 3)):
-        if l_actual[i] != l_reference[i]:
+        if l_actual[i] < l_reference[i]:
             return False
     return True
 

@@ -554,10 +554,13 @@ adaptive_train_exp() {
         AMP_NO_INITIAL) echo "AMP_NO_INITIAL — stop amp-continue for $exp"; return 1 ;;
         AMP_AT_RMIN) echo "AMP_AT_RMIN — stop amp-continue for $exp"; break ;;
         LENGTH_STALL|TIME_BUDGET)
-          # At L_reference slight desync must not abort amp (R-tune already active).
-          if at_l_reference "$exp"; then
-            echo "length stall at L_ref during amp — continue amp for $exp"
-            continue
+          # Re-apply L-ref floor if dendrite shrank below reference during amp, then continue.
+          if [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]]; then
+            l_guard_floor_before "$exp"
+            if at_l_reference "$exp" || ready_for_amp "$exp"; then
+              echo "length stall during amp — re-floor/continue amp for $exp"
+              continue
+            fi
           fi
           echo "length stall returned during amp — stop for $exp"
           break ;;
