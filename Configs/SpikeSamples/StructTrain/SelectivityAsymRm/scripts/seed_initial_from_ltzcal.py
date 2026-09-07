@@ -19,6 +19,12 @@ from asymrm_train_common import (
 
 LTZCAL_ROOT = Path(__file__).resolve().parents[2] / "SelectivityLtzCalibrate" / "AsymRmLtzCal"
 
+
+def pack_a_alias(exp: str) -> str:
+    """Pack B/C have no LtzCal dirs — use same span+kind Pack A."""
+    return exp.replace("_packB_", "_packA_").replace("_packC_", "_packA_")
+
+
 def exp_name_from_train_path(train_dir: Path) -> str:
     if train_dir.name in ("Train", "Test"):
         return train_dir.parent.name
@@ -27,8 +33,9 @@ def exp_name_from_train_path(train_dir: Path) -> str:
 
 def ltzcal_ref_params(exp: str, *, prefer_done: bool = True) -> Path | None:
     """Resolve LtzCal params for Initial: prefer Train with valid Initial, else Done Test."""
-    train = LTZCAL_ROOT / exp / "Train" / "Parameters_00.xml"
-    test = LTZCAL_ROOT / exp / "Test" / "Parameters_00.xml"
+    ref_exp = pack_a_alias(exp)
+    train = LTZCAL_ROOT / ref_exp / "Train" / "Parameters_00.xml"
+    test = LTZCAL_ROOT / ref_exp / "Test" / "Parameters_00.xml"
 
     def has_valid_initial(path: Path) -> bool:
         try:
@@ -51,11 +58,12 @@ def ltzcal_ref_params(exp: str, *, prefer_done: bool = True) -> Path | None:
 
 def ltzcal_tip_r_source(exp: str) -> Path | None:
     """Prefer Done Model TipR (preinh Test Model often has tuned TipR)."""
+    ref_exp = pack_a_alias(exp)
     candidates = [
-        LTZCAL_ROOT / exp / "Train" / "Parameters_00.xml",
-        LTZCAL_ROOT / exp / "Train" / "Model_00.xml",
-        LTZCAL_ROOT / exp / "Test" / "Model_00.xml",
-        LTZCAL_ROOT / exp / "Test" / "Parameters_00.xml",
+        LTZCAL_ROOT / ref_exp / "Train" / "Parameters_00.xml",
+        LTZCAL_ROOT / ref_exp / "Train" / "Model_00.xml",
+        LTZCAL_ROOT / ref_exp / "Test" / "Model_00.xml",
+        LTZCAL_ROOT / ref_exp / "Test" / "Parameters_00.xml",
     ]
     best: Path | None = None
     best_score = -1
@@ -130,9 +138,15 @@ def seed_train_dir(
         raise FileNotFoundError(params_path)
 
     exp = exp_name_from_train_path(train_dir)
+    ref_exp = pack_a_alias(exp)
     ref_path = ltzcal_ref_params(exp)
     if ref_path is None:
-        return {"exp": exp, "ok": False, "error": f"LtzCal ref not found for {exp}"}
+        return {
+            "exp": exp,
+            "ok": False,
+            "error": f"LtzCal ref not found for {exp} (alias {ref_exp})",
+            "ltzcal_exp": ref_exp,
+        }
 
     cur = load_train_params(params_path)
     ref = load_train_params(ref_path)
@@ -184,6 +198,7 @@ def seed_train_dir(
 
     result = {
         "exp": exp,
+        "ltzcal_exp": ref_exp,
         "ok": True,
         "ref_path": str(ref_path),
         "tip_r_source": result_tip_src if seed_tip_r else None,

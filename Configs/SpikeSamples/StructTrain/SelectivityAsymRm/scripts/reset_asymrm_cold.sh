@@ -15,6 +15,14 @@ META="$ROOT/grid_cells.tsv"
 GTS="${GTS:-20000}"
 RESET_TEST="${RESET_TEST:-1}"
 PILOT_EXPS="${PILOT_EXPS:-}"
+# POSITIONAL safety: args are EXP names; empty PILOT_EXPS must NOT mean "all".
+if [[ $# -gt 0 ]]; then
+  PILOT_EXPS="$*"
+fi
+if [[ -z "${PILOT_EXPS}" ]]; then
+  echo "Refuse full-grid cold reset. Set PILOT_EXPS=... or pass EXP names as args." >&2
+  exit 2
+fi
 L_REFERENCE="${L_REFERENCE:-}"
 L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
 

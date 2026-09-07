@@ -1,28 +1,38 @@
-# Scale deferred / notes (2026-09-04)
+# Scale deferred / notes (2026-09-05)
 
-## Train Done gate (span25 Pack A)
+## Disk cleanup (2026-09-05)
 
-`run_gate_scale.sh` reports **GATE OK** for:
+Freed ~320 GB by deleting `StatisticLog/*` timestamp dirs under:
 
-- `EXP_span25ms_packA_gen` — Done, FixedLTZ≈0.0869
-- `EXP_span25ms_packA_preinh` — Done, FixedLTZ≈0.0516
+- `SelectivityAsymRm/` (~245 GB)
+- `SelectivityPresynapticInhib/` StatisticLogs
+- `SelectivityLtzCalibrate/AsymRmLtzCal/` StatisticLogs
+- `TimeNeuronTimeLearnerBranchTest_savedcheck*` StatisticLogs
 
-## Why Pack B/C scale did not auto-run earlier
+Kept Parameters/Models and `archives/statisticlog/*.tar.gz`. Disk now ~27% used.
 
-1. `scale_asymrm.sh` previously used a broken `VERIFY` path (`$ROOT/../../SelectivityLtzCalibrate/...`), so Done count was wrongly **0/3**.
-2. Default `PILOT_EXPS` included span100 (LENGTH_STALL), which is **not** a span25 gate blocker.
-3. Amp sweep inside scale does **cold reset** of pilot — would destroy Done weights. Now `SKIP_SWEEP=1` by default.
+## Accidental full-grid cold reset
 
-## How to scale Pack B/C span25 (manual)
+`reset_asymrm_cold.sh EXP_…` previously treated empty `PILOT_EXPS` as **all EXP**. Fixed: requires `PILOT_EXPS` or positional EXP args (`Refuse full-grid cold reset`).
+
+Pack A span25/50 Done restored from `Bin` git `HEAD` (`9c45613` / `a3b8b6d`). Pack A span100 + Pack B/C need retrain (Done was never committed).
+
+## Waves
+
+| Phase | Status |
+|-------|--------|
+| Pack A span25/50 | **Done** (git restore) |
+| Remaining 14 EXP | `scale_remaining.log`, `MAX_JOBS=6` |
+| Pack B/C span100 | included in remaining batch |
 
 ```bash
-# Preserve Done pilot; only train remaining Pack A / B / C as needed:
-SKIP_SWEEP=1 PILOT_EXPS="EXP_span25ms_packA_gen EXP_span25ms_packA_preinh" \
-  bash scripts/scale_asymrm.sh
+# Do NOT cold-reset without PILOT_EXPS=
+PILOT_EXPS='EXP_span50ms_packC_preinh' bash scripts/reset_asymrm_cold.sh
 
-# Or selective Pack B/C only:
-PILOT_EXPS="EXP_span25ms_packB_gen EXP_span25ms_packB_preinh ..." \
-  L_REFERENCE=ltzcal SEED_INITIAL=1 ADAPTIVE_TRAIN=1 bash scripts/run_asymrm.sh
+MAX_JOBS=6 bash scripts/run_scale_bc_span25.sh
+MAX_JOBS=6 bash scripts/run_scale_bc_span50.sh
+MAX_JOBS=6 bash scripts/run_scale_bc_span100.sh
+SKIP_COLD_RESET=1 MAX_JOBS=6 bash scripts/run_pilot_span100.sh
 ```
 
-Test selectivity gate (fire_all / partial_FA) is separate from train Done and may need LTZ / pattern follow-up after scale.
+Global NeuroModelerConsole budget: **≤6**.

@@ -7,15 +7,33 @@ import re
 import sys
 from pathlib import Path
 
-# Done-state L from AsymRmLtzCal (Pack A). span100: formula + optional warm-start.
+# Done-state L from AsymRm Pack A pilots / formula.
+# span50: actual Train Done (not historical LtzCal partial floors).
+# span100: EstDelay≈0.005 formula for needed [0.1, 0.08333, 0.05] — never Test [1,1,1,1].
 REFERENCE_L: dict[str, list[int]] = {
     "EXP_span25ms_packA_gen": [6, 5, 4, 1],
     "EXP_span25ms_packA_preinh": [6, 5, 4, 1],
-    "EXP_span50ms_packA_gen": [9, 9, 7, 1],
-    "EXP_span50ms_packA_preinh": [9, 9, 6, 1],
+    "EXP_span50ms_packA_gen": [11, 9, 7, 1],
+    "EXP_span50ms_packA_preinh": [11, 9, 6, 1],
+    "EXP_span100ms_packA_gen": [20, 17, 10, 1],
+    "EXP_span100ms_packA_preinh": [20, 17, 10, 1],
 }
 
 LTZCAL_ROOT = Path(__file__).resolve().parents[2] / "SelectivityLtzCalibrate" / "AsymRmLtzCal"
+ASYMRM_ROOT = Path(__file__).resolve().parents[1]
+GRID_CELLS = ASYMRM_ROOT / "grid_cells.tsv"
+
+
+def pack_a_alias(exp: str) -> str:
+    """Map Pack B/C EXP name to same span+kind Pack A (LtzCal exists only for A)."""
+    return exp.replace("_packB_", "_packA_").replace("_packC_", "_packA_")
+
+
+def is_trivial_l(l: list[int] | None) -> bool:
+    """Reject cold/Test Done vectors that are all non-ref ones."""
+    if not l or len(l) < 3:
+        return True
+    return all(x <= 1 for x in l[:3])
 
 
 def load_l_from_params(path: Path) -> list[int] | None:
@@ -37,7 +55,7 @@ def is_need_to_train(path: Path) -> str | None:
 
 
 def build_reference_map() -> dict[str, list[int]]:
-    out = dict(REFERENCE_L)
+    out = {k: list(v) for k, v in REFERENCE_L.items()}
     if not LTZCAL_ROOT.is_dir():
         return out
     for exp_dir in LTZCAL_ROOT.iterdir():
@@ -54,14 +72,22 @@ def build_reference_map() -> dict[str, list[int]]:
             if need != "0":
                 continue
             l = load_l_from_params(p)
-            if l:
+            if l and not is_trivial_l(l):
                 out[exp] = l
                 break
     return out
 
 
 def get_reference_l(exp: str) -> list[int] | None:
-    return build_reference_map().get(exp)
+    data = build_reference_map()
+    if exp in data:
+        return list(data[exp])
+    alias = pack_a_alias(exp)
+    if alias != exp and alias in data:
+        return list(data[alias])
+    if alias != exp and alias in REFERENCE_L:
+        return list(REFERENCE_L[alias])
+    return None
 
 
 def effective_l_target(l_formula: list[int], l_reference: list[int] | None) -> list[int]:
@@ -86,9 +112,28 @@ def at_l_reference(l_actual: list[int], l_reference: list[int] | None) -> bool:
     return True
 
 
+def grid_exp_names() -> list[str]:
+    if not GRID_CELLS.is_file():
+        return list(REFERENCE_L.keys())
+    names: list[str] = []
+    for line in GRID_CELLS.read_text(encoding="utf-8").splitlines()[1:]:
+        if not line.strip():
+            continue
+        names.append(line.split("\t")[0])
+    return names
+
+
 def export_reference_json(path: Path) -> dict[str, list[int]]:
-    data = build_reference_map()
-    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    """Export Pack A refs plus Pack B/C resolved via pack_a_alias."""
+    data: dict[str, list[int]] = {}
+    for exp in grid_exp_names():
+        l = get_reference_l(exp)
+        if l:
+            data[exp] = l
+    # Ensure hardcoded Pack A keys present even if missing from grid.
+    for exp, l in REFERENCE_L.items():
+        data.setdefault(exp, list(l))
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     return data
 
 

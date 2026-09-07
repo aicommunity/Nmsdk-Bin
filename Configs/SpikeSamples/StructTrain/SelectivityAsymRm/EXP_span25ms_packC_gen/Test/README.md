@@ -1,3 +1,1 @@
-## EXP_span25ms_packC_gen — Test
-NeuronClass=`NSPNeuronGenAsymRmD001C25e12Rm5e6` pack=C kind=gen span=25ms GTS=20000
-C=2.5e-11 ExcRm=5e6 InhRm=5e7 ExcRsyn=8.6e7 InhRsyn=8.6e8
+Конфиг для EXP_span25ms_packC_gen_Test (Test). Родитель: /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/EXP_span25ms_packC_gen/README.md
