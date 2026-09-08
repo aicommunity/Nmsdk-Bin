@@ -8,7 +8,12 @@ TRAIN_T="${TRAIN_T:-160}"
 TEST_T="${TEST_T:-20}"
 META="$ROOT/grid_cells.tsv"
 OUT="$ROOT/grid_summary.csv"
-LOG="$ROOT/run_fastspan_rerun.log"
+SKIP_TRAIN="${SKIP_TRAIN:-0}"
+if [[ "$SKIP_TRAIN" == "1" ]]; then
+  LOG="${LOG:-$ROOT/run_fastspan_valid_test.log}"
+else
+  LOG="${LOG:-$ROOT/run_fastspan_rerun.log}"
+fi
 VERIFY="$ROOT/scripts/verify_element_params.py"
 VERIFY_SPAN="$ROOT/scripts/verify_pattern_span.py"
 COPY="$ROOT/scripts/copy_config.sh"
@@ -69,10 +74,14 @@ python3 "$VERIFY_SPAN" --meta "$META" \
   "$ROOT"/EXP_*/Train/Parameters_00.xml \
   "$ROOT"/EXP_*/Test/Parameters_00.xml
 
-echo "=== TRAIN wave MAX_JOBS=$MAX_JOBS t=$TRAIN_T ==="
-if ! run_wave train "$TRAIN_T"; then
-  echo "Train wave had failures" >&2
-  exit 1
+if [[ "$SKIP_TRAIN" != "1" ]]; then
+  echo "=== TRAIN wave MAX_JOBS=$MAX_JOBS t=$TRAIN_T ==="
+  if ! run_wave train "$TRAIN_T"; then
+    echo "Train wave had failures" >&2
+    exit 1
+  fi
+else
+  echo "=== SKIP_TRAIN=1 — reuse existing Train Models ==="
 fi
 
 echo "=== VERIFY Train Models (D/C) ==="

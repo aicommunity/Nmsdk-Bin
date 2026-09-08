@@ -23,8 +23,9 @@
 | EXP_span100ms_packC_gen | **1** | **0** | **0.0115 cold** | `20 17 10 1` |
 | EXP_span100ms_packC_preinh | 0 | 1 | 0.100 | `20 17 10 1` |
 
-Done gate (unchanged): `verify_train_done.py --require-calibrated --require-sync-ok`.  
-Test `fire_all` out of scope for train Done.
+Done gate (unchanged): `verify_train_done.py --require-calibrated --require-sync-ok`.
+
+**Test selectivity (2026-09-08):** first systematic 8-trial gate on 16 Done — see [`SELECTIVITY_REPORT.md`](SELECTIVITY_REPORT.md). **Gate PASS 1/16** (`EXP_span25ms_packA_gen` 6/8 selective); majority fire_all; one silent. Fingerprint unchanged.
 
 **Anti-regression:** preinh amp postflight `done_fingerprint.py --diff` → **OK, 16 Done unchanged**. Pack C preinh sources still Need=0 (read-only).
 
@@ -50,15 +51,16 @@ Sync non-ref still OK; FixedLTZ never left cold. Initial≈0.042 from preinh app
 - `scripts/done_fingerprint.py` — Done EXP hash pre/post
 - `scripts/seed_from_done_preinh.py` — TipR+Initial from preinh, `--surgical`
 - `scripts/seed_tipr_from_done_sibling.py` — TipR Pack B→C (superseded for this lever)
-- `scripts/finish_packC_gen_preinh_amp.sh` / `finish_packC_gen_fast_amp.sh`
+- `scripts/finish_packC_gen_preinh_amp.sh` / `finish_packC_gen_fast_amp.sh` / `finish_packC_gen_tip_reset_amp.sh`
+- `scripts/reset_pathological_tip.py` — H1 TipR reset (failed under amp)
 - `run_asymrm.sh`: `AMP_ABORT_HARD_OSC` (default 0)
 
-## Blocked next step (not auto-run)
+## Next (deferred)
 
-EnableDebug / PulseSynced audit on the two gen only — do **not** repeat TipR transplant + short amp without new evidence. Do **not** touch the 16 Done EXP.
+H1 tip-reset amp **FAILED** (TipR→Rmax again). See [`PACKC_GEN_DIAGNOSIS.md`](PACKC_GEN_DIAGNOSIS.md) / [`NEXT_LEVER_PACKC.md`](NEXT_LEVER_PACKC.md). Do **not** touch the 16 Done EXP.
 
 ```bash
-python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_preinh_amp.json
+python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_tip_reset_amp.json
 python3 ../SelectivityLtzCalibrate/scripts/verify_train_done.py \
   --require-calibrated --require-sync-ok --L-reference l_reference.json \
   EXP_*/Train/Parameters_00.xml

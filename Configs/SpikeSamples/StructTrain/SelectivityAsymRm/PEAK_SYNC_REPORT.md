@@ -267,9 +267,9 @@
 
 | dend | L | L_formula | L_sync | sync_ok | last_abs_dt | shape | verdict |
 |:----:|:-:|:---------:|:------:|:-------:|:-----------:|:-----:|:-------:|
-| 0 | 11 | 11 | 11 | True | 0.00045 | invalid | PEAK_SHAPE_SUSPECT |
-| 1 | 9 | 9 | 9 | True | 0.00025 | invalid | PEAK_SHAPE_SUSPECT |
-| 2 | 7 | 6 | 6 | True | 0.00115 | invalid | PEAK_SHAPE_SUSPECT |
+| 0 | 11 | 11 | 11 | True | 0 | invalid | PEAK_SHAPE_SUSPECT |
+| 1 | 9 | 9 | 9 | True | 7.494e-16 | invalid | PEAK_SHAPE_SUSPECT |
+| 2 | 7 | 6 | 6 | True | 0.00125 | invalid | PEAK_SHAPE_SUSPECT |
 | 3 | 1 | 1 | 1 | False | 1.501 | invalid | SYNC_OK |
 
 ## EXP_span50ms_packC_preinh

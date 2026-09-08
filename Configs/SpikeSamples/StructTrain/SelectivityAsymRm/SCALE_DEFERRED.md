@@ -8,7 +8,7 @@
 - `EXP_span100ms_packC_gen`
 
 Both: L at `l_reference`, sync_ok, FixedLTZ **cold 0.0115**, Need=1.  
-**Done fingerprint unchanged** after preinh lever (`done_fingerprint_pre/post_preinh_amp.json`).
+**Done fingerprint unchanged** after tip-reset amp (`done_fingerprint_pre/post_tip_reset_amp.json`).
 
 ## Attempts that failed (do not repeat blindly)
 
@@ -16,7 +16,8 @@ Both: L at `l_reference`, sync_ok, FixedLTZ **cold 0.0115**, Need=1.
 |---------|--------|
 | Blind amp `640 1280 2560` + refresh | ~22 h; hard OSC; no FixedLTZ |
 | TipR←**Pack B gen** + `160 320 640` + renudge | fail=1; TipR drifts |
-| TipR+Initial←**Pack C preinh** + `80 160 320` + renudge + fingerprint | fail=1; **16 Done OK**; span50 d2 → Rmax + pathological `amp_dt`; span100 d1 hard OSC |
+| TipR+Initial←**Pack C preinh** + `80 160 320` + renudge + fingerprint | fail=1; **16 Done OK**; span50 d2 → Rmax + pathological `amp_dt` |
+| Pathological TipR reset (H1) + `80 160` + hard-OSC | fail=1; TipR re-hit Rmax; `amp_dt≈-5.9e4`; see `PACKC_GEN_DIAGNOSIS.md` |
 
 Manual FixedLTZ/UseFixed=1 — forbidden (fakes calibrated Done).
 
@@ -28,25 +29,25 @@ Manual FixedLTZ/UseFixed=1 — forbidden (fakes calibrated Done).
 - Never cold-reset without explicit EXP list
 - Never write Pack C preinh XML
 
-## Next (deferred — needs new diagnosis)
+## Next (deferred — needs C++ / peak evidence)
 
-Not another TipR copy amp. Prefer:
+Tip reset + short amp **failed**. Prefer:
 
-1. EnableDebug NM on the two gen: `PulseSynced` / `ActivePulseIndex` / why EndOfLearning never fires with Initial=0.042.
-2. Investigate span50 d2 `amp_dt≈-35` + TipR at Rmax (measurement/peak anomaly vs real amp).
-3. Only then design a targeted fix (possibly C++ or pattern/Initial interaction for gen vs preinh).
-
-## Waves
-
-| Phase | Status |
-|-------|--------|
-| Pack A/B/C span25–100 except C gen 50/100 | **Done** (fingerprint protected) |
-| Pack C gen 50/100 | **blocked** after preinh lever |
+1. Instrument why `AmpDtTrace` can reach ~1e4–1e5 on Pack C gen (peak / MaxIterSomaAmp).
+2. Minimal PulseLib patch only with reproducible unit evidence.
+3. Do **not** re-run TipR transplant or blind tip-reset amp.
 
 ```bash
-python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_preinh_amp.json
+python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_tip_reset_amp.json
 python3 scripts/analyze_train_stall.py --json \
   EXP_span50ms_packC_gen/Train EXP_span100ms_packC_gen/Train
 ```
 
 Global NeuroModelerConsole budget: **≤6**.
+
+## Waves
+
+| Phase | Status |
+|-------|--------|
+| Pack A/B/C span25–100 except C gen 50/100 | **Done** (fingerprint protected); test gate 1/16 PASS |
+| Pack C gen 50/100 | **blocked** after tip-reset amp FAIL |

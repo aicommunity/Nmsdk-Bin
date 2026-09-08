@@ -28,3 +28,27 @@ MAX_JOBS=4, Train t=160, Test t=20. Verify pattern 16/16 PASS, verify D/C PASS.
 ### Вывод
 
 С корректными паттернами при TS=2000 селективность не достигнута (fire_all). ts10k: silent (target_hit=0) — отдельная задача калибровки LTZ. Следующие направления: алгоритм различения, Preinh k, tip R, не повторный TC-sweep без новой гипотезы.
+
+## 2026-09-08 — Cleanup invalid pre-2026-08-23 artifacts + valid Test rerun
+
+### Удалено (битый scale / misleading)
+
+- Top-level: `run_fastspan.log`, `run_escalate_*.log`, `setup.log`, `setup_rerun.log`, `run_fastspan_rerun.log`, `grid_cells.tsv.all`, `*.bak_full`, `*.superseded`
+- Все `Parameters_00.xml.bak`; все `EventsLog/`
+- `StatisticLog` с датой **&lt; 2026.08.23** (266 dirs)
+- Stale `Test/SelectivityLog/results.csv` (часть с ISI `0.0015` от 22 авг)
+
+### Не удалялось
+
+- Каталоги `EXP_*`, валидные Models/Parameters после fix 23 авг
+- `REPORT.md`, `grid_cells.tsv`, актуальный `patch_pattern_scale.py`
+
+### Прогон
+
+`SKIP_TRAIN=1` добавлен в `run_fastspan.sh`. Команда:
+
+```bash
+MAX_JOBS=4 TEST_T=20 SKIP_TRAIN=1 bash scripts/run_fastspan.sh
+```
+
+Лог: `run_fastspan_valid_test.log`. Verify pattern 16/16 PASS. Результат совпал с каноном 23 авг: TS=2000 → fire_all 1/8; ts10k → silent 7/8. CSV с валидными ISI (не 0.0015).
