@@ -1,38 +1,52 @@
-# Scale deferred / notes (2026-09-05)
+# Scale deferred / notes (2026-09-08)
 
-## Disk cleanup (2026-09-05)
+## Status
 
-Freed ~320 GB by deleting `StatisticLog/*` timestamp dirs under:
+**16/18** AsymRm EXP train Done. Remaining:
 
-- `SelectivityAsymRm/` (~245 GB)
-- `SelectivityPresynapticInhib/` StatisticLogs
-- `SelectivityLtzCalibrate/AsymRmLtzCal/` StatisticLogs
-- `TimeNeuronTimeLearnerBranchTest_savedcheck*` StatisticLogs
+- `EXP_span50ms_packC_gen`
+- `EXP_span100ms_packC_gen`
 
-Kept Parameters/Models and `archives/statisticlog/*.tar.gz`. Disk now ~27% used.
+Both: L at `l_reference`, sync_ok, FixedLTZ **cold 0.0115**, Need=1.  
+**Done fingerprint unchanged** after preinh lever (`done_fingerprint_pre/post_preinh_amp.json`).
 
-## Accidental full-grid cold reset
+## Attempts that failed (do not repeat blindly)
 
-`reset_asymrm_cold.sh EXP_…` previously treated empty `PILOT_EXPS` as **all EXP**. Fixed: requires `PILOT_EXPS` or positional EXP args (`Refuse full-grid cold reset`).
+| Attempt | Result |
+|---------|--------|
+| Blind amp `640 1280 2560` + refresh | ~22 h; hard OSC; no FixedLTZ |
+| TipR←**Pack B gen** + `160 320 640` + renudge | fail=1; TipR drifts |
+| TipR+Initial←**Pack C preinh** + `80 160 320` + renudge + fingerprint | fail=1; **16 Done OK**; span50 d2 → Rmax + pathological `amp_dt`; span100 d1 hard OSC |
 
-Pack A span25/50 Done restored from `Bin` git `HEAD` (`9c45613` / `a3b8b6d`). Pack A span100 + Pack B/C need retrain (Done was never committed).
+Manual FixedLTZ/UseFixed=1 — forbidden (fakes calibrated Done).
+
+## Safety tooling (keep)
+
+- Whitelist PILOT only `EXP_span{50,100}ms_packC_gen`
+- `done_fingerprint.py` pre/post
+- Backup/restore grid `PEAK_SYNC_*` / `stall_latest*` / `grid_summary.csv`
+- Never cold-reset without explicit EXP list
+- Never write Pack C preinh XML
+
+## Next (deferred — needs new diagnosis)
+
+Not another TipR copy amp. Prefer:
+
+1. EnableDebug NM on the two gen: `PulseSynced` / `ActivePulseIndex` / why EndOfLearning never fires with Initial=0.042.
+2. Investigate span50 d2 `amp_dt≈-35` + TipR at Rmax (measurement/peak anomaly vs real amp).
+3. Only then design a targeted fix (possibly C++ or pattern/Initial interaction for gen vs preinh).
 
 ## Waves
 
 | Phase | Status |
 |-------|--------|
-| Pack A span25/50 | **Done** (git restore) |
-| Remaining 14 EXP | `scale_remaining.log`, `MAX_JOBS=6` |
-| Pack B/C span100 | included in remaining batch |
+| Pack A/B/C span25–100 except C gen 50/100 | **Done** (fingerprint protected) |
+| Pack C gen 50/100 | **blocked** after preinh lever |
 
 ```bash
-# Do NOT cold-reset without PILOT_EXPS=
-PILOT_EXPS='EXP_span50ms_packC_preinh' bash scripts/reset_asymrm_cold.sh
-
-MAX_JOBS=6 bash scripts/run_scale_bc_span25.sh
-MAX_JOBS=6 bash scripts/run_scale_bc_span50.sh
-MAX_JOBS=6 bash scripts/run_scale_bc_span100.sh
-SKIP_COLD_RESET=1 MAX_JOBS=6 bash scripts/run_pilot_span100.sh
+python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_preinh_amp.json
+python3 scripts/analyze_train_stall.py --json \
+  EXP_span50ms_packC_gen/Train EXP_span100ms_packC_gen/Train
 ```
 
 Global NeuroModelerConsole budget: **≤6**.

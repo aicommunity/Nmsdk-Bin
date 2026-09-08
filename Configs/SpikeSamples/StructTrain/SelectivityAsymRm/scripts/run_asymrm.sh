@@ -38,6 +38,8 @@ L_REF_JSON="${L_REF_JSON:-$ROOT/l_reference.json}"
 L_REF_REFRESH="${L_REF_REFRESH:-320}"
 AMP_PARTIAL_AT_L_REF="${AMP_PARTIAL_AT_L_REF:-0}"
 AMP_FORCE_AT_L_REF="${AMP_FORCE_AT_L_REF:-0}"
+AMP_ABORT_HARD_OSC="${AMP_ABORT_HARD_OSC:-0}"
+AMP_HARD_OSC_NO_IMPROVE="${AMP_HARD_OSC_NO_IMPROVE:-20}"
 L_TRAIN_GUARD="$ROOT/scripts/l_train_guard.py"
 SEED_INITIAL_SCRIPT="$ROOT/scripts/seed_initial_from_ltzcal.py"
 TRAIN_STEPS="${TRAIN_STEPS:-$LENGTH_STEPS}"
@@ -344,6 +346,38 @@ has_amp_stall() {
   [[ "$blocker" == "AMP_AT_RMIN" || "$blocker" == "AMP_OSCILLATION" || "$blocker" == "AMP_PENDING" ]]
 }
 
+# Exit 0 if hard OSC: Need!=0, overall AMP_OSCILLATION, some non-ref dend with
+# no_improve>=threshold and |amp_dt|<0.005 (further amp steps waste wall time).
+hard_osc_abort_exp() {
+  local exp="$1"
+  [[ "${AMP_ABORT_HARD_OSC:-0}" == "1" ]] || return 1
+  python3 - "$ROOT/$exp/Train" "$ROOT/scripts" "$AMP_HARD_OSC_NO_IMPROVE" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from analyze_train_stall import analyze_exp
+from asymrm_train_common import REF_DENDRITE
+
+train = Path(sys.argv[1])
+thresh = float(sys.argv[3])
+r = analyze_exp(train)
+if str(r.get("IsNeedToTrain")) == "0":
+    sys.exit(1)
+if r.get("blocker") != "AMP_OSCILLATION":
+    sys.exit(1)
+for d in r.get("dendrites") or []:
+    if d.get("dend") == REF_DENDRITE:
+        continue
+    if d.get("blocker") != "AMP_OSCILLATION":
+        continue
+    ni = float(d.get("no_improve") or 0.0)
+    ad = abs(float(d.get("amp_dt") or 0.0))
+    if ni >= thresh and ad < 0.005:
+        sys.exit(0)
+sys.exit(1)
+PY
+}
+
 has_amp_no_initial() {
   local blocker="$1"
   [[ "$blocker" == "AMP_NO_INITIAL" ]]
@@ -550,7 +584,14 @@ adaptive_train_exp() {
       blocker=$(get_stall_blocker "$exp")
       echo "stall $exp blocker=$blocker after amp T=$cumulative"
       case "$blocker" in
-        AMP_PENDING|AMP_OSCILLATION) continue ;;
+        AMP_PENDING) continue ;;
+        AMP_OSCILLATION)
+          if hard_osc_abort_exp "$exp"; then
+            echo "ABORT hard OSC $exp after amp T=$cumulative (no_improve>=${AMP_HARD_OSC_NO_IMPROVE}) — stop amp schedule"
+            break
+          fi
+          continue
+          ;;
         AMP_NO_INITIAL) echo "AMP_NO_INITIAL — stop amp-continue for $exp"; return 1 ;;
         AMP_AT_RMIN) echo "AMP_AT_RMIN — stop amp-continue for $exp"; break ;;
         LENGTH_STALL|TIME_BUDGET)
