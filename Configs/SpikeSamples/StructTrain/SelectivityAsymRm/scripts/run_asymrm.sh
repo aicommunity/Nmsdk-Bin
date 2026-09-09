@@ -7,7 +7,7 @@ NM="${NM:-/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole}"
 MAX_JOBS="${MAX_JOBS:-3}"
 TRAIN_T="${TRAIN_T:-80}"
 TEST_T="${TEST_T:-20}"
-META="$ROOT/grid_cells.tsv"
+META="${META:-$ROOT/grid_cells.tsv}"
 OUT="$ROOT/grid_summary.csv"
 LOG="$ROOT/run_asymrm.log"
 VERIFY="$ROOT/scripts/verify_element_params.py"
@@ -115,6 +115,8 @@ l_guard_after() {
 l_guard_floor_before() {
   local exp="$1"
   [[ "$L_REFERENCE" == "ltzcal" || -n "$L_REFERENCE" ]] || return 0
+  # Cold D∝span pilots must grow from L=1 1 1 1 — do not raise to L_ref before train.
+  [[ "$exp" == *_Dspan ]] && return 0
   python3 "$L_TRAIN_GUARD" "$ROOT/$exp/Train" --apply-floor --l-reference --json 2>/dev/null || true
 }
 
@@ -217,7 +219,15 @@ PY
   local inh_rm inh_rsyn
   inh_rm=$(sed -n '1p' /tmp/asym_inh_vals.txt)
   inh_rsyn=$(sed -n '2p' /tmp/asym_inh_vals.txt)
-  local args=(--expect-dissoc "${DISSOC:-0.001}" --expect-cap "$cap" --expect-secr "${SECR:-0.001}"
+  local dissoc="${DISSOC:-0.001}"
+  # Pilot *_Dspan: Dissoc scales with span (kept via reapply_dspan_dissoc).
+  if [[ "$model" == *_Dspan* ]]; then
+    case "$model" in
+      *span50*) dissoc=0.002 ;;
+      *span100*) dissoc=0.004 ;;
+    esac
+  fi
+  local args=(--expect-dissoc "$dissoc" --expect-cap "$cap" --expect-secr "${SECR:-0.001}"
     --expect-exc-r "$exc_rm" --expect-inh-r "$inh_rm"
     --expect-inh-syn-r "$inh_rsyn"
     --expect-class "$neuron" --min-count 4)
@@ -275,10 +285,12 @@ apply_ltz_train_patch() {
 train_one_exp() {
   local exp="$1" tlim="$2"
   l_guard_floor_before "$exp"
+  reapply_dspan_dissoc "$exp"
   local dir="$ROOT/$exp/Train"
   local ini=Project.ini
   [[ -f "$dir/project.ini" ]] && ini=project.ini
   ( cd "$dir"; "$NM" -c "$ini" -s -t "$tlim" -x -S >>run_console.log 2>&1; echo "Project saved." >>run_console.log )
+  reapply_dspan_dissoc "$exp"
 }
 
 all_dendrites_sync_ok() {
@@ -333,6 +345,40 @@ t = set_tag(t, "IsNeedToTrain", "1", 1)
 t = set_tag(t, "StructureBuildMode", "1", 1)
 p.write_text(t, encoding="utf-8")
 print("continue_train", p)
+PY
+  reapply_dspan_dissoc "$exp"
+}
+
+# Class NSPNeuronGenAsymRmD001* hardcodes Dissoc=0.001; StructureBuild/save resets XML.
+# Pilot *_Dspan keeps SynapseDissociationTC / DissociationTC at span-scaled values.
+reapply_dspan_dissoc() {
+  local exp="$1"
+  [[ "$exp" == *_Dspan ]] || return 0
+  local span dissoc
+  span=$(exp_meta "$exp" 3)
+  case "$span" in
+    50) dissoc=0.002 ;;
+    100) dissoc=0.004 ;;
+    *) return 0 ;;
+  esac
+  python3 - "$ROOT/$exp/Train" "$dissoc" <<'PY'
+import re, sys
+from pathlib import Path
+train = Path(sys.argv[1])
+dissoc = sys.argv[2]
+def set_tag(text, tag, value):
+    return re.sub(rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)", rf"\g<1>{value}\2", text, count=0)
+for name in ("Parameters_00.xml", "Model_00.xml"):
+    p = train / name
+    if not p.is_file():
+        continue
+    t = p.read_text(encoding="utf-8")
+    t = set_tag(t, "SynapseDissociationTC", dissoc)
+    t = set_tag(t, "DissociationTC", dissoc)
+    t = set_tag(t, "UseElementDefaults", "1")
+    t = set_tag(t, "MembraneCapacity", "2.5e-11")
+    p.write_text(t, encoding="utf-8")
+print(f"reapply_dspan_dissoc {train.parent.name} Dissoc={dissoc}")
 PY
 }
 

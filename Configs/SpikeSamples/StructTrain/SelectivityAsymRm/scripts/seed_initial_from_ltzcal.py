@@ -21,7 +21,13 @@ LTZCAL_ROOT = Path(__file__).resolve().parents[2] / "SelectivityLtzCalibrate" / 
 
 
 def pack_a_alias(exp: str) -> str:
-    """Pack B/C have no LtzCal dirs — use same span+kind Pack A."""
+    """Pack B/C have no LtzCal dirs — use same span+kind Pack A.
+    Pilot suffixes (_Dspan, _ampaudit) map to the parent EXP name.
+    """
+    for suf in ("_Dspan", "_ampaudit"):
+        if exp.endswith(suf):
+            exp = exp[: -len(suf)]
+            break
     return exp.replace("_packB_", "_packA_").replace("_packC_", "_packA_")
 
 

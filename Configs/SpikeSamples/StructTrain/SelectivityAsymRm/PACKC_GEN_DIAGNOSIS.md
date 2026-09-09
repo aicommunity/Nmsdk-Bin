@@ -58,3 +58,38 @@ Applied TipR reset (span50 d1+d2; span100 d1) then `AMP_TRAIN_STEPS=80 160` + `A
 - Stall snapshot: `finish_packC_gen_tip_reset_amp_stall.json`.
 
 **Defer:** tip reset alone does not stop pathological amp measurement on Pack C gen. Next requires C++/peak measurement audit or different algorithm — **not** another TipR transplant / short amp campaign.
+
+## AmpDtAudit (копии `_ampaudit`, 2026-09-08)
+
+Оригиналы `EXP_span{50,100}ms_packC_gen` **не** трогались. Клоны:
+
+| EXP | Источник | Примечание |
+|-----|----------|------------|
+| `EXP_span50ms_packC_gen_ampaudit` | stuck Pack C gen 50 | EnableDebug=1; Project.ini EventsLogMode/DebugMode=1 |
+| `EXP_span100ms_packC_gen_ampaudit` | stuck Pack C gen 100 | то же; NM hung после `phase -> Done` (убит после ~42 мин) |
+
+C++ (`NNeuronTimeLearner.cpp`, только при EnableDebug + logger):
+
+- `UpdateNormTraces` — `|amp_dt|>5`
+- `ChangeSynapseResistanceStatus` — `|dt|>5`
+- `MeasureMaxPotentialAndTime` — `currentsomaamp>10` или `>50×Initial`
+
+Короткий train: `ADAPTIVE_TRAIN=0 TRAIN_T=80 AMP_TRAIN_STEPS=80` на копиях only. Fingerprint 16 Done: **OK**.
+
+### События `AmpDtAudit` (span50 copy)
+
+≥66 строк в `Train/run_console.log`. Пример (dend **2**, L=7):
+
+```text
+AmpDtAudit MeasureMaxPotentialAndTime: i=2 L=7 ... currentsomaamp=59278.5 MaxIterSomaAmp=59278.5 InitialSomaPotential=0.0423094
+AmpDtAudit ChangeSynapseResistanceStatus: num=2 dt=-59278.5 ... r_old=2.42e6 → затем TipR=1e11 length_settled=1 ready_for_r_tune=1
+AmpDtAudit UpdateNormTraces: i=2 amp_dt=-59278.5 TipR=1e11 PeakSeen=1 PeakLocked=1
+```
+
+**Вывод:** пик в окне PeakMeasure даёт чудовищный `MaxIterSomaAmp` при маленьком `Initial`; damped TipR при `|dt|≫1` гонит R к **ResistanceMax** — это и есть механизм H1 / tip-reset FAIL.
+
+span100 copy: за T=80 до Done **0** строк `AmpDtAudit` (`|amp_dt|` в FinishTrainingIteration ~1e−2…0.045); `CalibrateFixedLTZ max=1.37e6` намекает на выбросы **вне** peak-окна / вне MaxIterSomaAmp.
+
+### Fix (always-safe)
+
+В `ChangeSynapseResistanceStatus`: если `|dt|>5` — **не** вызывать damped TipR update; `ResistanceStatus` не трогать; лог `AmpDtAudit skip TipR update`. Rebuild NeuroModelerConsole. Без TipR transplant.

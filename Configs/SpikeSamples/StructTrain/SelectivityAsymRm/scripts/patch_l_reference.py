@@ -25,7 +25,11 @@ GRID_CELLS = ASYMRM_ROOT / "grid_cells.tsv"
 
 
 def pack_a_alias(exp: str) -> str:
-    """Map Pack B/C EXP name to same span+kind Pack A (LtzCal exists only for A)."""
+    """Map Pack B/C / pilot suffixes to same span+kind Pack A (LtzCal exists only for A)."""
+    for suf in ("_Dspan", "_ampaudit"):
+        if exp.endswith(suf):
+            exp = exp[: -len(suf)]
+            break
     return exp.replace("_packB_", "_packA_").replace("_packC_", "_packA_")
 
 
@@ -113,14 +117,19 @@ def at_l_reference(l_actual: list[int], l_reference: list[int] | None) -> bool:
 
 
 def grid_exp_names() -> list[str]:
-    if not GRID_CELLS.is_file():
-        return list(REFERENCE_L.keys())
     names: list[str] = []
-    for line in GRID_CELLS.read_text(encoding="utf-8").splitlines()[1:]:
-        if not line.strip():
+    seen: set[str] = set()
+    for grid in (GRID_CELLS, ASYMRM_ROOT / "grid_cells_pilot.tsv"):
+        if not grid.is_file():
             continue
-        names.append(line.split("\t")[0])
-    return names
+        for line in grid.read_text(encoding="utf-8").splitlines()[1:]:
+            if not line.strip():
+                continue
+            name = line.split("\t")[0]
+            if name not in seen:
+                seen.add(name)
+                names.append(name)
+    return names if names else list(REFERENCE_L.keys())
 
 
 def export_reference_json(path: Path) -> dict[str, list[int]]:

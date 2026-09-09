@@ -173,7 +173,9 @@
 | Обучение завершено + порог не холодный | 16 / 18 |
 | Не завершено | 2 (Pack C gen, спаны 50 и 100 мс) |
 
-**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, цель стреляет). Остальные в основном стрельба на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён; дальше нужен C++/peak audit, не повтор TipR amp.
+**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, цель стреляет). Остальные в основном стрельба на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён.
+
+**Параметры span:** D/C/Rm внутри пакета **одинаковы** для 25/50/100 мс; со span масштабируются только ISI и Peak/SyncTol — см. [`SelectivityAsymRm/PARAM_SPAN_COMPARE.md`](SelectivityAsymRm/PARAM_SPAN_COMPARE.md). Пилоты D∝span и AmpDtAudit — только на **копиях** EXP (`*_Dspan`, `*_ampaudit`).
 
 
 ---

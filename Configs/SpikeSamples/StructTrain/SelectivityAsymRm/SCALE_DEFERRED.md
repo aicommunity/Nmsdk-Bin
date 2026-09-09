@@ -29,16 +29,21 @@ Manual FixedLTZ/UseFixed=1 — forbidden (fakes calibrated Done).
 - Never cold-reset without explicit EXP list
 - Never write Pack C preinh XML
 
-## Next (deferred — needs C++ / peak evidence)
+## Span membrane params (see PARAM_SPAN_COMPARE.md)
 
-Tip reset + short amp **failed**. Prefer:
+D=`0.001`, C/Rm pack-fixed — **same for 25/50/100**. Only ISI + Peak/SyncTol scale with span. Hypothesis for fire_all on Done 50/100: EPSP tuned for ~25 ms.
 
-1. Instrument why `AmpDtTrace` can reach ~1e4–1e5 on Pack C gen (peak / MaxIterSomaAmp).
-2. Minimal PulseLib patch only with reproducible unit evidence.
-3. Do **not** re-run TipR transplant or blind tip-reset amp.
+## Pilots completed (copies only)
+
+| Pilot | Result |
+|-------|--------|
+| AmpDtAudit on `*_ampaudit` | span50: ≥66 `AmpDtAudit` (amp≈5.9e4 → TipR Rmax); span100: 0 events / NM hang after Done. Fix: skip TipR update if `|dt|>5`. |
+| D∝span `*_Dspan` | span100 D=0.004 → Done but **fire_all** 1/8; span50 D=0.002 → Need=1 pathological amp (abort). |
+
+Do **not** re-run TipR transplant / tip-reset amp; do **not** cold-reset originals. Next: peak-window invalidation / empty-window PeakSeen; not another Dissoc-only scale.
 
 ```bash
-python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_tip_reset_amp.json
+python3 scripts/done_fingerprint.py --diff done_fingerprint_pre_dspan.json
 python3 scripts/analyze_train_stall.py --json \
   EXP_span50ms_packC_gen/Train EXP_span100ms_packC_gen/Train
 ```
@@ -50,4 +55,5 @@ Global NeuroModelerConsole budget: **≤6**.
 | Phase | Status |
 |-------|--------|
 | Pack A/B/C span25–100 except C gen 50/100 | **Done** (fingerprint protected); test gate 1/16 PASS |
-| Pack C gen 50/100 | **blocked** after tip-reset amp FAIL |
+| Pack C gen 50/100 | **blocked**; AmpDtAudit on copies + TipR `|dt|>5` guard shipped |
+| Dspan packA gen 50/100 | span100 Done/fire_all; span50 stuck amp — D∝span alone insufficient |
