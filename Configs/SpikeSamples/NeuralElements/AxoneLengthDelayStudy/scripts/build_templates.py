@@ -328,29 +328,89 @@ def main() -> None:
     patch_project_name(cad, "AxoneLengthDelayStudy_cad")
     print(f"built {cad}")
 
-    # Expand empty Segment trees (chain/cad Num*=1) via Console -S
+    # Expand empty Segment trees (chain/cad Num*=1) via 2→1 + prune.
+    # A single -S at N=1 does not reliably persist Segment1 for NAxoneChain.
     import os
     import subprocess
+    import sys
+
+    ne_scripts = NE / "scripts"
+    sys.path.insert(0, str(STUDY / "scripts"))
+    from ensure_watch import ensure_watch
 
     nm = os.environ.get("NM", "/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
-    for tmpl in (c, cad):
-        print(f"structural -S {tmpl.name} ...")
-        subprocess.run(
-            [nm, "-c", str(tmpl / "project.ini"), "-s", "-t", "0.05", "-x", "-S"],
-            check=True,
-            cwd=str(tmpl),
-        )
-        # restore watch after -S
-        from ensure_watch import ensure_watch
+    patch = ne_scripts / "patch_param.py"
+    titles = {
+        c: "AxoneLengthDelay: NAxoneChain",
+        cad: "AxoneLengthDelay: NAxoneChainAndDelay",
+    }
+    length_tag = {c: "NumSegments", cad: "NumNodes"}
 
-        ensure_watch(
-            tmpl,
-            title={
-                c: "AxoneLengthDelay: NAxoneChain",
-                cad: "AxoneLengthDelay: NAxoneChainAndDelay",
-            }[tmpl],
+    def prune_n1_extras(cell: Path) -> None:
+        for fname in ("Model_00.xml", "Parameters_00.xml"):
+            p = cell / fname
+            if not p.is_file():
+                continue
+            text = p.read_text(encoding="utf-8")
+            text = re.sub(
+                r'\n\t+<Segment2 Class="NAxoneSegment">.*?</Segment2>',
+                "",
+                text,
+                count=1,
+                flags=re.DOTALL,
+            )
+            text = re.sub(
+                r'\n\t+<Delay1 Class="NAxoneDelay">.*?</Delay1>',
+                "",
+                text,
+                count=1,
+                flags=re.DOTALL,
+            )
+
+            def drop_link(m: re.Match[str]) -> str:
+                b = m.group(0)
+                return "" if ("Segment2" in b or "Delay1" in b) else b
+
+            if "<Links" in text:
+                text = re.sub(
+                    r'\n\t\t\t<elem Type="ULink">.*?</elem>',
+                    drop_link,
+                    text,
+                    flags=re.DOTALL,
+                )
+                elems = len(re.findall(r'<elem Type="ULink">', text))
+                text = re.sub(
+                    r'<Links Type="ULinksList" Size="\d+">',
+                    f'<Links Type="ULinksList" Size="{elems}">',
+                    text,
+                    count=1,
+                )
+            p.write_text(text, encoding="utf-8")
+
+    def expand_template_n1(tmpl: Path, tag: str) -> None:
+        print(f"structural 2→1 {tmpl.name} ({tag}) ...")
+        for val in (2, 1):
+            for xml in (tmpl / "Model_00.xml", tmpl / "Parameters_00.xml"):
+                subprocess.run(
+                    [sys.executable, str(patch), str(xml), "--set", tag, str(val)],
+                    check=True,
+                )
+            subprocess.run(
+                [nm, "-c", str(tmpl / "project.ini"), "-s", "-t", "0.05", "-x", "-S"],
+                check=True,
+                cwd=str(tmpl),
+            )
+        prune_n1_extras(tmpl)
+        got = (tmpl / "Model_00.xml").read_text(encoding="utf-8").count(
+            'Class="NAxoneSegment"'
         )
-        print(f"expanded {tmpl}")
+        if got < 1:
+            raise SystemExit(f"FAIL {tmpl.name}: expected >=1 Segment after 2→1, got {got}")
+        ensure_watch(tmpl, title=titles[tmpl])
+        print(f"expanded {tmpl} segments={got}")
+
+    for tmpl in (c, cad):
+        expand_template_n1(tmpl, length_tag[tmpl])
 
 
 if __name__ == "__main__":

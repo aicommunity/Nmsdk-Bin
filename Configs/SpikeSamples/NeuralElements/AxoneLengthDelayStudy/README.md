@@ -25,3 +25,5 @@ GUI: NeuroModeler → открыть `cells/<cell>/project.ini` → Reset → St
 | `scripts/` | setup / run / extract / plot / ensure_watch |
 
 Протокол: `DefaultTimeStep=2000`, `Frequency=10`, `PulseLength=0.001`, `LTZone.Threshold=0.03`, `SIM_T=0.5`, `MAX_JOBS≤4`.
+
+`NumSegments`/`NumNodes=1` обязан содержать `Segment1` в XML (шаблоны chain/cad поднимают его через 2→1 + prune). Смена длины в GUI: property + Reset.

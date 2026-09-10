@@ -158,22 +158,13 @@ for row in "${ROWS[@]}"; do
   title="$(title_for "$cell" "$model" "$lp" "$lv")"
   python3 "$ENSURE" "$dst" --title "$title"
 
-  if [[ "$model" == "chain" ]]; then
+  if [[ "$model" == "chain" || "$model" == "cad" ]]; then
     n="$lv"
     got=$(grep -c 'Class="NAxoneSegment"' "$dst/Model_00.xml" || true)
     echo "$cell segments=$got need=$n"
-    # NumSegments=1 may keep empty Components (built at runtime), like AxoneChain1
-    if (( n > 1 && got < n )); then
+    # N=1 must also persist Segment1 in XML (empty Components is a bug).
+    if (( got < n )); then
       echo "FAIL $cell: expected >=$n segments, got $got"
-      exit 1
-    fi
-  fi
-  if [[ "$model" == "cad" ]]; then
-    n="$lv"
-    got=$(grep -c 'Class="NAxoneSegment"' "$dst/Model_00.xml" || true)
-    echo "$cell segments=$got need=$n"
-    if (( n > 1 && got < n )); then
-      echo "FAIL $cell: expected >=$n nodes/segments, got $got"
       exit 1
     fi
   fi
