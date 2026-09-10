@@ -3,8 +3,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SRC_TRAIN="${ROOT}/../TimeNeuronTimeLearnerBranch"
-SRC_TEST="${ROOT}/../TimeNeuronTimeLearnerBranchTest"
+SRC_TRAIN="${ROOT}/../TimeNeuronTimeLearnerBranch/Train"
+SRC_TEST="${ROOT}/../TimeNeuronTimeLearnerBranch/Test"
 EXCLUDE=(--exclude='EventsLog' --exclude='StatisticLog' --exclude='History.xml'
          --exclude='settings.qt' --exclude='SelectivityLog')
 
