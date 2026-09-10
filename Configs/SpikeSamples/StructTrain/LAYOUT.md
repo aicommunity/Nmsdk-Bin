@@ -26,3 +26,11 @@ Every experiment unit has:
 | Branch PreInh250 | `TimeNeuronTimeLearnerBranch_PreInh250/{Train,Test}` |
 
 Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
+
+## Related docs
+
+| Doc | Role |
+|-----|------|
+| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Реестр audit-PASS (`ok_audit=1`) + ссылки на конфиги |
+| [`AUDIT_REPORT.md`](AUDIT_REPORT.md) | Ворота, demote, морфология ответа |
+| [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md) | Хроника кампаний |

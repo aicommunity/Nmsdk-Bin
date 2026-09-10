@@ -4,6 +4,8 @@ Scope: `Selectivity*` + `TimeNeuronTimeLearner*` under [`StructTrain/`](.).
 Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.  
 No retrain — Test-only re-runs + offline metrics.
 
+Термины (RU): см. глоссарий в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md). Кратко: **ответ/спайк** на выходе нейрона (не «стрельба»); **алгоритм обучения** `NNeuronTimeLearner` / Branch = **обучение на одном дендрите** (сегменты импульсов); `fire_all` = ответ на все 8 проб.
+
 Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py)  
 - `ok_legacy` — historical gate (`match` / in-window only)  
 - `ok_strict` — late_fp/late_fn counted as errors  
@@ -28,6 +30,8 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 
 ### `ok_audit` PASS
 
+Полный реестр с рычагами и ссылками Train/Test/CSV: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md).
+
 | Experiment | acc_legacy |
 |------------|------------|
 | `SelectivityAsymRm/EXP_span25ms_packA_gen` | 6 |
@@ -44,23 +48,23 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | `…Branch_NextSegInh/Test` | 7/8 | 0 | 4 | **per_stim** | 6 |
 | `…Branch_PreInh250/Test` | 7/8 | 1 | 3 | **per_stim** | 6 |
 
-Legacy 7/8 on Branch was driven by late nontarget spikes counted as correct silence (`match=1`) plus multi-spike / per-stim morphology. **Demoted.**
+Legacy 7/8 на Branch (обучение на одном дендрите): late-ответ на отвлекающих считался «тишиной» (`match=1`) плюс multi-spike / per-stim. **Demoted.**
 
 ## Span 25 ms + timing-parameter fit
 
 | EXP (AsymRm) | n | ok_audit | mode / notes |
 |--------------|---|----------|--------------|
 | `EXP_span25ms_packA_gen` | 8 | **1** | selective 6/8, single-spike |
-| `EXP_span25ms_packA_preinh` | 8 | 0 | fire_all + per_stim |
-| `EXP_span25ms_packB_*` | 8 | 0 | fire_all; B_gen also burst |
-| `EXP_span25ms_packC_*` | 8 | 0 | fire_all + per_stim |
+| `EXP_span25ms_packA_preinh` | 8 | 0 | ответ на все пробы (`fire_all`) + per_stim |
+| `EXP_span25ms_packB_*` | 8 | 0 | `fire_all`; B_gen also burst |
+| `EXP_span25ms_packC_*` | 8 | 0 | `fire_all` + per_stim |
 | FastSpan 25 ms (non-ts10k) | 8 | 0 | per_stim / silent-ts10k |
 
-**Verdict:** membrane/dendrite timing fit did **not** generalize across 25 мс packs. The one audit PASS (`packA_gen`) is real under strict+single, but siblings are fire_all / per-stim — not evidence that temporal-parameter search systematically produces selectivity.
+**Verdict:** membrane/dendrite timing fit did **not** generalize across 25 мс packs. The one audit PASS (`packA_gen`) is real under strict+single, but siblings are `fire_all` / per-stim — not evidence that temporal-parameter search systematically produces selectivity.
 
 ## Burst / per-stim morphology
 
-- **per_stim** (answer to most pattern spikes): ~48 EXP with ≥1 such trial — dominant pathology; likely tip R / synaptic drive / short L.  
+- **per_stim** (ответ на большинство стимулов паттерна): ~48 EXP with ≥1 such trial — dominant pathology; likely tip R / synaptic drive / short L.  
 - **burst** (ISI≤5 мс packs): 8 EXP — often co-occurs with per_stim (`mixed`).  
 - Both force `ok_audit=0` even if class labels look selective.
 

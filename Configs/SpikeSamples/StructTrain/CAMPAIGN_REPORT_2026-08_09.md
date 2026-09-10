@@ -2,26 +2,36 @@
 
 Дата сводки: 2026-09-08 (аудит метрик/layout: **2026-09-10**, см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md)).  
 Период по журналам и коммитам: примерно четыре недели.  
-Цель почти везде: стрелять на обученный временной паттерн и молчать на семь отвлекающих.  
-Оценка: 8 проб (сколько ответов совпали с эталоном). Отдельно: попали ли в цель, нет ли стрельбы на все восемь проб.
+Цель почти везде: дать **ответ (спайк) на выходе нейрона** на обученный временной паттерн и **молчать** на семь отвлекающих.  
+Оценка: 8 проб (сколько ответов совпали с эталоном). Отдельно: есть ли ответ на целевой паттерн, нет ли ответа на все восемь проб (`fire_all`).
 
-Конфиги селективности: [`StructTrain/`](.) (этот каталог). Бенчи аксонов: [`../NeuralElements/AxoneLengthDelayStudy/`](../NeuralElements/AxoneLengthDelayStudy/). Пути ниже — относительно `StructTrain/`. Канон раскладки: [`LAYOUT.md`](LAYOUT.md) (`…/{Train,Test}`).
+Конфиги селективности: [`StructTrain/`](.) (этот каталог). Бенчи аксонов: [`../NeuralElements/AxoneLengthDelayStudy/`](../NeuralElements/AxoneLengthDelayStudy/). Пути ниже — относительно `StructTrain/`. Канон раскладки: [`LAYOUT.md`](LAYOUT.md) (`…/{Train,Test}`).  
+Реестр audit-PASS с ссылками на конфиги: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md). Аудит ворот: [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
 Уточнения к ранней сводке (разд. 3, 5, 6) включены в текст ниже.
 
 ---
 
-## Как читать метрики
+## Глоссарий и метрики
 
 | Термин | Смысл |
 |--------|--------|
-| Обучение завершено | Флаг «нужно учить» сброшен, длины дендритов выросли с «1 1 1 1», порог откалиброван (не холодный 0.0115) |
-| Точность 6/8 | 6 из 8 проб совпали с желаемым поведением (**legacy** `match`, только in-window) |
-| Стрельба на все пробы | Нейрон отвечает на все 8 паттернов |
-| Ворота качества (legacy) | Цель поражена и нет стрельбы на все и точность ≥ 4/8 |
-| Ворота аудита (`ok_audit`) | legacy-strict (late = ошибка) **и** один спайк на trial (`response_quality=ok_single`) **и** `n=8` |
-| Ложный пропуск цели | На целевом паттерне нет генерации |
-| Ложное срабатывание | Генерация на отвлекающем паттерне |
+| Алгоритм обучения временному паттерну | Компонент `NNeuronTimeLearner` (несколько дендритов) или `NNeuronTimeLearnerBranch` (см. ниже) — не «ученик» |
+| Обучение на одном дендрите (Branch) | `NNeuronTimeLearnerBranch`: импульсы паттерна на **разных сегментах одного** дендрита (не несколько дендритов) |
+| LTZone | Зона локальной временной интеграции: компонент порога/интегратора на потенциале сомы (`FixedLTZThreshold` и др.) |
+| Тип компонента LTZone | Имя C++-класса в Model (`NPLTZone`, `NPulseLTZoneThreshold`, …), **не** метка класса сэмпла `target_class` |
+| Интеграция LTZone | Режим с `TimeConstant` у `NPLTZone` (сглаживание до порога) |
+| Проба / trial | Одно предъявление паттерна из восьми |
+| Целевой паттерн | Trial 0 (обученный) |
+| Отвлекающий паттерн | Trials 1…7 |
+| Ответ / спайк / импульс на выходе | Rising-edge на выходе нейрона (LTZone); в CSV — `neuron_fired` / late |
+| Ответ на все пробы | `fire_all`: спайк на всех 8 паттернах |
+| Обучение завершено | Флаг «нужно учить» сброшен, длины выросли с «1 1 1 1», порог откалиброван (не холодный 0.0115) |
+| Точность 6/8 | 6 из 8 проб совпали с эталоном (**legacy** `match`, только in-window) |
+| Ворота качества (legacy) | Есть ответ на цель, нет ответа на все пробы, точность ≥ 4/8 |
+| Ворота аудита (`ok_audit`) | strict (late = ошибка) **и** один спайк на trial (`ok_single`) **и** `n=8` |
+| Ложный пропуск цели | На целевом паттерне нет ответа |
+| Ложное срабатывание | Ответ на отвлекающем паттерне |
 | late_fp / пачка / per-stim | Поздний спайк / пачка / ответ на каждый стимул паттерна — **не** успех (см. аудит) |
 
 ---
@@ -30,9 +40,9 @@
 
 | Период | Кампания | Папка | Что исследовали |
 |--------|----------|-------|-----------------|
-| 13–14 авг | Фаза A | [`SelectivityPhaseA/`](SelectivityPhaseA/) | Порог зоны локальной временной интеграции, допуск синхронизации, коэффициент подстройки сопротивления |
+| 13–14 авг | Фаза A | [`SelectivityPhaseA/`](SelectivityPhaseA/) | Порог LTZone, допуск синхронизации, коэффициент подстройки сопротивления |
 | 14–18 авг | Пресинаптическое торможение | [`SelectivityPresynapticInhib/`](SelectivityPresynapticInhib/) | Сила торможения (множитель k), автопорог, сжатие и растяжение длительности паттерна |
-| 18–21 авг | Ученик «ветка» | [`TimeNeuronTimeLearnerBranch/{Train,Test}`](TimeNeuronTimeLearnerBranch/), [`…_NextSegInh/`](TimeNeuronTimeLearnerBranch_NextSegInh/), [`…_PreInh250/`](TimeNeuronTimeLearnerBranch_PreInh250/) | Нормализация амплитуд кончиков, торможение следующего сегмента, пресинаптическое торможение k=2.5 |
+| 18–21 авг | Обучение на одном дендрите (Branch) | [`TimeNeuronTimeLearnerBranch/{Train,Test}`](TimeNeuronTimeLearnerBranch/), [`…_NextSegInh/`](TimeNeuronTimeLearnerBranch_NextSegInh/), [`…_PreInh250/`](TimeNeuronTimeLearnerBranch_PreInh250/) | Нормализация амплитуд кончиков, торможение следующего сегмента, пресинаптическое торможение k=2.5 |
 | 21–23 авг | Быстрый отклик; короткий спан; аксоны | [`SelectivityFastResponse/`](SelectivityFastResponse/), [`SelectivityFastSpan/`](SelectivityFastSpan/), [`../NeuralElements/AxoneLengthDelayStudy/`](../NeuralElements/AxoneLengthDelayStudy/) | Постоянная диссоциации × ёмкость; сжатые 100/50/25 мс; бенчи аксонов |
 | 23 авг | Калибровка порога + ремонт пайплайна | [`SelectivityLtzCalibrate/`](SelectivityLtzCalibrate/) (`AsymRmLtzCal/`, `FastSpanLtzCal/`, …) | Автокалибровка после структурного обучения; исправление масштаба паттернов |
 | 27 авг – 8 сен | Асимметричная мембрана | [`SelectivityAsymRm/`](SelectivityAsymRm/) | Пакеты A/B/C × спаны × gen/preinh; доводка двух залипших Pack C gen |
@@ -53,19 +63,19 @@
 | EXP05 | [`SelectivityPhaseA/EXP05_resistance_gain_025`](SelectivityPhaseA/EXP05_resistance_gain_025) |
 | EXP06 | [`SelectivityPhaseA/EXP06_ltzone_integration`](SelectivityPhaseA/EXP06_ltzone_integration) |
 
-Алгоритм: ученик времени на классическом нейроне-генераторе, эталон ~0.48 с, длины порядка [49, 41, 25, 1].
+Алгоритм: `NNeuronTimeLearner` (несколько дендритов), эталон ~0.48 с, длины порядка [49, 41, 25, 1].
 
 | Опыт | Что меняли | Диапазон | Сходимость | Точность теста | Конфиги |
 |------|------------|----------|------------|----------------|---------|
 | EXP00 база | контроль | порог 0.0115 | веса уже обучены | 4/8 | [Train](SelectivityPhaseA/EXP00_baseline/Train) · [Test](SelectivityPhaseA/EXP00_baseline/Test) |
-| EXP01 | только порог | 0.0115…0.0135 | без переобучения | лучшее 6/8 при 0.0135 | [Train](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Train) · [Test](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test) |
-| EXP02 | среднее vs сумма по зоне | 0 / 1 | без переобучения | 4/8 | [Train](SelectivityPhaseA/EXP02_ltzone_average_mode/Train) · [Test](SelectivityPhaseA/EXP02_ltzone_average_mode/Test) |
+| EXP01 | только порог LTZone | 0.0115…0.0135 | без переобучения | лучшее 6/8 при 0.0135 | [Train](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Train) · [Test](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test) |
+| EXP02 | среднее vs сумма потенциала LTZone | 0 / 1 | без переобучения | 4/8 | [Train](SelectivityPhaseA/EXP02_ltzone_average_mode/Train) · [Test](SelectivityPhaseA/EXP02_ltzone_average_mode/Test) |
 | EXP03 | допуск синхронизации | 0.015 | переобучение; Done за 160 с не зафиксирован | 3/8 | [Train](SelectivityPhaseA/EXP03_sync_tolerance_015/Train) · [Test](SelectivityPhaseA/EXP03_sync_tolerance_015/Test) |
 | EXP04 | допуск синхронизации | 0.010 | переобучение | 4/8 | [Train](SelectivityPhaseA/EXP04_sync_tolerance_010/Train) · [Test](SelectivityPhaseA/EXP04_sync_tolerance_010/Test) |
 | EXP05 | коэффициент подстройки сопротивления | 0.25 | переобучение | 4/8 | [Train](SelectivityPhaseA/EXP05_resistance_gain_025/Train) · [Test](SelectivityPhaseA/EXP05_resistance_gain_025/Test) |
-| EXP06 | класс/интеграция зоны | разные варианты | без переобучения | до 6/8 (как порог 0.0135) | [Train](SelectivityPhaseA/EXP06_ltzone_integration/Train) · [Test](SelectivityPhaseA/EXP06_ltzone_integration/Test) |
+| EXP06 | тип компонента LTZone (`NPLTZone`) и τ интеграции × порог | сетка tc×thr | без переобучения | до 6/8 (как порог 0.0135) | [Train](SelectivityPhaseA/EXP06_ltzone_integration/Train) · [Test](SelectivityPhaseA/EXP06_ltzone_integration/Test) |
 
-Порог: **ручной перебор** фиксированного порога (не «без подстройки»). Лучший результат фазы: 0.0135 → 6/8 **со стрельбой на цель**.
+Порог: **ручной перебор** фиксированного порога (не «без подстройки»). Лучший результат фазы: 0.0135 → 6/8 **с ответом на целевой паттерн**.
 
 ---
 
@@ -101,7 +111,7 @@
 
 Каталоги: [`EXP20_span100ms_baseline`](SelectivityPresynapticInhib/EXP20_span100ms_baseline) / [`EXP21_…_preinh250`](SelectivityPresynapticInhib/EXP21_span100ms_preinh250), [`EXP22`](SelectivityPresynapticInhib/EXP22_span50ms_baseline)/[`EXP23`](SelectivityPresynapticInhib/EXP23_span50ms_preinh250) (50 мс), [`EXP24`](SelectivityPresynapticInhib/EXP24_span25ms_baseline)/[`EXP25`](SelectivityPresynapticInhib/EXP25_span25ms_preinh250) (25 мс), [`EXP26`](SelectivityPresynapticInhib/EXP26_span10ms_baseline)/[`EXP27`](SelectivityPresynapticInhib/EXP27_span10ms_preinh250) (10 мс).
 
-После исправления метрик (не смотреть «точность» без факта выстрела): на коротких спанах часто стрельба на все пробы или провал ворот. Якоря несжатых 4/8 и 6/8 при проверке не деградировали.
+После исправления метрик (не смотреть «точность» без факта ответа на цель): на коротких спанах часто ответ на все пробы или провал ворот. Якоря несжатых 4/8 и 6/8 при проверке не деградировали.
 
 ### 2.3 Растяжение (200 / 300 / 400 мс)
 
@@ -111,7 +121,7 @@
 
 ---
 
-## 3. Ученик «ветка» (18–21 авг) — уточнение про 6/8 и 7/8
+## 3. Обучение на одном дендрите (Branch, 18–21 авг) — уточнение про 6/8 и 7/8
 
 **Расположение:** [`TimeNeuronTimeLearnerBranch/{Train,Test}`](TimeNeuronTimeLearnerBranch/) (канон после аудита 2026-09-10). То же для `_NextSegInh` / `_PreInh250`.
 
@@ -122,7 +132,7 @@
 | Пресинаптическое торможение k=2.5 | [`TimeNeuronTimeLearnerBranch_PreInh250/`](TimeNeuronTimeLearnerBranch_PreInh250/) |
 | Доп. verify | [`TimeNeuronTimeLearnerBranch/Test_savedcheck*`](TimeNeuronTimeLearnerBranch/) |
 
-Алгоритм: один дендрит, импульсы на разных сегментах; обучение длины + нормализация амплитуд; в конце обучения — **встроенная калибровка порога по пику** (доля от пика, обычно ×0.99).
+Алгоритм (`NNeuronTimeLearnerBranch`): один дендрит, импульсы на разных сегментах; обучение длины + нормализация амплитуд; в конце — **встроенная калибровка порога по пику** (доля от пика, обычно ×0.99).
 
 ### Итоговые цифры
 
@@ -132,7 +142,7 @@
 | NextSegInh | завершено | 7/8 | **0** (per_stim, late_fp=4) | demoted | [Train](TimeNeuronTimeLearnerBranch_NextSegInh/Train) · [Test](TimeNeuronTimeLearnerBranch_NextSegInh/Test) |
 | PreInh250 | завершено | 7/8 | **0** (per_stim, late_fp=3) | demoted | [Train](TimeNeuronTimeLearnerBranch_PreInh250/Train) · [Test](TimeNeuronTimeLearnerBranch_PreInh250/Test) |
 
-**Важно:** legacy 6/8 и 7/8 — цель стреляла (`fn=0`), но аудит показал **late_fp** и **per-stim / multi-spike** морфологию. Это не audit PASS.
+**Важно:** legacy 6/8 и 7/8 — на целевом паттерне **был ответ** (`fn=0`), но аудит показал **late_fp** и **per-stim / multi-spike** морфологию. Это не audit PASS.
 
 ### Ложные интерпретации «7/8»
 
@@ -140,10 +150,11 @@
 |----------|----------|------|---------------------------|
 | PreInh250 при неполном копировании весов Test | 7/8 | молчит | совпадение за счёт тишины отвлекающих |
 | Ручной XML с торможением без переобучения | 7/8 | молчит (пропуск цели) | не обучался с торможением |
-| late_fp на nontarget (in-window тишина) | 7/8 legacy | стреляет | `match` игнорирует late; demote в `ok_strict`/`ok_audit` |
+| late_fp на nontarget (in-window тишина) | 7/8 legacy | есть ответ (late) | `match` игнорирует late; demote в `ok_strict`/`ok_audit` |
 | per-stim / пачка (max_spikes≥2) | любой | любой | брак модели/гиперпараметров |
 
-Лучший **legacy** результат периода на ветке: 7/8 со стрельбой на цель — **снят** аудитом 2026-09-10.
+Лучший **legacy** результат периода Branch: 7/8 с ответом на цель — **снят** аудитом 2026-09-10.
+
 ---
 
 ## 4. Быстрый отклик мембраны (21 авг)
@@ -160,9 +171,9 @@
 Меняли постоянную диссоциации синапса (0.005 / 0.002 / 0.001 с) и ёмкость мембраны (~1e-9 / 5e-10 / 2.5e-10).  
 Порог: **фиксированный холодный 0.0115** (без автокалибровки в этой кампании).
 
-| Ячейка | Диссоциация | Ёмкость | Цель стреляет | Точность | Замечание | Конфиги |
+| Ячейка | Диссоциация | Ёмкость | Ответ на цель | Точность | Замечание | Конфиги |
 |--------|-------------|---------|---------------|----------|-----------|---------|
-| Контроль | ~0.005 | ~1e-9 | да | 1/8 | перестрел | [Train](SelectivityFastResponse/EXP00CtrlExp04/Train) · [Test](SelectivityFastResponse/EXP00CtrlExp04/Test) |
+| Контроль | ~0.005 | ~1e-9 | да | 1/8 | ответ на лишние пробы | [Train](SelectivityFastResponse/EXP00CtrlExp04/Train) · [Test](SelectivityFastResponse/EXP00CtrlExp04/Test) |
 | D=0.002, C=2.5e-10 | 0.002 | 2.5e-10 | да | 1/8 | самый быстрый пик | [Train](SelectivityFastResponse/EXPD002C25e11/Train) · [Test](SelectivityFastResponse/EXPD002C25e11/Test) |
 | D↓ при C=1e-9 | 0.002/0.001 | 1e-9 | нет | 7/8 «молчанием» | брак цели | [D002 Train](SelectivityFastResponse/EXPD002C1e9/Train)·[T](SelectivityFastResponse/EXPD002C1e9/Test), [D001](SelectivityFastResponse/EXPD001C1e9/Train)·[T](SelectivityFastResponse/EXPD001C1e9/Test) |
 
@@ -189,16 +200,16 @@
 
 Единственный валидный пересчёт: **23 августа** (проверка паттернов 16/16 PASS).
 
-**Cleanup 2026-09-08:** с диска удалены логи/StatisticLog/баки/stale CSV эпохи битого scale (до 23 авг); выполнен `SKIP_TRAIN=1` Test-rerun — канон по-прежнему ≥2026-08-23 (см. `SelectivityFastSpan/JOURNAL.md`). Объективный FAIL (fire_all / silent) сохранён.
+**Cleanup 2026-09-08:** с диска удалены логи/StatisticLog/баки/stale CSV эпохи битого scale (до 23 авг); выполнен `SKIP_TRAIN=1` Test-rerun — канон по-прежнему ≥2026-08-23 (см. `SelectivityFastSpan/JOURNAL.md`). Объективный FAIL (`fire_all` / silent) сохранён.
 
 ### Результаты валидного прогона (порог 0.0115)
 
 | Спан | gen / preinh | Точность | Режим | Ворота | Конфиги |
 |------|--------------|----------|-------|--------|---------|
-| 100 мс | оба | 1/8 | стрельба на все | FAIL | gen [Tr](SelectivityFastSpan/EXP_span100ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span100ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span100ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span100ms_fast_preinh/Test) |
-| 50 мс | оба | 1/8 | стрельба на все | FAIL | gen [Tr](SelectivityFastSpan/EXP_span50ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span50ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span50ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span50ms_fast_preinh/Test) |
-| 25 мс | оба | 1/8 | стрельба на все | FAIL | gen [Tr](SelectivityFastSpan/EXP_span25ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span25ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_preinh/Test) |
-| 25 мс, шаг времени 10k | оба | 7/8 | тишина (цель не стреляет) | FAIL | gen [Tr](SelectivityFastSpan/EXP_span25ms_fast_ts10k/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_ts10k/Test), preinh [Tr](SelectivityFastSpan/EXP_span25ms_fast_preinh_ts10k/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_preinh_ts10k/Test) |
+| 100 мс | оба | 1/8 | ответ на все пробы | FAIL | gen [Tr](SelectivityFastSpan/EXP_span100ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span100ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span100ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span100ms_fast_preinh/Test) |
+| 50 мс | оба | 1/8 | ответ на все пробы | FAIL | gen [Tr](SelectivityFastSpan/EXP_span50ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span50ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span50ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span50ms_fast_preinh/Test) |
+| 25 мс | оба | 1/8 | ответ на все пробы | FAIL | gen [Tr](SelectivityFastSpan/EXP_span25ms_fast/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast/Test), preinh [Tr](SelectivityFastSpan/EXP_span25ms_fast_preinh/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_preinh/Test) |
+| 25 мс, шаг времени 10k | оба | 7/8 | тишина (нет ответа на цель) | FAIL | gen [Tr](SelectivityFastSpan/EXP_span25ms_fast_ts10k/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_ts10k/Test), preinh [Tr](SelectivityFastSpan/EXP_span25ms_fast_preinh_ts10k/Train)·[Te](SelectivityFastSpan/EXP_span25ms_fast_preinh_ts10k/Test) |
 
 ---
 
@@ -214,16 +225,16 @@
 
 1. Фаза A — ручной перебор фиксированного порога.  
 2. Пресинаптическое торможение (основная сетка) — автокалибровка после обучения.  
-3. Ученик «ветка» — встроенная калибровка по пику.  
+3. Branch (один дендрит) — встроенная калибровка по пику.  
 4. Быстрый отклик и валидный короткий спан — как раз шли при холодном 0.0115.
 
-Новое в этой волне: сделать калибровку **систематическим ответом** на стрельбу на все пробы на коротких спанах и на сетке асимметричной мембраны (после диагноза 18/18 fire_all при 0.0115).
+Новое в этой волне: сделать калибровку **систематическим ответом** на `fire_all` (ответ на все пробы) на коротких спанах и на сетке асимметричной мембраны (после диагноза 18/18 `fire_all` при 0.0115).
 
 ### AsymRmLtzCal (пакет A)
 
 Каталоги: [`EXP_span25ms_packA_gen`](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen) / [`_preinh`](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh), то же для [`span50`](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen) и [`span100`](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen).
 
-На живом прогоне: 1 из 6 дошёл до завершения с калибровкой — спан 25 мс gen, порог ≈0.0885, тест 6/8, ворота PASS (цель стреляет, не fire_all). Остальные — stall обучения.
+На живом прогоне: 1 из 6 дошёл до завершения с калибровкой — спан 25 мс gen, порог ≈0.0885, тест 6/8, ворота PASS (есть ответ на цель, не `fire_all`). Остальные — stall обучения.
 
 ### SelectivityAsymRm (18 конфигов)
 
@@ -238,7 +249,7 @@
 
 Три пакета мембраны × спаны 25/50/100 мс × gen/preinh.
 
-Первый массовый прогон (конец августа, порог 0.0115): 18/18 стрельба на все, точность 1/8.
+Первый массовый прогон (конец августа, порог 0.0115): 18/18 ответ на все пробы, точность 1/8.
 
 На 8 сентября:
 
@@ -247,7 +258,7 @@
 | Обучение завершено + порог не холодный | 16 / 18 |
 | Не завершено | 2 (Pack C gen, спаны 50 и 100 мс) |
 
-**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, цель стреляет). Остальные в основном стрельба на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён.
+**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, есть ответ на цель). Остальные в основном ответ на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён.
 
 **Параметры span:** D/C/Rm внутри пакета **одинаковы** для 25/50/100 мс; со span масштабируются только ISI и Peak/SyncTol — см. [`SelectivityAsymRm/PARAM_SPAN_COMPARE.md`](SelectivityAsymRm/PARAM_SPAN_COMPARE.md). Пилоты D∝span и AmpDtAudit — только на **копиях** EXP (`*_Dspan`, `*_ampaudit`).
 
@@ -259,31 +270,31 @@
 | Тема | Папка | Результат |
 |------|-------|-----------|
 | Элементы аксона / задержка vs длина | [`../NeuralElements/AxoneLengthDelayStudy/`](../NeuralElements/AxoneLengthDelayStudy/) | бенчи и смоук; не основная таблица 8-пробной селективности |
-| Починка копирования весов Train→Test | (скрипты внутри групп выше) | критично для честных 6/8 и 7/8 на ветке |
+| Починка копирования весов Train→Test | (скрипты внутри групп выше) | критично для честных 6/8 и 7/8 в кампании Branch |
 | Протоколы «обучение завершено» | см. `SELECTIVITY_*` / `verify_*` в группах | холодный порог запрещён как успех |
 
 ---
 
 ## Сводная таблица алгоритмов
 
-| Алгоритм | Параметры | Лучшая сходимость | Лучшая точность | Цель стреляет? | Порог | Конфиги (пример) |
+| Алгоритм | Параметры | Лучшая сходимость | Лучшая точность | Ответ на цель? | Порог | Конфиги (пример) |
 |----------|-----------|-------------------|-----------------|----------------|-------|-------------------|
-| Классический ученик + порог | 0.0115→0.0135 | веса базы | 6/8 | да | ручной | [Train](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Train) · [Test](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test) |
+| `NNeuronTimeLearner` + порог | 0.0115→0.0135 | веса базы | 6/8 | да | ручной | [Train](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Train) · [Test](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test) |
 | + пресинаптическое торможение | k≈0.5…10, пик 2.1–2.6 | почти все Done | 6/8 | да (в лучших) | автокалибровка | [Train](SelectivityPresynapticInhib/EXP04_preinh_250/Train) · [Test](SelectivityPresynapticInhib/EXP04_preinh_250/Test) |
-| Ученик «ветка» + сегментное / preinh | amp-eq, Inh на L+1, k=2.5 | Done | legacy 7/8; **ok_audit=0** (late+per_stim) | да | встроенная калибровка | [Train](TimeNeuronTimeLearnerBranch_PreInh250/Train) · [Test](TimeNeuronTimeLearnerBranch_PreInh250/Test) |
+| Branch (один дендрит) + сегментное / preinh | amp-eq, Inh на L+1, k=2.5 | Done | legacy 7/8; **ok_audit=0** (late+per_stim) | да | встроенная калибровка | [Train](TimeNeuronTimeLearnerBranch_PreInh250/Train) · [Test](TimeNeuronTimeLearnerBranch_PreInh250/Test) |
 | Быстрая мембрана D×C | D 0.001–0.005; C 2.5e-10–1e-9 | большинство Done | 1/8 при успешном train | да (при 1/8) | холодный 0.0115 | [Train](SelectivityFastResponse/EXPD002C25e11/Train) · [Test](SelectivityFastResponse/EXPD002C25e11/Test) |
-| Короткий спан 25–100 мс (валидный, с 23 авг) | D=0.002, C=2.5e-10 | train идёт | 1/8 fire_all или тишина | fire_all: да; ts10k: нет | холодный 0.0115 | [Train](SelectivityFastSpan/EXP_span25ms_fast/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast/Test) |
-| Асимметричная мембрана A/B/C | 3×3×2 | 16/18 Done | тест 1/16 gate PASS (span25 packA gen 6/8) | да на PASS; иначе чаще fire_all | сначала 0.0115, затем калибровка на Done | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) |
+| Короткий спан 25–100 мс (валидный, с 23 авг) | D=0.002, C=2.5e-10 | train идёт | 1/8 `fire_all` или тишина | `fire_all`: да; ts10k: нет | холодный 0.0115 | [Train](SelectivityFastSpan/EXP_span25ms_fast/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast/Test) |
+| Асимметричная мембрана A/B/C | 3×3×2 | 16/18 Done | тест 1/16 gate PASS (span25 packA gen 6/8) | да на PASS; иначе чаще `fire_all` | сначала 0.0115, затем калибровка на Done | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) |
 | Автокалибровка порога Pack A | после структурного обучения | 1/6 в первой LtzCal-волне | 6/8 | да | автокалибровка | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test) |
 
 ---
 
 ## Что не упустить
 
-1. Метрика «точность» без режима стрельбы вводила в заблуждение — исправили воротами.  
+1. Метрика «точность» без учёта режима ответа (есть ли спайк на цели / на всех пробах) вводила в заблуждение — исправили воротами.  
 2. Все FastSpan до 23 августа (включая 21–22) невалидны.  
-3. Legacy 6/8 и 7/8 на ветке — со стрельбой на цель, но **аудит 2026-09-10** demote из‑за late_fp и per-stim/multi-spike (`ok_audit=0`).  
-4. Подстройка порога была и до п.5 (фаза A, PSI-автопорог, ветка); п.6 сделал калибровку центральным рычагом против fire_all на коротких/асимметричных сетках.  
-5. Практический потолок **audit-pass** за месяц: AsymRm/LtzCal `span25 packA gen` 6/8 single-spike; PSI/PhaseA отдельные 4–6/8. Legacy «7/8 на ветке» больше не канон.  
+3. Legacy 6/8 и 7/8 в кампании Branch — с ответом на цель, но **аудит 2026-09-10** demote из‑за late_fp и per-stim/multi-spike (`ok_audit=0`).  
+4. Подстройка порога была и до п.5 (фаза A, PSI-автопорог, Branch); п.6 сделал калибровку центральным рычагом против `fire_all` на коротких/асимметричных сетках.  
+5. Практический потолок **audit-pass** за месяц: AsymRm/LtzCal `span25 packA gen` 6/8 single-spike; PSI/PhaseA отдельные 4–6/8. Legacy «7/8 Branch» больше не канон.  
 6. Сейчас: 16/18 асимметричных конфигов с завершённым обучением; два Pack C gen открыты.  
 7. Полный аудит: [`AUDIT_REPORT.md`](AUDIT_REPORT.md), layout: [`LAYOUT.md`](LAYOUT.md).

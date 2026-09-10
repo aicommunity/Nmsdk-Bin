@@ -1,12 +1,12 @@
 # Selectivity Phase A — Config Experiments Report
 
 Date: 2026-08-13  
-Baseline reference: [`TimeNeuronTimeLearnerTest`](../TimeNeuronTimeLearnerTest/) (4/8)
+Baseline reference: [`TimeNeuronTimeLearner/Test`](../TimeNeuronTimeLearner/Test/) (4/8)
 
 Инфраструктура:
 - `NeuroModelerConsole -S` / `--save-project` — Save после расчёта ([`App/NeuroModelerConsole/main.cpp`](../../../../../App/NeuroModelerConsole/main.cpp))
 - `NPatternResponseAnalyzer` CSV: `ltz_potential_max`, `soma_amp_0..3`, `soma_amp_sum`
-- Исходные `TimeNeuronTimeLearner` / `TimeNeuronTimeLearnerTest` не менялись
+- Шаблоны `TimeNeuronTimeLearner/{Train,Test}` (канон layout)
 
 ## 1. Config map
 
@@ -18,7 +18,7 @@ Baseline reference: [`TimeNeuronTimeLearnerTest`](../TimeNeuronTimeLearnerTest/)
 | EXP03 | [`EXP03.../Train`](EXP03_sync_tolerance_015/Train/) | [`Test`](EXP03_sync_tolerance_015/Test/) | `SyncTolerance=0.015` | да + `-S` | **3/8** |
 | EXP04 | [`EXP04.../Train`](EXP04_sync_tolerance_010/Train/) | [`Test`](EXP04_sync_tolerance_010/Test/) | `SyncTolerance=0.010` | да + `-S` | **4/8** |
 | EXP05 | [`EXP05.../Train`](EXP05_resistance_gain_025/Train/) | [`Test`](EXP05_resistance_gain_025/Test/) | `ResistanceAdjustGain=0.25` | да + `-S` | **4/8** |
-| EXP06 | веса EXP00 | [`Test_tc*`](EXP06_ltzone_integration/), [`Test_npltzone_*`](EXP06_ltzone_integration/) | класс LTZone / порог | нет | **6/8** (= EXP01 thr) |
+| EXP06 | веса EXP00 | [`Test_tc*`](EXP06_ltzone_integration/), [`Test_npltzone_*`](EXP06_ltzone_integration/) | тип компонента LTZone (`NPLTZone`) / τ / порог | нет | **6/8** (= EXP01 thr) |
 
 ## 2. Baseline metrics (EXP00)
 
@@ -101,9 +101,10 @@ EXP04: soma0 amp упала (~0.007 vs 0.014) — `missing tip Dendrite1_50` в 
 После `-S`: L=`[49,41,25,1]`, R как у baseline. Accuracy **4/8**, CSV совпадает с EXP00.  
 Cold retrain за 160 с не ушёл от уже settled длин (старт с копии обученного конфига + ResetToUntrained мог не сериализоваться). Gain в Test Parameters остался 0.4 (merge копирует только веса, не gain) — на inference это не влияет.
 
-## 8. EXP06 — LTZone integration
+## 8. EXP06 — тип компонента LTZone и временная интеграция
 
-Класс `NPulseLTZone` **не зарегистрирован** в PulseLibrary. Зарегистрированное имя интегратора: **`NPLTZone`** ([`NPulseLibrary.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NPulseLibrary.cpp) `UploadClass("NPLTZone", ...)`).
+Здесь «класс» = **имя C++-компонента** LTZone в Model, не метка сэмпла `target_class`.  
+Имя `NPulseLTZone` **не зарегистрировано** в PulseLibrary. Зарегистрированный интегратор: **`NPLTZone`** ([`NPulseLibrary.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NPulseLibrary.cpp) `UploadClass("NPLTZone", ...)`). Интеграция = сглаживание с `TimeConstant` перед порогом.
 
 Сетка `Test_tc*_thr*` с `Class=NPulseLTZone` падала с `name not found: NPulseLTZone` и фактически работала как `NPulseLTZoneThreshold` + изменённый Threshold:
 
