@@ -97,3 +97,25 @@ LtzCal twin: те же L/σ/early (`t_rel=0.001`), fires `10001100`, τ=0.25 �
 | TipR×2.5, thr=0.015 | nspk↓ (7), `t_rel≈0.06` late; всё ещё fire_all, **нет** margin target vs foil |
 
 **Вывод:** рычаг τ/EstDelay **сдвинул** mid-pattern → late burst (прогресс по времени), но на span25 при τ≈10 мс и переусиленных tip’ах (Rsyn d0–d2 ~1e6) нет одиночного селективного crown. Следующее: amp-norm / более высокий Rsyn floor, промежуточная C (5e-10), или иной LTZone / refractory — не фаза 5.
+
+## Фаза Rsyn floor / TipR reset (2026-09-11) — PASS
+
+Корневая причина fire_all: amp-norm упёрся в `ResistanceMin=1e6` → TipR d0–d2 ~1e6 (слишком сильные tips).
+
+| Шаг | Действие | Итог |
+|-----|----------|------|
+| Floor | `ResistanceMin=2e7` (было 1e6) | нельзя снова уйти в 1e6 |
+| TipR | reset → `8.6e7` ×4 (SynapseResistanceBase) | слабее EPSP |
+| Keep | C1e9, EstDelay=0.002, L=`15 12 8 1` | late integration |
+| thr probe | FixedLTZ `0.0118` | silent / fn (ltz≈0.0097) |
+| thr | FixedLTZ **`0.0096`** (AutoCal=0) | **PASS** |
+
+### Gate (Test, confirmed)
+
+- `ok_audit=1`, `ok_strict`, `response_quality=ok_single`, `mode=selective`, **acc 8/8**
+- Target: `neuron_fired=1`, `nspk=1`, `t_rel≈0.10` ≥ 0.8·`pattern_end` (0.025) → **last-pulse**
+- Foils: silent; target `ltz_max` чуть выше foils (~0.0096 vs ~0.0094–0.0095)
+
+Amp-continue с новым полом **не** потребовался для PASS: reset TipR на base + floor + thr-калибровка достаточны. Полный amp-norm с `ResistanceMin=2e7` — опциональное упрочнение позже.
+
+Фаза 5: можно планировать после репликации на twin / соседних pack — **не** автостарт всей сетки.

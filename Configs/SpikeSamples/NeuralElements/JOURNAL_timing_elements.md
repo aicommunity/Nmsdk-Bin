@@ -82,6 +82,12 @@ Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh
 
 ---
 
+## 2026-09-11 — AsymRm packA Rsyn floor PASS
+
+`ResistanceMin=2e7`, TipR reset to `8.6e7`, FixedLTZ=`0.0096` on C1e9+EstDelay=0.002 L=`15 12 8 1`: **ok_audit=1**, 8/8 selective, last-pulse single spike. В реестре [`SUCCESSFUL_EXPERIMENTS.md`](../StructTrain/SUCCESSFUL_EXPERIMENTS.md).
+
+---
+
 ## 2026-08-27 — SelectivityAsymRm grid
 
 18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  

@@ -57,13 +57,21 @@
 |-----|--------|-----|-------|---------|
 | TimeNeuronTimeLearner | `NNeuronTimeLearner` (несколько дендритов) | 4/8 | partial_FA | [Train](TimeNeuronTimeLearner/Train) · [Test](TimeNeuronTimeLearner/Test) · [CSV](TimeNeuronTimeLearner/Test/SelectivityLog/results.csv) |
 
+## AsymRm (short-span)
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_span25ms_packA_gen | C1e9 + EstDelay=0.002 + Rmin=2e7 + TipR base + FixedLTZ=0.0096 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
+
+Алгоритм: `NNeuronTimeLearner`; last-pulse `t_rel≈0.10` на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+
 ## Вне реестра
 
-- **AsymRm / LtzCal `EXP_span25ms_packA_gen`:** demote 2026-09-11 (нет last-pulse). C25e11 Done без crown; C1e9+EstDelay=0.002 даёт **late** first-spike на всех пробах, но `fire_all`/`per_stim` — в реестр не включать. См. [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+- **AsymRm LtzCal twin / прочие pack:** не поднимать автоматически; packA_gen PASS 2026-09-11 после Rsyn floor. См. DIAG.
 - **Branch** (обучение на одном дендрите): legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per-stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 - Хронология кампаний, ложные успехи, отрицательные результаты — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
 
 ## Отложено (фаза 5)
 
-После **стабильного last-pulse** успеха на span 25 мс (ещё не достигнуто): перезапуск подбора NeuralElements + AsymRm/FastSpan и переобучение всех сжатых паттернов (сначала весь контур 25 мс, затем 50 / 100 мс). **Не стартовать.**
+После стабильного last-pulse на span 25 мс (**packA_gen PASS**): репликация на twin/соседей, затем перезапуск сжатых паттернов 25→50→100. **Не** автостарт всей сетки без явного решения.
