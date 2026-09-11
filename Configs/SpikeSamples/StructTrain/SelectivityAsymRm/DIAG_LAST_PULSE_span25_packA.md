@@ -62,3 +62,18 @@ LtzCal twin: те же L/σ/early (`t_rel=0.001`), fires `10001100`, τ=0.25 �
 - Калибровка порога / tip amp так, чтобы одиночный EPSP &lt; thr &lt; crown.
 - Дальнейший sync (σ_L, EstDelay) и/или более сильная интеграция LTZone.
 - Только после last-pulse PASS — фаза 5 (все сжатые span).
+
+## Фаза tip/thr / force-L (2026-09-11) — FAIL
+
+Конфиг после проб **возвращён** к post-C25e11 Train (L=`7 6 4 1`, TipR trained, FixedLTZ≈0.02995).
+
+| Проба | Условие | Итог |
+|-------|---------|------|
+| TipR×2.5, thr=0.018, L=`6 5 3 1` | слабее tips | тишина: target `ltz≈0.009` ≪ thr; `ok_audit=0`, fn |
+| TipR restore, thr=0.031, L=`6 5 3 1` | formula L | тишина: target `ltz≈0.020` &lt; thr; foil6/7 `ltz` **выше** цели |
+| TipR restore, thr=0.019, avgLTZ=0, L=`6 5 3 1` | sum mode | mid-pattern spike цели @`0.01405` (не fire); foil7 fp @`0.029` last-pulse-like |
+| L=`26 21 13 1`, thr=0.02 | «физическая» длина | mid-pattern цели @`0.01`; fp foil5/7 near end; crown нет |
+
+**Вывод:** масштабирование TipR не создаёт crown (линейный режим: crown/single не растёт). Force formula-L и удлинение кабеля не убирают mid-pattern edge до last stim. `EstDelayPerSeg` остаётся ~5 мс и **не** совпадает с фактическим временем до спайка (~1–2 мс после 3-го стимула). Нужен рычаг **реальной** задержки/интеграции (Ra/τ сегмента, калибровка EstDelay по observed peak, либо иной LTZone), а не tip/thr alone.
+
+Фаза 5 по-прежнему **не стартовать**.
