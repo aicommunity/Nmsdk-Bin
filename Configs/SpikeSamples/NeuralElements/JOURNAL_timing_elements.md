@@ -88,6 +88,16 @@ Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh
 
 ---
 
+## 2026-09-11 — span25 recipe replicate + thr window
+
+- thr window packA ≈0.00956–0.00969; lock **0.00962**.
+- PASS replicate: LtzCal twin (clone), `packA_preinh` (Preinh C1e9), `packB_gen`, `packC_gen` (per-exp thr).
+- New class: `NSPNeuronGenPreinh2_5AsymRmD001C1e9`.
+
+См. DIAG.
+
+---
+
 ## 2026-08-27 — SelectivityAsymRm grid
 
 18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  

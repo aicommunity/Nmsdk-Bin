@@ -61,17 +61,25 @@
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_span25ms_packA_gen | C1e9 + EstDelay=0.002 + Rmin=2e7 + TipR base + FixedLTZ=0.0096 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_packA_gen | C1e9 + EstDelay=0.002 + Rmin=2e7 + TipR base + FixedLTZ=0.00962 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_packA_preinh | + Preinh2.5 C1e9; thr≈0.00469 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_packB_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packB_gen/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_packC_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packC_gen/Test/SelectivityLog/results.csv) |
 
-Алгоритм: `NNeuronTimeLearner`; last-pulse `t_rel≈0.10` на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+## AsymRmLtzCal twin
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_span25ms_packA_gen | clone Model/Parameters с AsymRm эталона | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
+
+Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 
 ## Вне реестра
 
-- **AsymRm LtzCal twin / прочие pack:** не поднимать автоматически; packA_gen PASS 2026-09-11 после Rsyn floor. См. DIAG.
 - **Branch** (обучение на одном дендрите): legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per-stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 - Хронология кампаний, ложные успехи, отрицательные результаты — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
 
 ## Отложено (фаза 5)
 
-После стабильного last-pulse на span 25 мс (**packA_gen PASS**): репликация на twin/соседей, затем перезапуск сжатых паттернов 25→50→100. **Не** автостарт всей сетки без явного решения.
+Репликация span25 (twin + A_preinh + B/C gen) **PASS**. Далее по решению: сетка 25→50→100. **Не** автостарт без явного go.

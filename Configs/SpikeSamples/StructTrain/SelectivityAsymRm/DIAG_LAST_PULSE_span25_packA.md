@@ -119,3 +119,25 @@ LtzCal twin: те же L/σ/early (`t_rel=0.001`), fires `10001100`, τ=0.25 �
 Amp-continue с новым полом **не** потребовался для PASS: reset TipR на base + floor + thr-калибровка достаточны. Полный amp-norm с `ResistanceMin=2e7` — опциональное упрочнение позже.
 
 Фаза 5: можно планировать после репликации на twin / соседних pack — **не** автостарт всей сетки.
+
+## Фаза репликация + thr-margin (2026-09-11 вечер)
+
+### thr-margin (packA_gen)
+- Tip imbalance / `UseAverage=0`: физический gap tgt−foil остаётся **~0.00023** (не расширили).
+- Операционное окно thr (8/8 selective): примерно **`0.00956 … 0.00969`** (ширина ≥1.3e-4).
+- Зафиксировано **FixedLTZ=`0.00962`** (середина окна) + TipR base + Rmin=2e7 + C1e9 + EstDelay=0.002 + L=`15 12 8 1`.
+- Confirm: `ok_audit=1`, 8/8, last-pulse single (`t_rel≈0.103`).
+
+### Репликация рецепта (span25)
+
+| EXP | Результат | Примечание |
+|-----|-----------|------------|
+| AsymRm `packA_gen` | **PASS** 8/8 | эталон; thr=0.00962 |
+| LtzCal twin `packA_gen` | **PASS** 8/8 | freeze recipe без полного clone → fire_all; **clone Model+Parameters** с эталона → PASS (`t_rel≈0.098`) |
+| AsymRm `packA_preinh` | **PASS** 8/8 | класс `…Preinh2_5AsymRmD001C1e9`; thr≈**0.00469** (ниже из‑за preinh amp) |
+| AsymRm `packB_gen` | **PASS** 8/8 | neuron→C1e9; thr≈**0.00700** |
+| AsymRm `packC_gen` | **PASS** 8/8 | neuron→C1e9; thr≈**0.00700** |
+
+**Вывод:** рецепт переносится на соседние pack 25 мс при **per-exp thr** (mid gap silent-probe) и C=1e-9. Twin требует совпадения структуры/Initial с эталоном (не только тегов). Физический ltz-gap по-прежнему узкий (~1.5e-4); запас — в окне thr, не в tip-imbalance.
+
+Фаза 5 (сетка 25→50→100): основания усилены репликацией; автостарт всей сетки — только по явному решению.
