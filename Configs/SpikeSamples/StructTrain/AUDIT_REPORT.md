@@ -55,7 +55,7 @@ Legacy 7/8 на Branch (обучение на одном дендрите): late
 
 | EXP (AsymRm) | n | ok_audit | mode / notes |
 |--------------|---|----------|--------------|
-| `EXP_span25ms_packA_gen` | 8 | **1** | selective 6/8, single-spike |
+| `EXP_span25ms_packA_gen` | 8 | **1** | selective **8/8**, last-pulse single (Rsyn floor PASS) |
 | `EXP_span25ms_packA_preinh` | 8 | 0 | ответ на все пробы (`fire_all`) + per_stim |
 | `EXP_span25ms_packB_*` | 8 | 0 | `fire_all`; B_gen also burst |
 | `EXP_span25ms_packC_*` | 8 | 0 | `fire_all` + per_stim |
