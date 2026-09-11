@@ -30,6 +30,8 @@
 | Точность 6/8 | 6 из 8 проб совпали с эталоном (**legacy** `match`, только in-window) |
 | Ворота качества (legacy) | Есть ответ на цель, нет ответа на все пробы, точность ≥ 4/8 |
 | Ворота аудита (`ok_audit`) | strict (late = ошибка) **и** один спайк на trial (`ok_single`) **и** `n=8` |
+| Last-pulse | Ответ на цели у **конца** паттерна: `neuron_t_rel ≥ 0.8·pattern_end` (Σ ISI). Нужен для реестра успехов; `ok_audit` сам по себе **не** гарантирует crown на соме |
+| Early-spike | `t_rel ≪ pattern_end` при fire на цели — формальный PASS возможен, эталоном не считать |
 | Ложный пропуск цели | На целевом паттерне нет ответа |
 | Ложное срабатывание | Ответ на отвлекающем паттерне |
 | late_fp / пачка / per-stim | Поздний спайк / пачка / ответ на каждый стимул паттерна — **не** успех (см. аудит) |
@@ -242,7 +244,7 @@
 
 | В отчёте | Каталог |
 |----------|---------|
-| PASS-тест (span25 packA gen) | [`SelectivityAsymRm/EXP_span25ms_packA_gen`](SelectivityAsymRm/EXP_span25ms_packA_gen) |
+| PASS-тест (span25 packA gen) | [`SelectivityAsymRm/EXP_span25ms_packA_gen`](SelectivityAsymRm/EXP_span25ms_packA_gen) — **demote 2026-09-11** (нет last-pulse; см. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md)) |
 | Stuck Pack C gen 50 / 100 | [`EXP_span50ms_packC_gen`](SelectivityAsymRm/EXP_span50ms_packC_gen), [`EXP_span100ms_packC_gen`](SelectivityAsymRm/EXP_span100ms_packC_gen) |
 | Пилоты D∝span | [`EXP_span50ms_packA_gen_Dspan`](SelectivityAsymRm/EXP_span50ms_packA_gen_Dspan), [`EXP_span100ms_packA_gen_Dspan`](SelectivityAsymRm/EXP_span100ms_packA_gen_Dspan) |
 | Пилоты AmpDtAudit | [`EXP_span50ms_packC_gen_ampaudit`](SelectivityAsymRm/EXP_span50ms_packC_gen_ampaudit), [`EXP_span100ms_packC_gen_ampaudit`](SelectivityAsymRm/EXP_span100ms_packC_gen_ampaudit) |
@@ -258,7 +260,8 @@
 | Обучение завершено + порог не холодный | 16 / 18 |
 | Не завершено | 2 (Pack C gen, спаны 50 и 100 мс) |
 
-**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, есть ответ на цель). Остальные в основном ответ на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён.
+**Тест 2026-09-08** на 16 Done (`SELECTIVITY_REPORT.md`): ворота PASS **1/16** — `EXP_span25ms_packA_gen` (6/8, есть ответ на цель). Остальные в основном ответ на все пробы при калиброванном пороге; один silent. Рычаг H1 tip-reset на двух Pack C gen — FAIL (TipR снова к Rmax); отпечаток 16 Done сохранён.  
+**Уточнение 2026-09-11:** у этого PASS target `t_rel≈0.001` ≪ `pattern_end≈0.025` — нет last-pulse crown; из живого реестра успехов снят.
 
 **Параметры span:** D/C/Rm внутри пакета **одинаковы** для 25/50/100 мс; со span масштабируются только ISI и Peak/SyncTol — см. [`SelectivityAsymRm/PARAM_SPAN_COMPARE.md`](SelectivityAsymRm/PARAM_SPAN_COMPARE.md). Пилоты D∝span и AmpDtAudit — только на **копиях** EXP (`*_Dspan`, `*_ampaudit`).
 
@@ -295,6 +298,6 @@
 2. Все FastSpan до 23 августа (включая 21–22) невалидны.  
 3. Legacy 6/8 и 7/8 в кампании Branch — с ответом на цель, но **аудит 2026-09-10** demote из‑за late_fp и per-stim/multi-spike (`ok_audit=0`).  
 4. Подстройка порога была и до п.5 (фаза A, PSI-автопорог, Branch); п.6 сделал калибровку центральным рычагом против `fire_all` на коротких/асимметричных сетках.  
-5. Практический потолок **audit-pass** за месяц: AsymRm/LtzCal `span25 packA gen` 6/8 single-spike; PSI/PhaseA отдельные 4–6/8. Legacy «7/8 Branch» больше не канон.  
+5. Практический потолок **audit-pass** за месяц: PSI/PhaseA отдельные 4–6/8 с `t_rel≈pattern_end`. AsymRm/LtzCal `span25 packA gen` 6/8 formal `ok_audit` **demoted** (early-spike, нет last-pulse). Legacy «7/8 Branch» больше не канон.  
 6. Сейчас: 16/18 асимметричных конфигов с завершённым обучением; два Pack C gen открыты.  
 7. Полный аудит: [`AUDIT_REPORT.md`](AUDIT_REPORT.md), layout: [`LAYOUT.md`](LAYOUT.md).

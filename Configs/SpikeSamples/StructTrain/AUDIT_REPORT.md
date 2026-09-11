@@ -30,15 +30,16 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 
 ### `ok_audit` PASS
 
-Полный реестр с рычагами и ссылками Train/Test/CSV: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md).
+Полный реестр с рычагами и ссылками Train/Test/CSV: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
+(**last-pulse** обязателен для живого реестра: target `t_rel ≥ 0.8·pattern_end`).
 
-| Experiment | acc_legacy |
-|------------|------------|
-| `SelectivityAsymRm/EXP_span25ms_packA_gen` | 6 |
-| `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen` | 6 |
-| PhaseA EXP00 / EXP01 / EXP02 / EXP06 | 4–6 |
-| PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 |
-| `TimeNeuronTimeLearner/Test` | 4 |
+| Experiment | acc_legacy | Примечание |
+|------------|------------|------------|
+| PhaseA EXP00 / EXP01 / EXP02 / EXP06 | 4–6 | `t_rel≈pattern_end` (~0.48 с) |
+| PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 | |
+| `TimeNeuronTimeLearner/Test` | 4 | |
+
+**Demote (2026-09-11):** `SelectivityAsymRm/EXP_span25ms_packA_gen` и `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen` имели `ok_audit=1` (6/8), но target `neuron_t_rel≈0.001` при `pattern_end≈0.025` — нет last-pulse coincidence / crown. `ok_audit` ≠ GUI-синхронизация мембраны; смотреть `LTZone.Output` у конца паттерна. См. [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 
 ### False successes (legacy PASS, audit FAIL)
 

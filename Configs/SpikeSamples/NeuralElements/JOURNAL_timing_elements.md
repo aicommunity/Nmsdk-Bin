@@ -52,6 +52,24 @@ Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh
 
 ---
 
+## 2026-09-11 — ChannelRcSweep + AsymRm span25 last-pulse
+
+### Наблюдение
+`EXP_span25ms_packA_gen` (C=2.5e-11, τ≈0.25 мс): formal `ok_audit` без last-pulse (`t_rel≈0.001` vs end≈0.025). Demote из реестра успехов. DIAG: mix H-sync/H-tau.
+
+### ChannelRcSweep
+- Добавлена ячейка `3b_C25e12` (C=2.5e-11).
+- Gate span25: τ ≥ 0.3·EstDelayPerSeg ≈ 1.5 мс → **C=2.5e-10 PASS**, C=2.5e-11 FAIL.
+- Новый класс: `NSPNeuronGenAsymRmD001C25e11` (AsymRm + C=2.5e-10).
+
+### C++ (смежно)
+- Analyzer: `neuron_fired` только после last stim полного паттерна (≥4 импульса).
+- Learner: peak window anti-overlap по delay следующего дендрита; peak_synced может сдвинуть L к соседу с меньшим \|dt\|.
+
+См. [`ChannelRcSweep/REPORT.md`](ChannelRcSweep/REPORT.md), [`StructTrain/SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](../StructTrain/SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+
+---
+
 ## 2026-08-27 — SelectivityAsymRm grid
 
 18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  
