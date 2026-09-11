@@ -39,7 +39,7 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 | |
 | `TimeNeuronTimeLearner/Test` | 4 | |
 
-**Demote (2026-09-11):** `SelectivityAsymRm/EXP_span25ms_packA_gen` и `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen` имели `ok_audit=1` (6/8), но target `neuron_t_rel≈0.001` при `pattern_end≈0.025` — нет last-pulse coincidence / crown. `ok_audit` ≠ GUI-синхронизация мембраны; смотреть `LTZone.Output` у конца паттерна. См. [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+**Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor (`ResistanceMin=2e7`, TipR base, FixedLTZ=0.0096) — `ok_audit=1`, 8/8 selective, last-pulse single (`t_rel≈0.10`). Twin LtzCal по-прежнему вне реестра. См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 
 ### False successes (legacy PASS, audit FAIL)
 
