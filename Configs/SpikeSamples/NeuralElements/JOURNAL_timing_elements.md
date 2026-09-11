@@ -70,6 +70,18 @@ Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh
 
 ---
 
+## 2026-09-11 — AsymRm C1e9 + EstDelayPerSeg XML (span25)
+
+После FAIL tip/thr: физическая τ + seed EstDelay.
+
+- `EstDelayPerSeg` — pub parameter (не wipe в ResizeSyncVectors).
+- `NSPNeuronGenAsymRmD001C1e9` (C=1e-9).
+- packA retrain Done L=`15 12 8 1`, Cap=1e-9; Test: **late** first spike на всех пробах, но `fire_all`/`per_stim` — last-pulse timing без селективности.
+
+См. [`DIAG_LAST_PULSE_span25_packA.md`](../StructTrain/SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+
+---
+
 ## 2026-08-27 — SelectivityAsymRm grid
 
 18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  

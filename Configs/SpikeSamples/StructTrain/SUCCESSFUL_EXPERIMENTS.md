@@ -59,7 +59,7 @@
 
 ## Вне реестра
 
-- **AsymRm / LtzCal `EXP_span25ms_packA_gen`:** demote 2026-09-11 (нет last-pulse). Retrain на `NSPNeuronGenAsymRmD001C25e11` (C=2.5e-10) Done, но last-pulse gate **FAIL** (mid-pattern spike / fn на цели). См. [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+- **AsymRm / LtzCal `EXP_span25ms_packA_gen`:** demote 2026-09-11 (нет last-pulse). C25e11 Done без crown; C1e9+EstDelay=0.002 даёт **late** first-spike на всех пробах, но `fire_all`/`per_stim` — в реестр не включать. См. [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 - **Branch** (обучение на одном дендрите): legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per-stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 - Хронология кампаний, ложные успехи, отрицательные результаты — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).

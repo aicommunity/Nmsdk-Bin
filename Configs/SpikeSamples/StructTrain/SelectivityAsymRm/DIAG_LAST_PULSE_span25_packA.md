@@ -77,3 +77,23 @@ LtzCal twin: те же L/σ/early (`t_rel=0.001`), fires `10001100`, τ=0.25 �
 **Вывод:** масштабирование TipR не создаёт crown (линейный режим: crown/single не растёт). Force formula-L и удлинение кабеля не убирают mid-pattern edge до last stim. `EstDelayPerSeg` остаётся ~5 мс и **не** совпадает с фактическим временем до спайка (~1–2 мс после 3-го стимула). Нужен рычаг **реальной** задержки/интеграции (Ra/τ сегмента, калибровка EstDelay по observed peak, либо иной LTZone), а не tip/thr alone.
 
 Фаза 5 по-прежнему **не стартовать**.
+
+## Фаза τ/EstDelay — C1e9 + EstDelay seed (2026-09-11)
+
+### Изменения (C++)
+- `EstDelayPerSeg` → `UProperty` (XML); **не** сбрасывать в `ResizeSyncVectors`.
+- Класс `NSPNeuronGenAsymRmD001C1e9` (AsymRm + C=`1e-9`, τ≈10 мс как PhaseA Bio).
+
+### Retrain packA
+- Cold reset; seed `EstDelayPerSeg=0.002`; neuron C1e9.
+- **Done** T=80: L=`15 12 8 1`, Cap verified `1e-9`, FixedLTZ≈`0.0118`, `NeedTrain=0`, `sync_ok_all=True`.
+- Peak report: `PEAK_PREFERS_L_ACTUAL` (formula still assumes 5 мс → `[6,5,3,1]`); feas `est≈0.00179`.
+
+### Test last-pulse gate
+| Условие | Итог |
+|---------|------|
+| AutoCal thr≈0.0118 | **first spike late** (`t_rel≈0.045` ≥ 0.8·end) на **всех** 8 пробах → timing last-pulse **есть**, но `fire_all` / `per_stim` (10–11 спайков), `ok_audit=0` |
+| thr 0.0125 / 0.014 / 0.02 | ltz_max «догоняет» thr (~thr+ε); всё ещё fire_all (регенерация LTZ) |
+| TipR×2.5, thr=0.015 | nspk↓ (7), `t_rel≈0.06` late; всё ещё fire_all, **нет** margin target vs foil |
+
+**Вывод:** рычаг τ/EstDelay **сдвинул** mid-pattern → late burst (прогресс по времени), но на span25 при τ≈10 мс и переусиленных tip’ах (Rsyn d0–d2 ~1e6) нет одиночного селективного crown. Следующее: amp-norm / более высокий Rsyn floor, промежуточная C (5e-10), или иной LTZone / refractory — не фаза 5.
