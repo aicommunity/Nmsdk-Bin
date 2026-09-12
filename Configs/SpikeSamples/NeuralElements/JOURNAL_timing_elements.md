@@ -98,6 +98,21 @@ Lock Pack A/B/C → UploadClass AsymRm + кампания SelectivityAsymRm (Inh
 
 ---
 
+## 2026-09-12 — AsymRm PHASE5 span 50 / 100
+
+Пересчёт по C1e9 + EstDelay=0.002 + Rmin=2e7 + **TipR@Rmin** `2e7 2e7 2e7 8.6e7` + per-exp mid-thr + last-pulse gate.
+
+| Span | L | FixedLTZ | PASS |
+|------|---|----------|------|
+| 50 мс | `25 23 15 1` | 0.011759 | packA gen/preinh, twin, B/C gen |
+| 100 мс | `52 48 27 1` | 0.006681 | packA gen/preinh, twin, B/C gen |
+
+**Робастность:** рецепт/last-pulse переносятся хорошо; FixedLTZ-маржа нет. Gap @50 ≈ @25 (~1.7e-4, хрупкий как раньше); @100 gap ~5e-6 (~30× уже). Модели обучения на одном span дают одинаковый gap после clone. Подробно — [`PHASE5_SPAN50_100.md`](../StructTrain/SelectivityAsymRm/PHASE5_SPAN50_100.md).
+
+Twin@100: GTS=20000; клонировать чистый Test эталона. Реестр: [`SUCCESSFUL_EXPERIMENTS.md`](../StructTrain/SUCCESSFUL_EXPERIMENTS.md).
+
+---
+
 ## 2026-08-27 — SelectivityAsymRm grid
 
 18 EXP (pack A/B/C × 100/50/25 × gen/preinh), GTS=10000, TRAIN_T=80.  

@@ -65,14 +65,26 @@
 | EXP_span25ms_packA_preinh | + Preinh2.5 C1e9; thr≈0.00469 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test/SelectivityLog/results.csv) |
 | EXP_span25ms_packB_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packB_gen/Test/SelectivityLog/results.csv) |
 | EXP_span25ms_packC_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packC_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_gen | C1e9; TipR@Rmin `2e7×3+8.6e7`; thr=0.011759; L=`25 23 15 1` | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_preinh | Preinh C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packB_gen | clone A→C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packB_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packC_gen | clone A→C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packC_gen/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packA_gen | C1e9; TipR@Rmin; thr=0.006681; L=`52 48 27 1` | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packA_preinh | Preinh C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packB_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packB_gen/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packC_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packC_gen/Test/SelectivityLog/results.csv) |
 
 ## AsymRmLtzCal twin
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
 | EXP_span25ms_packA_gen | clone Model/Parameters с AsymRm эталона | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_gen | clone Test эталона; GTS=20000; thr=0.011759 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packA_gen | clone Test эталона; GTS=20000; thr=0.006681 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
 
-Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md), фаза 50/100: [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
+
+**Робастность thr:** PASS на 25/50/100 и gen/preinh/twin/B·C — перенос рецепта, не широкий порог. Физический gap tgt−foil: @25/~1.5e-4, @50/~1.7e-4 (**та же хрупкость**), @100/~5e-6 (**на порядок хуже**).
 
 ## Вне реестра
 
@@ -80,6 +92,6 @@
 - Хронология кампаний, ложные успехи, отрицательные результаты — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
 
-## Отложено (фаза 5)
+## Отложено
 
-Репликация span25 (twin + A_preinh + B/C gen) **PASS**. Далее по решению: сетка 25→50→100. **Не** автостарт без явного go.
+Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
