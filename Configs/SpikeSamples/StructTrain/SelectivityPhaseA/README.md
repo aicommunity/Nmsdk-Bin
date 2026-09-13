@@ -18,6 +18,10 @@ Baseline reference: [`TimeNeuronTimeLearner/Test`](../TimeNeuronTimeLearner/Test
 
 Лучший конфиг: [`EXP01_ltz_threshold_sweep/Test`](EXP01_ltz_threshold_sweep/Test/) (канон = бывший `Test_thr00135`).
 
+## PHASE6 @480 мс
+
+Клоны рецепта (не перезаписывают EXP00–06): [`Phase6/`](Phase6/) · журнал [`PHASE6_480_RECIPE.md`](PHASE6_480_RECIPE.md). Best **7/8** selective last-pulse.
+
 ## Команды
 
 ```bash
