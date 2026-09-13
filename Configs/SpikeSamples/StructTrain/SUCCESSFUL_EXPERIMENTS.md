@@ -3,7 +3,7 @@
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
-**Срез метрик:** 2026-09-10 · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) · в таблице ниже — записи после demote AsymRm span25 (2026-09-11).
+**Срез метрик:** 2026-09-13 · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (пересчёт metrics-from-CSV после PHASE5–7; архив [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv)).
 
 ## Критерий включения
 
@@ -146,6 +146,8 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 ## Отложено
 
+- **PHASE8** Branch short-span @25/50/100 C1e9 cold Train — журнал [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md).
+- AsymRm **preinh B/C** tiprmin/C1e9 — только карта в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md); вне PHASE8 execution.
 - Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
-- PHASE7 short-span Branch C1e9 retrain / AsymRmLtzCalBranch stall — deferred. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
+- AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).

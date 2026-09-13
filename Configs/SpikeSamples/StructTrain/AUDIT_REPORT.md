@@ -1,8 +1,8 @@
-# StructTrain audit report (2026-09-10)
+# StructTrain audit report
 
+Первичный срез: **2026-09-10**. Пересчёт GATE (metrics-from-CSV): **2026-09-13** после PHASE5–7.  
 Scope: `Selectivity*` + `TimeNeuronTimeLearner*` under [`StructTrain/`](.).  
-Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.  
-No retrain — Test-only re-runs + offline metrics.
+Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.
 
 Термины (RU): см. глоссарий в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md). Кратко: **ответ/спайк** на выходе нейрона (не «стрельба»); **алгоритм обучения** `NNeuronTimeLearner` / Branch = **обучение на одном дендрите** (сегменты импульсов); `fire_all` = ответ на все 8 проб.
 
@@ -12,7 +12,7 @@ Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metric
 - `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8` (**не** требует 8/8; partial_FA 4–6/8 может пройти)  
 - **Last-pulse (реестр)** — target `t_rel ≥ 0.8·pattern_end`; поверх audit, см. [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
 Analyzer: mid-pattern spike не ставит `neuron_fired` (`kMinStimForInWindowFire` в `NPatternResponseAnalyzer`).  
-Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md).  
+Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), архив [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md).  
 Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот».
 
 ## Layout
@@ -20,16 +20,16 @@ Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv), [`AUDIT_STRUC
 All experiment roots now use `<root>/{Train,Test}` (+ optional `Test_<tag>/`).  
 Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02/06 gained `Train/` from EXP00 (`TRAIN_SOURCE.txt`).
 
-## Gate recompute (112 Test)
+## Gate recompute (2026-09-13, 126 Test)
 
 | Metric | Count |
 |--------|------:|
-| `ok_legacy=1` | 19 |
-| `ok_strict=1` | 18 |
-| `ok_audit=1` | 16 |
-| `response_quality=per_stim` | 40 EXP |
-| `response_quality=mixed` (burst∪per_stim) | 8 EXP |
-| `n≠8` (incomplete / timeout) | 41 |
+| `ok_legacy=1` | 43 |
+| `ok_strict=1` | 42 |
+| `ok_audit=1` | 37 |
+| `n≠8` (incomplete / timeout) | 34 |
+
+Счётчики `per_stim`/`mixed` — в CSV; исторический срез 2026-09-10: см. архив GATE.
 
 ### `ok_audit` PASS
 
@@ -41,11 +41,13 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | PhaseA EXP00 / EXP01 / EXP02 / EXP06 | 4–6 | `t_rel≈pattern_end` (~0.48 с) |
 | PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 | |
 | `TimeNeuronTimeLearner/Test` | 4 | |
+| PHASE5 AsymRm packA gen+preinh, B/C gen @25/50/100 | **8** | C1e9 + TipR@Rmin — [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) |
+| AsymRmLtzCal twin packA gen @25/50/100 | **8** | в реестре (после PHASE5 Wave1) |
 | PHASE6 `Phase6/EXP_480_*` (tiprmin / thr_only / preinh / twin) | **7** | 2026-09-13; last-pulse; не 8/8 — см. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) |
 | PHASE7 `SelectivityBranch/EXP_br480_tiprmin` (+ nextseginh) | **8** | TipR@Rmin + mid soma; last-pulse — [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
 | PHASE7 `EXP_br480_preinh250_tiprmin` | **7** | ok_audit; 1 FP |
 
-**Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor (`ResistanceMin=2e7`, TipR base, FixedLTZ=0.0096) — `ok_audit=1`, 8/8 selective, last-pulse single (`t_rel≈0.10`). Twin LtzCal по-прежнему вне реестра. См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
+**Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor — `ok_audit=1`, 8/8 selective, last-pulse. **Twins packA gen @25/50/100 — в реестре.** См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 
 ### False successes (legacy PASS, audit FAIL)
 
@@ -55,19 +57,18 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | `…Branch_NextSegInh/Test` | 7/8 | 0 | 4 | **per_stim** | 6 |
 | `…Branch_PreInh250/Test` | 7/8 | 1 | 3 | **per_stim** | 6 |
 
-Legacy 7/8 на Branch (обучение на одном дендрите): late-ответ на отвлекающих считался «тишиной» (`match=1`) плюс multi-spike / per-stim. **Demoted.**
+Legacy 7/8 на Branch (обучение на одном дендрите): late-ответ на отвлекающих считался «тишиной» (`match=1`) плюс multi-spike / per-stim. **Demoted.** Снято tiprmin-клонами PHASE7 (`EXP_br480_*_tiprmin`); **канон trio всё ещё demoted** как эталон «до рецепта».
 
-## Span 25 ms + timing-parameter fit
+## Span 25 ms (исторический срез 2026-09-10 vs live)
 
-| EXP (AsymRm) | n | ok_audit | mode / notes |
-|--------------|---|----------|--------------|
-| `EXP_span25ms_packA_gen` | 8 | **1** | selective **8/8**, last-pulse single (Rsyn floor PASS) |
-| `EXP_span25ms_packA_preinh` | 8 | 0 | ответ на все пробы (`fire_all`) + per_stim |
-| `EXP_span25ms_packB_*` | 8 | 0 | `fire_all`; B_gen also burst |
-| `EXP_span25ms_packC_*` | 8 | 0 | `fire_all` + per_stim |
-| FastSpan 25 ms (non-ts10k) | 8 | 0 | per_stim / silent-ts10k |
+| EXP (AsymRm) | Исторический GATE 2026-09-10 | Live (после PHASE5) |
+|--------------|------------------------------|---------------------|
+| `EXP_span25ms_packA_gen` | ok_audit=1 (early затем restore) | **8/8** selective, last-pulse |
+| `EXP_span25ms_packA_preinh` | fire_all | **8/8** (C1e9 recipe) — SUCCESSFUL / PHASE5 |
+| `EXP_span25ms_packB_*` / `packC_*` | fire_all | **gen 8/8**; preinh B/C — deferred (RECIPE_COVERAGE) |
+| FastSpan 25 ms (non-ts10k) | per_stim / silent | без tiprmin-кампании (orphan) |
 
-**Verdict:** membrane/dendrite timing fit did **not** generalize across 25 мс packs. The one audit PASS (`packA_gen`) is real under strict+single, but siblings are `fire_all` / per-stim — not evidence that temporal-parameter search systematically produces selectivity.
+**Verdict (исторический):** membrane/dendrite timing fit alone не обобщался. **Superseded by PHASE5:** C1e9 + TipR@Rmin + silent mid-thr даёт 8/8 на gen A/B/C и A preinh @25/50/100.
 
 ## Burst / per-stim morphology
 

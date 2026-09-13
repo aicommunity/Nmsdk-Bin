@@ -55,6 +55,7 @@
 | 11–12 сен | PHASE5 short-span C1e9 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | TipR@Rmin + silent mid-thr → 8/8 @25/50/100 |
 | 13 сен | PHASE6 @480 мс | [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · [`Phase6/`](SelectivityPhaseA/Phase6/) | та же процедура на full pattern; best **7/8** (не 8/8) |
 | 13 сен | PHASE7 Branch quality | [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) | TipR@Rmin → Branch **8/8** audit+last-pulse; канон trio demoted |
+| 13 сен | PHASE8 Branch short-span | [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) | cold C1e9 Branch @25/50/100 packA gen/preinh |
 
 ---
 
@@ -252,7 +253,7 @@
 | В отчёте | Каталог |
 |----------|---------|
 | PASS-тест (span25 packA gen) | [`SelectivityAsymRm/EXP_span25ms_packA_gen`](SelectivityAsymRm/EXP_span25ms_packA_gen) — **demote 2026-09-11** (нет last-pulse; см. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md)) |
-| Stuck Pack C gen 50 / 100 | [`EXP_span50ms_packC_gen`](SelectivityAsymRm/EXP_span50ms_packC_gen), [`EXP_span100ms_packC_gen`](SelectivityAsymRm/EXP_span100ms_packC_gen) |
+| Stuck Pack C gen 50 / 100 (**историческое**; закрыто PHASE5 clone→C1e9) | [`EXP_span50ms_packC_gen`](SelectivityAsymRm/EXP_span50ms_packC_gen), [`EXP_span100ms_packC_gen`](SelectivityAsymRm/EXP_span100ms_packC_gen) — live **8/8** |
 | Пилоты D∝span | [`EXP_span50ms_packA_gen_Dspan`](SelectivityAsymRm/EXP_span50ms_packA_gen_Dspan), [`EXP_span100ms_packA_gen_Dspan`](SelectivityAsymRm/EXP_span100ms_packA_gen_Dspan) |
 | Пилоты AmpDtAudit | [`EXP_span50ms_packC_gen_ampaudit`](SelectivityAsymRm/EXP_span50ms_packC_gen_ampaudit), [`EXP_span100ms_packC_gen_ampaudit`](SelectivityAsymRm/EXP_span100ms_packC_gen_ampaudit) |
 
@@ -305,6 +306,6 @@
 2. Все FastSpan до 23 августа (включая 21–22) невалидны.  
 3. Legacy 6/8 и 7/8 в кампании Branch — с ответом на цель, но **аудит 2026-09-10** demote из‑за late_fp и per-stim/multi-spike (`ok_audit=0`).  
 4. Подстройка порога была и до п.5 (фаза A, PSI-автопорог, Branch); п.6 сделал калибровку центральным рычагом против `fire_all` на коротких/асимметричных сетках.  
-5. Практический потолок **audit-pass** за месяц: PSI/PhaseA отдельные 4–6/8 с `t_rel≈pattern_end`. AsymRm/LtzCal `span25 packA gen` 6/8 formal `ok_audit` **demoted** (early-spike, нет last-pulse). Legacy «7/8 Branch» больше не канон.  
-6. Сейчас: 16/18 асимметричных конфигов с завершённым обучением; два Pack C gen открыты.  
-7. Полный аудит: [`AUDIT_REPORT.md`](AUDIT_REPORT.md), layout: [`LAYOUT.md`](LAYOUT.md).
+5. **Early-spike demote → restore:** AsymRm/LtzCal `span25 packA gen` снят с реестра (нет last-pulse), затем restore C1e9+Rsyn floor → 8/8 last-pulse. Legacy «7/8 Branch» demoted; PHASE7 tiprmin → Branch **8/8**.  
+6. **Pack C gen** (50/100) закрыты PHASE5 (clone→C1e9 + TipR@Rmin). PHASE6 @480 best **7/8**. PHASE7 Branch tiprmin **8/8**. Карта пробелов: [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md). PHASE8 = Branch short-span C1e9.  
+7. Полный аудит: [`AUDIT_REPORT.md`](AUDIT_REPORT.md), layout: [`LAYOUT.md`](LAYOUT.md), GATE: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv).
