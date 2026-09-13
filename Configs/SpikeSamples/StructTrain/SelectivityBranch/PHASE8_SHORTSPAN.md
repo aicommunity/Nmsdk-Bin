@@ -20,11 +20,11 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 | EXP | Span | kind | Status |
 |-----|------|------|--------|
 | [`EXP_br_span25_packA_gen_C1e9`](EXP_br_span25_packA_gen_C1e9/) | 25 | gen | **PASS** S1 — L=`13 11 7 1`, TipR@Rmin, mid≈0.0718, fires `10000000` |
-| [`EXP_br_span25_packA_preinh_C1e9`](EXP_br_span25_packA_preinh_C1e9/) | 25 | preinh | scaffolded (S0) |
+| [`EXP_br_span25_packA_preinh_C1e9`](EXP_br_span25_packA_preinh_C1e9/) | 25 | preinh | **PASS** S3 — L=`7 6 4 1`, TipR@Rmin, mid≈0.0517 |
 | [`EXP_br_span50_packA_gen_C1e9`](EXP_br_span50_packA_gen_C1e9/) | 50 | gen | **PASS** S2 — L=`13 11 6 1`, TipR@Rmin, mid≈0.0644, fires `10000000` |
-| [`EXP_br_span50_packA_preinh_C1e9`](EXP_br_span50_packA_preinh_C1e9/) | 50 | preinh | scaffolded (S0) |
+| [`EXP_br_span50_packA_preinh_C1e9`](EXP_br_span50_packA_preinh_C1e9/) | 50 | preinh | **PASS** S3 — L=`13 11 6 1`, TipR@Rmin, mid≈0.0301 |
 | [`EXP_br_span100_packA_gen_C1e9`](EXP_br_span100_packA_gen_C1e9/) | 100 | gen | **PASS** S2 — L=`25 21 11 1`, **Done TipR** (Rmin foil>target), mid≈0.00718, fires `10000000` |
-| [`EXP_br_span100_packA_preinh_C1e9`](EXP_br_span100_packA_preinh_C1e9/) | 100 | preinh | scaffolded (S0) |
+| [`EXP_br_span100_packA_preinh_C1e9`](EXP_br_span100_packA_preinh_C1e9/) | 100 | preinh | **PASS** S3 — L=`22 18 11 1`, TipR@Rmin, mid≈0.0203 |
 
 ## S1 notes (span25 gen)
 
@@ -38,6 +38,16 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 - span50: тот же TipR@Rmin рецепт; L=`13 11 6 1`; mid≈0.0644.
 - span100: TipR@Rmin → soma foil trial6 > target (7/8 FP). **Done TipR** + mid → 8/8. Зафиксировать fallback в helper/README.
 - Learner SB на Model: первый `StructureBuildMode` **до** `<Neuron>` =`1` (тег `NNeuronTimeLearnerBranch` в Model часто отсутствует).
+
+## S3 notes (preinh A)
+
+- Cold Train `NSPNeuronGenPreinh2_5AsymRmD001C1e9` @25/50/100; per-exp mid thr.
+- Все три **PASS** TipR@Rmin + mid (`ok_audit=1`, fires `10000000`).
+- span25 preinh: после extend Need=0, L=`7 6 4 1` (короче первого band `16 13 3 1`).
+
+## S4 notes (pack B/C)
+
+- **Deferred**: pack B/C short-span Branch не клонировались в этой волне (фокус — packA gen+preinh). Строка в SUCCESSFUL §Отложено / RECIPE_COVERAGE.
 
 ## Waves
 

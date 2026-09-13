@@ -12,6 +12,7 @@
 | AsymRm A gen+preinh, B/C gen @25/50/100 | `SelectivityAsymRm/EXP_span{25,50,100}ms_pack{A,B,C}_gen` (+ A_preinh) | [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) |
 | AsymRmLtzCal twin gen @25/50/100 | `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span*_packA_gen` | PHASE5 Wave1 |
 | Branch @480 tiprmin / nextseginh | `SelectivityBranch/EXP_br480_tiprmin`, `…_nextseginh_tiprmin` | [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
+| **Branch short-span packA gen+preinh** @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_packA_{gen,preinh}_C1e9` | [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) (span100 gen: Done TipR fallback) |
 
 ## Partial
 
@@ -24,8 +25,8 @@
 
 | Семья | Пути | Почему | Действие |
 |-------|------|--------|----------|
-| **Branch short-span** | `BranchFastSpan/EXP_branch_span{25,100}_gen`; `SelectivityBranch/EXP_br_span25_tiprmin` (FAIL) | Test-only tiprmin FAIL; нет C1e9 Train | **PHASE8** — [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) |
-| AsymRmLtzCalBranch ×6 | `SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_*` | NeedTrain=1, C25e12 stall | Не overwrite; PHASE8 = замена |
+| **Branch short-span pack B/C** | — | deferred S4 | follow-up |
+| AsymRmLtzCalBranch ×6 | `SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_*` | NeedTrain=1, C25e12 stall | Не overwrite; PHASE8 packA = замена |
 | AsymRm **preinh B/C** | `SelectivityAsymRm/EXP_span*_pack{B,C}_preinh` | PHASE5 deferred | Только эта строка; **вне PHASE8** (отдельная волна) |
 | AsymRmLtzCal preinh twins | `AsymRmLtzCal/EXP_*_preinh` | silent / n≠8 | Вне PHASE8 |
 | PSI mid-k / short | `SelectivityPresynapticInhib/EXP0*`, EXP20–27 | нет tiprmin-кампании | Orphan docs only |
