@@ -1,29 +1,53 @@
 #!/usr/bin/env python3
-"""Add SomaAmplitudeInput link for Branch test Model_00.xml."""
+"""Add SomaAmplitudeInput link for Branch test Model_00.xml.
+
+Idempotent: never turns NeuronTimeLearnerBranch into BranchBranch.
+Also repairs any existing BranchBranch typos.
+"""
 import re
 import sys
 from pathlib import Path
 
 
+def repair_branchbranch(text: str) -> str:
+    text = text.replace("NNeuronTimeLearnerBranchBranch", "NNeuronTimeLearnerBranch")
+    text = text.replace("NeuronTimeLearnerBranchBranch", "NeuronTimeLearnerBranch")
+    return text
+
+
+def ensure_branch_names(text: str) -> str:
+    """Rename classic TimeLearner component to Branch once."""
+    text = repair_branchbranch(text)
+    if "NeuronTimeLearnerBranch" in text:
+        return text
+    text = re.sub(r"NeuronTimeLearner(?!Branch)", "NeuronTimeLearnerBranch", text)
+    text = re.sub(r"NNeuronTimeLearner(?!Branch)", "NNeuronTimeLearnerBranch", text)
+    return text
+
+
 def patch_model(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
-    if "NeuronTimeLearnerBranch" not in text:
-        text = text.replace("NeuronTimeLearner", "NeuronTimeLearnerBranch")
+    text = ensure_branch_names(text)
     if "SomaAmplitudeInput" in text:
         path.write_text(text, encoding="utf-8")
         return
 
     link_block = """
-\t\t\t<elem Type="ULink">
-\t\t\t\t<Item Type="ULinkSide" Index="-1" Name="SomaNeuronAmplitude">NeuronTimeLearnerBranch</Item>
-\t\t\t\t<Connector Type="ULinkSide" Index="-1" Name="SomaAmplitudeInput">PatternResponseAnalyzer</Connector>
-\t\t\t</elem>"""
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="SomaNeuronAmplitude">NeuronTimeLearnerBranch</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SomaAmplitudeInput">PatternResponseAnalyzer</Connector>
+			</elem>"""
 
-    marker = '<Item Type="ULinkSide" Index="-1" Name="CurrentClassMatrix">NeuronTimeLearnerBranch.DatasetMatrix</Item>'
-    insert_after = '\t\t\t<elem Type="ULink">\n\t\t\t\t' + marker
+    marker = (
+        '<Item Type="ULinkSide" Index="-1" Name="CurrentClassMatrix">'
+        "NeuronTimeLearnerBranch.DatasetMatrix</Item>"
+    )
+    insert_after = "\t\t\t<elem Type=\"ULink\">\n\t\t\t\t" + marker
     if insert_after not in text:
         raise SystemExit(f"link anchor not found in {path}")
-    text = text.replace(insert_after, link_block + '\n\t\t\t<elem Type="ULink">\n\t\t\t\t' + marker, 1)
+    text = text.replace(
+        insert_after, link_block + "\n\t\t\t<elem Type=\"ULink\">\n\t\t\t\t" + marker, 1
+    )
 
     m = re.search(r'<Links Type="ULinksList" Size="(\d+)">', text)
     if not m:

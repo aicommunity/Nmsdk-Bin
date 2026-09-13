@@ -42,6 +42,8 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 | |
 | `TimeNeuronTimeLearner/Test` | 4 | |
 | PHASE6 `Phase6/EXP_480_*` (tiprmin / thr_only / preinh / twin) | **7** | 2026-09-13; last-pulse; не 8/8 — см. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) |
+| PHASE7 `SelectivityBranch/EXP_br480_tiprmin` (+ nextseginh) | **8** | TipR@Rmin + mid soma; last-pulse — [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
+| PHASE7 `EXP_br480_preinh250_tiprmin` | **7** | ok_audit; 1 FP |
 
 **Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor (`ResistanceMin=2e7`, TipR base, FixedLTZ=0.0096) — `ok_audit=1`, 8/8 selective, last-pulse single (`t_rel≈0.10`). Twin LtzCal по-прежнему вне реестра. См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 

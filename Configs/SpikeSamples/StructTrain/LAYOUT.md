@@ -35,4 +35,5 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 | [`AUDIT_REPORT.md`](AUDIT_REPORT.md) | Ворота, demote, морфология ответа |
 | [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md) | Хроника кампаний |
 | [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) | PHASE6 рецепт @480 мс (клоны в `Phase6/`) |
+| [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) | PHASE7 качество Branch (клоны TipR@Rmin) |
 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | PHASE5 short-span C1e9 |

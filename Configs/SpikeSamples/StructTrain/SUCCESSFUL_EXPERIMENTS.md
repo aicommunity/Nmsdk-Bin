@@ -127,13 +127,25 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 Зеркало EXP00 (4/8): [`Phase6/EXP_480_gen_baseline`](SelectivityPhaseA/Phase6/EXP_480_gen_baseline/) — не отдельная строка реестра (дубликат EXP00).
 
+## Branch @480 мс (PHASE7)
+
+Журнал: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md). Исторический канон Branch trio **demoted** (late_fp+per_stim) — сохранён как эталон «до рецепта». PASS — только клоны TipR@Rmin + mid thr по `soma_amp_sum`.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_br480_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.05149 | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_br480_nextseginh_tiprmin | NextSegInh + tiprmin; thr=0.036298 | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_br480_preinh250_tiprmin | Preinh2.5 + tiprmin; thr=0.111136 | 7/8 | selective | [Train](SelectivityBranch/EXP_br480_preinh250_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
+
 ## Вне реестра
 
-- **Branch** (обучение на одном дендрите): legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per-stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
-- Хронология кампаний, ложные успехи, отрицательные результаты — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
+- **Branch канон** (`TimeNeuronTimeLearnerBranch*`) без tiprmin: legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per_stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md); PHASE7: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
+- Short-span BranchFastSpan / `EXP_br_span25_tiprmin` — fire_all / FAIL (deferred C1e9 retrain).
+- Хронология кампаний — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
 
 ## Отложено
 
 - Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
+- PHASE7 short-span Branch C1e9 retrain / AsymRmLtzCalBranch stall — deferred. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).

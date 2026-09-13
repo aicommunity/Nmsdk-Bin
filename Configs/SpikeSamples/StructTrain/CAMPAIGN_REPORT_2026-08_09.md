@@ -54,6 +54,7 @@
 | 27 авг – 8 сен | Асимметричная мембрана | [`SelectivityAsymRm/`](SelectivityAsymRm/) | Пакеты A/B/C × спаны × gen/preinh; доводка двух залипших Pack C gen |
 | 11–12 сен | PHASE5 short-span C1e9 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | TipR@Rmin + silent mid-thr → 8/8 @25/50/100 |
 | 13 сен | PHASE6 @480 мс | [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · [`Phase6/`](SelectivityPhaseA/Phase6/) | та же процедура на full pattern; best **7/8** (не 8/8) |
+| 13 сен | PHASE7 Branch quality | [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) | TipR@Rmin → Branch **8/8** audit+last-pulse; канон trio demoted |
 
 ---
 
