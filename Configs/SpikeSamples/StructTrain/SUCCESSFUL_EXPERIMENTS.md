@@ -84,7 +84,7 @@
 
 Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md), фаза 50/100: [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 
-**Робастность thr:** PASS на 25/50/100 и gen/preinh/twin/B·C — перенос рецепта, не широкий порог. Физический gap tgt−foil: @25/~1.5e-4, @50/~1.7e-4 (**та же хрупкость**), @100/~5e-6 (**на порядок хуже**).
+**Робастность порога:** PASS на 25/50/100 и gen/preinh/twin/B·C — перенос рецепта и last-pulse, **не** широкий амплитудный запас. Зазор «максимум потенциала зоны на цели − на самом трудном чужом»: @25/~1.5e-4, @50/~1.7e-4 (та же хрупкость), @100/~5e-6 (на порядок хуже). Эталон ~480 мс: зазор ~6e-6 при частичных ложных, не «широкий порог». Диагноз и probe: конфиг tip на Done Test зазор ≥5e-4 не даёт; модель нейрона не меняем. [`SelectivityAsymRm/THR_FRAGILITY_DIAG.md`](SelectivityAsymRm/THR_FRAGILITY_DIAG.md).
 
 ## Вне реестра
 
