@@ -144,6 +144,8 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
 | EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packA_gen_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0644 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packA_gen_C1e9 | L=`25 21 11 1`; Done TipR (не Rmin); thr≈0.00718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 
 ## Вне реестра
 
@@ -154,7 +156,7 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 ## Отложено
 
-- **PHASE8** span50/100 gen + preinh A + pack B/C — [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md).
+- **PHASE8** preinh A @25/50/100 + pack B/C — [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md).
 - AsymRm **preinh B/C** tiprmin/C1e9 — только карта в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md); вне PHASE8 execution.
 - Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).

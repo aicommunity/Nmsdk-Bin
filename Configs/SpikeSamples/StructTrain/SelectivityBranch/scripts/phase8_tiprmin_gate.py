@@ -71,18 +71,18 @@ def set_neuron_sb(text: str, learner_sb: str, neuron_sb: str) -> str:
     text = re.sub(
         r'<Neuron Class="[^"]+">.*?</Neuron>', repl_neuron, text, count=1, flags=re.S
     )
-    m = re.search(
-        r"(<NNeuronTimeLearnerBranch\b[^>]*>)(.*?)(<Neuron Class=)", text, re.S
+    # Model XML often has no <NNeuronTimeLearnerBranch> element — set first SB before Neuron
+    idx = text.find("<Neuron Class=")
+    if idx < 0:
+        return text
+    head, tail = text[:idx], text[idx:]
+    head = re.sub(
+        r'(<StructureBuildMode Type="i"[^>]*>)[^<]*(</StructureBuildMode>)',
+        lambda mm: mm.group(1) + learner_sb + mm.group(2),
+        head,
+        count=1,
     )
-    if m:
-        head = re.sub(
-            r'(<StructureBuildMode Type="i"[^>]*>)[^<]*(</StructureBuildMode>)',
-            lambda mm: mm.group(1) + learner_sb + mm.group(2),
-            m.group(2),
-            count=1,
-        )
-        text = text[: m.start(2)] + head + text[m.end(2) :]
-    return text
+    return head + tail
 
 
 def ensure_generator_tips(text: str, tips: list[int]) -> str:
