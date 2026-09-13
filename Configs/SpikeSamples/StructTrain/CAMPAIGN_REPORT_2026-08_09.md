@@ -28,13 +28,17 @@
 | Ответ на все пробы | `fire_all`: спайк на всех 8 паттернах |
 | Обучение завершено | Флаг «нужно учить» сброшен, длины выросли с «1 1 1 1», порог откалиброван (не холодный 0.0115) |
 | Точность 6/8 | 6 из 8 проб совпали с эталоном (**legacy** `match`, только in-window) |
-| Ворота качества (legacy) | Есть ответ на цель, нет ответа на все пробы, точность ≥ 4/8 |
-| Ворота аудита (`ok_audit`) | strict (late = ошибка) **и** один спайк на trial (`ok_single`) **и** `n=8` |
+| Ворота качества (`ok_legacy`) | Target hit, не `fire_all`, acc≥4, `n=8`; late на чужом **игнорируется** |
+| Ворота strict (`ok_strict`) | Как legacy, но late на чужом = `late_fp`; late-only на цели = `late_fn`; acc_strict≥4 |
+| Ворота аудита (`ok_audit`) | `ok_strict` ∧ `ok_single` ∧ `n=8`. **Не требует 8/8** — partial_FA 4–6/8 может пройти |
 | Last-pulse | Ответ на цели у **конца** паттерна: `neuron_t_rel ≥ 0.8·pattern_end` (Σ ISI). Нужен для реестра успехов; `ok_audit` сам по себе **не** гарантирует crown на соме |
 | Early-spike | `t_rel ≪ pattern_end` при fire на цели — формальный PASS возможен, эталоном не считать |
 | Ложный пропуск цели | На целевом паттерне нет ответа |
-| Ложное срабатывание | Ответ на отвлекающем паттерне |
-| late_fp / пачка / per-stim | Поздний спайк / пачка / ответ на каждый стимул паттерна — **не** успех (см. аудит) |
+| Ложное срабатывание | Ответ на отвлекающем: in-window FP и/или late_fp (в strict) |
+| late_fp / пачка / per-stim | Поздний спайк / пачка / ответ на каждый стимул паттерна — ломают `ok_audit` |
+| PHASE5 / PHASE6 цель волны | Процедурно целят **8/8 selective** + last-pulse; формула `ok_audit` в коде не ужесточается |
+
+Детализация слоёв: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот». Рецепт @480 мс: [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
 
 ---
 
@@ -48,6 +52,8 @@
 | 21–23 авг | Быстрый отклик; короткий спан; аксоны | [`SelectivityFastResponse/`](SelectivityFastResponse/), [`SelectivityFastSpan/`](SelectivityFastSpan/), [`../NeuralElements/AxoneLengthDelayStudy/`](../NeuralElements/AxoneLengthDelayStudy/) | Постоянная диссоциации × ёмкость; сжатые 100/50/25 мс; бенчи аксонов |
 | 23 авг | Калибровка порога + ремонт пайплайна | [`SelectivityLtzCalibrate/`](SelectivityLtzCalibrate/) (`AsymRmLtzCal/`, `FastSpanLtzCal/`, …) | Автокалибровка после структурного обучения; исправление масштаба паттернов |
 | 27 авг – 8 сен | Асимметричная мембрана | [`SelectivityAsymRm/`](SelectivityAsymRm/) | Пакеты A/B/C × спаны × gen/preinh; доводка двух залипших Pack C gen |
+| 11–12 сен | PHASE5 short-span C1e9 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | TipR@Rmin + silent mid-thr → 8/8 @25/50/100 |
+| 13 сен | PHASE6 @480 мс | [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · [`Phase6/`](SelectivityPhaseA/Phase6/) | та же процедура на full pattern; best **7/8** (не 8/8) |
 
 ---
 

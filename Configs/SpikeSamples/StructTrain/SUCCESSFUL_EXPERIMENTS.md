@@ -19,6 +19,32 @@
 
 Термины: глоссарий в CAMPAIGN_REPORT (алгоритм обучения, ответ/спайк, тип компонента LTZone, last-pulse).
 
+### Слои ворот (без изменения порогов кода)
+
+Реализация: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py); mid-pattern spike на цели **не** ставит `neuron_fired` после фикса `kMinStimForInWindowFire` в `NPatternResponseAnalyzer` (PulseLib; нужен полный 4-pulse паттерн и окно после последнего стимула).
+
+| Слой | Что считает | Порог PASS | Late на чужом | Acc |
+|------|-------------|------------|---------------|-----|
+| **`ok_legacy`** | in-window `neuron_fired` / `match` | `n=8`, target hit, не `fire_all` | **игнорируется** (тишина) | **≥4** |
+| **`ok_strict`** | effective fire = in-window ∨ late | target in-window; чужой: ни fire, ни late | **`late_fp` = ошибка** | **≥4** |
+| **`ok_audit`** | `ok_strict` ∧ `ok_single` ∧ `n=8` | один спайк/trial (не burst/per_stim) | как strict | **≥4** (не 8/8) |
+| **Last-pulse (реестр)** | `neuron_t_rel ≥ 0.8·pattern_end` на цели | ручная проверка поверх audit | — | — |
+
+Важно:
+
+- Канонический **`ok_audit` не требует 8/8**: PhaseA / PSI / TimeNeuron с **4–6/8** `partial_FA` могут иметь `ok_audit=1` и числятся в реестре ниже — это audit-PASS при частичных in-window FP, не «полная селективность».
+- Кампании **PHASE5 (AsymRm 25/50/100)** и **PHASE6 (@480 мс)** дополнительно целят **8/8 selective** + last-pulse (процедурная цель волны, не смена формулы `ok_audit`).
+- Mid-pattern / early edge на цели без in-window после last stim → `neuron_fired=0`; late-only на цели → `late_fn`.
+
+Ошибки на чужом (nontarget):
+
+| Сигнал | `ok_legacy` | `ok_strict` / audit |
+|--------|-------------|---------------------|
+| In-window FP (`neuron_fired=1`) | FA (снижает acc) | FA |
+| Late FP (`late_fired=1`, in-window тишина) | **не** FA | **FA** (`late_fp`) |
+| `fire_all` | FAIL gate | FAIL gate |
+| burst / per_stim | не ломает legacy | `ok_audit=0` (`response_quality`) |
+
 ## Как обновлять
 
 1. При необходимости прогнать Test (`scripts/rerun_all_tests.sh` или точечный NeuroModelerConsole).
@@ -27,6 +53,8 @@
 4. При demote — удалить строку; кратко зафиксировать причину в AUDIT_REPORT.
 
 ## Phase A
+
+Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускает acc≥4). Кампания рецепта @480 мс: [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) / [`Phase6/`](SelectivityPhaseA/Phase6/).
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
@@ -86,6 +114,19 @@
 
 **Робастность порога:** PASS на 25/50/100 и gen/preinh/twin/B·C — перенос рецепта и last-pulse, **не** широкий амплитудный запас. Зазор «максимум потенциала зоны на цели − на самом трудном чужом»: @25/~1.5e-4, @50/~1.7e-4 (та же хрупкость), @100/~5e-6 (на порядок хуже). Эталон ~480 мс: зазор ~6e-6 при частичных ложных, не «широкий порог». Диагноз и probe: конфиг tip на Done Test зазор ≥5e-4 не даёт; модель нейрона не меняем. [`SelectivityAsymRm/THR_FRAGILITY_DIAG.md`](SelectivityAsymRm/THR_FRAGILITY_DIAG.md).
 
+## Phase6 @480 мс (рецепт PHASE5-процедуры)
+
+Журнал: [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md). Исторические EXP00/TimeNeuron/PSI **не** перезаписаны — только клоны в `Phase6/`. Цель волны 8/8 не достигнута (hard foil trial6); ниже — audit-PASS **7/8** selective + last-pulse.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_480_gen_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.016894 | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_480_gen_thr_only | mid-thr=0.014386, TipR Done | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Test/SelectivityLog/results.csv) |
+| EXP_480_preinh250_tiprmin | PSI EXP04 + TipR@Rmin; thr=0.038722 | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_480_ltzcal_twin_gen | twin clean Test tiprmin | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Test/SelectivityLog/results.csv) |
+
+Зеркало EXP00 (4/8): [`Phase6/EXP_480_gen_baseline`](SelectivityPhaseA/Phase6/EXP_480_gen_baseline/) — не отдельная строка реестра (дубликат EXP00).
+
 ## Вне реестра
 
 - **Branch** (обучение на одном дендрите): legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per-stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
@@ -94,4 +135,5 @@
 
 ## Отложено
 
-Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
+- Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
+- PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).

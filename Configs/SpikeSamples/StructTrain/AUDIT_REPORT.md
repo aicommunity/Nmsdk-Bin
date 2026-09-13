@@ -7,10 +7,13 @@ No retrain — Test-only re-runs + offline metrics.
 Термины (RU): см. глоссарий в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md). Кратко: **ответ/спайк** на выходе нейрона (не «стрельба»); **алгоритм обучения** `NNeuronTimeLearner` / Branch = **обучение на одном дендрите** (сегменты импульсов); `fire_all` = ответ на все 8 проб.
 
 Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py)  
-- `ok_legacy` — historical gate (`match` / in-window only)  
-- `ok_strict` — late_fp/late_fn counted as errors  
-- `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8`  
-Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md).
+- `ok_legacy` — historical gate (`match` / in-window only); late на чужом **не** FA; PASS при acc≥4  
+- `ok_strict` — late_fp/late_fn counted as errors; nontarget ok только при тишине in-window **и** late; PASS при acc_strict≥4  
+- `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8` (**не** требует 8/8; partial_FA 4–6/8 может пройти)  
+- **Last-pulse (реестр)** — target `t_rel ≥ 0.8·pattern_end`; поверх audit, см. [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
+Analyzer: mid-pattern spike не ставит `neuron_fired` (`kMinStimForInWindowFire` в `NPatternResponseAnalyzer`).  
+Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md).  
+Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот».
 
 ## Layout
 
@@ -38,6 +41,7 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | PhaseA EXP00 / EXP01 / EXP02 / EXP06 | 4–6 | `t_rel≈pattern_end` (~0.48 с) |
 | PSI EXP01, EXP14–15, EXP21, EXP31–35 | 4–6 | |
 | `TimeNeuronTimeLearner/Test` | 4 | |
+| PHASE6 `Phase6/EXP_480_*` (tiprmin / thr_only / preinh / twin) | **7** | 2026-09-13; last-pulse; не 8/8 — см. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) |
 
 **Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor (`ResistanceMin=2e7`, TipR base, FixedLTZ=0.0096) — `ok_audit=1`, 8/8 selective, last-pulse single (`t_rel≈0.10`). Twin LtzCal по-прежнему вне реестра. См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 
