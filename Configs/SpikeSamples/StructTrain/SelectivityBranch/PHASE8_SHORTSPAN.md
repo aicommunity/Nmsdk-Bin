@@ -19,12 +19,19 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 
 | EXP | Span | kind | Status |
 |-----|------|------|--------|
-| [`EXP_br_span25_packA_gen_C1e9`](EXP_br_span25_packA_gen_C1e9/) | 25 | gen | scaffolded (S0) |
+| [`EXP_br_span25_packA_gen_C1e9`](EXP_br_span25_packA_gen_C1e9/) | 25 | gen | **PASS** S1 — L=`13 11 7 1`, mid≈0.0718, fires `10000000`, `ok_audit=1` |
 | [`EXP_br_span25_packA_preinh_C1e9`](EXP_br_span25_packA_preinh_C1e9/) | 25 | preinh | scaffolded (S0) |
-| [`EXP_br_span50_packA_gen_C1e9`](EXP_br_span50_packA_gen_C1e9/) | 50 | gen | scaffolded (S0) |
+| [`EXP_br_span50_packA_gen_C1e9`](EXP_br_span50_packA_gen_C1e9/) | 50 | gen | Train pending (S2) |
 | [`EXP_br_span50_packA_preinh_C1e9`](EXP_br_span50_packA_preinh_C1e9/) | 50 | preinh | scaffolded (S0) |
-| [`EXP_br_span100_packA_gen_C1e9`](EXP_br_span100_packA_gen_C1e9/) | 100 | gen | scaffolded (S0) |
+| [`EXP_br_span100_packA_gen_C1e9`](EXP_br_span100_packA_gen_C1e9/) | 100 | gen | Train pending (S2) |
 | [`EXP_br_span100_packA_preinh_C1e9`](EXP_br_span100_packA_preinh_C1e9/) | 100 | preinh | scaffolded (S0) |
+
+## S1 notes (span25 gen)
+
+- Train: `NeedTrain=0`, L=`13 11 7 1` (не ждать Ideal TipR / amp-Done).
+- Test hygiene: **overlay Train `<Neuron>`** в Test (шаблон Branch держит tips `85/46/25/1`); Generator → `Dendrite1_{13,11,7,1}`; TipR@Rmin property + tip Exc R; Parameters Matrix/Classes из AsymRm packA @25; Model DatasetMatrix 1-sample; Learner SB Params=`0` / Model=`1`, Neuron SB=`2`.
+- Mid из `soma_amp_sum` при silent thr=1.0; gap мал (~1.2e-4) но mid режет foils.
+- Helper: [`scripts/phase8_tiprmin_gate.py`](scripts/phase8_tiprmin_gate.py).
 
 ## Waves
 

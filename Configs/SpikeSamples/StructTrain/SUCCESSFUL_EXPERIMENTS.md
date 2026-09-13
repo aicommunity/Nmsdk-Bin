@@ -137,16 +137,24 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 | EXP_br480_nextseginh_tiprmin | NextSegInh + tiprmin; thr=0.036298 | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test/SelectivityLog/results.csv) |
 | EXP_br480_preinh250_tiprmin | Preinh2.5 + tiprmin; thr=0.111136 | 7/8 | selective | [Train](SelectivityBranch/EXP_br480_preinh250_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
 
+## Branch short-span (PHASE8)
+
+Журнал: [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md). Cold Train Branch C1e9 + TipR@Rmin + mid thr по `soma_amp_sum`. Test: overlay Train Neuron + Generator tips `Dendrite1_{L[i]}`.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+
 ## Вне реестра
 
 - **Branch канон** (`TimeNeuronTimeLearnerBranch*`) без tiprmin: legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per_stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md); PHASE7: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
-- Short-span BranchFastSpan / `EXP_br_span25_tiprmin` — fire_all / FAIL (deferred C1e9 retrain).
+- Short-span BranchFastSpan / `EXP_br_span25_tiprmin` — fire_all / FAIL (superseded PHASE8 C1e9).
 - Хронология кампаний — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
 - Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
 
 ## Отложено
 
-- **PHASE8** Branch short-span @25/50/100 C1e9 cold Train — журнал [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md).
+- **PHASE8** span50/100 gen + preinh A + pack B/C — [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md).
 - AsymRm **preinh B/C** tiprmin/C1e9 — только карта в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md); вне PHASE8 execution.
 - Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
