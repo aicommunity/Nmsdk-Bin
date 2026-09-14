@@ -1,6 +1,6 @@
 # StructTrain audit report
 
-Первичный срез: **2026-09-10**. Пересчёт GATE (metrics-from-CSV): **2026-09-13** после PHASE5–7; **2026-09-14** PHASE9 D0 (incl. PHASE8 C1e9).  
+Первичный срез: **2026-09-10**. Пересчёт GATE (metrics-from-CSV): **2026-09-13** после PHASE5–7; **2026-09-14** PHASE9 D0 (incl. PHASE8 C1e9); **2026-09-14 T0** (+P1–P3 C1e9).  
 Scope: `Selectivity*` + `TimeNeuronTimeLearner*` under [`StructTrain/`](.).  
 Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.
 
@@ -12,7 +12,7 @@ Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metric
 - `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8` (**не** требует 8/8; partial_FA 4–6/8 может пройти)  
 - **Last-pulse (реестр)** — target `t_rel ≥ 0.8·pattern_end`; поверх audit, см. [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
 Analyzer: mid-pattern spike не ставит `neuron_fired` (`kMinStimForInWindowFire` в `NPatternResponseAnalyzer`).  
-Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md), [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).  
+Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md), [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).  
 Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот». Пороги `ok_audit` **не** ужесточались.
 
 ## Layout
@@ -20,16 +20,14 @@ Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`AUDI
 All experiment roots now use `<root>/{Train,Test}` (+ optional `Test_<tag>/`).  
 Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02/06 gained `Train/` from EXP00 (`TRAIN_SOURCE.txt`).
 
-## Gate recompute (2026-09-14 PHASE9 D0, 132 Test)
+## Gate recompute (2026-09-14 PHASE9 T0, 154 Test)
 
 | Metric | Count |
 |--------|------:|
-| `ok_legacy=1` | 49 |
-| `ok_strict=1` | 48 |
-| `ok_audit=1` | 43 |
-| `n≠8` (incomplete / timeout) | 34 |
+| `ok_audit=1` | 64 |
+| rows | 154 |
 
-Δ vs 2026-09-13: +6 PHASE8 Branch short-span C1e9 в CSV (+ связанные счётчики). Исторический срез 2026-09-13: [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv).
+Δ vs PHASE9 D0 (132 / 43): **+21** P1–P3 C1e9 (Branch B/C ×12 + AsymRm preinh B/C ×6 + NextSeg ×3) → 64 `ok_audit`. Архив T0: [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv). D0: [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv).
 
 ### `ok_audit` PASS
 
@@ -47,6 +45,9 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | PHASE7 `SelectivityBranch/EXP_br480_tiprmin` (+ nextseginh) | **8** | TipR@Rmin + mid soma; last-pulse — [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
 | PHASE7 `EXP_br480_preinh250_tiprmin` | **7** | ok_audit; 1 FP |
 | PHASE8 `SelectivityBranch/EXP_br_span*_packA_*_C1e9` ×6 | **8** | TipR@Rmin (span100 gen: Done TipR); last-pulse — [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) |
+| PHASE9 P1 Branch pack B/C C1e9 ×12 | **8** | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) |
+| PHASE9 P2 AsymRm pack B/C preinh C1e9 ×6 | **8** | |
+| PHASE9 P3 Branch NextSeg short C1e9 ×3 | **8** | |
 
 **Demote (2026-09-11):** ранний `packA_gen` / LtzCal twin с `t_rel≈0.001` (нет last-pulse) — снят с реестра. **Restore (2026-09-11 вечер):** `SelectivityAsymRm/EXP_span25ms_packA_gen` после C1e9+EstDelay+Rsyn floor — `ok_audit=1`, 8/8 selective, last-pulse. **Twins packA gen @25/50/100 — в реестре.** См. [`DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md).
 

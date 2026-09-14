@@ -4,7 +4,7 @@
 Для short-span дополнительно **C1e9** neuron + cold Train (Test-only tiprmin на Branch short-span — FAIL).
 
 Критерии кода не меняются — [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
-Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). GATE D0: 2026-09-14 · 132 Test · 43 `ok_audit=1`.
+Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). GATE T0: 2026-09-14 · 154 Test · 64 `ok_audit=1`.
 
 ## Covered
 
@@ -25,17 +25,24 @@
 | Phase6 TimeLearner @480 | 7/8 | `SelectivityPhaseA/Phase6/EXP_480_*` | foil trial6; pack B/C deferred — [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · PHASE9 P4 |
 | Branch preinh250 tiprmin | 7/8 | `SelectivityBranch/EXP_br480_preinh250_tiprmin` | 1 FP (trial4) · PHASE9 P4 |
 
-## Gap (PHASE9 execution targets)
+## Gap (PHASE10 execution)
+
+| Тема | Путь | Статус |
+|------|------|--------|
+| AsymRmLtzCal preinh twins | `AsymRmLtzCal/EXP_*_preinh` | **T2** Test hygiene (no Train overwrite) |
+| Phase6 foil trial6 / br480 FP | quality clones | **T1** TipR Done/partial |
+
+## Orphans PHASE10+ (exec in PHASE10)
+
+Catalog started in PHASE9; execution: P10.1 PSI short, P10.2 FastSpan, P10.3 FastResponse tiprmin copies.
 
 | Семья | Пути | Почему | Действие |
 |-------|------|--------|----------|
 | AsymRmLtzCalBranch ×6 | `SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_*` | NeedTrain=1, C25e12 stall | Не overwrite; PHASE8 packA = замена |
-| AsymRmLtzCal preinh twins | `AsymRmLtzCal/EXP_*_preinh` | silent / n≠8 | **explicit defer** PHASE9 P4 (no overwrite) |
+| AsymRmLtzCal preinh twins | `AsymRmLtzCal/EXP_*_preinh` | silent / n≠8 | **T2** Test hygiene |
 | Branch канон trio | `TimeNeuronTimeLearnerBranch*` | demoted эталон | Не cold-reset |
 
-## Orphans PHASE10+ (catalog only — no Train/gate in PHASE9)
-
-Тренер: `NNeuronTimeLearner`. Рецепт C1e9+TipR@Rmin **не** применялся. Срез: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv).
+Тренер: `NNeuronTimeLearner`. Рецепт C1e9+TipR@Rmin **не** применялся на orphans ниже. Срез: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv).
 
 ### PSI (~38 EXP roots)
 

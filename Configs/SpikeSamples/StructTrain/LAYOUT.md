@@ -40,3 +40,4 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | PHASE5 short-span C1e9 |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | Матрица покрытия tiprmin/C1e9 по семьям |
 | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) | PHASE9 журнал волн + orphan → PHASE10+ |
+| [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) | PHASE10 S0 disk + tails T0–T2 + PSI/Fast |

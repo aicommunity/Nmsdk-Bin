@@ -3,7 +3,7 @@
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
-**Срез метрик:** 2026-09-14 (PHASE9 D0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (metrics-from-CSV; **GATE incl. PHASE8** packA C1e9 ×6; 132 Test / 43 `ok_audit=1`) · архивы [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv). Журнал: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
+**Срез метрик:** 2026-09-14 (PHASE9 T0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (metrics-from-CSV; **GATE incl. P1–P3** C1e9; 154 Test / 64 `ok_audit=1`) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).
 
 ## Критерий включения
 

@@ -8,7 +8,7 @@
 | ID | Содержание | Статус |
 |----|------------|--------|
 | S0 | Pack StatisticLog/EventsLog ≥200M → `archives/statisticlog_*` | **done** 111/111 |
-| T0 | GATE metrics rebuild (+P1–P3 C1e9) | pending |
+| T0 | GATE metrics rebuild (+P1–P3 C1e9) | **done** 154/64 |
 | T1 | P4b TipR Done/partial (br480 + Phase6 foil6) | pending |
 | T2 | AsymRmLtzCal packA_preinh ×3 Test hygiene | pending |
 | P10.1 | PSI short preinh250 → `*_C1e9` TipR@Rmin | pending |

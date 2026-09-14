@@ -3,7 +3,9 @@
 Журнал волн после PHASE8. Критерии кода **не** меняются (`ok_audit` в [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py)).  
 Карта семей: [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md). Реестр PASS: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md).
 
-**GATE D0:** 2026-09-14 · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (132 Test, 43 `ok_audit=1`, в т.ч. PHASE8 packA C1e9 ×6) · архив [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv).
+**GATE D0:** 2026-09-14 · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (исторически 132/43) · архив [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv).
+
+**GATE T0:** 2026-09-14 · live CSV **154 Test / 64 `ok_audit=1`** (+P1–P3) · [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv).
 
 **Disk prep → PHASE10 S0:** pack StatisticLog/EventsLog — см. [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) §S0.
 
@@ -23,6 +25,7 @@
 | ID | Содержание | Статус |
 |----|------------|--------|
 | D0 | GATE recompute + RECIPE + orphan catalog + этот журнал | **done** |
+| T0 | GATE sync +P1–P3 C1e9 (154/64) | **done** |
 | P1 | Branch short pack B/C ×12 clone packA + silent mid gate | **12/12 PASS** |
 | P2 | AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые FAIL keep) | **6/6 PASS** |
 | P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | **3/3 PASS** |
