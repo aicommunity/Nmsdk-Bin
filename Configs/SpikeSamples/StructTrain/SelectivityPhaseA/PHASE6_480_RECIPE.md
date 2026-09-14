@@ -113,3 +113,7 @@ Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PH
 ## PHASE9 P4 note
 
 Clone `Phase6/EXP_480_gen_tiprmin_phase9_foil6`: silent foil6 ltz/soma > target → 8/8 unreachable by mid alone. See `EXP_480_gen_tiprmin_phase9_foil6/PHASE9_FOIL6_NOTE.md`. Parent 7/8 retained.
+
+## PHASE10 T1 TipR Done retry
+
+Clone `Phase6/EXP_480_gen_tiprmin_phase10_done_tipr`: TipR from thr_only (`~25.8e6…86e6`) + silent 0.05 mid. Foil6 ltz still ≥ target → gate **7/8** (fires `10000010`). See `PHASE10_FOIL6_TIPR_NOTE.md`. No pack B/C @480.
