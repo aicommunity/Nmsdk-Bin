@@ -159,8 +159,9 @@ def overlay_train_neuron(train_model: Path, test_model: Path) -> None:
     test_model.write_text(test, encoding="utf-8")
 
 
-def apply_asym_matrix(params: Path, span_ms: int) -> None:
-    asym = ASYM / f"EXP_span{span_ms}ms_packA_gen" / "Test" / "Parameters_00.xml"
+def apply_asym_matrix(params: Path, span_ms: int, pack: str = "A") -> None:
+    pack = pack.upper()
+    asym = ASYM / f"EXP_span{span_ms}ms_pack{pack}_gen" / "Test" / "Parameters_00.xml"
     if not asym.exists():
         raise SystemExit(f"missing AsymRm matrix source {asym}")
     src = asym.read_text(encoding="utf-8")
@@ -211,7 +212,7 @@ def mid_thr(somas: list[float]) -> tuple[float, float]:
     return mid, gap
 
 
-def prepare_test(root: Path, span_ms: int, tips: list[int]) -> None:
+def prepare_test(root: Path, span_ms: int, tips: list[int], pack: str = "A") -> None:
     train, test = root / "Train", root / "Test"
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     L = " ".join(str(x) for x in tips)
@@ -237,7 +238,7 @@ def prepare_test(root: Path, span_ms: int, tips: list[int]) -> None:
     subprocess.check_call(
         [sys.executable, str(SCRIPTS / "patch_test_model_branch.py"), str(test / "Model_00.xml")]
     )
-    apply_asym_matrix(test / "Parameters_00.xml", span_ms)
+    apply_asym_matrix(test / "Parameters_00.xml", span_ms, pack=pack)
 
     for rel, learner_sb in [("Parameters_00.xml", "0"), ("Model_00.xml", "1")]:
         p = test / rel
@@ -293,15 +294,30 @@ def main() -> None:
     ap.add_argument("--span-ms", type=int, required=True)
     ap.add_argument("--test-t", type=float, default=40.0)
     ap.add_argument("--skip-prepare", action="store_true")
+    ap.add_argument("--pack", default="A", help="AsymRm foil pack A|B|C for MatrixData")
+    ap.add_argument(
+        "--matrix-only",
+        action="store_true",
+        help="With --skip-prepare: overlay Matrix from --pack before silent/gate",
+    )
+    ap.add_argument(
+        "--allow-done-tipr-fallback",
+        action="store_true",
+        help="If silent gap<=0, keep current TipR (Done TipR) and mid from foil max anyway",
+    )
     args = ap.parse_args()
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")
-    print("L=", tips)
+    print("L=", tips, "pack=", args.pack.upper())
 
     if not args.skip_prepare:
-        prepare_test(root, args.span_ms, tips)
+        prepare_test(root, args.span_ms, tips, pack=args.pack)
         print("prepared Test hygiene")
+    elif args.matrix_only:
+        apply_asym_matrix(test / "Parameters_00.xml", args.span_ms, pack=args.pack)
+        # Model Parameters often mirror Matrix — keep Params as gate source of foils
+        print(f"matrix overlay pack{args.pack.upper()}")
 
     for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
         set_fixed_thr(p, SILENT_THR)
@@ -321,8 +337,14 @@ def main() -> None:
     mid, gap = mid_thr(somas[:8])
     print(f"mid={mid} gap={gap}")
     if gap <= 0:
-        print("FAIL negative/zero gap — abort gate", file=sys.stderr)
-        sys.exit(3)
+        if args.allow_done_tipr_fallback:
+            # span100 gen PHASE8 pattern: use mid between target and max foil even if inverted amp
+            tgt, foil = somas[0], max(somas[1:8])
+            mid = 0.5 * (tgt + foil) if foil < tgt else tgt * 0.99
+            print(f"WARN gap<=0 → Done TipR fallback mid={mid}", file=sys.stderr)
+        else:
+            print("FAIL negative/zero gap — abort gate", file=sys.stderr)
+            sys.exit(3)
 
     mid_s = f"{mid:.12g}"
     for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:

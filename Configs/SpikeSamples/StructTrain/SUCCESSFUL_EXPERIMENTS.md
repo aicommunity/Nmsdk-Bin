@@ -149,6 +149,20 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 | EXP_br_span25_packA_preinh_C1e9 | L=`7 6 4 1`; TipR@Rmin; thr≈0.0517 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span50_packA_preinh_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0301 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_preinh_C1e9 | L=`22 18 11 1`; TipR@Rmin; thr≈0.0203 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packB_gen_C1e9 | clone packA; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packC_gen_C1e9 | clone packA; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packB_preinh_C1e9 | clone packA; thr≈0.0517 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packC_preinh_C1e9 | clone packA; thr≈0.0517 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packB_gen_C1e9 | clone packA; thr≈0.0644 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packC_gen_C1e9 | clone packA; thr≈0.0644 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packB_preinh_C1e9 | clone packA; thr≈0.0301 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packC_preinh_C1e9 | clone packA; thr≈0.0301 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packB_gen_C1e9 | Done TipR; thr≈0.00718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packC_gen_C1e9 | Done TipR; thr≈0.00718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packB_preinh_C1e9 | TipR@Rmin; thr≈0.0203 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packC_preinh_C1e9 | TipR@Rmin; thr≈0.0203 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
+
+PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
 ## Вне реестра
 
@@ -159,7 +173,6 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 ## Отложено
 
-- **PHASE9 P1** Branch short pack B/C ×12 — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 - **PHASE9 P2** AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые `_preinh` FAIL keep).
 - **PHASE9 P3** Branch NextSegInh short packA C1e9 ×3.
 - **PHASE9 P4** Phase6 foil trial6 + `EXP_br480_preinh250_tiprmin` FP; AsymRmLtzCal preinh twins defer.

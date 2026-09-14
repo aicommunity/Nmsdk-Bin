@@ -47,7 +47,7 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 
 ## S4 notes (pack B/C)
 
-- **Deferred**: pack B/C short-span Branch не клонировались в этой волне (фокус — packA gen+preinh). Строка в SUCCESSFUL §Отложено / RECIPE_COVERAGE.
+- Закрыто в **PHASE9 P1**: 12/12 PASS — см. [`../PHASE9_COVERAGE.md`](../PHASE9_COVERAGE.md).
 
 ## Waves
 

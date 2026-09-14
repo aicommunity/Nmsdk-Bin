@@ -14,6 +14,7 @@
 | AsymRmLtzCal twin gen @25/50/100 | `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span*_packA_gen` | PHASE5 Wave1 |
 | Branch @480 tiprmin / nextseginh | `SelectivityBranch/EXP_br480_tiprmin`, `…_nextseginh_tiprmin` | [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
 | Branch short-span packA gen+preinh @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_packA_{gen,preinh}_C1e9` | [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) (span100 gen: Done TipR fallback) |
+| Branch short-span pack B/C gen+preinh @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_pack{B,C}_{gen,preinh}_C1e9` | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P1 **12/12 PASS** |
 
 ## Partial
 
@@ -26,7 +27,6 @@
 
 | Семья | Пути | Почему | Действие |
 |-------|------|--------|----------|
-| **Branch short-span pack B/C** | `EXP_br_span*_pack{B,C}_*_C1e9` | deferred S4 | **PHASE9 P1** |
 | AsymRm **preinh B/C → C1e9** | `EXP_span*_pack{B,C}_preinh_C1e9` (new; keep old FAIL) | PHASE5 deferred | **PHASE9 P2** |
 | Branch NextSegInh short | `EXP_br_span*_packA_nextseginh_C1e9` | follow-up after PHASE8 | **PHASE9 P3** |
 | AsymRmLtzCalBranch ×6 | `SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_*` | NeedTrain=1, C25e12 stall | Не overwrite; PHASE8 packA = замена |

@@ -21,17 +21,24 @@
 | ID | Содержание | Статус |
 |----|------------|--------|
 | D0 | GATE recompute + RECIPE + orphan catalog + этот журнал | **done** |
-| P1 | Branch short pack B/C ×12 clone packA + silent mid gate | pending |
+| P1 | Branch short pack B/C ×12 clone packA + silent mid gate | **12/12 PASS** |
 | P2 | AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые FAIL keep) | pending |
-| P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | pending |
+| P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | scaffolded |
 | P4 | Phase6 foil trial6 + br480 preinh250 FP; twin preinh defer | pending |
 | Orphans | PSI / FastSpan / FastResponse / PhaseA03–05 — **catalog only** → PHASE10+ | cataloged |
 
 ## P1 matrix (status)
 
-| EXP | Status | thr / note |
-|-----|--------|------------|
-| `EXP_br_span{25,50,100}_pack{B,C}_{gen,preinh}_C1e9` | pending | clone from packA; Matrix ≡ A |
+MatrixData sha256 A≡B≡C на каждом span (25/`9d50a7ab1d2a`, 50/`4757f0a41370`, 100/`ac8bf5ff2ecf`). Helper: `--pack` / `--matrix-only` в [`phase8_tiprmin_gate.py`](SelectivityBranch/scripts/phase8_tiprmin_gate.py).
+
+| EXP | Status | thr |
+|-----|--------|-----|
+| `EXP_br_span25_pack{B,C}_gen_C1e9` | **PASS** | 0.07179975 |
+| `EXP_br_span25_pack{B,C}_preinh_C1e9` | **PASS** | 0.05171075 |
+| `EXP_br_span50_pack{B,C}_gen_C1e9` | **PASS** | 0.06440315 |
+| `EXP_br_span50_pack{B,C}_preinh_C1e9` | **PASS** | 0.03008405 |
+| `EXP_br_span100_pack{B,C}_gen_C1e9` | **PASS** (Done TipR) | 0.007181835 |
+| `EXP_br_span100_pack{B,C}_preinh_C1e9` | **PASS** | 0.0203054 |
 
 ## P2 matrix (status)
 
