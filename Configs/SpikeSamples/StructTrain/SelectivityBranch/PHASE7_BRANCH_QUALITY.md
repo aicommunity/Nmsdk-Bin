@@ -67,6 +67,9 @@ NextSeg/PreInh **не** нужны для 8/8 gen; tiprmin переноситс�
 
 TipR@Rmin **не** переносится на short-span Done без retrain (в отличие от @480).
 
+## PHASE10 T1 — preinh250 TipR Done/partial
+
+Clone [`EXP_br480_preinh250_tiprmin_phase10_tipr`](EXP_br480_preinh250_tiprmin_phase10_tipr/): Done TipR (PreInh250 skew) и partial → оба `ok_audit=0` (per_stim). Parent **7/8** retained. See `PHASE10_MID_TIPR_NOTE.md`. Helper: [`scripts/phase10_br480_tipr_retry.py`](scripts/phase10_br480_tipr_retry.py).
 
 ## Рецепт PASS (Branch @480)
 
