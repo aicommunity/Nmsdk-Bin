@@ -5,6 +5,8 @@
 
 **GATE D0:** 2026-09-14 · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (132 Test, 43 `ok_audit=1`, в т.ч. PHASE8 packA C1e9 ×6) · архив [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv).
 
+**Disk prep → PHASE10 S0:** pack StatisticLog/EventsLog — см. [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) §S0.
+
 ## Анти-регрессия
 
 Не cold-reset / overwrite:

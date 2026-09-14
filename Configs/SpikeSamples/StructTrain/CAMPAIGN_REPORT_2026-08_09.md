@@ -57,6 +57,7 @@
 | 13 сен | PHASE7 Branch quality | [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) | TipR@Rmin → Branch **8/8** audit+last-pulse; канон trio demoted |
 | 13 сен | PHASE8 Branch short-span | [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) | packA gen+preinh @25/50/100 **6/6 PASS** (`ok_audit=1`); pack B/C deferred |
 | 14 сен | PHASE9 | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) | D0 GATE; P1 Branch B/C **12/12**; P2 AsymRm preinh B/C C1e9 **6/6**; P3 NextSeg short **3/3**; P4 foil/mid docs (FAIL) |
+| 14 сен | PHASE10 S0 | [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) | Pack StatisticLog/EventsLog ≥200M (111 tar) — Avail 142G→308G; затем tails T0–T2 + PSI/Fast |
 
 ---
 
