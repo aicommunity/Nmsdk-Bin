@@ -103,6 +103,8 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 | EXP_span50ms_packC_gen | clone A→C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packC_gen/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_packA_gen | C1e9; TipR@Rmin; thr=0.006681; L=`52 48 27 1` | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_packA_preinh | Preinh C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packB_preinh_C1e9 | PHASE9 P2 TipR@Rmin; thr≈0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packC_preinh_C1e9 | PHASE9 P2 TipR@Rmin; thr≈0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_packB_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packB_gen/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_packC_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packC_gen/Test/SelectivityLog/results.csv) |
 
@@ -168,6 +170,17 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
+
+## Branch NextSegInh short-span (PHASE9 P3)
+
+Журнал: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Cold Train + `EnableNextSegmentInhibition=1` + TipR@Rmin + mid soma.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_br_span25_packA_nextseginh_C1e9 | L=`13 11 7 1`; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packA_nextseginh_C1e9 | L=`14 9 6 1`; thr≈0.0456 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packA_nextseginh_C1e9 | L=`21 17 11 1`; thr≈0.0144 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+
 ## Вне реестра
 
 - **Branch канон** (`TimeNeuronTimeLearnerBranch*`) без tiprmin: legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per_stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md); PHASE7: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
@@ -177,9 +190,7 @@ PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
 ## Отложено
 
-- **PHASE9 P2** AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые `_preinh` FAIL keep).
-- **PHASE9 P3** Branch NextSegInh short packA C1e9 ×3.
-- **PHASE9 P4** Phase6 foil trial6 + `EXP_br480_preinh250_tiprmin` FP; AsymRmLtzCal preinh twins defer.
+- PHASE6 foil trial6 / br480 preinh250 FP: mid-only **FAIL** (amp inversion) — см. [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P4 notes.
 - **PHASE10+ orphans** PSI / FastSpan / FastResponse / PhaseA EXP03–05 — каталог в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) §Orphans (без Train/gate в PHASE9).
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
 - AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).

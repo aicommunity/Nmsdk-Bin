@@ -23,8 +23,8 @@
 | D0 | GATE recompute + RECIPE + orphan catalog + этот журнал | **done** |
 | P1 | Branch short pack B/C ×12 clone packA + silent mid gate | **12/12 PASS** |
 | P2 | AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые FAIL keep) | **6/6 PASS** |
-| P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | scaffolded |
-| P4 | Phase6 foil trial6 + br480 preinh250 FP; twin preinh defer | pending |
+| P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | **3/3 PASS** |
+| P4 | Phase6 foil trial6 + br480 preinh250 FP; twin preinh defer | **done** (docs; mid FAIL) |
 | Orphans | PSI / FastSpan / FastResponse / PhaseA03–05 — **catalog only** → PHASE10+ | cataloged |
 
 ## P1 matrix (status)
@@ -52,9 +52,13 @@ Helper: [`SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py`](SelectivityAsymRm
 
 ## P3 matrix (status)
 
-| EXP | Status |
-|-----|--------|
-| `EXP_br_span{25,50,100}_packA_nextseginh_C1e9` | pending |
+Cold Train C1e9 + NextSeg=1; Test shell from packA gen + neuron overlay (full `prepare_test` sync broke Matrix → n=25).
+
+| EXP | Status | L | thr |
+|-----|--------|---|-----|
+| `EXP_br_span25_packA_nextseginh_C1e9` | **PASS** | `13 11 7 1` | 0.07179975 |
+| `EXP_br_span50_packA_nextseginh_C1e9` | **PASS** | `14 9 6 1` | ≈0.04564 |
+| `EXP_br_span100_packA_nextseginh_C1e9` | **PASS** | `21 17 11 1` | ≈0.01443 |
 
 ## Orphans → PHASE10+ (no Train/gate in PHASE9)
 
@@ -73,3 +77,14 @@ Helper: [`SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py`](SelectivityAsymRm
 - Helper Branch: [`SelectivityBranch/scripts/phase8_tiprmin_gate.py`](SelectivityBranch/scripts/phase8_tiprmin_gate.py)
 - AsymRm clone: [`SelectivityAsymRm/scripts/clone_asymrm_exp.sh`](SelectivityAsymRm/scripts/clone_asymrm_exp.sh)
 - PHASE8 эталон: [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md)
+
+## P4 quality notes
+
+### Phase6 foil trial6
+Clone `SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin_phase9_foil6` — silent foil6 ltz/soma **>** target → 8/8 unreachable by mid alone. See `PHASE9_FOIL6_NOTE.md`. Parent 7/8 retained.
+
+### Branch br480 preinh250 FP trial4
+Clone `SelectivityBranch/EXP_br480_preinh250_tiprmin_phase9_mid` — silent soma gap **negative** (trial4 > target). Mid-only FAIL. See `PHASE9_MID_NOTE.md`. Parent 7/8 retained.
+
+### AsymRmLtzCal preinh twins
+`SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span*_packA_preinh`: GATE n=2 silent — **explicit defer** (no overwrite stall Train). PHASE10+ if revisited.

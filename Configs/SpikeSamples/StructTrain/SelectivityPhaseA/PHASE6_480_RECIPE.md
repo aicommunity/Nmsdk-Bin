@@ -109,3 +109,7 @@ Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PH
 - Не трогать AsymRm span25/50/100 PASS cold-reset.
 - Исторические PhaseA / TimeNeuron / PSI — сохранены; Phase6 только клоны.
 - Критерии `ok_audit` / acc≥4 в коде **не** менялись.
+
+## PHASE9 P4 note
+
+Clone `Phase6/EXP_480_gen_tiprmin_phase9_foil6`: silent foil6 ltz/soma > target → 8/8 unreachable by mid alone. See `EXP_480_gen_tiprmin_phase9_foil6/PHASE9_FOIL6_NOTE.md`. Parent 7/8 retained.
