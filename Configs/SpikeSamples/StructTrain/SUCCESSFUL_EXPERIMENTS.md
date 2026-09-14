@@ -3,7 +3,7 @@
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
-**Срез метрик:** 2026-09-13 · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (пересчёт metrics-from-CSV после PHASE5–7; архив [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv)).
+**Срез метрик:** 2026-09-14 (PHASE9 D0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (metrics-from-CSV; **GATE incl. PHASE8** packA C1e9 ×6; 132 Test / 43 `ok_audit=1`) · архивы [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv). Журнал: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
 ## Критерий включения
 
@@ -159,8 +159,10 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 ## Отложено
 
-- **PHASE8** pack B/C Branch short-span — deferred ([`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) S4).
-- AsymRm **preinh B/C** tiprmin/C1e9 — только карта в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md); вне PHASE8 execution.
-- Preinh B/C @50/100 и полная 18-EXP сетка со старыми RC — вне PHASE5 waves 0–2. См. [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
-- PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов; deferred. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
+- **PHASE9 P1** Branch short pack B/C ×12 — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
+- **PHASE9 P2** AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые `_preinh` FAIL keep).
+- **PHASE9 P3** Branch NextSegInh short packA C1e9 ×3.
+- **PHASE9 P4** Phase6 foil trial6 + `EXP_br480_preinh250_tiprmin` FP; AsymRmLtzCal preinh twins defer.
+- **PHASE10+ orphans** PSI / FastSpan / FastResponse / PhaseA EXP03–05 — каталог в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) §Orphans (без Train/gate в PHASE9).
+- PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
 - AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).

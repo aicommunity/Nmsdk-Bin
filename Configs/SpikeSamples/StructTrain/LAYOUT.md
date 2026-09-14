@@ -39,3 +39,4 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 | [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) | PHASE8 Branch short-span C1e9 @25/50/100 |
 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | PHASE5 short-span C1e9 |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | Матрица покрытия tiprmin/C1e9 по семьям |
+| [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) | PHASE9 журнал волн + orphan → PHASE10+ |
