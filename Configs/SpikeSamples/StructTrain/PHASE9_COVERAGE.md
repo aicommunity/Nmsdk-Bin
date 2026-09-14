@@ -22,7 +22,7 @@
 |----|------------|--------|
 | D0 | GATE recompute + RECIPE + orphan catalog + этот журнал | **done** |
 | P1 | Branch short pack B/C ×12 clone packA + silent mid gate | **12/12 PASS** |
-| P2 | AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые FAIL keep) | pending |
+| P2 | AsymRm `*_pack{B,C}_preinh_C1e9` ×6 (старые FAIL keep) | **6/6 PASS** |
 | P3 | Branch NextSegInh short packA C1e9 ×3 cold Train + gate | scaffolded |
 | P4 | Phase6 foil trial6 + br480 preinh250 FP; twin preinh defer | pending |
 | Orphans | PSI / FastSpan / FastResponse / PhaseA03–05 — **catalog only** → PHASE10+ | cataloged |
@@ -42,9 +42,13 @@ MatrixData sha256 A≡B≡C на каждом span (25/`9d50a7ab1d2a`, 50/`4757f
 
 ## P2 matrix (status)
 
-| EXP | Status | Seed |
-|-----|--------|------|
-| `EXP_span{25,50,100}ms_pack{B,C}_preinh_C1e9` | pending | `packA_preinh` via `clone_asymrm_exp.sh` |
+Helper: [`SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py`](SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py). Old `*_preinh` FAIL kept.
+
+| EXP | Status | thr |
+|-----|--------|-----|
+| `EXP_span25ms_pack{B,C}_preinh_C1e9` | **PASS** | 0.004686425 |
+| `EXP_span50ms_pack{B,C}_preinh_C1e9` | **PASS** | 0.011759 |
+| `EXP_span100ms_pack{B,C}_preinh_C1e9` | **PASS** | 0.006681015 |
 
 ## P3 matrix (status)
 

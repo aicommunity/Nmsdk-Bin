@@ -11,6 +11,7 @@
 | Семья | Конфиги | Журнал |
 |-------|---------|--------|
 | AsymRm A gen+preinh, B/C gen @25/50/100 | `SelectivityAsymRm/EXP_span{25,50,100}ms_pack{A,B,C}_gen` (+ A_preinh) | [`PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) |
+| AsymRm pack B/C preinh C1e9 @25/50/100 | `SelectivityAsymRm/EXP_span*_pack{B,C}_preinh_C1e9` (old FAIL kept) | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P2 **6/6 PASS** |
 | AsymRmLtzCal twin gen @25/50/100 | `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span*_packA_gen` | PHASE5 Wave1 |
 | Branch @480 tiprmin / nextseginh | `SelectivityBranch/EXP_br480_tiprmin`, `…_nextseginh_tiprmin` | [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md) |
 | Branch short-span packA gen+preinh @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_packA_{gen,preinh}_C1e9` | [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) (span100 gen: Done TipR fallback) |
@@ -27,7 +28,6 @@
 
 | Семья | Пути | Почему | Действие |
 |-------|------|--------|----------|
-| AsymRm **preinh B/C → C1e9** | `EXP_span*_pack{B,C}_preinh_C1e9` (new; keep old FAIL) | PHASE5 deferred | **PHASE9 P2** |
 | Branch NextSegInh short | `EXP_br_span*_packA_nextseginh_C1e9` | follow-up after PHASE8 | **PHASE9 P3** |
 | AsymRmLtzCalBranch ×6 | `SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_*` | NeedTrain=1, C25e12 stall | Не overwrite; PHASE8 packA = замена |
 | AsymRmLtzCal preinh twins | `AsymRmLtzCal/EXP_*_preinh` | silent / n≠8 | defer note PHASE9 P4 |
