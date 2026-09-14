@@ -11,7 +11,7 @@
 | T0 | GATE metrics rebuild (+P1–P3 C1e9) | **done** 154/64 |
 | T1 | P4b TipR Done/partial (br480 + Phase6 foil6) | **done** (both FAIL 8/8; parents 7/8 keep) |
 | T2 | AsymRmLtzCal packA_preinh ×3 Test hygiene | **3/3 PASS** 8/8 |
-| P10.1 | PSI short preinh250 → `*_C1e9` TipR@Rmin | pending |
+| P10.1 | PSI short preinh250 → `*_C1e9` TipR@Rmin | **3/3 ok_audit** (partial_FA 4–6/8; no cold Train) |
 | P10.2 | FastSpan short → `*_C1e9` / `*_preinh_C1e9` | pending |
 | P10.3 | FastResponse D001/D002 C1e9 tiprmin copies | pending |
 | P10.4 | PhaseA03–05 / LtzCal Fast — docs skip | pending |
@@ -44,3 +44,15 @@ Test refreshed from AsymRm `packA_preinh` (Train stall untouched). TipR: @25 bas
 | `AsymRmLtzCal/EXP_span25ms_packA_preinh` | **PASS** 8/8 | 0.004686425 |
 | `…/EXP_span50ms_packA_preinh` | **PASS** 8/8 | 0.011759 |
 | `…/EXP_span100ms_packA_preinh` | **PASS** 8/8 | 0.006681015 |
+
+## P10.1 PSI short preinh250 C1e9
+
+Neuron kept `NSPNeuronGenPreinh2_5`. TipR@Rmin + GTS=20000 + silent mid (no cold Train; gap>0).
+
+| EXP | Status | thr | fires |
+|-----|--------|-----|-------|
+| `EXP_span25ms_preinh250_C1e9` | ok_audit=1 acc5 | 0.03457115 | `11110000` |
+| `EXP_span50ms_preinh250_C1e9` | ok_audit=1 acc4 | 0.02956455 | `11110001` |
+| `EXP_span100ms_preinh250_C1e9` | ok_audit=1 acc6 | 0.0181721 | `10100001` |
+
+Not added to SUCCESSFUL (partial_FA / not ≥7 selective). Cold Train deferred (gap>0 trigger not met).

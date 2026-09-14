@@ -59,7 +59,7 @@ Catalog started in PHASE9; execution: P10.1 PSI short, P10.2 FastSpan, P10.3 Fas
 | | `EXP30`–`EXP35` (200–400 мс) | 3–5/8; часть ok_audit |
 
 Нейроны: `NSPNeuronGen` / `NSPNeuronGenPreinh{k}` — **не** AsymRm C1e9.  
-**PHASE10 start:** `preinh250` @25/50/100 → новые `*_C1e9` + TipR@Rmin + mid (не весь k-sweep).
+**PHASE10.1 done:** `EXP_span{25,50,100}ms_preinh250_C1e9` — TipR@Rmin+mid; `ok_audit=1` partial_FA (не 8/8). Cold Train deferred.
 
 ### FastSpan (8)
 
