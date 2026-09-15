@@ -8,7 +8,7 @@
 | ID | Содержание | Статус |
 |----|------------|--------|
 | RD | Pack StatisticLog ≥200M; Avail≥80G gate | **done** 3/3 |
-| R0 | AUDIT_MATRIX + GATE archive + docs | pending |
+| R0 | AUDIT_MATRIX + GATE archive + docs | **done** 168 EXP / 167 GATE / 77 ok_audit |
 | R1 | n=8 hygiene + foil6 CSV | pending |
 | R2.1 | Branch NextSeg pack B/C ×6 | pending |
 | R2.2 | PSI short C1e9 cold Train ×3 | pending |

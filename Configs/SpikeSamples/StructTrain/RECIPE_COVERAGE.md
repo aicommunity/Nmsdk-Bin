@@ -4,7 +4,7 @@
 Для short-span дополнительно **C1e9** neuron + cold Train (Test-only tiprmin на Branch short-span — FAIL).
 
 Критерии кода не меняются — [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
-Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). GATE: 2026-09-15 · 167 Test · 77 `ok_audit=1` (P10 Fast).
+Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). GATE: 2026-09-15 · 167 Test · 77 `ok_audit=1` (PHASE11 R0 = P10 Fast). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
 
 ## Covered
 
@@ -27,13 +27,16 @@
 |-------|-----|--------|--------|
 | Phase6 TimeLearner @480 | 7/8 | `SelectivityPhaseA/Phase6/EXP_480_*` | foil trial6; pack B/C deferred — [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · PHASE9 P4 |
 | Branch preinh250 tiprmin | 7/8 | `SelectivityBranch/EXP_br480_preinh250_tiprmin` | 1 FP (trial4) · PHASE9 P4 |
+| FastSpan span50 gen C1e9 | 5/8 | `EXP_span50ms_fast_C1e9` | partial_FA → PHASE11 R2.3 |
+| PSI short C1e9 | 4–6/8 | `EXP_span*_preinh250_C1e9` | cold Train → PHASE11 R2.2 |
 
-## Gap (deferred / FAIL probes)
+## Gap (PHASE11 execution)
 
 | Тема | Путь | Статус |
 |------|------|--------|
-| Phase6 foil trial6 / br480 FP | quality clones | **T1** TipR Done/partial — still 7/8 |
-| FastResponse tiprmin | `EXPD00{1,2}C1e9_phase10_tiprmin` | **P10.3** silent / fire_all |
+| Branch NextSeg pack B/C short | `EXP_br_span*_pack{B,C}_nextseginh_C1e9` | **R2.1** NEW |
+| Phase6 foil trial6 / br480 FP | quality clones | TipR Done/partial — still 7/8 |
+| FastResponse tiprmin | `EXPD00{1,2}C1e9_phase10_tiprmin` | P10.3 silent / fire_all |
 
 ## Orphans PHASE10+ (catalog / residual)
 

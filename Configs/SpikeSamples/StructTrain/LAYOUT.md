@@ -41,3 +41,5 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | Матрица покрытия tiprmin/C1e9 по семьям |
 | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) | PHASE9 журнал волн + orphan → PHASE10+ |
 | [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) | PHASE10 S0 disk + tails T0–T2 + PSI/Fast |
+| [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md) | PHASE11 re-audit RD–R4 + MATRIX |
+| [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) | trainer/recipe/gate/orphan matrix |
