@@ -58,6 +58,12 @@ Thr re-mid: still acc5. Cold Train: amp inversion → acc2 `ok_audit=0`. Restore
 
 See [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) §PHASE11 defer catalog.
 
+### Follow-up: identical cold repro
+
+Harness: [`_repro/README.md`](_repro/README.md) · result [`_repro/REPRO_COLD_RESULT.md`](_repro/REPRO_COLD_RESULT.md).
+
+Clean tip-1 cold ×2 (FastSpan25 `-t`160, Branch25 `-t`320) → TipR@Rmin + mid. **r1≡r2** (deterministic); neither family matches gold fires → `REPRO_FAIL` (not `NONDET`). FS L=`7 5 4 1` vs gold `6 5 4 1`; Branch L matches gold, fires `10010000` vs gold `10000000`.
+
 ### R2.2 PSI short C1e9 cold
 
 | span | L after | thr | acc | note |
