@@ -185,6 +185,19 @@ PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 | EXP_br_span50_packA_nextseginh_C1e9 | L=`14 9 6 1`; thr≈0.0456 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_nextseginh_C1e9 | L=`21 17 11 1`; thr≈0.0144 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 
+## Branch NextSegInh short pack B/C (PHASE11 R2.1)
+
+Clone packA + Matrix overlay B/C via `phase8_tiprmin_gate.py --skip-prepare --matrix-only` (no cold Train). Mid `soma_amp_sum`.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_br_span25_packB_nextseginh_C1e9 | thr≈0.0476 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packC_nextseginh_C1e9 | thr≈0.0476 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packB_nextseginh_C1e9 | thr≈0.0456 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packC_nextseginh_C1e9 | thr≈0.0456 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packB_nextseginh_C1e9 | thr≈0.0144 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span100_packC_nextseginh_C1e9 | thr≈0.0144 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+
 ## FastSpan short C1e9 (PHASE10)
 
 Журнал: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) P10.2. AsymRm C1e9 neuron + cold Train + TipR@Rmin + mid `ltz`. Last-pulse на цели.

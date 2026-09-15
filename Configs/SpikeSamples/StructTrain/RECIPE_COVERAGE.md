@@ -4,7 +4,7 @@
 Для short-span дополнительно **C1e9** neuron + cold Train (Test-only tiprmin на Branch short-span — FAIL).
 
 Критерии кода не меняются — [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
-Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). GATE: 2026-09-15 · 167 Test · 77 `ok_audit=1` (PHASE11 R0 = P10 Fast). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
+Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). GATE: 2026-09-15 · 168 Test · 97 `ok_audit=1` (PHASE11 R1). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
 
 ## Covered
 
@@ -18,6 +18,7 @@
 | Branch short-span packA gen+preinh @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_packA_{gen,preinh}_C1e9` | [`PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md) (span100 gen: Done TipR fallback) |
 | Branch short-span pack B/C gen+preinh @25/50/100 | `SelectivityBranch/EXP_br_span{25,50,100}_pack{B,C}_{gen,preinh}_C1e9` | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P1 **12/12 PASS** |
 | Branch NextSegInh short packA @25/50/100 | `SelectivityBranch/EXP_br_span*_packA_nextseginh_C1e9` | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P3 **3/3 PASS** |
+| Branch NextSegInh short pack B/C @25/50/100 | `SelectivityBranch/EXP_br_span*_pack{B,C}_nextseginh_C1e9` | [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md) R2.1 **6/6 PASS** |
 | FastSpan short C1e9 gen+preinh @25/50/100 | `SelectivityFastSpan/EXP_span*_fast_C1e9` (+ `_preinh_C1e9`) | [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) P10.2 (4×8/8 + 7/8; span50 gen partial) |
 | PSI short preinh250 C1e9 | `SelectivityPresynapticInhib/EXP_span*_preinh250_C1e9` | P10.1 `ok_audit` partial_FA |
 
@@ -34,7 +35,6 @@
 
 | Тема | Путь | Статус |
 |------|------|--------|
-| Branch NextSeg pack B/C short | `EXP_br_span*_pack{B,C}_nextseginh_C1e9` | **R2.1** NEW |
 | Phase6 foil trial6 / br480 FP | quality clones | TipR Done/partial — still 7/8 |
 | FastResponse tiprmin | `EXPD00{1,2}C1e9_phase10_tiprmin` | P10.3 silent / fire_all |
 

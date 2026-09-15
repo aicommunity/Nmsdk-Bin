@@ -10,7 +10,7 @@
 | RD | Pack StatisticLog ≥200M; Avail≥80G gate | **done** 3/3 |
 | R0 | AUDIT_MATRIX + GATE archive + docs | **done** 168 EXP / 167 GATE / 77 ok_audit |
 | R1 | n=8 hygiene + foil6 CSV | **done** 20 Test + foil6 CSV; GATE 168 / 97 ok_audit |
-| R2.1 | Branch NextSeg pack B/C ×6 | pending |
+| R2.1 | Branch NextSeg pack B/C ×6 | **done** 6/6 8/8 selective last-pulse |
 | R2.2 | PSI short C1e9 cold Train ×3 | pending |
 | R2.3 | FastSpan span50 gen fix | pending |
 | R2.4 | br480 preinh retrain (optional) | pending |
