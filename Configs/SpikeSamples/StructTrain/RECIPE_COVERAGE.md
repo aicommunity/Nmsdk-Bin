@@ -20,16 +20,16 @@
 | Branch NextSegInh short packA @25/50/100 | `SelectivityBranch/EXP_br_span*_packA_nextseginh_C1e9` | [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P3 **3/3 PASS** |
 | Branch NextSegInh short pack B/C @25/50/100 | `SelectivityBranch/EXP_br_span*_pack{B,C}_nextseginh_C1e9` | [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md) R2.1 **6/6 PASS** |
 | FastSpan short C1e9 gen+preinh @25/50/100 | `SelectivityFastSpan/EXP_span*_fast_C1e9` (+ `_preinh_C1e9`) | [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) P10.2 (4×8/8 + 7/8; span50 gen partial) |
-| PSI short preinh250 C1e9 | `SelectivityPresynapticInhib/EXP_span*_preinh250_C1e9` | P10.1 `ok_audit` partial_FA |
+| PSI short preinh250 C1e9 | `SelectivityPresynapticInhib/EXP_span*_preinh250_C1e9` | P10.1 + R2.2 cold; still partial_FA 4–6/8 |
 
 ## Partial
 
 | Семья | Acc | Конфиг | Пробел |
 |-------|-----|--------|--------|
-| Phase6 TimeLearner @480 | 7/8 | `SelectivityPhaseA/Phase6/EXP_480_*` | foil trial6; pack B/C deferred — [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) · PHASE9 P4 |
+| Phase6 TimeLearner @480 | 7/8 | `SelectivityPhaseA/Phase6/EXP_480_*` | foil trial6 closed — [`PHASE11_FOIL6_CLOSURE.md`](SelectivityPhaseA/Phase6/PHASE11_FOIL6_CLOSURE.md) |
 | Branch preinh250 tiprmin | 7/8 | `SelectivityBranch/EXP_br480_preinh250_tiprmin` | 1 FP (trial4) · PHASE9 P4 |
 | FastSpan span50 gen C1e9 | 5/8 | `EXP_span50ms_fast_C1e9` | PHASE11 R2.3 thr+cold fail (amp inversion); restored P10 partial; sibling preinh PASS |
-| PSI short C1e9 | 4–6/8 | `EXP_span*_preinh250_C1e9` | cold Train → PHASE11 R2.2 |
+| PSI short C1e9 | 4–6/8 | `EXP_span*_preinh250_C1e9` | PHASE11 R2.2 cold done; still partial (no SUCCESSFUL ≥7) |
 
 ## Gap (PHASE11 execution)
 
@@ -80,22 +80,38 @@
 | EXP | GATE |
 |-----|------|
 | `EXP00CtrlExp04`, `EXPD00{1,2,5}C25e11`, `…C5e10` | fire_all |
-| `EXPD001C1e9` / `EXPD002C1e9` parents | silent / incomplete |
-| `EXPD00{1,2}C1e9_phase10_tiprmin` | **P10.3** silent / fire_all |
+| `EXPD001C1e9` / `EXPD002C1e9` parents | silent / incomplete → R1 n=8 silent |
+| `EXPD00{1,2}C1e9_phase10_tiprmin` | **P10.3** TipR-only FAIL (silent / fire_all) |
+
+**PHASE11 R3:** TipR-only FAIL catalogued. AsymRm C1e9 scaffold for FR = **вне scope** unless disk budget + explicit campaign (not PHASE11).
 
 ### PhaseA EXP03–05 (3)
 
 | EXP | GATE |
 |-----|------|
-| `EXP03_sync_tolerance_015` | fail / n≠8 — P10.4 skip |
-| `EXP04_sync_tolerance_010` | fail / n≠8 — P10.4 skip |
-| `EXP05_resistance_gain_025` | fail / n≠8 — P10.4 skip |
+| `EXP03_sync_tolerance_015` | fail — R4 defer |
+| `EXP04_sync_tolerance_010` | R1 n=8 partial_FA — hygiene only |
+| `EXP05_resistance_gain_025` | R1 n=8 partial_FA — hygiene only |
 
-### LtzCal Fast / BranchFastSpan
+### LtzCal Fast / Branch / FastSpanLtzCal
 
-`SelectivityLtzCalibrate/FastSpanLtzCal`, `BranchFastSpan` — superseded PHASE8 / P10.2.
+`SelectivityLtzCalibrate/FastSpanLtzCal`, `AsymRmLtzCalBranch`, `BranchFastSpan` — **wontfix**: superseded by PHASE8 Branch short-span + P10.2 FastSpan C1e9. Do not cold-reset stall parents.
+
+## PHASE11 defer catalog (R4)
+
+| Кластер | Почему |
+|---------|--------|
+| PSI k-sweep EXP00–15 | R1 n=8 only; not full C1e9 recipe |
+| PSI long / span10 | C1e9 short still partial after R2.2 cold |
+| PhaseA EXP03–05 | R1 hygiene enough |
+| FastSpan ts10k | silent acc7 |
+| RegressionFull480 / `_smoke_sync` | harness / incomplete by design |
+| AsymRm old FAIL `*_preinh` (non-C1e9) | keep intentionally |
+| FastResponse AsymRm scaffold | disk + scope |
+| Phase6 pack B/C @480 | no Matrix packs; foil6 closure |
 
 ## Вне scope
 
 - `UProperty EstDelayPerSeg` для Branch (отдельный PulseLib PR).
 - Полный retrain orphans — только PHASE10+.
+- Branch канон trio cold-reset.

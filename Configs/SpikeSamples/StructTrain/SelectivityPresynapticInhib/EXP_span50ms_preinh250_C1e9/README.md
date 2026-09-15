@@ -1,5 +1,7 @@
 # EXP_span50ms_preinh250_C1e9
 
-PHASE10.1 from `EXP23_span50ms_preinh250`.
-NeuronClass kept `NSPNeuronGenPreinh2_5`. TipR@Rmin, Rmin=2e7, GTS=20000.
-Prefer no cold Train; mid gate via phase9_preinh_bc_gate.py.
+PSI short preinh250 + TipR@Rmin (PHASE10.1). Neuron `NSPNeuronGenPreinh2_5`.
+
+## PHASE11 R2.2 cold Train
+
+Cold → TipR@Rmin + mid. Gate: acc4 partial_FA `ok_audit=1` — not SUCCESSFUL (≥7). Pack `archives/statisticlog_20260915T141845Z/`.
