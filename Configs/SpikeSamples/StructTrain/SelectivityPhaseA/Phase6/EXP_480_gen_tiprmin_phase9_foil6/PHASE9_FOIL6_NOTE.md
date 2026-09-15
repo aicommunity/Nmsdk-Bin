@@ -12,3 +12,7 @@ Silent thr≈0.05 (`results_silent_thr05.csv`):
 **foil6 > target** — amp inversion. Gate thr≈0.016894 fires trial0+trial6.
 
 Mid-thr alone cannot reach 8/8 without foil-matrix change. Pack B/C @480 **deferred** (no Matrix packs). Parent PASS retained; this clone is diagnostic only.
+
+## PHASE11 R1
+
+Gate via `phase9_preinh_bc_gate.py --silent-thr 0.05 --metric ltz_potential_max`: CSV complete n=8, thr≈0.0168941, fires=`10000010`, acc=7/8 selective, last-pulse ok. Confirms foil6 unreachable; audit gap closed (no missing CSV).
