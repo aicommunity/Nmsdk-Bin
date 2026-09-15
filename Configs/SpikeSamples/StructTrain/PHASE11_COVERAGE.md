@@ -12,7 +12,7 @@
 | R1 | n=8 hygiene + foil6 CSV | **done** 20 Test + foil6 CSV; GATE 168 / 97 ok_audit |
 | R2.1 | Branch NextSeg pack B/C ×6 | **done** 6/6 8/8 selective last-pulse |
 | R2.2 | PSI short C1e9 cold Train ×3 | pending |
-| R2.3 | FastSpan span50 gen fix | pending |
+| R2.3 | FastSpan span50 gen fix | **done** thr+cold fail; restored P10 partial_FA; pack `statisticlog_20260915T103702Z` |
 | R2.4 | br480 preinh retrain (optional) | pending |
 | R3 | foil6/FR/stall closure docs | pending |
 | R4 | defer catalog | pending |
@@ -42,3 +42,7 @@ S0 prior: [`archives/statisticlog_20260914T161650Z/`](archives/statisticlog_2026
 ## Анти-регрессия
 
 Не cold-reset PASS parents (Branch tiprmin / packA–C C1e9, AsymRm, Phase6 7/8, AsymRmLtzCalBranch stall). Не менять `ok_audit`.
+
+### R2.3 FastSpan span50 gen
+
+Thr re-mid: still acc5. Cold Train: amp inversion → acc2 `ok_audit=0`. Restored PHASE10 XML/CSV (acc5 `ok_audit=1`). Sibling preinh 8/8 kept. Disk: pack after Train Avail 300G→303G.
