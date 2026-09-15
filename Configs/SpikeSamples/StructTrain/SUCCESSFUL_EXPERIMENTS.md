@@ -3,7 +3,7 @@
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
-**Срез метрик:** 2026-09-14 (PHASE9 T0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (metrics-from-CSV; **GATE incl. P1–P3** C1e9; 154 Test / 64 `ok_audit=1`) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).
+**Срез метрик:** 2026-09-15 (PHASE10 Fast) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (metrics-from-CSV; **167 Test / 77 `ok_audit=1`**) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).
 
 ## Критерий включения
 
@@ -115,6 +115,9 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 | EXP_span25ms_packA_gen | clone Model/Parameters с AsymRm эталона | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
 | EXP_span50ms_packA_gen | clone Test эталона; GTS=20000; thr=0.011759 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_packA_gen | clone Test эталона; GTS=20000; thr=0.006681 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_packA_preinh | PHASE10 T2 Test hygiene from AsymRm A_preinh; thr=0.004686425 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_preinh | T2 TipR@Rmin; thr=0.011759 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_packA_preinh | T2 TipR@Rmin; thr=0.006681015 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Test/SelectivityLog/results.csv) |
 
 Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md), фаза 50/100: [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
 
@@ -181,6 +184,20 @@ PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 | EXP_br_span50_packA_nextseginh_C1e9 | L=`14 9 6 1`; thr≈0.0456 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_nextseginh_C1e9 | L=`21 17 11 1`; thr≈0.0144 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 
+## FastSpan short C1e9 (PHASE10)
+
+Журнал: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) P10.2. AsymRm C1e9 neuron + cold Train + TipR@Rmin + mid `ltz`. Last-pulse на цели.
+
+| Имя | Рычаг | Acc | Режим | Конфиги |
+|-----|--------|-----|-------|---------|
+| EXP_span25ms_fast_C1e9 | AsymRmD001C1e9; thr=0.0328372 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.01563085 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.0112976 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_fast_C1e9 | AsymRmD001C1e9; thr=0.01568185 | 7/8 | selective | [Train](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span100ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.00708053 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
+
+`EXP_span50ms_fast_C1e9` — `ok_audit=1` partial_FA acc5; не в реестре.
+
 ## Вне реестра
 
 - **Branch канон** (`TimeNeuronTimeLearnerBranch*`) без tiprmin: legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per_stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md); PHASE7: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
@@ -190,7 +207,9 @@ PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
 ## Отложено
 
-- PHASE6 foil trial6 / br480 preinh250 FP: mid-only **FAIL** (amp inversion) — см. [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P4 notes.
-- **PHASE10+ orphans** PSI / FastSpan / FastResponse / PhaseA EXP03–05 — каталог в [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) §Orphans (без Train/gate в PHASE9).
+- PHASE6 foil trial6 / br480 preinh250 FP: mid-only **FAIL** (amp inversion) — см. [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P4 notes; T1 TipR still 7/8.
+- FastResponse tiprmin P10.3 — silent / fire_all; D/C sweep вне scope.
+- PSI short C1e9 — `ok_audit` partial_FA; cold Train deferred.
+- PhaseA EXP03–05 / FastSpanLtzCal — P10.4 docs skip.
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
 - AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).

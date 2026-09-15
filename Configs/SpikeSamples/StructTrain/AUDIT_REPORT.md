@@ -1,6 +1,6 @@
 # StructTrain audit report
 
-Первичный срез: **2026-09-10**. Пересчёт GATE (metrics-from-CSV): **2026-09-13** после PHASE5–7; **2026-09-14** PHASE9 D0 (incl. PHASE8 C1e9); **2026-09-14 T0** (+P1–P3 C1e9).  
+Первичный срез: **2026-09-10**. Пересчёт GATE (metrics-from-CSV): **2026-09-13** после PHASE5–7; **2026-09-14** PHASE9 D0 (incl. PHASE8 C1e9); **2026-09-14 T0** (+P1–P3 C1e9); **2026-09-15** PHASE10 Fast (+twins/PSI/FastSpan).  
 Scope: `Selectivity*` + `TimeNeuronTimeLearner*` under [`StructTrain/`](.).  
 Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.
 
@@ -12,13 +12,22 @@ Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metric
 - `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8` (**не** требует 8/8; partial_FA 4–6/8 может пройти)  
 - **Last-pulse (реестр)** — target `t_rel ≥ 0.8·pattern_end`; поверх audit, см. [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
 Analyzer: mid-pattern spike не ставит `neuron_fired` (`kMinStimForInWindowFire` в `NPatternResponseAnalyzer`).  
-Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md), [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).  
+Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-13.csv`](AUDIT_GATE_RECOMPUTE_2026-09-13.csv), [`AUDIT_GATE_RECOMPUTE_2026-09-10.csv`](AUDIT_GATE_RECOMPUTE_2026-09-10.csv), [`AUDIT_STRUCTURE_2026-09-10.csv`](AUDIT_STRUCTURE_2026-09-10.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md), [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md).  
 Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот». Пороги `ok_audit` **не** ужесточались.
 
 ## Layout
 
 All experiment roots now use `<root>/{Train,Test}` (+ optional `Test_<tag>/`).  
 Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02/06 gained `Train/` from EXP00 (`TRAIN_SOURCE.txt`).
+
+## Gate recompute (2026-09-15 PHASE10 Fast, 167 Test)
+
+| Metric | Count |
+|--------|------:|
+| `ok_audit=1` | 77 |
+| rows | 167 |
+
+Δ vs T0 (154 / 64): **+13** Test rows / **+13** `ok_audit` (T2 twins ×3 + P10.1 PSI ×3 + P10.2 FastSpan ×6; FR tiprmin ×2 `ok_audit=0`). Архив: [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv).
 
 ## Gate recompute (2026-09-14 PHASE9 T0, 154 Test)
 
