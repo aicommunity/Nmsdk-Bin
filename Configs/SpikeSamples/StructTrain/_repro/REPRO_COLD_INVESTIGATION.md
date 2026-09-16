@@ -45,9 +45,9 @@ Follow-up: FS delayed-save poll; optional `-t` extension; debug `peak_synced` on
 
 ## Canon
 
-- **Branch25:** soft-cold + Need=0 + full phase8 gate.
-- **FastSpan25:** same protocol; FS quality still failing until Need=0 / L/thr fixed.
+- **Branch25:** soft-cold + Need=0 + full phase8 gate → **`REPRO_OK_EXACT`** (r1≡r2≡gold).
+- **FastSpan25:** same protocol; still **`REPRO_FAIL`** (`Need=1` at `-t 160`, L=`7 5 4 1`, acc=3). Soft≡strip; not Model-strip issue.
 
 ## Checkpoints
 
-C0–C2.* done in Bin. C3=this file. C4 after soft canon re-run.
+C0–C4 in Bin (`time_trainer_audit`). See `git log --grep='cold invest\|cold harness'`.
