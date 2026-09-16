@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Helpers for identical-cold repro harness (clone, cold reset, TipR@Rmin, compare)."""
+"""Helpers for identical-cold repro harness (clone, soft/strip cold, TipR@Rmin, compare)."""
 from __future__ import annotations
 
 import csv
@@ -9,6 +9,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 ROOT = Path(__file__).resolve().parents[1]
 NM = Path("/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
@@ -16,6 +17,7 @@ TIPR_COLD = "86000000 86000000 86000000 86000000"
 TIPR_RMIN = "20000000 20000000 20000000 86000000"
 RMIN = "20000000"
 L_COLD = "1 1 1 1"
+ColdMode = Literal["soft", "strip"]
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from audit_structtrain import last_pulse_ok  # noqa: E402
@@ -55,6 +57,17 @@ FAMILIES: dict[str, Family] = {
 }
 
 REPRO_ROOT = ROOT / "_repro"
+INVEST_ROOT = REPRO_ROOT / "_invest"
+
+# invest job id -> (family_key, cold_mode, dest_name)
+INVEST_JOBS: dict[str, tuple[str, ColdMode, str]] = {
+    "A1": ("fastspan", "soft", "A1_fs_soft_r1"),
+    "A2": ("fastspan", "strip", "A2_fs_strip_r1"),
+    "B1": ("branch", "soft", "B1_br_soft_r1"),
+    "B2": ("branch", "strip", "B2_br_strip_r1"),
+    "A1r2": ("fastspan", "soft", "A1_fs_soft_r2"),
+    "B1r2": ("branch", "soft", "B1_br_soft_r2"),
+}
 
 
 def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
@@ -75,8 +88,13 @@ def clone_root(family: Family, rep: int) -> Path:
     return REPRO_ROOT / family.clone_name / f"r{rep}"
 
 
+def invest_root(job_id: str) -> Path:
+    if job_id not in INVEST_JOBS:
+        raise SystemExit(f"unknown invest job {job_id}")
+    return INVEST_ROOT / INVEST_JOBS[job_id][2]
+
+
 def free_gib(path: Path = Path("/")) -> float:
-    st = path.stat() if False else None
     import os
 
     st = os.statvfs(path)
@@ -104,10 +122,9 @@ def rsync_clone(gold: Path, dst: Path, project_name: str) -> None:
         "--exclude=settings.qt",
         "--exclude=ltz_sweep/",
         "--exclude=Test_bak_phase9/",
+        "--exclude=bak_pre_eval/",
     ]
-    subprocess.check_call(
-        ["rsync", "-a", *excludes, f"{gold}/", f"{dst}/"]
-    )
+    subprocess.check_call(["rsync", "-a", *excludes, f"{gold}/", f"{dst}/"])
     for ini in (dst / "Train" / "Project.ini", dst / "Test" / "Project.ini"):
         if not ini.exists():
             continue
@@ -137,12 +154,11 @@ def strip_dendrite_segments_above_one(model_text: str) -> str:
 
 
 def rewrite_links_to_tip1(model_text: str) -> str:
-    model_text = re.sub(
+    return re.sub(
         r"(NeuronTimeLearner(?:Branch)?\.Neuron\.Dendrite\d+)_\d+(\.(?:Exc|Inh)Synapse)",
         r"\1_1\2",
         model_text,
     )
-    return model_text
 
 
 def dendrite_tips_above_one(model_text: str) -> list[str]:
@@ -150,31 +166,52 @@ def dendrite_tips_above_one(model_text: str) -> list[str]:
     return [f"Dendrite{a}_{b}" for a, b in tips if int(b) > 1]
 
 
-def cold_reset_train(train: Path) -> None:
-    """Canonical cold on Train Parameters+Model (in-clone, after rsync from gold)."""
-    params = train / "Parameters_00.xml"
-    model = train / "Model_00.xml"
-    pt = params.read_text(encoding="utf-8")
-    neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
+def tip_indices(model_text: str) -> list[int]:
+    return sorted({int(b) for b in re.findall(r"<Dendrite\d+_(\d+)\b", model_text)})
 
-    def cold_params(t: str) -> str:
-        t = set_tag(t, "IsNeedToTrain", "1", 1)
-        t = set_tag(t, "StructureBuildMode", "1", 1)
-        t = set_tag(t, "NeuronClassName", neuron, 0)
-        t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
-        t = set_tag(t, "ResistanceMin", RMIN, 1)
-        t = set_tag(t, "DendriteLength", L_COLD, 1)
-        t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
-        t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
-        if re.search(r"<ResetToUntrainedState\b", t):
-            t = set_tag(t, "ResetToUntrainedState", "1", 1)
-        t = set_tag(t, "UseFixedLTZThreshold", "0", 1)
-        t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "1", 1)
-        return t
 
-    params.write_text(cold_params(pt), encoding="utf-8")
+def read_need(params: Path | str) -> str:
+    text = params if isinstance(params, str) else params.read_text(encoding="utf-8")
+    return (get_tag(text, "IsNeedToTrain") or "").strip()
 
-    mt = model.read_text(encoding="utf-8")
+
+def assert_train_cold_flags(params: Path, *, mode: ColdMode) -> None:
+    t = params.read_text(encoding="utf-8")
+    need = get_tag(t, "IsNeedToTrain")
+    autocal = get_tag(t, "AutoCalibrateFixedLTZThreshold")
+    L = " ".join((get_tag(t, "DendriteLength") or "").replace(",", " ").split())
+    tipr = " ".join((get_tag(t, "TipSynapseResistance") or "").replace(",", " ").split())
+    errs: list[str] = []
+    if need != "1":
+        errs.append(f"Need={need}")
+    if autocal != "0":
+        errs.append(f"AutoCal={autocal} (want 0)")
+    if L != L_COLD:
+        errs.append(f"L={L}")
+    if tipr != TIPR_COLD:
+        errs.append(f"TipR={tipr}")
+    if errs:
+        raise SystemExit(f"cold flags fail ({mode}): {', '.join(errs)}")
+
+
+def _cold_params_common(t: str, neuron: str) -> str:
+    t = set_tag(t, "IsNeedToTrain", "1", 1)
+    t = set_tag(t, "StructureBuildMode", "1", 1)
+    t = set_tag(t, "NeuronClassName", neuron, 0)
+    t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
+    t = set_tag(t, "ResistanceMin", RMIN, 1)
+    t = set_tag(t, "DendriteLength", L_COLD, 1)
+    t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
+    t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
+    if re.search(r"<ResetToUntrainedState\b", t):
+        t = set_tag(t, "ResetToUntrainedState", "1", 1)
+    # Historical soft-cold / A/B: AutoCal=0 (do not mix with strip factor)
+    t = set_tag(t, "UseFixedLTZThreshold", "0", 1)
+    t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
+    return t
+
+
+def _cold_model_common(mt: str, neuron: str) -> str:
     mt = re.sub(r'(<Neuron Class=")[^"]+(">)', rf"\g<1>{neuron}\2", mt, count=1)
     mt = set_tag(mt, "NeuronClassName", neuron, 0)
     mt = set_tag(mt, "DendriteLength", L_COLD, 0)
@@ -186,13 +223,51 @@ def cold_reset_train(train: Path) -> None:
     mt = set_tag(mt, "StructureBuildMode", "1", 1)
     if re.search(r"<ResetToUntrainedState\b", mt):
         mt = set_tag(mt, "ResetToUntrainedState", "1", 1)
+    if re.search(r"<UseFixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "UseFixedLTZThreshold", "0", 1)
+    if re.search(r"<AutoCalibrateFixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "AutoCalibrateFixedLTZThreshold", "0", 1)
+    return mt
+
+
+def soft_cold_reset_train(train: Path) -> None:
+    """Historical soft-cold: param L/TipR + links→tip-1; keep fat Model cable."""
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8")
+    neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
+    params.write_text(_cold_params_common(pt, neuron), encoding="utf-8")
+    mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
+    mt = rewrite_links_to_tip1(mt)
+    model.write_text(mt, encoding="utf-8")
+    assert_train_cold_flags(params, mode="soft")
+    tips = tip_indices(mt)
+    if tips and max(tips) <= 1:
+        print("WARN soft-cold: Model already tip-1 only (no fat cable)")
+
+
+def strip_cold_reset_train(train: Path) -> None:
+    """Strip Model to tip-1 segments + links (prior harness); AutoCal=0."""
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8")
+    neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
+    params.write_text(_cold_params_common(pt, neuron), encoding="utf-8")
+    mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
     mt = strip_dendrite_segments_above_one(mt)
     mt = rewrite_links_to_tip1(mt)
     model.write_text(mt, encoding="utf-8")
-
+    assert_train_cold_flags(params, mode="strip")
     left = dendrite_tips_above_one(mt)
     if left:
-        raise SystemExit(f"cold Model still has tips>1: {left[:12]}")
+        raise SystemExit(f"strip Model still has tips>1: {left[:12]}")
+
+
+def cold_reset_train(train: Path, *, mode: ColdMode = "soft") -> None:
+    if mode == "soft":
+        soft_cold_reset_train(train)
+    else:
+        strip_cold_reset_train(train)
 
 
 def apply_tiprmin(paths: list[Path]) -> None:
@@ -210,8 +285,30 @@ def read_lengths(params: Path) -> list[int]:
     return [int(float(x)) for x in raw.replace(",", " ").split()]
 
 
+def patch_tip_exc_r(text: str, tips: list[int], *, branch: bool) -> str:
+    """Set tip ExcSynapse1 Resistance to TipR@Rmin values (Branch: Dendrite1_L)."""
+    for i, L in enumerate(tips):
+        r = "20000000" if i < 3 else "86000000"
+        if branch:
+            pat = re.compile(
+                rf'(<Dendrite1_{L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">'
+                rf'.*?<Resistance Type="d"[^>]*>)[^<]*(</Resistance>)',
+                re.S,
+            )
+        else:
+            di = i + 1
+            pat = re.compile(
+                rf'(<Dendrite{di}_{L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">'
+                rf'.*?<Resistance Type="d"[^>]*>)[^<]*(</Resistance>)',
+                re.S,
+            )
+        text, n = pat.subn(lambda m, _r=r: m.group(1) + _r + m.group(2), text, count=1)
+        if not n:
+            print(f"WARN: no ExcSynapse Resistance tip L={L}", file=sys.stderr)
+    return text
+
+
 def fix_generator_tip_links(model_text: str, tips: list[int]) -> str:
-    """TimeLearner: Dendrite{i}_{tips[i-1]} for i=1..4."""
     out = model_text
     for i, L in enumerate(tips, start=1):
         out = re.sub(
@@ -223,7 +320,6 @@ def fix_generator_tip_links(model_text: str, tips: list[int]) -> str:
 
 
 def fix_branch_tip_links(model_text: str, tips: list[int]) -> str:
-    """Rewrite Branch Generator tip connectors to Dendrite1_{L[i]} in order of appearance."""
     it = iter(tips)
     last = tips[-1] if tips else 1
 
@@ -255,7 +351,27 @@ def overlay_neuron(train_model: Path, test_model: Path) -> None:
     test_model.write_text(test2, encoding="utf-8")
 
 
+def first_tip_exc_r(model: Path, *, branch: bool, tip_L: int = 1) -> str:
+    t = model.read_text(encoding="utf-8")
+    if branch:
+        pat = rf'<Dendrite1_{tip_L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">.*?<Resistance Type="d"[^>]*>([^<]*)</Resistance>'
+    else:
+        pat = rf'<Dendrite1_{tip_L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">.*?<Resistance Type="d"[^>]*>([^<]*)</Resistance>'
+    m = re.search(pat, t, re.S)
+    return (m.group(1).strip().replace(",", ".") if m else "")
+
+
 def post_train_hygiene(root: Path, family: Family) -> None:
+    """FastSpan pre-gate hygiene. Branch full prepare is done by phase8_tiprmin_gate."""
+    if family.kind == "branch":
+        # TipR property on Train only; Exc + Test rebuild via phase8 prepare_test
+        apply_tiprmin([root / "Train" / "Parameters_00.xml", root / "Train" / "Model_00.xml"])
+        tips = read_lengths(root / "Train" / "Parameters_00.xml")
+        mp = root / "Train" / "Model_00.xml"
+        mt = patch_tip_exc_r(mp.read_text(encoding="utf-8").replace(",", "."), tips, branch=True)
+        mp.write_text(mt, encoding="utf-8")
+        return
+
     train, test = root / "Train", root / "Test"
     apply_tiprmin(
         [
@@ -266,31 +382,20 @@ def post_train_hygiene(root: Path, family: Family) -> None:
         ]
     )
     tips = read_lengths(train / "Parameters_00.xml")
-    # merge params
-    if family.kind == "fastspan":
-        merge = ROOT / "SelectivityFastSpan" / "scripts" / "merge_train_weights.py"
-        subprocess.check_call(
-            [
-                sys.executable,
-                str(merge),
-                str(train / "Parameters_00.xml"),
-                str(test / "Parameters_00.xml"),
-            ]
-        )
-    else:
-        merge = ROOT / "SelectivityLtzCalibrate" / "scripts" / "merge_train_weights.py"
-        # branch merge signature may differ — try FastSpan-style first via local copy of tags
-        _merge_params_simple(train / "Parameters_00.xml", test / "Parameters_00.xml")
-
+    merge = ROOT / "SelectivityFastSpan" / "scripts" / "merge_train_weights.py"
+    subprocess.check_call(
+        [
+            sys.executable,
+            str(merge),
+            str(train / "Parameters_00.xml"),
+            str(test / "Parameters_00.xml"),
+        ]
+    )
     overlay_neuron(train / "Model_00.xml", test / "Model_00.xml")
     mt = (test / "Model_00.xml").read_text(encoding="utf-8").replace(",", ".")
-    if family.kind == "branch":
-        mt = fix_branch_tip_links(mt, tips)
-    else:
-        mt = fix_generator_tip_links(mt, tips)
+    mt = fix_generator_tip_links(mt, tips)
+    mt = patch_tip_exc_r(mt, tips, branch=False)
     (test / "Model_00.xml").write_text(mt, encoding="utf-8")
-
-    # Test inference flags
     for p in (test / "Parameters_00.xml", test / "Model_00.xml"):
         t = p.read_text(encoding="utf-8").replace(",", ".")
         t = set_tag(t, "IsNeedToTrain", "0", 1)
@@ -298,45 +403,41 @@ def post_train_hygiene(root: Path, family: Family) -> None:
         t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
         t = set_tag(t, "TipSynapseResistance", TIPR_RMIN, 1)
         p.write_text(t, encoding="utf-8")
-
-
-def _merge_params_simple(train_p: Path, test_p: Path) -> None:
-    tags = [
-        "TipSynapseResistance",
-        "DendriteLength",
-        "InitialSomaPotential",
-        "NumSynapse",
-        "NumDendriteMembranePartsVec",
-        "NeuronClassName",
-        "FixedLTZThreshold",
-        "LTZThreshold",
-        "UseFixedLTZThreshold",
-        "AutoCalibrateFixedLTZThreshold",
-    ]
-    train = train_p.read_text(encoding="utf-8")
-    test = test_p.read_text(encoding="utf-8")
-    for tag in tags:
-        m = re.search(rf"(<{tag}\b[^>]*>.*?</{tag}>)", train, re.S)
-        if not m:
-            continue
-        block = m.group(1).replace(",", ".")
-        if re.search(rf"<{tag}\b", test):
-            test = re.sub(rf"<{tag}\b[^>]*>.*?</{tag}>", block, test, count=1, flags=re.S)
-    test = set_tag(test, "IsNeedToTrain", "0", 1)
-    test_p.write_text(test, encoding="utf-8")
+    # also tip Exc on Train Model
+    mp = train / "Model_00.xml"
+    mt = patch_tip_exc_r(mp.read_text(encoding="utf-8").replace(",", "."), tips, branch=False)
+    mp.write_text(mt, encoding="utf-8")
 
 
 def snapshot_gate(root: Path) -> dict[str, str]:
     train_p = root / "Train" / "Parameters_00.xml"
     test_p = root / "Test" / "Parameters_00.xml"
+    model_p = root / "Train" / "Model_00.xml"
     csv_path = root / "Test" / "SelectivityLog" / "results.csv"
-    L = get_tag(train_p.read_text(encoding="utf-8"), "DendriteLength") or ""
-    tipr = get_tag(test_p.read_text(encoding="utf-8"), "TipSynapseResistance") or ""
-    thr = get_tag(test_p.read_text(encoding="utf-8"), "FixedLTZThreshold") or ""
+    tp = train_p.read_text(encoding="utf-8")
+    L = get_tag(tp, "DendriteLength") or ""
+    tipr = (
+        get_tag(test_p.read_text(encoding="utf-8"), "TipSynapseResistance")
+        if test_p.exists()
+        else ""
+    ) or ""
+    thr = (
+        get_tag(test_p.read_text(encoding="utf-8"), "FixedLTZThreshold")
+        if test_p.exists()
+        else ""
+    ) or ""
+    branch = "NeuronTimeLearnerBranch" in (
+        model_p.read_text(encoding="utf-8") if model_p.exists() else ""
+    )
+    tips = read_lengths(train_p) if L else [1]
+    tip1 = first_tip_exc_r(model_p, branch=branch, tip_L=tips[0] if tips else 1) if model_p.exists() else ""
     out = {
         "L": L.replace(",", " "),
         "TipR": tipr.replace(",", " "),
         "thr": thr.replace(",", "."),
+        "Need": read_need(tp),
+        "InitSoma": (get_tag(tp, "InitialSomaPotential") or "").replace(",", ".")[:64],
+        "tip1_ExcR": tip1,
         "fires": "",
         "acc": "",
         "mode": "",
@@ -370,6 +471,14 @@ def verdict_family(gold: dict[str, str], r1: dict[str, str], r2: dict[str, str])
 
     if fires(r1) != fires(r2) or L(r1) != L(r2):
         return "NONDET"
+    try:
+        acc_ok = int(r1.get("acc") or 0) >= 8 and int(r2.get("acc") or 0) >= 8
+    except ValueError:
+        acc_ok = False
+    if r1.get("ok_audit") == "1" and r2.get("ok_audit") == "1" and acc_ok:
+        if fires(r1) == fires(gold) and L(r1) == L(gold):
+            return "REPRO_OK_EXACT"
+        return "REPRO_OK_QUALITY"
     for r in (r1, r2):
         if r.get("ok_audit") != "1":
             return "REPRO_FAIL"
@@ -377,7 +486,6 @@ def verdict_family(gold: dict[str, str], r1: dict[str, str], r2: dict[str, str])
             return "REPRO_FAIL"
     if L(r1) == L(gold) and r1.get("last_pulse_ok") == "1" and r2.get("last_pulse_ok") == "1":
         return "REPRO_OK"
-    # both audit ok + same fires as gold but L/thr drift
     try:
         if int(r1.get("acc") or 0) >= 7 and int(r2.get("acc") or 0) >= 7:
             return "REPRO_SOFT"
@@ -386,7 +494,24 @@ def verdict_family(gold: dict[str, str], r1: dict[str, str], r2: dict[str, str])
     return "REPRO_SOFT"
 
 
-def prepare_family(family: Family, reps: tuple[int, ...] = (1, 2), *, force: bool = False) -> list[Path]:
+def _cold_test_params(dst: Path) -> None:
+    tp = dst / "Test" / "Parameters_00.xml"
+    if not tp.exists():
+        return
+    t = tp.read_text(encoding="utf-8")
+    t = set_tag(t, "IsNeedToTrain", "0", 1)
+    t = set_tag(t, "DendriteLength", L_COLD, 1)
+    t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
+    tp.write_text(t, encoding="utf-8")
+
+
+def prepare_family(
+    family: Family,
+    reps: tuple[int, ...] = (1, 2),
+    *,
+    force: bool = False,
+    mode: ColdMode = "soft",
+) -> list[Path]:
     REPRO_ROOT.mkdir(parents=True, exist_ok=True)
     out: list[Path] = []
     for rep in reps:
@@ -398,21 +523,89 @@ def prepare_family(family: Family, reps: tuple[int, ...] = (1, 2), *, force: boo
                 print(f"skip existing {dst}")
                 out.append(dst)
                 continue
-        pname = f"{family.clone_name}_r{rep}"
-        print(f"clone {family.gold.name} -> {dst}")
+        pname = f"{family.clone_name}_r{rep}_{mode}"
+        print(f"clone {family.gold.name} -> {dst} cold={mode}")
         rsync_clone(family.gold, dst, pname)
-        cold_reset_train(dst / "Train")
-        # also cold-ish Test params so TipR not Done tiprmin before merge (gate will set thr)
-        tp = dst / "Test" / "Parameters_00.xml"
-        if tp.exists():
-            t = tp.read_text(encoding="utf-8")
-            t = set_tag(t, "IsNeedToTrain", "0", 1)
-            t = set_tag(t, "DendriteLength", L_COLD, 1)
-            t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
-            tp.write_text(t, encoding="utf-8")
-        left = dendrite_tips_above_one((dst / "Train" / "Model_00.xml").read_text(encoding="utf-8"))
-        if left:
-            raise SystemExit(f"prepare assert failed tips>1: {left}")
-        print(f"  cold ok L=1 1 1 1 TipR cold neuron tips stripped")
+        cold_reset_train(dst / "Train", mode=mode)
+        _cold_test_params(dst)
+        mt = (dst / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+        if mode == "strip":
+            left = dendrite_tips_above_one(mt)
+            if left:
+                raise SystemExit(f"prepare assert failed tips>1: {left}")
+            print("  strip ok L=1 1 1 1 TipR cold AutoCal=0")
+        else:
+            tips = tip_indices(mt)
+            print(f"  soft ok L=1 1 1 1 TipR cold AutoCal=0 tips_max={max(tips) if tips else 0}")
         out.append(dst)
     return out
+
+
+def prepare_invest(job_id: str, *, force: bool = False) -> Path:
+    fam_key, mode, _name = INVEST_JOBS[job_id]
+    family = FAMILIES[fam_key]
+    dst = invest_root(job_id)
+    INVEST_ROOT.mkdir(parents=True, exist_ok=True)
+    if dst.exists():
+        if force:
+            shutil.rmtree(dst)
+        else:
+            raise SystemExit(f"refuse existing invest {dst} (use --force)")
+    pname = f"invest_{job_id}_{mode}"
+    print(f"INVEST prepare {job_id}: {family.gold.name} -> {dst} cold={mode}")
+    rsync_clone(family.gold, dst, pname)
+    cold_reset_train(dst / "Train", mode=mode)
+    _cold_test_params(dst)
+    assert_train_cold_flags(dst / "Train" / "Parameters_00.xml", mode=mode)
+    mt = (dst / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+    tips = tip_indices(mt)
+    if mode == "soft":
+        if tips and max(tips) <= 1:
+            print("WARN soft invest: tip max <=1")
+        else:
+            print(f"  soft preflight tips_max={max(tips)}")
+    else:
+        if dendrite_tips_above_one(mt):
+            raise SystemExit("strip invest still has tips>1")
+        print("  strip preflight tip-1 only")
+    return dst
+
+
+def append_compare_row(job_id: str, family: Family, mode: ColdMode, root: Path) -> Path:
+    snap = snapshot_gate(root)
+    gold = snapshot_gate(family.gold)
+    compare = INVEST_ROOT / "COMPARE.md"
+    INVEST_ROOT.mkdir(parents=True, exist_ok=True)
+    if not compare.exists():
+        compare.write_text(
+            "# Cold invest COMPARE\n\n"
+            "| ID | cold | Need_end | L | InitSoma | TipR | tip1_ExcR | thr | fires | acc | ok_audit | last_pulse | vs_gold_L | vs_gold_fires |\n"
+            "|----|------|----------|---|----------|------|-----------|-----|-------|-----|----------|------------|-----------|---------------|\n",
+            encoding="utf-8",
+        )
+    vs_L = "Y" if " ".join(snap.get("L", "").split()) == " ".join(gold.get("L", "").split()) else "N"
+    vs_f = "Y" if snap.get("fires") == gold.get("fires") else "N"
+    line = (
+        f"| {job_id} | {mode} | {snap.get('Need','')} | `{snap.get('L','')}` | "
+        f"`{snap.get('InitSoma','')[:40]}` | `{snap.get('TipR','')[:40]}` | "
+        f"`{snap.get('tip1_ExcR','')}` | {snap.get('thr','')} | `{snap.get('fires','')}` | "
+        f"{snap.get('acc','')} | {snap.get('ok_audit','')} | {snap.get('last_pulse_ok','')} | "
+        f"{vs_L} | {vs_f} |\n"
+    )
+    # replace existing row for same ID if present
+    text = compare.read_text(encoding="utf-8")
+    rows = text.splitlines(keepends=True)
+    out_lines: list[str] = []
+    replaced = False
+    for r in rows:
+        if r.startswith(f"| {job_id} |"):
+            out_lines.append(line)
+            replaced = True
+        else:
+            out_lines.append(r)
+    if not replaced:
+        if out_lines and not out_lines[-1].endswith("\n"):
+            out_lines[-1] += "\n"
+        out_lines.append(line)
+    compare.write_text("".join(out_lines), encoding="utf-8")
+    return compare

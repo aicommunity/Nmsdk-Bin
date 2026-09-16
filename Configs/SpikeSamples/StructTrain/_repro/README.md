@@ -1,6 +1,8 @@
 # Cold Train reproducibility harness
 
-Identical cold Train: clone gold PASS → strip Model to tip-1 → TipR `8.6e7×4` / L=`1 1 1 1` → Train → TipR@Rmin + mid gate → compare vs gold and r1↔r2.
+Canonical cold = **soft-cold** (links→tip-1, fat Model kept). Optional `--cold strip` for A/B.
+
+Stop Train on **`IsNeedToTrain=0`**. Post: TipR@Rmin (+ tip Exc); Branch uses full `phase8_tiprmin_gate` prepare.
 
 ## Gold (do not overwrite)
 
@@ -13,11 +15,14 @@ Identical cold Train: clone gold PASS → strip Model to tip-1 → TipR `8.6e7×
 
 ```bash
 ROOT=Bin/Configs/SpikeSamples/StructTrain
-python3 "$ROOT/scripts/repro_cold_harness.py" prepare --all
-python3 "$ROOT/scripts/repro_cold_harness.py" run --all
+python3 "$ROOT/scripts/repro_cold_harness.py" prepare --all --cold soft
+python3 "$ROOT/scripts/repro_cold_harness.py" run --all --cold soft
 python3 "$ROOT/scripts/repro_cold_harness.py" compare
+# A/B invest
+python3 "$ROOT/scripts/repro_cold_harness.py" invest --job A1
 ```
 
-Disk: Avail ≥80G before each Train; pack StatisticLog ≥200M after. One NM at a time.
+Disk: Avail ≥80G before Train; pack ≥200M after. One NM.
 
-Result: [`REPRO_COLD_RESULT.md`](REPRO_COLD_RESULT.md).
+- Result: [`REPRO_COLD_RESULT.md`](REPRO_COLD_RESULT.md)
+- Investigation: [`REPRO_COLD_INVESTIGATION.md`](REPRO_COLD_INVESTIGATION.md)
