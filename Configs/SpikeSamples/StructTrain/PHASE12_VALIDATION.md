@@ -120,7 +120,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | exp_id | path | wave | kind | status | gold_L | gold_TipR_recipe | gold_thr | notes | last_commit |
 |--------|------|------|------|--------|--------|------------------|----------|-------|-------------|
 | EXP_br_span25_packA_gen_C1e9 | SelectivityBranch/EXP_br_span25_packA_gen_C1e9 | 1 | cold | VALIDATED | `13 11 7 1` | tiprmin | 0.07179975 | stamp-from-repro preferred (`REPRO_OK_EXACT`) | |
-| EXP_br_span50_packA_gen_C1e9 | SelectivityBranch/EXP_br_span50_packA_gen_C1e9 | 1 | cold | DEFERRED | `13 11 6 1` | tiprmin | 0.06440315 | | |
+| EXP_br_span50_packA_gen_C1e9 | SelectivityBranch/EXP_br_span50_packA_gen_C1e9 | 1 | cold | VALIDATED | `13 11 6 1` | tiprmin | 0.06440315 | | |
 | EXP_br_span100_packA_gen_C1e9 | SelectivityBranch/EXP_br_span100_packA_gen_C1e9 | 1 | cold | DEFERRED | `25 21 11 1` | done_tipr | 0.007181835 | Done TipR + `--allow-done-tipr-fallback` | |
 | EXP_br_span25_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packA_preinh_C1e9 | 1 | cold | DEFERRED | `7 6 4 1` | tiprmin | 0.05171075 | | |
 | EXP_br_span50_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span50_packA_preinh_C1e9 | 1 | cold | DEFERRED | `13 11 6 1` | tiprmin | 0.03008405 | | |
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | UTC | exp_id | verdict | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-16T15:35Z | EXP_br_span50_packA_gen_C1e9 | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`13 11 6 1` thr=0.06440315 fires=`10000000` |
 | 2026-09-16T13:51Z | EXP_br_span25_packA_gen_C1e9 | VALIDATED | | | | stamp-from-repro REPRO_OK_EXACT L=`13 11 7 1` thr=0.07179975 |
 
 ## Links
