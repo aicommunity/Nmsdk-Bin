@@ -194,6 +194,19 @@ def assert_train_cold_flags(params: Path, *, mode: ColdMode) -> None:
         raise SystemExit(f"cold flags fail ({mode}): {', '.join(errs)}")
 
 
+def _ensure_tag(text: str, tag: str, value: str, *, after_tag: str | None = None) -> str:
+    """Set tag value, or insert a minimal tag block if missing."""
+    if re.search(rf"<{tag}\b", text):
+        return set_tag(text, tag, value, 1)
+    block = f"<{tag}>{value}</{tag}>"
+    if after_tag and re.search(rf"</{after_tag}>", text):
+        return re.sub(rf"(</{after_tag}>)", rf"\1\n\t\t{block}", text, count=1)
+    # fallback: after IsNeedToTrain
+    if re.search(r"</IsNeedToTrain>", text):
+        return re.sub(r"(</IsNeedToTrain>)", rf"\1\n\t\t{block}", text, count=1)
+    return text
+
+
 def _cold_params_common(t: str, neuron: str) -> str:
     t = set_tag(t, "IsNeedToTrain", "1", 1)
     t = set_tag(t, "StructureBuildMode", "1", 1)
@@ -203,9 +216,8 @@ def _cold_params_common(t: str, neuron: str) -> str:
     t = set_tag(t, "DendriteLength", L_COLD, 1)
     t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
     t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
-    if re.search(r"<ResetToUntrainedState\b", t):
-        t = set_tag(t, "ResetToUntrainedState", "1", 1)
-    # Historical soft-cold / A/B: AutoCal=0 (do not mix with strip factor)
+    # Gold Done XML often lacks this tag — must inject or soft-cold never rebuilds
+    t = _ensure_tag(t, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
     t = set_tag(t, "UseFixedLTZThreshold", "0", 1)
     t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
     return t
@@ -221,8 +233,7 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     mt = set_tag(mt, "InitialSomaPotential", "0 0 0 0", 1)
     mt = set_tag(mt, "IsNeedToTrain", "1", 1)
     mt = set_tag(mt, "StructureBuildMode", "1", 1)
-    if re.search(r"<ResetToUntrainedState\b", mt):
-        mt = set_tag(mt, "ResetToUntrainedState", "1", 1)
+    mt = _ensure_tag(mt, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
     if re.search(r"<UseFixedLTZThreshold\b", mt):
         mt = set_tag(mt, "UseFixedLTZThreshold", "0", 1)
     if re.search(r"<AutoCalibrateFixedLTZThreshold\b", mt):
