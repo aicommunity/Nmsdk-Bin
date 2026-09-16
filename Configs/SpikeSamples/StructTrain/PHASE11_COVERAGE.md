@@ -60,9 +60,9 @@ See [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) §PHASE11 defer catalog.
 
 ### Follow-up: identical cold repro
 
-Harness: [`_repro/README.md`](_repro/README.md) · result [`_repro/REPRO_COLD_RESULT.md`](_repro/REPRO_COLD_RESULT.md).
+Harness: [`_repro/README.md`](_repro/README.md) · investigation [`_repro/REPRO_COLD_INVESTIGATION.md`](_repro/REPRO_COLD_INVESTIGATION.md) · result [`_repro/REPRO_COLD_RESULT.md`](_repro/REPRO_COLD_RESULT.md).
 
-Clean tip-1 cold ×2 (FastSpan25 `-t`160, Branch25 `-t`320) → TipR@Rmin + mid. **r1≡r2** (deterministic); neither family matches gold fires → `REPRO_FAIL` (not `NONDET`). FS L=`7 5 4 1` vs gold `6 5 4 1`; Branch L matches gold, fires `10010000` vs gold `10000000`.
+First strip-harness (`REPRO_FAIL`): protocol mismatch (no Reset, early stop, `--skip-prepare`). **A/B 2026-09-16:** Branch soft/strip + Need=0 + full gate → **exact gold** (`acc=8`, fires `10000000`). FastSpan soft≡strip still `acc=3` (`Need=1` at `-t`, L `7 5 4 1`); open FS follow-up. PulseLib pin `780ffc7` unchanged.
 
 ### R2.2 PSI short C1e9 cold
 

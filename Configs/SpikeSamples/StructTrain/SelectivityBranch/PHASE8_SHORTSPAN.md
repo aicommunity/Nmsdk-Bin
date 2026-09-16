@@ -73,6 +73,8 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 | GTS | `20000` |
 | TipR@Rmin (post) | `2e7 2e7 2e7 8.6e7` |
 
+**Repro cold (2026-09):** canonical = **soft-cold** (param L/TipR + links→tip-1; **не** strip Model). Post-train: full `phase8_tiprmin_gate` prepare (`patch_tip_exc_r`). Inject `ResetToUntrainedState=1` if tag missing on Done clone. Stop Train on `Need=0`. See [`_repro/REPRO_COLD_INVESTIGATION.md`](../_repro/REPRO_COLD_INVESTIGATION.md).
+
 ## Антирегрессия
 
 - Не cold-reset: `TimeNeuronTimeLearnerBranch*`, `EXP_br480_tiprmin`, AsymRm PHASE5 PASS, `AsymRmLtzCalBranch/**`.

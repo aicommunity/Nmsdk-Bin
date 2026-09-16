@@ -153,7 +153,7 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) · repro soft-cold [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
 | EXP_br_span50_packA_gen_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0644 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_gen_C1e9 | L=`25 21 11 1`; Done TipR (не Rmin); thr≈0.00718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span25_packA_preinh_C1e9 | L=`7 6 4 1`; TipR@Rmin; thr≈0.0517 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
@@ -204,7 +204,7 @@ Clone packA + Matrix overlay B/C via `phase8_tiprmin_gate.py --skip-prepare --ma
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_span25ms_fast_C1e9 | AsymRmD001C1e9; thr=0.0328372 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_span25ms_fast_C1e9 | AsymRmD001C1e9; thr=0.0328372 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test/SelectivityLog/results.csv) · FS soft-cold repro open [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
 | EXP_span25ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.01563085 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_span50ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.0112976 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_span100ms_fast_C1e9 | AsymRmD001C1e9; thr=0.01568185 | 7/8 | selective | [Train](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test/SelectivityLog/results.csv) |
