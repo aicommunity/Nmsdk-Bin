@@ -398,6 +398,8 @@ def run_gate(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> None:
         "40",
     ]
     if spec.tipr_recipe == "done_tipr":
+        # Keep Train Done TipR through prepare (do not force TipR@Rmin)
+        cmd.append("--keep-tipr")
         cmd.append("--allow-done-tipr-fallback")
     log = root / "Test" / "run_phase12_gate.log"
     log.parent.mkdir(parents=True, exist_ok=True)
@@ -440,6 +442,36 @@ def run_gate(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> None:
         subprocess.call([sys.executable, str(METRICS), "-v", str(csv_path)])
 
 
+def verdict_phase12(gold: dict[str, str], r1: dict[str, str], r2: dict[str, str]) -> str:
+    """Wave1: EXACT preferred; QUALITY if r1≡r2 + ok_audit + last_pulse + Need=0 + acc≥7."""
+    base = verdict_family(gold, r1, r2)
+    if base in ("REPRO_OK_EXACT", "REPRO_OK_QUALITY", "REPRO_OK", "REPRO_SOFT"):
+        return base
+    if not r1 or not r2:
+        return "incomplete"
+
+    def L(d: dict[str, str]) -> str:
+        return " ".join(d.get("L", "").split())
+
+    if r1.get("fires") != r2.get("fires") or L(r1) != L(r2):
+        return "NONDET"
+    for snap in (r1, r2):
+        if snap.get("Need") != "0":
+            return "REPRO_FAIL"
+        if snap.get("ok_audit") != "1":
+            return "REPRO_FAIL"
+        if snap.get("last_pulse_ok") != "1":
+            return "REPRO_FAIL"
+        try:
+            if int(snap.get("acc") or 0) < 7:
+                return "REPRO_FAIL"
+        except ValueError:
+            return "REPRO_FAIL"
+    if L(r1) == L(gold) and r1.get("fires") == gold.get("fires"):
+        return "REPRO_OK_EXACT"
+    return "REPRO_OK_QUALITY"
+
+
 def write_compare(spec: ExpSpec) -> str:
     gold = snapshot_gate(spec.gold)
     r1p, r2p = clone_root(spec, 1), clone_root(spec, 2)
@@ -469,7 +501,7 @@ def write_compare(spec: ExpSpec) -> str:
             )
         )
     if r1 and r2:
-        v = verdict_family(gold, r1, r2)
+        v = verdict_phase12(gold, r1, r2)
     else:
         v = "incomplete"
     lines += ["", f"**verdict:** `{v}`", ""]
@@ -515,7 +547,7 @@ def promote_pass(spec: ExpSpec, *, dry_run: bool = False) -> None:
     gold = snapshot_gate(spec.gold)
     r1 = snapshot_gate(clone_root(spec, 1))
     r2 = snapshot_gate(clone_root(spec, 2))
-    v = verdict_family(gold, r1, r2)
+    v = verdict_phase12(gold, r1, r2)
     if v not in ("REPRO_OK_EXACT", "REPRO_OK_QUALITY", "REPRO_OK", "REPRO_SOFT"):
         raise SystemExit(f"refuse promote verdict={v}")
     for snap in (r1, r2):

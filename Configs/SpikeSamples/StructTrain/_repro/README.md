@@ -4,6 +4,8 @@ Canonical cold = **soft-cold** (links→tip-1, fat Model kept). Optional `--cold
 
 Stop Train on **`IsNeedToTrain=0`**. Post: TipR@Rmin (+ tip Exc); Branch uses full `phase8_tiprmin_gate` prepare.
 
+**PHASE12 multi-EXP:** use [`scripts/phase12_validate.py`](../scripts/phase12_validate.py) (Wave 1 Branch packA ×9). Manifest: [`PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). This harness stays for FS/Branch25 invest A/B and two-family compare.
+
 ## Gold (do not overwrite)
 
 | Family | Gold | `-t` | Mid |
@@ -15,10 +17,14 @@ Stop Train on **`IsNeedToTrain=0`**. Post: TipR@Rmin (+ tip Exc); Branch uses fu
 
 ```bash
 ROOT=Bin/Configs/SpikeSamples/StructTrain
+# PHASE12 Wave1 (preferred for packA roots)
+python3 "$ROOT/scripts/phase12_validate.py" list
+python3 "$ROOT/scripts/phase12_validate.py" stamp-from-repro --exp EXP_br_span25_packA_gen_C1e9
+python3 "$ROOT/scripts/phase12_validate.py" run-all-wave1 --exp EXP_br_span50_packA_gen_C1e9
+# Legacy two-family harness
 python3 "$ROOT/scripts/repro_cold_harness.py" prepare --all --cold soft
 python3 "$ROOT/scripts/repro_cold_harness.py" run --all --cold soft
 python3 "$ROOT/scripts/repro_cold_harness.py" compare
-# A/B invest
 python3 "$ROOT/scripts/repro_cold_harness.py" invest --job A1
 ```
 

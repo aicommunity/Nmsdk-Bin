@@ -212,10 +212,19 @@ def mid_thr(somas: list[float]) -> tuple[float, float]:
     return mid, gap
 
 
-def prepare_test(root: Path, span_ms: int, tips: list[int], pack: str = "A") -> None:
+def prepare_test(
+    root: Path,
+    span_ms: int,
+    tips: list[int],
+    pack: str = "A",
+    *,
+    keep_tipr: bool = False,
+) -> None:
     train, test = root / "Train", root / "Test"
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     L = " ".join(str(x) for x in tips)
+    tipr_src = get_tag(train_p, "TipSynapseResistance") or TIPRMIN
+    tipr_use = tipr_src if keep_tipr else TIPRMIN
 
     # Fresh Test shell if missing analyzer pattern
     if not (test / "Model_00.xml").exists():
@@ -252,7 +261,7 @@ def prepare_test(root: Path, span_ms: int, tips: list[int], pack: str = "A") -> 
             "SynapseResistanceBase",
         ):
             t = copy_tag(train_p, t, tag)
-        t = set_tag(t, "TipSynapseResistance", TIPRMIN)
+        t = set_tag(t, "TipSynapseResistance", tipr_use)
         t = set_tag(t, "ResistanceMin", RMIN)
         t = set_tag(t, "DendriteLength", L)
         t = set_tag(t, "IsNeedToTrain", "0")
@@ -265,7 +274,8 @@ def prepare_test(root: Path, span_ms: int, tips: list[int], pack: str = "A") -> 
         else:
             t = set_neuron_sb(t, learner_sb="1", neuron_sb="2")
             t = ensure_generator_tips(t, tips)
-            t = patch_tip_exc_r(t, tips)
+            if not keep_tipr:
+                t = patch_tip_exc_r(t, tips)
         p.write_text(t, encoding="utf-8")
 
     # GTS
@@ -277,15 +287,18 @@ def prepare_test(root: Path, span_ms: int, tips: list[int], pack: str = "A") -> 
     )
     (test / "Project.ini").write_text(ini, encoding="utf-8")
 
-    # also TipR@Rmin on Train artifacts for registry
-    for rel in ["Parameters_00.xml", "Model_00.xml"]:
-        p = train / rel
-        t = p.read_text(encoding="utf-8")
-        t = set_tag(t, "TipSynapseResistance", TIPRMIN)
-        t = set_tag(t, "ResistanceMin", RMIN)
-        if rel.endswith("Model_00.xml"):
-            t = patch_tip_exc_r(t, tips)
-        p.write_text(t, encoding="utf-8")
+    # TipR on Train: TipR@Rmin unless keep_tipr (Done TipR path)
+    if not keep_tipr:
+        for rel in ["Parameters_00.xml", "Model_00.xml"]:
+            p = train / rel
+            t = p.read_text(encoding="utf-8")
+            t = set_tag(t, "TipSynapseResistance", TIPRMIN)
+            t = set_tag(t, "ResistanceMin", RMIN)
+            if rel.endswith("Model_00.xml"):
+                t = patch_tip_exc_r(t, tips)
+            p.write_text(t, encoding="utf-8")
+    else:
+        print(f"keep-tipr: TipSynapseResistance={tipr_use[:48]}…")
 
 
 def main() -> None:
@@ -305,14 +318,21 @@ def main() -> None:
         action="store_true",
         help="If silent gap<=0, keep current TipR (Done TipR) and mid from foil max anyway",
     )
+    ap.add_argument(
+        "--keep-tipr",
+        action="store_true",
+        help="Do not force TipR@Rmin; keep Train TipSynapseResistance (Done TipR)",
+    )
     args = ap.parse_args()
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")
-    print("L=", tips, "pack=", args.pack.upper())
+    print("L=", tips, "pack=", args.pack.upper(), "keep_tipr=", args.keep_tipr)
 
     if not args.skip_prepare:
-        prepare_test(root, args.span_ms, tips, pack=args.pack)
+        prepare_test(
+            root, args.span_ms, tips, pack=args.pack, keep_tipr=args.keep_tipr
+        )
         print("prepared Test hygiene")
     elif args.matrix_only:
         apply_asym_matrix(test / "Parameters_00.xml", args.span_ms, pack=args.pack)

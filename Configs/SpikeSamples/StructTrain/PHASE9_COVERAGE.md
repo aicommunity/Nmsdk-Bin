@@ -59,6 +59,8 @@ Helper: [`SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py`](SelectivityAsymRm
 
 Cold Train C1e9 + NextSeg=1; Test shell from packA gen + neuron overlay (full `prepare_test` sync broke Matrix → n=25).
 
+**PHASE12:** packA NextSeg cold-replay = Wave 1 (`PHASE12_VALIDATION.md`); pack B/C NextSeg = Wave 2 `VALIDATED_CLONE` (matrix-only).
+
 | EXP | Status | L | thr |
 |-----|--------|---|-----|
 | `EXP_br_span25_packA_nextseginh_C1e9` | **PASS** | `13 11 7 1` | 0.07179975 |

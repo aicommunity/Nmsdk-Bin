@@ -5,6 +5,8 @@
 
 **Срез метрик:** 2026-09-15 (PHASE11 R0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**167 Test / 77 `ok_audit=1`**) · MATRIX [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
 
+**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) (source of truth статусов). Wave 1 = Branch short packA roots; Wave 2+ (clones / FS / AsymRm / Phase6) = **DEFERRED** → тот же манифест. PhaseA / PSI / TimeNeuron в реестре ниже — **ARTIFACT (PHASE12)** (исторический audit, без cold-replay).
+
 
 ## Критерий включения
 
@@ -153,8 +155,8 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) · repro soft-cold [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
-| EXP_br_span50_packA_gen_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0644 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) · repro soft-cold [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
+| EXP_br_span50_packA_gen_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0644 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_gen_C1e9 | L=`25 21 11 1`; Done TipR (не Rmin); thr≈0.00718 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span25_packA_preinh_C1e9 | L=`7 6 4 1`; TipR@Rmin; thr≈0.0517 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span50_packA_preinh_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0301 | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |

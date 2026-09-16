@@ -64,6 +64,8 @@ Harness: [`_repro/README.md`](_repro/README.md) · investigation [`_repro/REPRO_
 
 First strip-harness (`REPRO_FAIL`): protocol mismatch (no Reset, early stop, `--skip-prepare`). **A/B 2026-09-16:** Branch soft/strip + Need=0 + full gate → **exact gold** (`acc=8`, fires `10000000`). FastSpan soft≡strip still `acc=3` (`Need=1` at `-t`, L `7 5 4 1`); open FS follow-up. PulseLib pin `780ffc7` unchanged.
 
+**PHASE12:** Wave 1 = Branch packA roots (`phase12_validate.py`); Wave 2 = B/C clones + br480; Wave 3 = FS unblock → FastSpan/AsymRm. Манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md).
+
 ### R2.2 PSI short C1e9 cold
 
 | span | L after | thr | acc | note |
