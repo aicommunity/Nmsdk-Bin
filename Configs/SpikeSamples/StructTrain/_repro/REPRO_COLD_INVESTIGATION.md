@@ -2,63 +2,52 @@
 
 ## Goal
 
-Stable from-scratch cold → TipR@Rmin + mid with `ok_audit=1`, `acc≥8`, r1≡r2
-(`REPRO_OK_QUALITY`). Exact fires/L vs gold optional (`REPRO_OK_EXACT`).
+Stable from-scratch cold → TipR@Rmin + mid with `ok_audit=1`, `acc≥8`, r1≡r2.
+Exact gold match optional.
 
-Do **not** overwrite gold PASS dirs.
+## A/B results (2026-09-16)
 
-## Audit freeze
+See [`COMPARE.md`](COMPARE.md).
 
-| Item | Value |
-|------|-------|
-| PulseLib pin | `780ffc7` (same as gold Branch 13.09 / FastSpan 15.09) |
-| Gold FS | `SelectivityFastSpan/EXP_span25ms_fast_C1e9` L=`6 5 4 1` fires=`10000000` |
-| Gold Branch | `SelectivityBranch/EXP_br_span25_packA_gen_C1e9` L=`13 11 7 1` fires=`10000000` |
-| Prior strip harness | `_repro` r1≡r2 but `REPRO_FAIL` (FS L=7 FA; Branch 1 FA, Need=1) |
+| ID | cold | Need | L | acc | fires | vs gold |
+|----|------|------|---|-----|-------|---------|
+| A1 | soft | 1 | 7 5 4 1 | 3 | 11110101 | FAIL |
+| A2 | strip | 1 | 7 5 4 1 | 3 | 11110101 | FAIL (≡ A1) |
+| B1 | soft | 0 | 13 11 7 1 | 8 | 10000000 | **EXACT** |
+| B2 | strip | 0 | 13 11 7 1 | 8 | 10000000 | **EXACT** |
 
-### Soft-cold vs strip-cold
+## Root cause (C3)
 
-| | soft (historical) | strip (prior harness) |
-|--|-------------------|------------------------|
-| Model | fat cable kept; links → tip `_1` | delete `Dendrite*_k` k>1 |
-| TipR / L / Rmin | cold `8.6e7×4`, L=`1 1 1 1`, Rmin=`2e7` | same |
-| AutoCalibrate | **0** | was 1; now **0** for A/B |
-| Stop | **Need=0** | was SIGTERM on L≠cold |
+### Branch — resolved
 
-PulseLib L-policy commits already in gold binary: `281c98a`, `6f12f04`, `35984a2`.
+Prior `_repro` FAIL was **protocol**, not cold mode:
 
-## Definitions
+1. Missing **`ResetToUntrainedState`** on gold Done XML (injected when absent).
+2. Early SIGTERM before **`Need=0`** (poll L≠cold, not Done).
+3. Gate **`--skip-prepare`** → no `patch_tip_exc_r` on Test Model.
 
-- `soft-cold` — `soft_cold_reset_train` (setup_fastspan / PHASE8 seed style)
-- `strip-cold` — `strip_cold_reset_train`
-- `REPRO_OK_QUALITY` — r1≡r2 ∧ ok_audit=1 ∧ acc≥8
-- `REPRO_OK_EXACT` — QUALITY ∧ L==gold ∧ fires==gold
+With soft-cold + Need=0 wait + full phase8 prepare: **B1≡B2≡gold** (InitSoma, thr, fires).
 
-## A/B matrix
+Strip Model is **not required** for Branch25; soft-cold is canonical.
 
-| ID | Family | cold | path |
-|----|--------|------|------|
-| A1 | FastSpan25 | soft | `_repro/_invest/A1_fs_soft_r1` |
-| A2 | FastSpan25 | strip | `_repro/_invest/A2_fs_strip_r1` |
-| B1 | Branch25 | soft | `_repro/_invest/B1_br_soft_r1` |
-| B2 | Branch25 | strip | `_repro/_invest/B2_br_strip_r1` |
+### FastSpan — open (phase 2)
 
-See [`COMPARE.md`](COMPARE.md) for live rows.
+A1≡A2: strip vs soft **does not explain** FS gap.
 
-## CLI
+- Train grows L in trace (`6 5 4 1`+) but **`Parameters` often stale L=1 1 1 1** until late save.
+- NM exits at `-t 160` with **`Need=1`** (no delayed `Need=0` within 180s wait) → gate on incomplete Done.
+- Gate thr≈0.103 vs gold≈0.033 → `partial_FA` acc=3.
+- L settles **7 5 4 1** vs gold **6 5 4 1** (L-policy edge on dend0; PulseLib `6f12f04` already in gold binary).
 
-```bash
-ROOT=Bin/Configs/SpikeSamples/StructTrain
-python3 "$ROOT/scripts/repro_cold_harness.py" invest --job A1
-python3 "$ROOT/scripts/repro_cold_harness.py" prepare --all --cold soft
-python3 "$ROOT/scripts/repro_cold_harness.py" run --all --cold soft
-python3 "$ROOT/scripts/repro_cold_harness.py" compare
-```
+**Not** PulseLib regression after gold (pin `780ffc7` unchanged).
 
-## Checkpoints (Bin commits)
+Follow-up: FS delayed-save poll; optional `-t` extension; debug `peak_synced` on dend0 at L=6 vs 7.
 
-C0 audit+API → C1 Need0/gate → C2.A1…B2 → C3 diagnose? → C4 soft canon.
+## Canon
 
-## Root cause
+- **Branch25:** soft-cold + Need=0 + full phase8 gate.
+- **FastSpan25:** same protocol; FS quality still failing until Need=0 / L/thr fixed.
 
-_(filled after A/B)_
+## Checkpoints
+
+C0–C2.* done in Bin. C3=this file. C4 after soft canon re-run.

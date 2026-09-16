@@ -77,6 +77,13 @@ def run_train(family: Family, root: Path, *, dry_run: bool = False) -> str:
         time.sleep(30)
         if proc.poll() is not None:
             need = read_need(train / "Parameters_00.xml")
+            if need != "0":
+                for j in range(18):
+                    time.sleep(10)
+                    need = read_need(train / "Parameters_00.xml")
+                    if need == "0":
+                        print(f"Need=0 after NM exit (delayed save) poll={i} wait={j}")
+                        return "done"
             print(f"NM exited rc={proc.returncode} poll={i} Need={need}")
             return "done" if need == "0" else "exited_need1"
         if slog_dir is None:
