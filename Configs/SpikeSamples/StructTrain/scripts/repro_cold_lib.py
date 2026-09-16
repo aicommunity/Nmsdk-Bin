@@ -198,12 +198,12 @@ def _ensure_tag(text: str, tag: str, value: str, *, after_tag: str | None = None
     """Set tag value, or insert a minimal tag block if missing."""
     if re.search(rf"<{tag}\b", text):
         return set_tag(text, tag, value, 1)
-    block = f"<{tag}>{value}</{tag}>"
+    # Match TimeLearner property attrs (bool)
+    block = f'<{tag} Type="b" PType="257" IoType="17">{value}</{tag}>'
     if after_tag and re.search(rf"</{after_tag}>", text):
-        return re.sub(rf"(</{after_tag}>)", rf"\1\n\t\t{block}", text, count=1)
-    # fallback: after IsNeedToTrain
+        return re.sub(rf"(</{after_tag}>)", rf"\1\n\t\t\t\t\t\t\t{block}", text, count=1)
     if re.search(r"</IsNeedToTrain>", text):
-        return re.sub(r"(</IsNeedToTrain>)", rf"\1\n\t\t{block}", text, count=1)
+        return re.sub(r"(</IsNeedToTrain>)", rf"\1\n\t\t\t\t\t\t\t{block}", text, count=1)
     return text
 
 
