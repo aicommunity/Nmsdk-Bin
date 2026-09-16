@@ -256,6 +256,25 @@ def prepare_exp(spec: ExpSpec, reps: tuple[int, ...] = (1, 2), *, force: bool = 
 
 
 def run_train(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
+    """Train until Need=0. If NM exits at -t with Need=1, extend up to 2 extra -t windows."""
+    status = "incomplete_done"
+    extensions = 0
+    while extensions < 3:
+        status = _run_train_once(spec, root, dry_run=dry_run)
+        if status == "done" or dry_run:
+            return status
+        if status in ("disk",):
+            return status
+        # exited_need1 / incomplete_done → extend wall
+        need = read_need(root / "Train" / "Parameters_00.xml")
+        if need == "0":
+            return "done"
+        extensions += 1
+        print(f"TRAIN extend#{extensions} after status={status} Need={need}")
+    return status
+
+
+def _run_train_once(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
     train = root / "Train"
     ini = train / "Project.ini"
     tlim = spec.train_t
@@ -265,7 +284,7 @@ def run_train(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
     assert_disk_for_train()
     log = train / "run_phase12_cold.log"
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
-    proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("a"), stderr=subprocess.STDOUT)
     slog_dir = None
     need0_seen = False
     max_polls = 400
