@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Orchestrator: prepare / run / compare identical-cold repro harness."""
+"""Orchestrator: prepare / run / compare / invest identical-cold repro harness."""
 from __future__ import annotations
 
 import argparse
@@ -11,15 +11,23 @@ from pathlib import Path
 
 from repro_cold_lib import (
     FAMILIES,
+    INVEST_JOBS,
+    INVEST_ROOT,
     REPRO_ROOT,
     ROOT,
     NM,
+    ColdMode,
     Family,
+    append_compare_row,
     assert_disk_for_train,
     clone_root,
     free_gib,
+    get_tag,
+    invest_root,
     prepare_family,
+    prepare_invest,
     post_train_hygiene,
+    read_need,
     snapshot_gate,
     verdict_family,
 )
@@ -38,13 +46,23 @@ def _find_slog(train: Path) -> Path | None:
     return cands[0] if cands else None
 
 
-def run_train(family: Family, root: Path, *, dry_run: bool = False) -> None:
+def _terminate(proc: subprocess.Popen) -> None:
+    proc.terminate()
+    try:
+        proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait(timeout=30)
+
+
+def run_train(family: Family, root: Path, *, dry_run: bool = False) -> str:
+    """Train until IsNeedToTrain=0 (or timeout). Returns status: done|incomplete_done|exited|disk."""
     train = root / "Train"
     ini = train / "Project.ini"
     tlim = family.train_t
     print(f"TRAIN {root.name} -t {tlim} Avail={free_gib():.0f}G")
     if dry_run:
-        return
+        return "dry"
     assert_disk_for_train()
     log = train / "run_repro_cold.log"
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
@@ -52,11 +70,15 @@ def run_train(family: Family, root: Path, *, dry_run: bool = False) -> None:
         cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT
     )
     slog_dir = None
-    for i in range(1, 200):
+    need0_seen = False
+    # ~200 * 30s ≈ 100 min wall; Branch -t 320 may need longer — extend loop
+    max_polls = 400
+    for i in range(1, max_polls + 1):
         time.sleep(30)
         if proc.poll() is not None:
-            print(f"NM exited rc={proc.returncode} poll={i}")
-            break
+            need = read_need(train / "Parameters_00.xml")
+            print(f"NM exited rc={proc.returncode} poll={i} Need={need}")
+            return "done" if need == "0" else "exited_need1"
         if slog_dir is None:
             slog_dir = _find_slog(train)
         model_t = 0.0
@@ -65,54 +87,67 @@ def run_train(family: Family, root: Path, *, dry_run: bool = False) -> None:
             traces = sorted(slog_dir.glob("*DendriteLengthTrace.txt"))
             if traces:
                 try:
-                    last = traces[0].read_text(encoding="utf-8", errors="replace").strip().splitlines()[
-                        -1
-                    ]
+                    last = (
+                        traces[0]
+                        .read_text(encoding="utf-8", errors="replace")
+                        .strip()
+                        .splitlines()[-1]
+                    )
                     parts = last.split()
                     if len(parts) >= 6:
                         model_t = float(parts[1])
                         L = " ".join(parts[2:6])
                 except (OSError, ValueError, IndexError):
                     pass
+        raw = (train / "Parameters_00.xml").read_text(encoding="utf-8")
+        need = get_tag(raw, "IsNeedToTrain") or "?"
+        Ld = get_tag(raw, "DendriteLength") or L
         if i % 4 == 0:
-            print(f"  poll={i} model_t={model_t:.2f} L={L} avail={free_gib():.0f}G")
+            print(
+                f"  poll={i} model_t={model_t:.2f} L={Ld} Need={need} avail={free_gib():.0f}G"
+            )
         if free_gib() < 50:
             print("HARD STOP disk")
-            proc.terminate()
-            break
+            _terminate(proc)
+            return "disk"
+        if need == "0":
+            need0_seen = True
+            # allow a short settle then SIGTERM (Qt hang after -S)
+            time.sleep(8)
+            print("Need=0 saved+SIGTERM")
+            _terminate(proc)
+            return "done"
+        # past -t wall: wait for Need=0 with extended save polls (do NOT stop on L alone)
         if model_t >= tlim - 2:
-            # wait for Parameters DendriteLength != 1 1 1 1
-            for j in range(40):
+            print(f"  past -t ({model_t:.2f}>={tlim}); waiting Need=0 …")
+            for j in range(60):
                 time.sleep(10)
-                from repro_cold_lib import get_tag
-
-                raw = (train / "Parameters_00.xml").read_text(encoding="utf-8")
-                Ld = get_tag(raw, "DendriteLength") or ""
-                print(f"  save_wait L={Ld}")
-                if Ld.replace(",", " ").split() != ["1", "1", "1", "1"]:
-                    time.sleep(5)
-                    proc.terminate()
-                    try:
-                        proc.wait(timeout=30)
-                    except subprocess.TimeoutExpired:
-                        proc.kill()
-                    print("saved+SIGTERM")
-                    return
                 if proc.poll() is not None:
-                    return
-            proc.terminate()
-            break
-    else:
-        proc.terminate()
-    try:
-        proc.wait(timeout=60)
-    except subprocess.TimeoutExpired:
-        proc.kill()
+                    need = read_need(train / "Parameters_00.xml")
+                    return "done" if need == "0" else "exited_need1"
+                need = read_need(train / "Parameters_00.xml")
+                Ld = get_tag(
+                    (train / "Parameters_00.xml").read_text(encoding="utf-8"),
+                    "DendriteLength",
+                )
+                if j % 3 == 0:
+                    print(f"  save_wait Need={need} L={Ld}")
+                if need == "0":
+                    time.sleep(5)
+                    print("Need=0 after -t +SIGTERM")
+                    _terminate(proc)
+                    return "done"
+            print("WARN incomplete_done: Need still 1 after wait past -t")
+            _terminate(proc)
+            return "incomplete_done"
+    print("WARN poll budget exhausted")
+    _terminate(proc)
+    return "incomplete_done" if not need0_seen else "done"
 
 
-def pack_root(root: Path, *, dry_run: bool = False) -> Path:
+def pack_root(root: Path, *, dry_run: bool = False, prefix: str = "repro") -> Path:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    arch = ROOT / "archives" / f"statisticlog_repro_{stamp}"
+    arch = ROOT / "archives" / f"statisticlog_{prefix}_{stamp}"
     print(f"PACK {root} -> {arch}")
     if dry_run:
         return arch
@@ -148,6 +183,7 @@ def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
             family.metric,
         ]
     else:
+        # Full prepare_test (includes patch_tip_exc_r) — no --skip-prepare
         cmd = [
             sys.executable,
             str(PHASE8),
@@ -156,14 +192,14 @@ def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
             str(family.span_ms),
             "--pack",
             "A",
-            "--skip-prepare",
             "--test-t",
             "40",
         ]
     log = root / "Test" / "run_repro_gate.log"
+    log.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
     csv_path = root / "Test" / "SelectivityLog" / "results.csv"
-    for _ in range(90):
+    for _ in range(120):
         time.sleep(8)
         if proc.poll() is not None:
             break
@@ -181,11 +217,6 @@ def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
             if csv_path.exists():
                 n = sum(1 for _ in csv_path.open()) - 1
                 try:
-                    et = int((pid_s / "stat").read_text().split()[21])  # not etimes
-                except (OSError, IndexError, ValueError):
-                    et = 0
-                # use ps
-                try:
                     et = int(
                         subprocess.check_output(
                             ["ps", "-o", "etimes=", "-p", pid_s.name], text=True
@@ -198,19 +229,22 @@ def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
                     print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et}")
                     subprocess.call(["kill", "-TERM", pid_s.name])
     try:
-        proc.wait(timeout=120)
+        proc.wait(timeout=180)
     except subprocess.TimeoutExpired:
         proc.kill()
-    subprocess.call([sys.executable, str(METRICS), "-v", str(csv_path)])
+    if csv_path.exists():
+        subprocess.call([sys.executable, str(METRICS), "-v", str(csv_path)])
 
 
 def cmd_prepare(args: argparse.Namespace) -> None:
+    mode: ColdMode = args.cold
     families = list(FAMILIES.values()) if args.all else [FAMILIES[args.family]]
     for fam in families:
-        prepare_family(fam, force=args.force)
+        prepare_family(fam, force=args.force, mode=mode)
 
 
 def cmd_run(args: argparse.Namespace) -> None:
+    mode: ColdMode = args.cold
     jobs: list[tuple[Family, int]] = []
     if args.all:
         for fam in FAMILIES.values():
@@ -222,14 +256,40 @@ def cmd_run(args: argparse.Namespace) -> None:
         for r in reps:
             jobs.append((fam, r))
     for fam, rep in jobs:
-        root = clone_root(fam, rep)
+        root = Path(args.root) if args.root else clone_root(fam, rep)
         if not root.exists():
-            prepare_family(fam, reps=(rep,), force=False)
-        run_train(fam, root, dry_run=args.dry_run)
-        pack_root(root, dry_run=args.dry_run)
+            if args.root:
+                raise SystemExit(f"missing --root {root}")
+            prepare_family(fam, reps=(rep,), force=False, mode=mode)
+        status = run_train(fam, root, dry_run=args.dry_run)
+        print(f"TRAIN_STATUS={status}")
+        pack_root(root, dry_run=args.dry_run, prefix="repro")
         run_gate(fam, root, dry_run=args.dry_run)
         snap = snapshot_gate(root)
-        print(f"SNAP r{rep} {fam.key}: {snap}")
+        print(f"SNAP r{rep} {fam.key} cold={mode}: {snap}")
+
+
+def cmd_invest(args: argparse.Namespace) -> None:
+    if getattr(args, "all", False):
+        job_ids = ["A1", "A2", "B1", "B2"]
+    else:
+        job_ids = [args.job]
+    for job_id in job_ids:
+        fam_key, mode, _ = INVEST_JOBS[job_id]
+        fam = FAMILIES[fam_key]
+        root = invest_root(job_id)
+        if args.prepare_only or not root.exists() or args.force:
+            prepare_invest(job_id, force=bool(args.force or root.exists()))
+        if args.prepare_only:
+            continue
+        status = run_train(fam, root, dry_run=args.dry_run)
+        print(f"TRAIN_STATUS={status} job={job_id}")
+        pack_root(root, dry_run=args.dry_run, prefix="invest")
+        run_gate(fam, root, dry_run=args.dry_run)
+        append_compare_row(job_id, fam, mode, root)
+        snap = snapshot_gate(root)
+        print(f"INVEST SNAP {job_id}: {snap}")
+        print(f"COMPARE -> {INVEST_ROOT / 'COMPARE.md'}")
 
 
 def cmd_compare(args: argparse.Namespace) -> None:
@@ -238,10 +298,10 @@ def cmd_compare(args: argparse.Namespace) -> None:
         "",
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         "",
-        "Identical cold Train harness (clean tip-1 Model, TipR cold→@Rmin, mid gate).",
+        "Cold Train harness (soft-cold default; TipR cold→@Rmin; Need=0; mid gate).",
         "",
-        "| family | role | L | TipR | thr | fires | acc | mode | ok_audit | last_pulse |",
-        "|--------|------|---|------|-----|-------|-----|------|----------|------------|",
+        "| family | role | L | TipR | thr | fires | acc | mode | ok_audit | last_pulse | Need |",
+        "|--------|------|---|------|-----|-------|-----|------|----------|------------|------|",
     ]
     verdicts: list[str] = []
     for key, fam in FAMILIES.items():
@@ -252,7 +312,7 @@ def cmd_compare(args: argparse.Namespace) -> None:
         r2 = snapshot_gate(r2p) if r2p.exists() else {}
         for role, snap in (("gold", gold), ("r1", r1), ("r2", r2)):
             lines.append(
-                "| {fam} | {role} | `{L}` | `{TipR}` | {thr} | `{fires}` | {acc} | {mode} | {ok} | {lp} |".format(
+                "| {fam} | {role} | `{L}` | `{TipR}` | {thr} | `{fires}` | {acc} | {mode} | {ok} | {lp} | {need} |".format(
                     fam=key,
                     role=role,
                     L=snap.get("L", ""),
@@ -263,6 +323,7 @@ def cmd_compare(args: argparse.Namespace) -> None:
                     mode=snap.get("mode", ""),
                     ok=snap.get("ok_audit", ""),
                     lp=snap.get("last_pulse_ok", ""),
+                    need=snap.get("Need", ""),
                 )
             )
         if r1 and r2:
@@ -275,9 +336,10 @@ def cmd_compare(args: argparse.Namespace) -> None:
         [
             "## Criteria",
             "",
-            "- `REPRO_OK` — both reps: ok_audit=1, fires==gold, L==gold, last_pulse_ok",
-            "- `REPRO_SOFT` — both PASS-like (acc≥7) but L/thr drift",
-            "- `REPRO_FAIL` — ok_audit=0 or fires≠gold",
+            "- `REPRO_OK_QUALITY` — r1≡r2, ok_audit=1, acc≥8 (fires/L vs gold optional)",
+            "- `REPRO_OK_EXACT` — QUALITY + fires==gold + L==gold",
+            "- `REPRO_OK` / `REPRO_SOFT` — legacy exact/soft fires match",
+            "- `REPRO_FAIL` — ok_audit=0 or (legacy) fires≠gold without QUALITY",
             "- `NONDET` — r1 vs r2 disagree on fires or L",
             "",
         ]
@@ -292,10 +354,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p_prep = sub.add_parser("prepare", help="clone gold + canonical cold")
+    p_prep = sub.add_parser("prepare", help="clone gold + cold reset")
     p_prep.add_argument("--family", choices=FAMILIES.keys())
     p_prep.add_argument("--all", action="store_true")
-    p_prep.add_argument("--force", action="store_true", help="rm existing clones")
+    p_prep.add_argument("--force", action="store_true")
+    p_prep.add_argument("--cold", choices=("soft", "strip"), default="soft")
     p_prep.add_argument("--dry-run", action="store_true")
     p_prep.set_defaults(func=cmd_prepare)
 
@@ -303,16 +366,29 @@ def main() -> None:
     p_run.add_argument("--family", choices=FAMILIES.keys())
     p_run.add_argument("--rep", type=int, choices=(1, 2))
     p_run.add_argument("--all", action="store_true")
+    p_run.add_argument("--cold", choices=("soft", "strip"), default="soft")
+    p_run.add_argument("--root", type=str, help="explicit experiment root")
     p_run.add_argument("--dry-run", action="store_true")
     p_run.set_defaults(func=cmd_run)
+
+    p_inv = sub.add_parser("invest", help="A/B soft vs strip under _repro/_invest")
+    p_inv.add_argument("--job", choices=list(INVEST_JOBS.keys()))
+    p_inv.add_argument("--all", action="store_true", help="A1 A2 B1 B2")
+    p_inv.add_argument("--force", action="store_true")
+    p_inv.add_argument("--prepare-only", action="store_true")
+    p_inv.add_argument("--dry-run", action="store_true")
+    p_inv.set_defaults(func=cmd_invest)
 
     p_cmp = sub.add_parser("compare", help="write REPRO_COLD_RESULT.md")
     p_cmp.set_defaults(func=cmd_compare)
 
     args = ap.parse_args()
-    if args.cmd in ("prepare", "run"):
-        if not args.all and not getattr(args, "family", None):
-            ap.error("need --family or --all")
+    if args.cmd == "prepare" and not args.all and not args.family:
+        ap.error("need --family or --all")
+    if args.cmd == "run" and not args.all and not args.family and not args.root:
+        ap.error("need --family/--all or --root")
+    if args.cmd == "invest" and not args.all and not args.job:
+        ap.error("need --job or --all")
     args.func(args)
 
 
