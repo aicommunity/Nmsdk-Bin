@@ -138,7 +138,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span25_packB_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packB_preinh_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span25_packC_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packC_preinh_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span50_packB_gen_C1e9 | SelectivityBranch/EXP_br_span50_packB_gen_C1e9 | 2 | clone | VALIDATED_CLONE | | |
-| EXP_br_span50_packC_gen_C1e9 | SelectivityBranch/EXP_br_span50_packC_gen_C1e9 | 2 | clone | DEFERRED | | |
+| EXP_br_span50_packC_gen_C1e9 | SelectivityBranch/EXP_br_span50_packC_gen_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packB_preinh_C1e9 | SelectivityBranch/EXP_br_span50_packB_preinh_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span50_packC_preinh_C1e9 | SelectivityBranch/EXP_br_span50_packC_preinh_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span100_packB_gen_C1e9 | SelectivityBranch/EXP_br_span100_packB_gen_C1e9 | 2 | clone | DEFERRED | Done TipR parent | |
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T12:53Z | EXP_br_span50_packC_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.06440315; acc=8; ok_audit=1 |
 | 2026-09-17T12:50Z | EXP_br_span50_packB_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.06440315; acc=8; ok_audit=1 |
 | 2026-09-17T12:46Z | EXP_br_span25_packC_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.07179975; acc=8; ok_audit=1 |
 | 2026-09-17T12:41Z | EXP_br_span25_packB_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.07179975; acc=8; ok_audit=1 |
