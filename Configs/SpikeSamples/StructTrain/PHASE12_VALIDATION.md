@@ -24,7 +24,7 @@
 | Wave | Scope | Status |
 |------|-------|--------|
 | **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
-| 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **W2a done** (16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL); W2b br480 in progress |
+| 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | DEFERRED / BLOCKED_FS |
 | 4 | Phase6 480 tiprmin 7/8 | DEFERRED |
 | ∞ | ARTIFACT / OUT | marked below |
@@ -107,13 +107,13 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_480_preinh250_tiprmin | SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin | 4 | cold | DEFERRED | 7/8 | |
 | EXP_480_ltzcal_twin_gen | SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen | 4 | sync | DEFERRED | 7/8 | |
 
-### G. Branch @480 — Wave 2 DEFERRED
+### G. Branch @480 — Wave 2b FAIL (soft-cold)
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | FAIL | 8/8 | |
-| EXP_br480_nextseginh_tiprmin | SelectivityBranch/EXP_br480_nextseginh_tiprmin | 2 | cold | DEFERRED | 8/8 | |
-| EXP_br480_preinh250_tiprmin | SelectivityBranch/EXP_br480_preinh250_tiprmin | 2 | cold | DEFERRED | 7/8 | |
+| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; L stuck atypical; gold kept | |
+| EXP_br480_nextseginh_tiprmin | SelectivityBranch/EXP_br480_nextseginh_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; gold kept | |
+| EXP_br480_preinh250_tiprmin | SelectivityBranch/EXP_br480_preinh250_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; gold kept | |
 
 ### H. Branch short packA — Wave 1
 
@@ -182,6 +182,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T20:19Z | EXP_br480_preinh250_tiprmin | FAIL | | | | train exited_need1 r1 |
+| 2026-09-17T18:14Z | EXP_br480_nextseginh_tiprmin | FAIL | | | | train exited_need1 r1 |
 | 2026-09-17T16:04Z | EXP_br480_tiprmin | FAIL | | | | train exited_need1 r1 |
 | 2026-09-17T14:02Z | EXP_br_span100_packC_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.007181835; acc=8; ok_audit=1 |
 | 2026-09-17T13:56Z | EXP_br_span100_packB_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.007181835; acc=8; ok_audit=1 |

@@ -3,9 +3,9 @@
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).
 
-**Срез метрик:** 2026-09-15 (PHASE11 R0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**167 Test / 77 `ok_audit=1`**) · MATRIX [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
+**Срез метрик:** 2026-09-17 (PHASE12 W2 GATE) · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**174 Test / 103 `ok_audit=1`**) · prior 2026-09-15 (PHASE11 R0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**167 Test / 77 `ok_audit=1`**) · MATRIX [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
 
-**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) (source of truth статусов). Wave 1 = Branch packA ×9 (8 VALIDATED / 1 FAIL nextseg100). Wave 2a = Branch B/C clones **done** (16 `VALIDATED_CLONE`, 2 `DEFERRED_PARENT_FAIL`). Wave 2b br480 / Wave 3–4 = see [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). PhaseA / PSI / TimeNeuron в реестре ниже — **ARTIFACT (PHASE12)** (исторический audit, без cold-replay).
+**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) (source of truth статусов). Wave 1 = Branch packA ×9 (8 VALIDATED / 1 FAIL nextseg100). Wave 2 **done**: W2a 16 `VALIDATED_CLONE` + 2 `DEFERRED_PARENT_FAIL`; W2b br480 soft-cold **FAIL**×3 (Need≠0; gold kept). Wave 3–4 DEFERRED — [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). PhaseA / PSI / TimeNeuron в реестре ниже — **ARTIFACT (PHASE12)** (исторический audit, без cold-replay).
 
 
 ## Критерий включения
@@ -145,9 +145,9 @@ Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускае
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_br480_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.05149 | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_br480_nextseginh_tiprmin | NextSegInh + tiprmin; thr=0.036298 | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_br480_preinh250_tiprmin | Preinh2.5 + tiprmin; thr=0.111136 | 7/8 | selective | [Train](SelectivityBranch/EXP_br480_preinh250_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_br480_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.05149 · **FAIL (PHASE12 W2 soft-cold)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_br480_nextseginh_tiprmin | NextSegInh + tiprmin; thr=0.036298 · **FAIL (PHASE12 W2 soft-cold)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test/SelectivityLog/results.csv) |
+| EXP_br480_preinh250_tiprmin | Preinh2.5 + tiprmin; thr=0.111136 · **FAIL (PHASE12 W2 soft-cold)** | 7/8 | selective | [Train](SelectivityBranch/EXP_br480_preinh250_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
 
 ## Branch short-span (PHASE8)
 
