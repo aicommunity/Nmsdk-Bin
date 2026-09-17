@@ -23,7 +23,7 @@
 
 | Wave | Scope | Status |
 |------|-------|--------|
-| **1** | Branch packA ×9 cold | **done** |
+| **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | DEFERRED |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | DEFERRED / BLOCKED_FS |
 | 4 | Phase6 480 tiprmin 7/8 | DEFERRED |
@@ -127,7 +127,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span100_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span100_packA_preinh_C1e9 | 1 | cold | VALIDATED | `22 18 11 1` | tiprmin | 0.0203054 | | |
 | EXP_br_span25_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9 | 1 | cold | VALIDATED | `13 11 7 1` | tiprmin | 0.07179975 | NextSeg=1 | |
 | EXP_br_span50_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9 | 1 | cold | VALIDATED | `14 9 6 1` | tiprmin | 0.0456422 | NextSeg=1 | |
-| EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | FAIL | `21 17 11 1` | tiprmin | 0.014432775 | NextSeg=1 | |
+| EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | FAIL | `21 17 11 1` | tiprmin | 0.014432775 | soft-cold L stuck `1 1 1 1` ×3×320; gold kept; follow-up | |
 
 ### I. Branch pack B/C + NextSeg B/C — Wave 2 DEFERRED
 
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | UTC | exp_id | verdict | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T09:30Z | EXP_br_span100_packA_nextseginh_C1e9 | FAIL | `1 1 1 1` | | | soft-cold no L growth |
 | 2026-09-17T08:52Z | EXP_br_span100_packA_gen_C1e9 | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`25 21 11 1` thr=0.007181835 fires=`10000000` |
 | 2026-09-17T08:27Z | EXP_br_span100_packA_nextseginh_C1e9 | FAIL | | | | train exited_need1 r1 |
 | 2026-09-17T06:27Z | EXP_br_span50_packA_nextseginh_C1e9 | VALIDATED | | | | verdict=REPRO_OK_QUALITY L=`13 11 6 1` thr=0.0412798 fires=`10000000` |
