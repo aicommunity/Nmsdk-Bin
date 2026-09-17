@@ -767,7 +767,7 @@ def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
         "--skip-prepare",
         "--matrix-only",
         "--test-t",
-        "40",
+        "80" if spec.span_ms >= 100 else "40",
     ]
     if spec.tipr_recipe == "done_tipr":
         cmd.append("--keep-tipr")
