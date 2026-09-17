@@ -188,11 +188,45 @@ def set_fixed_thr(path: Path, thr: str) -> None:
 
 
 def run_nm(ini: Path, tsec: float, log: Path, save: bool = False) -> int:
+    """Run NM; SIGTERM when SelectivityLog has ≥8 rows and wall > max(tsec, 100)."""
+    import time
+
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tsec), "-x"]
     if save:
         cmd.append("-S")
+    csv_path = ini.parent / "SelectivityLog" / "results.csv"
     with log.open("w") as f:
-        return subprocess.call(cmd, stdout=f, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
+    deadline = time.time() + max(float(tsec) * 3.0, 180.0)
+    while proc.poll() is None:
+        if time.time() > deadline:
+            print(f"SIGTERM NM (deadline) pid={proc.pid}")
+            proc.terminate()
+            break
+        if csv_path.exists():
+            try:
+                n = sum(1 for _ in csv_path.open(encoding="utf-8")) - 1
+            except OSError:
+                n = 0
+            try:
+                et = int(
+                    subprocess.check_output(
+                        ["ps", "-o", "etimes=", "-p", str(proc.pid)], text=True
+                    ).strip()
+                    or "0"
+                )
+            except subprocess.CalledProcessError:
+                et = 0
+            if n >= 8 and et > max(int(tsec), 100):
+                print(f"SIGTERM NM pid={proc.pid} n={n} et={et}")
+                proc.terminate()
+                break
+        time.sleep(5)
+    try:
+        return proc.wait(timeout=60)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        return proc.wait(timeout=30)
 
 
 def soma_from_csv(csv_path: Path) -> list[float]:

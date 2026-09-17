@@ -133,7 +133,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_br_span25_packB_gen_C1e9 | SelectivityBranch/EXP_br_span25_packB_gen_C1e9 | 2 | clone | DEFERRED | matrix-only after packA | |
+| EXP_br_span25_packB_gen_C1e9 | SelectivityBranch/EXP_br_span25_packB_gen_C1e9 | 2 | clone | VALIDATED_CLONE | matrix-only after packA | |
 | EXP_br_span25_packC_gen_C1e9 | SelectivityBranch/EXP_br_span25_packC_gen_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span25_packB_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packB_preinh_C1e9 | 2 | clone | DEFERRED | | |
 | EXP_br_span25_packC_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packC_preinh_C1e9 | 2 | clone | DEFERRED | | |
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T12:41Z | EXP_br_span25_packB_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.07179975; acc=8; ok_audit=1 |
 
 ## Wave 1 run log
 
