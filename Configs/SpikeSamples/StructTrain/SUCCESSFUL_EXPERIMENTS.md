@@ -183,7 +183,7 @@ PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
 
 | Имя | Рычаг | Acc | Режим | Конфиги |
 |-----|--------|-----|-------|---------|
-| EXP_br_span25_packA_nextseginh_C1e9 | L=`13 11 7 1`; thr≈0.0718 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span25_packA_nextseginh_C1e9 | L=`13 11 7 1`; thr≈0.0476 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span50_packA_nextseginh_C1e9 | L=`13 11 6 1`; thr≈0.0413 · **VALIDATED (PHASE12 W1)** QUALITY | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_nextseginh_C1e9 | L=`21 17 11 1`; thr≈0.0144 · **PHASE12 W1 FAIL** (soft-cold L stuck; gold kept) | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
 
