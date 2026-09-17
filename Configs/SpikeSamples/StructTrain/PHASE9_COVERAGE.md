@@ -95,3 +95,5 @@ Clone `SelectivityBranch/EXP_br480_preinh250_tiprmin_phase9_mid` — silent soma
 
 ### AsymRmLtzCal preinh twins
 `SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span*_packA_preinh`: GATE n=2 silent — **explicit defer** (no overwrite stall Train). PHASE10+ if revisited.
+
+**PHASE12 Wave 2a:** Branch B/C + NextSeg B/C @25/50 matrix-only reaffirm — statuses in [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md).

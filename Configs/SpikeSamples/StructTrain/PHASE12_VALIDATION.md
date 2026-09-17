@@ -24,7 +24,7 @@
 | Wave | Scope | Status |
 |------|-------|--------|
 | **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
-| 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | DEFERRED |
+| 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **W2a done** (16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL); W2b br480 in progress |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | DEFERRED / BLOCKED_FS |
 | 4 | Phase6 480 tiprmin 7/8 | DEFERRED |
 | ∞ | ARTIFACT / OUT | marked below |
@@ -111,7 +111,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | DEFERRED | 8/8 | |
+| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | FAIL | 8/8 | |
 | EXP_br480_nextseginh_tiprmin | SelectivityBranch/EXP_br480_nextseginh_tiprmin | 2 | cold | DEFERRED | 8/8 | |
 | EXP_br480_preinh250_tiprmin | SelectivityBranch/EXP_br480_preinh250_tiprmin | 2 | cold | DEFERRED | 7/8 | |
 
@@ -129,7 +129,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span50_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9 | 1 | cold | VALIDATED | `14 9 6 1` | tiprmin | 0.0456422 | NextSeg=1 | |
 | EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | FAIL | `21 17 11 1` | tiprmin | 0.014432775 | soft-cold L stuck `1 1 1 1` ×3×320; gold kept; follow-up | |
 
-### I. Branch pack B/C + NextSeg B/C — Wave 2 DEFERRED
+### I. Branch pack B/C + NextSeg B/C — Wave 2a done
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T16:04Z | EXP_br480_tiprmin | FAIL | | | | train exited_need1 r1 |
 | 2026-09-17T14:02Z | EXP_br_span100_packC_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.007181835; acc=8; ok_audit=1 |
 | 2026-09-17T13:56Z | EXP_br_span100_packB_gen_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.007181835; acc=8; ok_audit=1 |
 | 2026-09-17T13:49Z | EXP_br_span100_packB_gen_C1e9 | FAIL | | | | matrix-only packB; thr=1.0; acc=6; ok_audit=0 |

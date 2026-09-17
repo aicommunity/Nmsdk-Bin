@@ -75,3 +75,5 @@ First strip-harness (`REPRO_FAIL`): protocol mismatch (no Reset, early stop, `--
 | 100 | 21 18 12 1 | ≈0.0182 | 6 | selective |
 
 Packs: `statisticlog_20260915T125643Z`, `…T141845Z`, `…T153249Z`. Avail finish ~301G. No SUCCESSFUL (need ≥7).
+
+**PHASE12:** Wave1 packA cold done; Wave2a B/C clones done — see [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md).

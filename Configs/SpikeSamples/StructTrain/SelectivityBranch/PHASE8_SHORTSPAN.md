@@ -75,7 +75,7 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 
 **Repro cold (2026-09):** canonical = **soft-cold** (param L/TipR + links→tip-1; **не** strip Model). Post-train: full `phase8_tiprmin_gate` prepare (`patch_tip_exc_r`). Inject `ResetToUntrainedState=1` if tag missing on Done clone. Stop Train on `Need=0`. See [`_repro/REPRO_COLD_INVESTIGATION.md`](../_repro/REPRO_COLD_INVESTIGATION.md).
 
-**PHASE12 Wave 1 (done 8/9):** cold×2 packA roots via [`../scripts/phase12_validate.py`](../scripts/phase12_validate.py); статусы в [`../PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). span25 gen = `VALIDATED` (`REPRO_OK_EXACT` stamp). span100 gen = `done_tipr` (не TipR@Rmin). Wave 2 = B/C clones + br480.
+**PHASE12 Wave 1 (done 8/9):** cold×2 packA roots via [`../scripts/phase12_validate.py`](../scripts/phase12_validate.py); статусы в [`../PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). span25 gen = `VALIDATED` (`REPRO_OK_EXACT` stamp). span100 gen = `done_tipr` (не TipR@Rmin). Wave 2a = B/C matrix-only clones **done** (16 VALIDATED_CLONE; nextseg100 B/C DEFERRED_PARENT_FAIL). Wave 2b = br480 soft-cold.
 
 ## Антирегрессия
 
