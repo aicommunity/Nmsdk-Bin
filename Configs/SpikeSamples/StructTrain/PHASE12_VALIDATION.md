@@ -23,7 +23,7 @@
 
 | Wave | Scope | Status |
 |------|-------|--------|
-| **1** | Branch packA ×9 cold | **in progress** |
+| **1** | Branch packA ×9 cold | **done** |
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | DEFERRED |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | DEFERRED / BLOCKED_FS |
 | 4 | Phase6 480 tiprmin 7/8 | DEFERRED |
