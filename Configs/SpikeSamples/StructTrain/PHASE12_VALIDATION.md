@@ -136,7 +136,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span25_packB_gen_C1e9 | SelectivityBranch/EXP_br_span25_packB_gen_C1e9 | 2 | clone | VALIDATED_CLONE | matrix-only after packA | |
 | EXP_br_span25_packC_gen_C1e9 | SelectivityBranch/EXP_br_span25_packC_gen_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span25_packB_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packB_preinh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
-| EXP_br_span25_packC_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packC_preinh_C1e9 | 2 | clone | DEFERRED | | |
+| EXP_br_span25_packC_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packC_preinh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packB_gen_C1e9 | SelectivityBranch/EXP_br_span50_packB_gen_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packC_gen_C1e9 | SelectivityBranch/EXP_br_span50_packC_gen_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packB_preinh_C1e9 | SelectivityBranch/EXP_br_span50_packB_preinh_C1e9 | 2 | clone | DEFERRED | | |
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T13:06Z | EXP_br_span25_packC_preinh_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.05171075; acc=8; ok_audit=1 |
 | 2026-09-17T13:03Z | EXP_br_span25_packB_preinh_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.05171075; acc=8; ok_audit=1 |
 | 2026-09-17T12:59Z | EXP_br_span100_packC_gen_C1e9 | FAIL | | | | matrix-only packC; thr=1.0; acc=6; ok_audit=0 |
 | 2026-09-17T12:56Z | EXP_br_span100_packB_gen_C1e9 | FAIL | | | | matrix-only packB; thr=1.0; acc=5; ok_audit=0 |
