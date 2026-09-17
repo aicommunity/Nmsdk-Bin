@@ -149,8 +149,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span25_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
-| EXP_br_span100_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9 | 2 | clone | DEFERRED | | |
-| EXP_br_span100_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9 | 2 | clone | DEFERRED | | |
+| EXP_br_span100_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9 | 2 | clone | DEFERRED_PARENT_FAIL | | |
+| EXP_br_span100_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9 | 2 | clone | DEFERRED_PARENT_FAIL | | |
 
 ### J. FastSpan C1e9 — Wave 3 BLOCKED_FS / OUT
 
@@ -182,6 +182,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T13:44Z | EXP_br_span100_packC_nextseginh_C1e9 | DEFERRED_PARENT_FAIL | | | | parent FAIL EXP_br_span100_packA_nextseginh_C1e9 |
+| 2026-09-17T13:44Z | EXP_br_span100_packB_nextseginh_C1e9 | DEFERRED_PARENT_FAIL | | | | parent FAIL EXP_br_span100_packA_nextseginh_C1e9 |
 | 2026-09-17T13:44Z | EXP_br_span50_packC_nextseginh_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.0456422; acc=8; ok_audit=1 |
 | 2026-09-17T13:39Z | EXP_br_span50_packB_nextseginh_C1e9 | VALIDATED_CLONE | | | | matrix-only packB; thr=0.0456422; acc=8; ok_audit=1 |
 | 2026-09-17T13:34Z | EXP_br_span25_packC_nextseginh_C1e9 | VALIDATED_CLONE | | | | matrix-only packC; thr=0.0475917; acc=8; ok_audit=1 |

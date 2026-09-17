@@ -771,6 +771,7 @@ def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
     ]
     if spec.tipr_recipe == "done_tipr":
         cmd.append("--keep-tipr")
+        cmd.append("--allow-done-tipr-fallback")
     print("CLONE_GATE", " ".join(cmd))
     if dry_run:
         return {"status": "dry"}
