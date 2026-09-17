@@ -197,10 +197,11 @@ def run_nm(ini: Path, tsec: float, log: Path, save: bool = False) -> int:
     csv_path = ini.parent / "SelectivityLog" / "results.csv"
     with log.open("w") as f:
         proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
-    deadline = time.time() + max(float(tsec) * 3.0, 180.0)
+    # Do not kill early before 8 samples — span100 silent can exceed 3×-t wall.
+    hard_deadline = time.time() + max(float(tsec) * 8.0, 600.0)
     while proc.poll() is None:
-        if time.time() > deadline:
-            print(f"SIGTERM NM (deadline) pid={proc.pid}")
+        if time.time() > hard_deadline:
+            print(f"SIGTERM NM (hard deadline) pid={proc.pid}")
             proc.terminate()
             break
         if csv_path.exists():
