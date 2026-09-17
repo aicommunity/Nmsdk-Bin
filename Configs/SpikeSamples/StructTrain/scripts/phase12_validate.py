@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""PHASE12 Wave1 orchestrator: soft-cold ×2 Branch packA roots + stamp/promote."""
+"""PHASE12 Wave1+Wave2 orchestrator: soft-cold packA, B/C matrix-only clones, br480."""
 from __future__ import annotations
 
 import argparse
+import csv
 import re
 import shutil
 import subprocess
@@ -160,6 +161,112 @@ WAVE1_EXPS: dict[str, ExpSpec] = {
 }
 
 WAVE1_ORDER = list(WAVE1_EXPS.keys())
+
+
+@dataclass(frozen=True)
+class CloneSpec:
+    exp_id: str
+    gold: Path
+    span_ms: int
+    pack: Literal["B", "C"]
+    parent_id: str
+    tipr_recipe: TipRRecipe
+    skip_reason: str = ""
+    gold_acc: str = "8/8"
+    gold_thr: str = ""
+
+
+def _clone(
+    exp_id: str,
+    span_ms: int,
+    pack: Literal["B", "C"],
+    parent_id: str,
+    tipr_recipe: TipRRecipe,
+    *,
+    skip_reason: str = "",
+    gold_thr: str = "",
+) -> CloneSpec:
+    return CloneSpec(
+        exp_id=exp_id,
+        gold=BRANCH / exp_id,
+        span_ms=span_ms,
+        pack=pack,
+        parent_id=parent_id,
+        tipr_recipe=tipr_recipe,
+        skip_reason=skip_reason,
+        gold_thr=gold_thr,
+    )
+
+
+def _build_wave2_clones() -> dict[str, CloneSpec]:
+    rows: list[CloneSpec] = []
+    # Plan order: all gen B/C by span, then preinh, then nextseg (skip nextseg@100 gate)
+    for variant, tipr_for_100 in (
+        ("gen", "done_tipr"),
+        ("preinh", "tiprmin"),
+        ("nextseginh", "tiprmin"),
+    ):
+        for span in (25, 50, 100):
+            tipr: TipRRecipe = tipr_for_100 if (variant == "gen" and span == 100) else "tiprmin"
+            for pack in ("B", "C"):
+                eid = f"EXP_br_span{span}_pack{pack}_{variant}_C1e9"
+                parent = f"EXP_br_span{span}_packA_{variant}_C1e9"
+                skip = ""
+                if variant == "nextseginh" and span == 100:
+                    skip = "parent FAIL EXP_br_span100_packA_nextseginh_C1e9"
+                rows.append(
+                    _clone(eid, span, pack, parent, tipr, skip_reason=skip)  # type: ignore[arg-type]
+                )
+    return {c.exp_id: c for c in rows}
+
+
+WAVE2_CLONES: dict[str, CloneSpec] = _build_wave2_clones()
+WAVE2_CLONE_ORDER = list(WAVE2_CLONES.keys())
+
+WAVE2_BR480: dict[str, ExpSpec] = {
+    s.exp_id: s
+    for s in (
+        ExpSpec(
+            exp_id="EXP_br480_tiprmin",
+            gold=BRANCH / "EXP_br480_tiprmin",
+            clone_name="Branch480_tiprmin",
+            span_ms=480,
+            train_t=600.0,
+            neuron="NSPNeuronGen",
+            next_seg=False,
+            tipr_recipe="tiprmin",
+            gold_L="85 46 25 1",
+            gold_thr="0.05149",
+        ),
+        ExpSpec(
+            exp_id="EXP_br480_nextseginh_tiprmin",
+            gold=BRANCH / "EXP_br480_nextseginh_tiprmin",
+            clone_name="Branch480_nextseginh_tiprmin",
+            span_ms=480,
+            train_t=600.0,
+            neuron="NSPNeuronGen",
+            next_seg=True,
+            tipr_recipe="tiprmin",
+            gold_L="89 46 25 1",
+            gold_thr="0.036298",
+        ),
+        ExpSpec(
+            exp_id="EXP_br480_preinh250_tiprmin",
+            gold=BRANCH / "EXP_br480_preinh250_tiprmin",
+            clone_name="Branch480_preinh250_tiprmin",
+            span_ms=480,
+            train_t=600.0,
+            neuron="NSPNeuronGenPreinh2_5",
+            next_seg=False,
+            tipr_recipe="tiprmin",
+            gold_L="97 50 25 1",
+            gold_thr="0.111136",
+        ),
+    )
+}
+WAVE2_BR480_ORDER = list(WAVE2_BR480.keys())
+
+INVEST_W2 = REPRO_ROOT / "_invest" / "w2_clone_bak"
 
 
 def clone_root(spec: ExpSpec, rep: int) -> Path:
@@ -536,30 +643,335 @@ def _update_manifest_status(exp_id: str, status: str, notes: str = "", commit: s
         print(f"WARN no manifest {MANIFEST}")
         return
     text = MANIFEST.read_text(encoding="utf-8")
-    # Match table row starting with | exp_id |
     pat = re.compile(
-        rf"^(\| {re.escape(exp_id)} \|[^\n]*\| )(DEFERRED|VALIDATED|VALIDATED_CLONE|FAIL|BLOCKED_FS|ARTIFACT|OUT)( \|)",
+        rf"^(\| {re.escape(exp_id)} \|[^\n]*\| )"
+        rf"(DEFERRED_PARENT_FAIL|DEFERRED|VALIDATED_CLONE|VALIDATED|FAIL|BLOCKED_FS|ARTIFACT|OUT)"
+        rf"( \|)",
         re.M,
     )
     new_text, n = pat.subn(rf"\g<1>{status}\3", text, count=1)
     if n != 1:
         print(f"WARN manifest status replace n={n} for {exp_id}")
-    # append run log row
     utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     log_line = f"| {utc} | {exp_id} | {status} | | | | {notes} |\n"
-    if "## Wave 1 run log" in new_text:
-        # insert after header separator of run log table
-        marker = "|-----|--------|---------|---|-----|-------|-------|\n"
-        if marker in new_text:
-            # replace empty placeholder row if present
+    for section, marker in (
+        ("## Wave 2 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
+        ("## Wave 1 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
+    ):
+        if section in new_text and marker in new_text.split(section, 1)[-1][:800]:
+            idx = new_text.find(section)
+            mpos = new_text.find(marker, idx)
+            if mpos >= 0:
+                ins = mpos + len(marker)
+                new_text = new_text[:ins] + log_line + new_text[ins:]
+                break
+    else:
+        if "## Wave 1 run log" in new_text:
+            marker = "|-----|--------|---------|---|-----|-------|-------|\n"
             new_text = new_text.replace("| | | | | | | |\n", log_line, 1)
-            if log_line not in new_text:
+            if log_line not in new_text and marker in new_text:
                 new_text = new_text.replace(marker, marker + log_line, 1)
-        if commit and f"| {exp_id} |" in new_text:
-            # try set last_commit column (last before newline) — best-effort leave notes
-            pass
     MANIFEST.write_text(new_text, encoding="utf-8")
     print(f"manifest {exp_id} -> {status}")
+
+
+def _manifest_parent_validated(parent_id: str) -> bool:
+    if not MANIFEST.exists():
+        return False
+    text = MANIFEST.read_text(encoding="utf-8")
+    m = re.search(
+        rf"^\| {re.escape(parent_id)} \|[^\n]*\| (VALIDATED|VALIDATED_CLONE) \|",
+        text,
+        re.M,
+    )
+    return m is not None
+
+
+def _metrics_from_csv(csv_path: Path) -> dict[str, str]:
+    if not csv_path.exists():
+        return {}
+    proc = subprocess.run(
+        [sys.executable, str(METRICS), "-v", str(csv_path)],
+        capture_output=True,
+        text=True,
+    )
+    out = proc.stdout + proc.stderr
+    print(out)
+    d: dict[str, str] = {}
+    for key in ("ok_audit", "acc", "mode", "fires", "last_pulse_ok"):
+        m = re.search(rf"{key}\s*[=:]\s*(\S+)", out)
+        if m:
+            d[key] = m.group(1).rstrip(",")
+    # also parse from CSV directly for acc
+    try:
+        rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+        fires = "".join("1" if float(r.get("fired") or r.get("n_spikes") or 0) > 0 else "0" for r in rows[:8])
+        if "fires" not in d and fires:
+            d["fires"] = fires
+        # selectivity_metrics prints structured; fallback acc count
+        if "acc" not in d and rows:
+            # leave empty — gate script already ran metrics
+            pass
+    except OSError:
+        pass
+    return d
+
+
+def _read_thr(root: Path) -> str:
+    p = root / "Test" / "Parameters_00.xml"
+    if not p.exists():
+        return ""
+    return get_tag(p.read_text(encoding="utf-8"), "FixedLTZThreshold") or ""
+
+
+def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
+    if spec.skip_reason:
+        _update_manifest_status(
+            spec.exp_id,
+            "DEFERRED_PARENT_FAIL",
+            notes=spec.skip_reason,
+        )
+        return {"status": "DEFERRED_PARENT_FAIL", "notes": spec.skip_reason}
+    if not spec.gold.exists():
+        raise SystemExit(f"missing gold {spec.gold}")
+    if not _manifest_parent_validated(spec.parent_id):
+        raise SystemExit(f"parent {spec.parent_id} not VALIDATED — refuse clone-gate {spec.exp_id}")
+
+    bak = INVEST_W2 / spec.exp_id
+    test = spec.gold / "Test"
+    csv_p = test / "SelectivityLog" / "results.csv"
+    if not dry_run:
+        bak.mkdir(parents=True, exist_ok=True)
+        for rel in (
+            "SelectivityLog/results.csv",
+            "Parameters_00.xml",
+            "Model_00.xml",
+        ):
+            src = test / rel
+            if src.exists():
+                dst = bak / Path(rel).name
+                if rel.startswith("SelectivityLog"):
+                    dst = bak / "results.csv"
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dst)
+        print(f"bak -> {bak}")
+
+    cmd = [
+        sys.executable,
+        str(PHASE8),
+        str(spec.gold),
+        "--span-ms",
+        str(spec.span_ms),
+        "--pack",
+        spec.pack,
+        "--skip-prepare",
+        "--matrix-only",
+        "--test-t",
+        "40",
+    ]
+    if spec.tipr_recipe == "done_tipr":
+        cmd.append("--keep-tipr")
+    print("CLONE_GATE", " ".join(cmd))
+    if dry_run:
+        return {"status": "dry"}
+    log = test / "run_phase12_clone_gate.log"
+    rc = subprocess.call(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
+    print(f"clone-gate rc={rc} log={log}")
+    if not csv_p.exists():
+        # restore bak
+        _restore_clone_bak(spec, bak)
+        _update_manifest_status(spec.exp_id, "FAIL", notes="no results.csv after gate")
+        raise SystemExit(f"clone-gate FAIL no csv {spec.exp_id}")
+    subprocess.call([sys.executable, str(METRICS), "-v", str(csv_p)])
+    snap = snapshot_gate(spec.gold)
+    try:
+        acc = int(snap.get("acc") or 0)
+    except ValueError:
+        acc = 0
+    ok = snap.get("ok_audit") == "1" and acc >= 7
+    thr = snap.get("thr") or _read_thr(spec.gold)
+    notes = f"matrix-only pack{spec.pack}; thr={thr}; acc={acc}; ok_audit={snap.get('ok_audit')}"
+    if not ok:
+        _restore_clone_bak(spec, bak)
+        _update_manifest_status(spec.exp_id, "FAIL", notes=notes)
+        raise SystemExit(f"clone-gate FAIL {spec.exp_id} {notes}")
+    _update_manifest_status(spec.exp_id, "VALIDATED_CLONE", notes=notes)
+    return {"status": "VALIDATED_CLONE", **snap, "notes": notes}
+
+
+def _restore_clone_bak(spec: CloneSpec, bak: Path) -> None:
+    test = spec.gold / "Test"
+    for name, dst in (
+        ("results.csv", test / "SelectivityLog" / "results.csv"),
+        ("Parameters_00.xml", test / "Parameters_00.xml"),
+        ("Model_00.xml", test / "Model_00.xml"),
+    ):
+        src = bak / name
+        if src.exists():
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
+            print(f"restored {dst}")
+
+
+def promote_clone(spec: CloneSpec, *, dry_run: bool = False) -> None:
+    """Clone gate already wrote Test; promote_clone only re-stamps if needed."""
+    if spec.skip_reason:
+        _update_manifest_status(spec.exp_id, "DEFERRED_PARENT_FAIL", notes=spec.skip_reason)
+        return
+    snap = snapshot_gate(spec.gold)
+    acc = int(snap.get("acc") or 0)
+    if snap.get("ok_audit") != "1" or acc < 7:
+        raise SystemExit(f"refuse promote-clone {spec.exp_id} snap={snap}")
+    notes = (
+        f"matrix-only pack{spec.pack}; thr={snap.get('thr')}; "
+        f"acc={acc}; fires=`{snap.get('fires')}`"
+    )
+    if dry_run:
+        print(f"dry promote-clone {notes}")
+        return
+    _update_manifest_status(spec.exp_id, "VALIDATED_CLONE", notes=notes)
+
+
+def bin_commit_paths(paths: list[Path], message: str) -> None:
+    bin_root = Path("/home/user/Nmsdk/Bin")
+    rels = []
+    for p in paths:
+        p = p.resolve()
+        try:
+            rels.append(str(p.relative_to(bin_root)))
+        except ValueError:
+            rels.append(str(p))
+    subprocess.call(["git", "add", "--"] + rels, cwd=bin_root)
+    # also -u for deletions inside exp dirs
+    st = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=bin_root)
+    if st.returncode == 0:
+        print(f"no staged changes for: {message}")
+        return
+    subprocess.check_call(["git", "commit", "-m", message], cwd=bin_root)
+    print(f"committed: {message}")
+
+
+def cmd_list_wave2(args: argparse.Namespace) -> None:
+    print("=== WAVE2_CLONES ===")
+    for eid in WAVE2_CLONE_ORDER:
+        c = WAVE2_CLONES[eid]
+        skip = f" SKIP={c.skip_reason}" if c.skip_reason else ""
+        print(
+            f"{eid}\tspan={c.span_ms}\tpack={c.pack}\tparent={c.parent_id}\t"
+            f"recipe={c.tipr_recipe}{skip}"
+        )
+    print("=== WAVE2_BR480 ===")
+    for eid in WAVE2_BR480_ORDER:
+        s = WAVE2_BR480[eid]
+        print(
+            f"{eid}\tL={s.gold_L}\tthr={s.gold_thr}\tneuron={s.neuron}\t"
+            f"NextSeg={int(s.next_seg)}\ttrain_t={s.train_t}"
+        )
+
+
+def cmd_clone_gate(args: argparse.Namespace) -> None:
+    spec = WAVE2_CLONES[args.exp]
+    clone_gate(spec, dry_run=args.dry_run)
+    if not args.dry_run and not args.no_commit and not spec.skip_reason:
+        bin_commit_paths(
+            [
+                MANIFEST,
+                spec.gold / "Test",
+            ],
+            f"phase12 W2a: VALIDATED_CLONE {spec.exp_id}",
+        )
+
+
+def cmd_run_clones_wave2(args: argparse.Namespace) -> None:
+    started = False if args.from_exp else True
+    for eid in WAVE2_CLONE_ORDER:
+        if not started:
+            if eid == args.from_exp:
+                started = True
+            else:
+                continue
+        print(f"\n===== CLONE {eid} =====")
+        spec = WAVE2_CLONES[eid]
+        try:
+            clone_gate(spec, dry_run=args.dry_run)
+        except SystemExit as e:
+            print(f"FAIL {eid}: {e}")
+            if args.stop_on_fail:
+                raise
+            continue
+        if (
+            not args.dry_run
+            and not args.no_commit
+            and not spec.skip_reason
+        ):
+            bin_commit_paths(
+                [MANIFEST, spec.gold / "Test"],
+                f"phase12 W2a: VALIDATED_CLONE {eid}",
+            )
+
+
+def cmd_promote_clone(args: argparse.Namespace) -> None:
+    promote_clone(WAVE2_CLONES[args.exp], dry_run=args.dry_run)
+
+
+def cmd_run_br480(args: argparse.Namespace) -> None:
+    spec = WAVE2_BR480[args.exp]
+    ns = argparse.Namespace(
+        exp=args.exp,
+        replicas=args.replicas,
+        dry_run=args.dry_run,
+        force_prepare=args.force_prepare,
+    )
+    # reuse cmd_run path via temporary WAVE1 lookup — call internals
+    reps = tuple(range(1, args.replicas + 1))
+    for rep in reps:
+        root = clone_root(spec, rep)
+        if not root.exists() or args.force_prepare:
+            prepare_exp(
+                spec,
+                reps=(rep,),
+                force=bool(args.force_prepare or not root.exists()),
+            )
+        status = run_train(spec, root, dry_run=args.dry_run)
+        print(f"TRAIN_STATUS={status} r{rep}")
+        if status not in ("done", "dry"):
+            _update_manifest_status(spec.exp_id, "FAIL", notes=f"train {status} r{rep}")
+            raise SystemExit(f"train failed: {status}")
+        pack_root(root, dry_run=args.dry_run)
+        run_gate(spec, root, dry_run=args.dry_run)
+        print(f"SNAP r{rep}: {snapshot_gate(root)}")
+    v = write_compare(spec)
+    if v in ("REPRO_OK_EXACT", "REPRO_OK_QUALITY", "REPRO_OK", "REPRO_SOFT"):
+        print(f"PASS candidate verdict={v}")
+        if not args.dry_run and not args.no_promote:
+            promote_pass(spec, dry_run=False)
+            if not args.no_commit:
+                bin_commit_paths(
+                    [MANIFEST, spec.gold],
+                    f"phase12 W2b: VALIDATED {spec.exp_id}",
+                )
+    else:
+        _update_manifest_status(spec.exp_id, "FAIL", notes=f"verdict={v}")
+        raise SystemExit(f"compare FAIL {v}")
+
+
+def cmd_run_br480_all(args: argparse.Namespace) -> None:
+    for eid in WAVE2_BR480_ORDER:
+        print(f"\n===== BR480 {eid} =====")
+        ns = argparse.Namespace(
+            exp=eid,
+            replicas=args.replicas,
+            dry_run=args.dry_run,
+            force_prepare=args.force_prepare,
+            no_promote=args.no_promote,
+            no_commit=args.no_commit,
+        )
+        try:
+            cmd_run_br480(ns)
+        except SystemExit as e:
+            print(f"FAIL {eid}: {e}")
+            if args.stop_on_fail:
+                raise
 
 
 def promote_pass(spec: ExpSpec, *, dry_run: bool = False) -> None:
@@ -762,6 +1174,45 @@ def main() -> None:
     p.add_argument("--no-promote", action="store_true")
     p.add_argument("--exp", choices=WAVE1_ORDER, help="single exp only")
     p.set_defaults(func=cmd_run_all)
+
+    p = sub.add_parser("list-wave2")
+    p.set_defaults(func=cmd_list_wave2)
+
+    p = sub.add_parser("clone-gate")
+    p.add_argument("--exp", required=True, choices=WAVE2_CLONE_ORDER)
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--no-commit", action="store_true")
+    p.set_defaults(func=cmd_clone_gate)
+
+    p = sub.add_parser("run-clones-wave2")
+    p.add_argument("--from", dest="from_exp", default=None, choices=WAVE2_CLONE_ORDER)
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--no-commit", action="store_true")
+    p.add_argument("--stop-on-fail", action="store_true")
+    p.set_defaults(func=cmd_run_clones_wave2)
+
+    p = sub.add_parser("promote-clone")
+    p.add_argument("--exp", required=True, choices=WAVE2_CLONE_ORDER)
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(func=cmd_promote_clone)
+
+    p = sub.add_parser("run-br480")
+    p.add_argument("--exp", required=True, choices=WAVE2_BR480_ORDER)
+    p.add_argument("--replicas", type=int, default=2)
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--force-prepare", action="store_true")
+    p.add_argument("--no-promote", action="store_true")
+    p.add_argument("--no-commit", action="store_true")
+    p.set_defaults(func=cmd_run_br480)
+
+    p = sub.add_parser("run-br480-all")
+    p.add_argument("--replicas", type=int, default=2)
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--force-prepare", action="store_true")
+    p.add_argument("--no-promote", action="store_true")
+    p.add_argument("--no-commit", action="store_true")
+    p.add_argument("--stop-on-fail", action="store_true")
+    p.set_defaults(func=cmd_run_br480_all)
 
     args = ap.parse_args()
     args.func(args)

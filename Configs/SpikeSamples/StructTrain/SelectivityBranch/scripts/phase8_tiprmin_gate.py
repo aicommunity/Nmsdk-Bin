@@ -163,6 +163,10 @@ def apply_asym_matrix(params: Path, span_ms: int, pack: str = "A") -> None:
     pack = pack.upper()
     asym = ASYM / f"EXP_span{span_ms}ms_pack{pack}_gen" / "Test" / "Parameters_00.xml"
     if not asym.exists():
+        # br480 / long-span: keep gold Test MatrixData (no AsymRm foil pack)
+        if span_ms >= 480:
+            print(f"keep existing MatrixData (no AsymRm source for span {span_ms})")
+            return
         raise SystemExit(f"missing AsymRm matrix source {asym}")
     src = asym.read_text(encoding="utf-8")
     md = re.search(r"(<MatrixData\b[^>]*>.*?</MatrixData>)", src, re.S).group(1)

@@ -17,7 +17,7 @@
 | Disk | Avail ≥80G; pack ≥200M; 1 NM |
 | Promote | bak + r1≡r2 + ok_audit + acc≥7 + Need=0 + last_pulse |
 
-Статусы: `VALIDATED` | `VALIDATED_CLONE` | `ARTIFACT` | `BLOCKED_FS` | `DEFERRED` | `OUT` | `FAIL`.
+Статусы: `VALIDATED` | `VALIDATED_CLONE` | `ARTIFACT` | `BLOCKED_FS` | `DEFERRED` | `DEFERRED_PARENT_FAIL` | `OUT` | `FAIL`.
 
 ## Wave map
 
@@ -177,6 +177,11 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_480_gen_baseline | OUT | EXP00 duplicate |
 
 ---
+
+## Wave 2 run log
+
+| utc | exp_id | status | L | thr | fires | notes |
+|-----|--------|---------|---|-----|-------|-------|
 
 ## Wave 1 run log
 
