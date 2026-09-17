@@ -124,7 +124,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span100_packA_gen_C1e9 | SelectivityBranch/EXP_br_span100_packA_gen_C1e9 | 1 | cold | DEFERRED | `25 21 11 1` | done_tipr | 0.007181835 | Done TipR + `--allow-done-tipr-fallback` | |
 | EXP_br_span25_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span25_packA_preinh_C1e9 | 1 | cold | VALIDATED | `7 6 4 1` | tiprmin | 0.05171075 | | |
 | EXP_br_span50_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span50_packA_preinh_C1e9 | 1 | cold | VALIDATED | `13 11 6 1` | tiprmin | 0.03008405 | | |
-| EXP_br_span100_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span100_packA_preinh_C1e9 | 1 | cold | DEFERRED | `22 18 11 1` | tiprmin | 0.0203054 | | |
+| EXP_br_span100_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span100_packA_preinh_C1e9 | 1 | cold | VALIDATED | `22 18 11 1` | tiprmin | 0.0203054 | | |
 | EXP_br_span25_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9 | 1 | cold | DEFERRED | `13 11 7 1` | tiprmin | 0.07179975 | NextSeg=1 | |
 | EXP_br_span50_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9 | 1 | cold | DEFERRED | `14 9 6 1` | tiprmin | 0.0456422 | NextSeg=1 | |
 | EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | DEFERRED | `21 17 11 1` | tiprmin | 0.014432775 | NextSeg=1 | |
@@ -182,6 +182,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | UTC | exp_id | verdict | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-17T01:34Z | EXP_br_span100_packA_preinh_C1e9 | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`22 18 11 1` thr=0.0203054 fires=`10000000` |
 | 2026-09-16T23:17Z | EXP_br_span50_packA_preinh_C1e9 | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`13 11 6 1` thr=0.03008405 fires=`10000000` |
 | 2026-09-16T21:32Z | EXP_br_span25_packA_preinh_C1e9 | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`7 6 4 1` thr=0.05171075 fires=`10000000` |
 | 2026-09-16T18:22Z | EXP_br_span25_packA_preinh_C1e9 | FAIL | | | | train exited_need1 r1 |
