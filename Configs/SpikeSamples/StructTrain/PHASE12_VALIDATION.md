@@ -77,7 +77,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_span100ms_packA_preinh | SelectivityAsymRm/EXP_span100ms_packA_preinh | 3 | cold | ARTIFACT_KEEP | | tiprmin | 0.006681 | | |
 | EXP_span25ms_packB_gen | SelectivityAsymRm/EXP_span25ms_packB_gen | 3 | clone | VALIDATED_CLONE | | | | after packA | |
 | EXP_span25ms_packC_gen | SelectivityAsymRm/EXP_span25ms_packC_gen | 3 | clone | VALIDATED_CLONE | | | | | |
-| EXP_span25ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
+| EXP_span25ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9 | 3 | clone | VALIDATED_CLONE | | | | | |
 | EXP_span25ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
 | EXP_span50ms_packB_gen | SelectivityAsymRm/EXP_span50ms_packB_gen | 3 | clone | DEFERRED | | | | | |
 | EXP_span50ms_packC_gen | SelectivityAsymRm/EXP_span50ms_packC_gen | 3 | clone | DEFERRED | | | | | |
@@ -183,6 +183,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T21:15Z | EXP_span25ms_packB_preinh_C1e9 | VALIDATED_CLONE | | | | phase9 packB; thr=0.004686425; acc=8; ok_audit=1 |
 | 2026-09-18T20:55Z | EXP_span25ms_packC_gen | VALIDATED_CLONE | | | | phase9 packC; thr=0.006994845; acc=8; ok_audit=1 |
 | 2026-09-18T20:35Z | EXP_span25ms_packB_gen | VALIDATED_CLONE | | | | phase9 packB; thr=0.006994845; acc=8; ok_audit=1 |
 | 2026-09-18T20:14Z | EXP_span100ms_fast_preinh_C1e9 | BLOCKED_FS | | | | blocked: FS25 FAIL_ROOTCAUSE; no FS×5 |
