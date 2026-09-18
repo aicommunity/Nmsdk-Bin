@@ -26,7 +26,7 @@
 | **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
-| 4 | Phase6 480 tiprmin 7/8 | **in progress** |
+| 4 | Phase6 480 tiprmin 7/8 | **done ARTIFACT_KEEP** (gold kept; soft-cold prepare AutoCal) |
 | ∞ | ARTIFACT / OUT | marked below |
 | FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve); ARTIFACT §A–C + OUT §K unchanged |
 
@@ -103,10 +103,10 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_480_gen_tiprmin | SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin | 4 | cold | DEFERRED | 7/8 | |
-| EXP_480_gen_thr_only | SelectivityPhaseA/Phase6/EXP_480_gen_thr_only | 4 | cold | DEFERRED | 7/8 | |
-| EXP_480_preinh250_tiprmin | SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin | 4 | cold | DEFERRED | 7/8 | |
-| EXP_480_ltzcal_twin_gen | SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen | 4 | sync | DEFERRED | 7/8 | |
+| EXP_480_gen_tiprmin | SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin | 4 | cold | ARTIFACT_KEEP | 7/8 | |
+| EXP_480_gen_thr_only | SelectivityPhaseA/Phase6/EXP_480_gen_thr_only | 4 | cold | ARTIFACT_KEEP | 7/8 | |
+| EXP_480_preinh250_tiprmin | SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin | 4 | cold | ARTIFACT_KEEP | 7/8 | |
+| EXP_480_ltzcal_twin_gen | SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen | 4 | sync | ARTIFACT_KEEP | 7/8 | |
 
 ### G. Branch @480 — Wave 2b FAIL (soft-cold)
 
@@ -183,6 +183,10 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T22:17Z | EXP_480_ltzcal_twin_gen | ARTIFACT_KEEP | | | | ARTIFACT_KEEP: W4 soft-cold AutoCal-missing/prepare fail or Need≠0 risk; gold 7/8 registry kept (no br480 marathon) |
+| 2026-09-18T22:17Z | EXP_480_preinh250_tiprmin | ARTIFACT_KEEP | | | | ARTIFACT_KEEP: W4 soft-cold AutoCal-missing/prepare fail or Need≠0 risk; gold 7/8 registry kept (no br480 marathon) |
+| 2026-09-18T22:17Z | EXP_480_gen_thr_only | ARTIFACT_KEEP | | | | ARTIFACT_KEEP: W4 soft-cold AutoCal-missing/prepare fail or Need≠0 risk; gold 7/8 registry kept (no br480 marathon) |
+| 2026-09-18T22:17Z | EXP_480_gen_tiprmin | ARTIFACT_KEEP | | | | ARTIFACT_KEEP: W4 soft-cold AutoCal-missing/prepare fail or Need≠0 risk; gold 7/8 registry kept (no br480 marathon) |
 | 2026-09-18T22:14Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
 | 2026-09-18T22:14Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
 | 2026-09-18T22:14Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |

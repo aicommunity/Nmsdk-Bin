@@ -218,8 +218,8 @@ def _cold_params_common(t: str, neuron: str) -> str:
     t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
     # Gold Done XML often lacks this tag — must inject or soft-cold never rebuilds
     t = _ensure_tag(t, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
-    t = set_tag(t, "UseFixedLTZThreshold", "0", 1)
-    t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
+    t = set_tag(t, "UseFixedLTZThreshold", "0", 1) if re.search(r"<UseFixedLTZThreshold\b", t) else _ensure_tag(t, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    t = _ensure_tag(t, "AutoCalibrateFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
     return t
 
 
