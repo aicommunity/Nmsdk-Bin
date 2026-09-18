@@ -335,7 +335,9 @@ def prepare_exp(spec: ExpSpec, reps: tuple[int, ...] = (1, 2), *, force: bool = 
         dst = clone_root(spec, rep)
         if dst.exists():
             if force:
-                shutil.rmtree(dst)
+                shutil.rmtree(dst, ignore_errors=True)
+                if dst.exists():
+                    shutil.rmtree(dst)
             else:
                 print(f"skip existing {dst}")
                 out.append(dst)
