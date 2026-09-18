@@ -264,16 +264,37 @@ def as_family(spec: "ExpSpec") -> Family:
 
 
 def post_hygiene_fs_asym(spec: "ExpSpec", root: Path) -> None:
-    """TipR@Rmin (unless done_tipr) + merge Train→Test for TimeLearner families."""
+    """TipR hygiene + merge Train→Test for TimeLearner families.
+
+    AsymRm soft-cold: TipR@Rmin flattens ltz mid gap (span25–100). Force TipR
+    86e6×4 (TIPR_COLD) for gate — matches span25 gold; QUALITY thr vs tiprmin golds.
+    """
+    from repro_cold_lib import TIPR_COLD
+
     fam = as_family(spec)
-    if spec.tipr_recipe == "tiprmin":
+    if spec.tipr_recipe == "tiprmin" and spec.kind != "asymrm":
         post_train_hygiene(root, fam)
         return
-    # thr_only / done_tipr: merge without forcing TipR@Rmin
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")
     tipr = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "TipSynapseResistance") or ""
-    print(f"  keep TipR (no force): {tipr}")
+    if spec.kind == "asymrm":
+        tipr = TIPR_COLD
+        print(f"  AsymRm soft-cold: force TipR 86e6×4 for mid gap (recipe was {spec.tipr_recipe})")
+    elif spec.tipr_recipe == "tiprmin":
+        post_train_hygiene(root, fam)
+        return
+    else:
+        print(f"  keep TipR (no force): {tipr}")
+    for side in (train, test):
+        for name in ("Parameters_00.xml", "Model_00.xml"):
+            p = side / name
+            if not p.exists():
+                continue
+            t = p.read_text(encoding="utf-8").replace(",", ".")
+            if tipr:
+                t = set_tag(t, "TipSynapseResistance", tipr, 1)
+            p.write_text(t, encoding="utf-8")
     subprocess.check_call(
         [sys.executable, str(FS_MERGE), str(train / "Parameters_00.xml"), str(test / "Parameters_00.xml")]
     )
