@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PHASE12 Wave1+Wave2 orchestrator: soft-cold packA, B/C matrix-only clones, br480."""
+"""PHASE12 Wave1–4 orchestrator: Branch + FastSpan/AsymRm/LtzCal/Phase6."""
 from __future__ import annotations
 
 import argparse
@@ -36,6 +36,8 @@ from repro_cold_lib import (
     tip_indices,
     verdict_family,
 )
+
+import phase12_wave3 as w3
 
 PACK = ROOT / "scripts" / "pack_statistic_logs.py"
 PHASE8 = ROOT / "SelectivityBranch" / "scripts" / "phase8_tiprmin_gate.py"
@@ -362,11 +364,17 @@ def prepare_exp(spec: ExpSpec, reps: tuple[int, ...] = (1, 2), *, force: bool = 
     return out
 
 
-def run_train(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
-    """Train until Need=0. If NM exits at -t with Need=1, extend up to 2 extra -t windows."""
+def run_train(
+    spec: ExpSpec,
+    root: Path,
+    *,
+    dry_run: bool = False,
+    max_extensions: int = 2,
+) -> str:
+    """Train until Need=0. If NM exits at -t with Need=1, extend up to max_extensions extra -t windows."""
     status = "incomplete_done"
     extensions = 0
-    while extensions < 3:
+    while True:
         status = _run_train_once(spec, root, dry_run=dry_run)
         if status == "done" or dry_run:
             return status
@@ -376,9 +384,10 @@ def run_train(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
         need = read_need(root / "Train" / "Parameters_00.xml")
         if need == "0":
             return "done"
+        if extensions >= max_extensions:
+            return status
         extensions += 1
-        print(f"TRAIN extend#{extensions} after status={status} Need={need}")
-    return status
+        print(f"TRAIN extend#{extensions}/{max_extensions} after status={status} Need={need}")
 
 
 def _run_train_once(spec: ExpSpec, root: Path, *, dry_run: bool = False) -> str:
@@ -638,23 +647,42 @@ def write_compare(spec: ExpSpec) -> str:
     return v
 
 
-def _update_manifest_status(exp_id: str, status: str, notes: str = "", commit: str = "") -> None:
+def _update_manifest_status(
+    exp_id: str,
+    status: str,
+    notes: str = "",
+    commit: str = "",
+    path_substr: str = "",
+) -> None:
     if not MANIFEST.exists():
         print(f"WARN no manifest {MANIFEST}")
         return
     text = MANIFEST.read_text(encoding="utf-8")
-    pat = re.compile(
-        rf"^(\| {re.escape(exp_id)} \|[^\n]*\| )"
-        rf"(DEFERRED_PARENT_FAIL|DEFERRED|VALIDATED_CLONE|VALIDATED|FAIL|BLOCKED_FS|ARTIFACT|OUT)"
-        rf"( \|)",
-        re.M,
+    status_alts = (
+        "DEFERRED_PARENT_FAIL|DEFERRED|VALIDATED_CLONE|VALIDATED|FAIL_ROOTCAUSE|"
+        "ARTIFACT_KEEP|FAIL|BLOCKED_FS|ARTIFACT|OUT"
     )
+    if path_substr:
+        pat = re.compile(
+            rf"^(\| {re.escape(exp_id)} \|[^\n]*{re.escape(path_substr)}[^\n]*\| )"
+            rf"({status_alts})"
+            rf"( \|)",
+            re.M,
+        )
+    else:
+        pat = re.compile(
+            rf"^(\| {re.escape(exp_id)} \|[^\n]*\| )"
+            rf"({status_alts})"
+            rf"( \|)",
+            re.M,
+        )
     new_text, n = pat.subn(rf"\g<1>{status}\3", text, count=1)
     if n != 1:
-        print(f"WARN manifest status replace n={n} for {exp_id}")
+        print(f"WARN manifest status replace n={n} for {exp_id} path_substr={path_substr!r}")
     utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     log_line = f"| {utc} | {exp_id} | {status} | | | | {notes} |\n"
     for section, marker in (
+        ("## Wave 3 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 2 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 1 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
     ):
@@ -1028,7 +1056,13 @@ def promote_pass(spec: ExpSpec, *, dry_run: bool = False) -> None:
         dst_csv.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(csv_s, dst_csv)
     notes = f"verdict={v} L=`{r2.get('L')}` thr={r2.get('thr')} fires=`{r2.get('fires')}`"
-    _update_manifest_status(spec.exp_id, "VALIDATED", notes=notes)
+    # disambiguate same exp_id across families (AsymRm vs LtzCal)
+    path_hint = ""
+    try:
+        path_hint = str(spec.gold.relative_to(ROOT)).split("/")[0]
+    except ValueError:
+        path_hint = spec.gold.parent.name
+    _update_manifest_status(spec.exp_id, "VALIDATED", notes=notes, path_substr=path_hint)
     print(f"PROMOTE done {notes}")
 
 
@@ -1214,6 +1248,8 @@ def main() -> None:
     p.add_argument("--no-commit", action="store_true")
     p.add_argument("--stop-on-fail", action="store_true")
     p.set_defaults(func=cmd_run_br480_all)
+
+    w3.register_wave3_cli(sub)
 
     args = ap.parse_args()
     args.func(args)

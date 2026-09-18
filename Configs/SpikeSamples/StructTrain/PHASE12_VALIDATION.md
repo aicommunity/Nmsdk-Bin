@@ -17,7 +17,7 @@
 | Disk | Avail ≥80G; pack ≥200M; 1 NM |
 | Promote | bak + r1≡r2 + ok_audit + acc≥7 + Need=0 + last_pulse |
 
-Статусы: `VALIDATED` | `VALIDATED_CLONE` | `ARTIFACT` | `BLOCKED_FS` | `DEFERRED` | `DEFERRED_PARENT_FAIL` | `OUT` | `FAIL`.
+Статусы: `VALIDATED` | `VALIDATED_CLONE` | `ARTIFACT` | `ARTIFACT_KEEP` | `BLOCKED_FS` | `DEFERRED` | `DEFERRED_PARENT_FAIL` | `OUT` | `FAIL` | `FAIL_ROOTCAUSE`.
 
 ## Wave map
 
@@ -25,9 +25,10 @@
 |------|-------|--------|
 | **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
-| 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | DEFERRED / BLOCKED_FS |
-| 4 | Phase6 480 tiprmin 7/8 | DEFERRED |
+| 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **in progress** (tooling ready; CLI `list-wave3` / `phase12_wave3_run.sh`) |
+| 4 | Phase6 480 tiprmin 7/8 | DEFERRED until W3 |
 | ∞ | ARTIFACT / OUT | marked below |
+| FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve) |
 
 ---
 
@@ -177,6 +178,11 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_480_gen_baseline | OUT | EXP00 duplicate |
 
 ---
+
+## Wave 3 run log
+
+| utc | exp_id | status | L | thr | fires | notes |
+|-----|--------|---------|---|-----|-------|-------|
 
 ## Wave 2 run log
 
