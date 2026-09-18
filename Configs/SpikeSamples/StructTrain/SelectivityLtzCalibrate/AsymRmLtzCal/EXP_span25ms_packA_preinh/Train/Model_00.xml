@@ -7,7 +7,24 @@
 			<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
 			<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
 		</Parameters>
-		<Links Type="ULinksList" Size="93">
+		<Links Type="ULinksList" Size="97">
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearner.DatasetMatrix.Generator1</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="StimulusInputs">PatternResponseAnalyzer</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="Output">NeuronTimeLearner.Neuron.LTZone</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="NeuronOutputs">PatternResponseAnalyzer</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="CurrentClassMatrix">NeuronTimeLearner.DatasetMatrix</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="TargetClassInput">PatternResponseAnalyzer</Connector>
+			</elem>
+			<elem Type="ULink">
+				<Item Type="ULinkSide" Index="-1" Name="SomaNeuronAmplitude">NeuronTimeLearner</Item>
+				<Connector Type="ULinkSide" Index="-1" Name="SomaAmplitudeInput">PatternResponseAnalyzer</Connector>
+			</elem>
+
 			<elem Type="ULink">
 				<Item Type="ULinkSide" Index="-1" Name="AmpDtTrace">NeuronTimeLearner</Item>
 				<Connector Type="ULinkSide" Index="-1" Name="InputMatrixData">StatisticDoubleMatrix</Connector>
@@ -420,11 +437,11 @@
 0
 0
 0</AdditionalInputPattern>
-					<LTZThreshold Type="d" PType="257" IoType="17">100</LTZThreshold>
-					<FixedLTZThreshold Type="d" PType="257" IoType="17">0.0115</FixedLTZThreshold>
+					<LTZThreshold Type="d" PType="257" IoType="17">0.0046899999999999997</LTZThreshold>
+					<FixedLTZThreshold Type="d" PType="257" IoType="17">0.0046899999999999997</FixedLTZThreshold>
 					<TrainingLTZThreshold Type="d" PType="257" IoType="17">100</TrainingLTZThreshold>
 					<UseFixedLTZThreshold Type="b" PType="257" IoType="17">0</UseFixedLTZThreshold>
-					<AutoCalibrateFixedLTZThreshold Type="b" PType="257" IoType="17">1</AutoCalibrateFixedLTZThreshold>
+					<AutoCalibrateFixedLTZThreshold Type="b" PType="257" IoType="17">0</AutoCalibrateFixedLTZThreshold>
 					<CalibrateLTZThresholdMode Type="i" PType="257" IoType="17">1</CalibrateLTZThresholdMode>
 					<CalibrateLTZThresholdFraction Type="d" PType="257" IoType="17">0.98999999999999999</CalibrateLTZThresholdFraction>
 					<CalibrateLTZThresholdMin Type="d" PType="257" IoType="17">0.001</CalibrateLTZThresholdMin>
@@ -432,13 +449,13 @@
 					<SynapseResistanceStep Type="d" PType="257" IoType="17">1000000000</SynapseResistanceStep>
 					<NormalizationMode Type="i" PType="257" IoType="17">1</NormalizationMode>
 					<SynapseResistanceBase Type="d" PType="257" IoType="17">86000000</SynapseResistanceBase>
-					<ResistanceMin Type="d" PType="257" IoType="17">1000000</ResistanceMin>
+					<ResistanceMin Type="d" PType="257" IoType="17">20000000</ResistanceMin>
 					<ResistanceMax Type="d" PType="257" IoType="17">100000000000</ResistanceMax>
-					<AttenuationGamma Type="d" PType="257" IoType="17">0.010416999388903824</AttenuationGamma>
+					<AttenuationGamma Type="d" PType="257" IoType="17">0.3614955131486875</AttenuationGamma>
 					<ResistanceAdjustGain Type="d" PType="257" IoType="17">0.40000000000000002</ResistanceAdjustGain>
-					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">89658563,232335806 60139468,634155959 100000000000 86000000</TipSynapseResistance>
-					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">6 5 4 1</DendriteLength>
-					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0,04230935112236478 0,04230936708725519 0,042309351122367445 0,042309351122367445</InitialSomaPotential>
+					<TipSynapseResistance Type="simplevector" Size="4" elemType="d" PType="259" IoType="33">20000000 20000000 20000000 86000000</TipSynapseResistance>
+					<DendriteLength Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">15 13 8 1</DendriteLength>
+					<InitialSomaPotential Type="simplevector" Size="4" elemType="d" PType="257" IoType="33">0.041312997582877986 0.023667088885860332 0.030538773718513212 0.025044338186394621</InitialSomaPotential>
 					<NumSynapse Type="simplevector" Size="4" elemType="i" PType="257" IoType="33">1 1 1 1</NumSynapse>
 					<IterationGap Type="d" PType="257" IoType="17">1.5</IterationGap>
 					<SyncTolerance Type="d" PType="257" IoType="17">0.00104167</SyncTolerance>
@@ -2511,6 +2528,22 @@
 				</Parameters>
 				<Components/>
 			</StatisticDoubleMatrix>
+			<PatternResponseAnalyzer Class="NPatternResponseAnalyzer">
+				<Parameters>
+					<Activity Type="b" PType="257" IoType="17">1</Activity>
+					<MaxCalculationDuration Type="x" PType="257" IoType="17">-1</MaxCalculationDuration>
+					<CalculationDurationThreshold Type="x" PType="257" IoType="17">-1</CalculationDurationThreshold>
+					<Coord Type="MVector&lt;d&gt;" Size="3" PType="257" IoType="17">20 5 0</Coord>
+					<DebugSysEventsMask Type="j" PType="769" IoType="17">4294967295</DebugSysEventsMask>
+					<PostPatternWindow Type="d" PType="257" IoType="17">0.5</PostPatternWindow>
+					<PulseDetectThreshold Type="d" PType="257" IoType="17">0</PulseDetectThreshold>
+					<SavePath Type="std::string" PType="257" IoType="17">SelectivityLog</SavePath>
+					<FileName Type="std::string" PType="257" IoType="17">results.csv</FileName>
+					<AppendMode Type="b" PType="257" IoType="17">0</AppendMode>
+					<Enable Type="b" PType="257" IoType="17">1</Enable>
+				</Parameters>
+				<Components/>
+			</PatternResponseAnalyzer>
 		</Components>
 	</Model>
 </Save>

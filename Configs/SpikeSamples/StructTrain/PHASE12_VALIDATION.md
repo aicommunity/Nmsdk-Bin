@@ -79,25 +79,25 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_span25ms_packC_gen | SelectivityAsymRm/EXP_span25ms_packC_gen | 3 | clone | VALIDATED_CLONE | | | | | |
 | EXP_span25ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9 | 3 | clone | VALIDATED_CLONE | | | | | |
 | EXP_span25ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9 | 3 | clone | VALIDATED_CLONE | | | | | |
-| EXP_span50ms_packB_gen | SelectivityAsymRm/EXP_span50ms_packB_gen | 3 | clone | DEFERRED | | | | | |
-| EXP_span50ms_packC_gen | SelectivityAsymRm/EXP_span50ms_packC_gen | 3 | clone | DEFERRED | | | | | |
-| EXP_span50ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
-| EXP_span50ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
-| EXP_span100ms_packB_gen | SelectivityAsymRm/EXP_span100ms_packB_gen | 3 | clone | DEFERRED | | | | | |
-| EXP_span100ms_packC_gen | SelectivityAsymRm/EXP_span100ms_packC_gen | 3 | clone | DEFERRED | | | | | |
-| EXP_span100ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
-| EXP_span100ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9 | 3 | clone | DEFERRED | | | | | |
+| EXP_span50ms_packB_gen | SelectivityAsymRm/EXP_span50ms_packB_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span50ms_packC_gen | SelectivityAsymRm/EXP_span50ms_packC_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span50ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span50ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span100ms_packB_gen | SelectivityAsymRm/EXP_span100ms_packB_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span100ms_packC_gen | SelectivityAsymRm/EXP_span100ms_packC_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span100ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span100ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
 
 ### E. AsymRmLtzCal twin — Wave 3c DEFERRED
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_span25ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen | 3c | sync | DEFERRED | sync from AsymRm | |
-| EXP_span50ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen | 3c | sync | DEFERRED | | |
-| EXP_span100ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen | 3c | sync | DEFERRED | | |
-| EXP_span25ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh | 3c | sync | DEFERRED | | |
-| EXP_span50ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh | 3c | sync | DEFERRED | | |
-| EXP_span100ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh | 3c | sync | DEFERRED | | |
+| EXP_span25ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen | 3c | sync | ARTIFACT_KEEP | sync from AsymRm | |
+| EXP_span50ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen | 3c | sync | ARTIFACT_KEEP | | |
+| EXP_span100ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen | 3c | sync | ARTIFACT_KEEP | | |
+| EXP_span25ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
+| EXP_span50ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
+| EXP_span100ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
 
 ### F. Phase6 @480 tiprmin — Wave 4 DEFERRED
 
@@ -183,6 +183,24 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T22:14Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
+| 2026-09-18T22:14Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
+| 2026-09-18T22:14Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
+| 2026-09-18T22:14Z | EXP_span50ms_packA_gen | ARTIFACT_KEEP | | | | parent AsymRm ARTIFACT_KEEP; no sync |
+| 2026-09-18T22:14Z | EXP_span25ms_packA_preinh | ARTIFACT_KEEP | | | | sync from AsymRm done; phase9 gate fail tiprmin hygiene on TipR86e6 twin; weights synced |
+| 2026-09-18T22:14Z | EXP_span25ms_packA_gen | ARTIFACT_KEEP | | | | sync from AsymRm done; phase9 gate fail tiprmin hygiene on TipR86e6 twin; weights synced |
+| 2026-09-18T22:14Z | EXP_span25ms_packA_preinh | VALIDATED | | | | restore after LtzCal sync mis-wrote AsymRm status |
+| 2026-09-18T22:14Z | EXP_span25ms_packA_gen | VALIDATED | | | | restore after LtzCal sync mis-wrote AsymRm status |
+| 2026-09-18T22:13Z | EXP_span25ms_packA_preinh | FAIL | | | | sync gate fail acc=4 ok=1 |
+| 2026-09-18T21:52Z | EXP_span25ms_packA_gen | FAIL | | | | sync gate fail acc=3 ok=0 |
+| 2026-09-18T21:36Z | EXP_span100ms_packC_preinh_C1e9 | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span100ms_packC_gen | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span100ms_packB_preinh_C1e9 | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span100ms_packB_gen | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span50ms_packC_preinh_C1e9 | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span50ms_packC_gen | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span50ms_packB_preinh_C1e9 | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
+| 2026-09-18T21:36Z | EXP_span50ms_packB_gen | DEFERRED_PARENT_FAIL | | | | DEFERRED_PARENT_FAIL: packA parent ARTIFACT_KEEP (soft-cold mid flat) |
 | 2026-09-18T21:35Z | EXP_span25ms_packC_preinh_C1e9 | VALIDATED_CLONE | | | | phase9 packC; thr=0.004686425; acc=8; ok_audit=1 |
 | 2026-09-18T21:15Z | EXP_span25ms_packB_preinh_C1e9 | VALIDATED_CLONE | | | | phase9 packB; thr=0.004686425; acc=8; ok_audit=1 |
 | 2026-09-18T20:55Z | EXP_span25ms_packC_gen | VALIDATED_CLONE | | | | phase9 packC; thr=0.006994845; acc=8; ok_audit=1 |
