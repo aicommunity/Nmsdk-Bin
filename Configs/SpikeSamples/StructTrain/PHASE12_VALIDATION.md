@@ -69,7 +69,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | gold_L | gold_TipR_recipe | gold_thr | notes | last_commit |
 |--------|------|------|------|--------|--------|------------------|----------|-------|-------------|
-| EXP_span25ms_packA_gen | SelectivityAsymRm/EXP_span25ms_packA_gen | 3 | cold | DEFERRED | | tiprmin/base | | after FS unblock | |
+| EXP_span25ms_packA_gen | SelectivityAsymRm/EXP_span25ms_packA_gen | 3 | cold | VALIDATED | | tiprmin/base | | after FS unblock | |
 | EXP_span25ms_packA_preinh | SelectivityAsymRm/EXP_span25ms_packA_preinh | 3 | cold | DEFERRED | | | | | |
 | EXP_span50ms_packA_gen | SelectivityAsymRm/EXP_span50ms_packA_gen | 3 | cold | DEFERRED | `25 23 15 1` | tiprmin | 0.011759 | | |
 | EXP_span50ms_packA_preinh | SelectivityAsymRm/EXP_span50ms_packA_preinh | 3 | cold | DEFERRED | | tiprmin | 0.011759 | | |
@@ -183,6 +183,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T12:47Z | EXP_span25ms_packA_gen | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`15 12 8 1` thr=0.03758895 fires=`10000000` |
+| 2026-09-18T11:09Z | EXP_span25ms_packA_gen | FAIL | | | | verdict=REPRO_FAIL |
 | 2026-09-18T09:15Z | EXP_span25ms_fast_C1e9 | FAIL_ROOTCAUSE | | | | train exited_need1 Need=1 r1 |
 
 ## Wave 2 run log
