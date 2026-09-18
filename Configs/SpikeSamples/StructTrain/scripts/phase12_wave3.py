@@ -115,6 +115,7 @@ WAVE3_FS_ORDER = list(WAVE3_FS.keys())
 WAVE3_ASYM_COLD: dict[str, "ExpSpec"] = {
     s.exp_id: s
     for s in (
+        # span25 gold TipR is 86e6×4 — TipR@Rmin destroys mid gap; keep TipR (done_tipr)
         _asym("EXP_span25ms_packA_gen", 25, GEN_ASYM, "15 12 8 1", "0.00962", 180),
         _asym("EXP_span25ms_packA_preinh", 25, PRE_ASYM, "15 12 8 1", "0.00469", 180),
         _asym("EXP_span50ms_packA_gen", 50, GEN_ASYM, "25 23 15 1", "0.011759", 240),
@@ -123,6 +124,15 @@ WAVE3_ASYM_COLD: dict[str, "ExpSpec"] = {
         _asym("EXP_span100ms_packA_preinh", 100, PRE_ASYM, "52 48 27 1", "0.006681", 320),
     )
 }
+# tipr override for span25 after registry build
+from dataclasses import replace as _dc_replace
+
+WAVE3_ASYM_COLD["EXP_span25ms_packA_gen"] = _dc_replace(
+    WAVE3_ASYM_COLD["EXP_span25ms_packA_gen"], tipr_recipe="done_tipr"
+)
+WAVE3_ASYM_COLD["EXP_span25ms_packA_preinh"] = _dc_replace(
+    WAVE3_ASYM_COLD["EXP_span25ms_packA_preinh"], tipr_recipe="done_tipr"
+)
 WAVE3_ASYM_COLD_ORDER = list(WAVE3_ASYM_COLD.keys())
 
 
@@ -306,10 +316,11 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
     csv_path = root / "Test" / "SelectivityLog" / "results.csv"
     tsec = float(test_t)
-    hard_deadline = max(tsec, 100.0)
+    # Slow TimeLearner sims: wall clock >> model -t; never cut before ~10× test-t
+    hard_deadline = max(tsec * 12.0, 600.0)
     if spec.span_ms >= 100:
-        hard_deadline = max(hard_deadline, 600.0)
-    for _ in range(150):
+        hard_deadline = max(hard_deadline, 900.0)
+    for _ in range(200):
         time.sleep(8)
         if proc.poll() is not None:
             break
@@ -336,10 +347,10 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
                 except subprocess.CalledProcessError:
                     et = 0
                 if n >= 8 and et > hard_deadline:
-                    print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et}")
+                    print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et} hard={hard_deadline}")
                     subprocess.call(["kill", "-TERM", pid_s.name])
     try:
-        proc.wait(timeout=180)
+        proc.wait(timeout=300)
     except subprocess.TimeoutExpired:
         proc.kill()
     if csv_path.exists():
@@ -490,10 +501,10 @@ def asym_clone_gate(clone: AsymCloneSpec, *, dry_run: bool = False) -> dict[str,
     log = test / "run_phase12_asym_clone_gate.log"
     # SIGTERM watchdog while phase9 runs NM
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
-    hard = max(float(test_t), 100.0)
+    hard = max(float(test_t) * 12.0, 600.0)
     if clone.span_ms >= 100:
-        hard = max(hard, 600.0)
-    for _ in range(150):
+        hard = max(hard, 900.0)
+    for _ in range(200):
         time.sleep(8)
         if proc.poll() is not None:
             break
@@ -518,10 +529,10 @@ def asym_clone_gate(clone: AsymCloneSpec, *, dry_run: bool = False) -> dict[str,
                 except subprocess.CalledProcessError:
                     et = 0
                 if n >= 8 and et > hard:
-                    print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et}")
+                    print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et} hard={hard}")
                     subprocess.call(["kill", "-TERM", pid_s.name])
     try:
-        rc = proc.wait(timeout=180)
+        rc = proc.wait(timeout=300)
     except subprocess.TimeoutExpired:
         proc.kill()
         rc = -1
