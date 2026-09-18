@@ -234,10 +234,8 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     mt = set_tag(mt, "IsNeedToTrain", "1", 1)
     mt = set_tag(mt, "StructureBuildMode", "1", 1)
     mt = _ensure_tag(mt, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
-    if re.search(r"<UseFixedLTZThreshold\b", mt):
-        mt = set_tag(mt, "UseFixedLTZThreshold", "0", 1)
-    if re.search(r"<AutoCalibrateFixedLTZThreshold\b", mt):
-        mt = set_tag(mt, "AutoCalibrateFixedLTZThreshold", "0", 1)
+    mt = _ensure_tag(mt, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    mt = _ensure_tag(mt, "AutoCalibrateFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
     return mt
 
 
