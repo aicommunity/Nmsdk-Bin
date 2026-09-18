@@ -28,7 +28,7 @@
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **in progress** (tooling ready; CLI `list-wave3` / `phase12_wave3_run.sh`) |
 | 4 | Phase6 480 tiprmin 7/8 | DEFERRED until W3 |
 | ∞ | ARTIFACT / OUT | marked below |
-| FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve) |
+| FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve); ARTIFACT §A–C + OUT §K unchanged |
 
 ---
 
@@ -70,8 +70,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | exp_id | path | wave | kind | status | gold_L | gold_TipR_recipe | gold_thr | notes | last_commit |
 |--------|------|------|------|--------|--------|------------------|----------|-------|-------------|
 | EXP_span25ms_packA_gen | SelectivityAsymRm/EXP_span25ms_packA_gen | 3 | cold | VALIDATED | | tiprmin/base | | after FS unblock | |
-| EXP_span25ms_packA_preinh | SelectivityAsymRm/EXP_span25ms_packA_preinh | 3 | cold | DEFERRED | | | | | |
-| EXP_span50ms_packA_gen | SelectivityAsymRm/EXP_span50ms_packA_gen | 3 | cold | DEFERRED | `25 23 15 1` | tiprmin | 0.011759 | | |
+| EXP_span25ms_packA_preinh | SelectivityAsymRm/EXP_span25ms_packA_preinh | 3 | cold | VALIDATED | | | | | |
+| EXP_span50ms_packA_gen | SelectivityAsymRm/EXP_span50ms_packA_gen | 3 | cold | FAIL | `25 23 15 1` | tiprmin | 0.011759 | | |
 | EXP_span50ms_packA_preinh | SelectivityAsymRm/EXP_span50ms_packA_preinh | 3 | cold | DEFERRED | | tiprmin | 0.011759 | | |
 | EXP_span100ms_packA_gen | SelectivityAsymRm/EXP_span100ms_packA_gen | 3 | cold | DEFERRED | `52 48 27 1` | tiprmin | 0.006681 | | |
 | EXP_span100ms_packA_preinh | SelectivityAsymRm/EXP_span100ms_packA_preinh | 3 | cold | DEFERRED | | tiprmin | 0.006681 | | |
@@ -183,6 +183,9 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T19:01Z | EXP_span25ms_packA_preinh | VALIDATED | | | | verdict=REPRO_OK_QUALITY L=`15 13 8 1` thr=0.01241355 fires=`10000000` |
+| 2026-09-18T18:19Z | EXP_span50ms_packA_gen | FAIL | | | | verdict=REPRO_FAIL |
+| 2026-09-18T14:55Z | EXP_span25ms_packA_preinh | FAIL | | | | verdict=REPRO_FAIL |
 | 2026-09-18T12:47Z | EXP_span25ms_packA_gen | VALIDATED | | | | verdict=REPRO_OK_EXACT L=`15 12 8 1` thr=0.03758895 fires=`10000000` |
 | 2026-09-18T11:09Z | EXP_span25ms_packA_gen | FAIL | | | | verdict=REPRO_FAIL |
 | 2026-09-18T09:15Z | EXP_span25ms_fast_C1e9 | FAIL_ROOTCAUSE | | | | train exited_need1 Need=1 r1 |
