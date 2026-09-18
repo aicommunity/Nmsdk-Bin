@@ -157,7 +157,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_span25ms_fast_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_C1e9 | 3 | cold | BLOCKED_FS | soft-cold REPRO_FAIL Need=1 L=`7 5 4 1` | |
+| EXP_span25ms_fast_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_C1e9 | 3 | cold | FAIL_ROOTCAUSE | W3a soft-cold Need=1 L=`6 5 4 1` after 180×3; PulseLib pin; no FS×5| |
 | EXP_span25ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9 | 3 | cold | BLOCKED_FS | | |
 | EXP_span50ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9 | 3 | cold | BLOCKED_FS | | |
 | EXP_span100ms_fast_C1e9 | SelectivityFastSpan/EXP_span100ms_fast_C1e9 | 3 | cold | BLOCKED_FS | 7/8 registry | |
@@ -183,6 +183,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-18T09:15Z | EXP_span25ms_fast_C1e9 | FAIL_ROOTCAUSE | | | | train exited_need1 Need=1 r1 |
 
 ## Wave 2 run log
 

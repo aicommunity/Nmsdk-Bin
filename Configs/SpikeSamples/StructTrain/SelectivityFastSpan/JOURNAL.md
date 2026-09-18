@@ -52,3 +52,7 @@ MAX_JOBS=4 TEST_T=20 SKIP_TRAIN=1 bash scripts/run_fastspan.sh
 ```
 
 Лог: `run_fastspan_valid_test.log`. Verify pattern 16/16 PASS. Результат совпал с каноном 23 авг: TS=2000 → fire_all 1/8; ts10k → silent 7/8. CSV с валидными ISI (не 0.0015).
+
+## 2026-09-18 — PHASE12 W3a FS25 unblock FAIL_ROOTCAUSE
+
+Soft-cold ×3×180: L→`6 5 4 1` but Need stuck 1. Status `FAIL_ROOTCAUSE`. FS×5 cold deferred; AsymRm continues. See `_repro/_invest/fs25_unblock/`.
