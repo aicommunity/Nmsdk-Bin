@@ -179,7 +179,7 @@ def _ltz(exp_id: str, twin_id: str, span_ms: int) -> "ExpSpec":
         train_t=0.0,
         neuron="",
         next_seg=False,
-        tipr_recipe="tiprmin",
+        tipr_recipe="done_tipr",  # never force TipR@Rmin on synced TipR86e6 twins
         metric="ltz_potential_max",
         kind="sync",
         gold_L="",

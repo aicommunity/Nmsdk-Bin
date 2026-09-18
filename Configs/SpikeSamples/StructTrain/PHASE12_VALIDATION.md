@@ -25,8 +25,8 @@
 |------|-------|--------|
 | **1** | Branch packA ×9 cold | **done (8/9 VALIDATED, 1 FAIL)** |
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
-| 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **in progress** (tooling ready; CLI `list-wave3` / `phase12_wave3_run.sh`) |
-| 4 | Phase6 480 tiprmin 7/8 | DEFERRED until W3 |
+| 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
+| 4 | Phase6 480 tiprmin 7/8 | **in progress** |
 | ∞ | ARTIFACT / OUT | marked below |
 | FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve); ARTIFACT §A–C + OUT §K unchanged |
 

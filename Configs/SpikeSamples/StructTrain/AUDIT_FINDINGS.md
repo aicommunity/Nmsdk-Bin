@@ -1,9 +1,9 @@
-# StructTrain structural audit (2026-09-17)
+# StructTrain structural audit (2026-09-19)
 
-- Experiments scanned: **181**
-- FAIL: **18**
-- Structure CSV: `AUDIT_STRUCTURE_2026-09-17.csv`
-- Matrix CSV: `AUDIT_MATRIX_20260917.csv`
+- Experiments scanned: **183**
+- FAIL: **20**
+- Structure CSV: `AUDIT_STRUCTURE_2026-09-19.csv`
+- Matrix CSV: `AUDIT_MATRIX_20260919.csv`
 
 ## FAIL sample
 
@@ -11,6 +11,8 @@
 - `SelectivityAsymRm/EXP_span100ms_packB_preinh`: csv_n=5
 - `SelectivityAsymRm/EXP_span100ms_packC_gen_ampaudit`: csv_n=6
 - `SelectivityAsymRm/EXP_span100ms_packC_preinh`: csv_n=6
+- `SelectivityAsymRm/EXP_span25ms_packA_gen.bak_phase12_20260918T124746Z`: no_results_csv
+- `SelectivityAsymRm/EXP_span25ms_packA_preinh.bak_phase12_20260918T190113Z`: no_results_csv
 - `SelectivityAsymRm/EXP_span50ms_packB_preinh`: csv_n=3
 - `SelectivityAsymRm/EXP_span50ms_packC_gen_ampaudit`: csv_n=4
 - `SelectivityAsymRm/EXP_span50ms_packC_preinh`: csv_n=4

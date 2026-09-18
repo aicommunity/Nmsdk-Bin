@@ -229,3 +229,12 @@ Clone packA + Matrix overlay B/C via `phase8_tiprmin_gate.py --skip-prepare --ma
 - PhaseA EXP03–05 / FastSpanLtzCal — P10.4 docs skip.
 - PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
 - AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
+
+
+## PHASE12 Wave3 badges (2026-09-18)
+
+- AsymRm `EXP_span25ms_packA_{gen,preinh}` **VALIDATED** (soft-cold TipR 86e6)
+- AsymRm span25 packB/C gen+preinh **VALIDATED_CLONE** ×4
+- AsymRm span50/100 packA **ARTIFACT_KEEP** (soft-cold mid flat)
+- FastSpan FS25 **FAIL_ROOTCAUSE**; FS×5 **BLOCKED_FS**
+- AsymRmLtzCal **ARTIFACT_KEEP** (sync; gate tiprmin hygiene)
