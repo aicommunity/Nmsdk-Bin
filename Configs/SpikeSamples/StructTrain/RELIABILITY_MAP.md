@@ -58,6 +58,7 @@ Only the intersection is **fully confirmed**.
 | **Flat mid-pattern potential** | After cold, mid profile has no usable target/non-target gap |
 | **Tip-resistance at Rmin recipe** | Tip resistances `2e7 2e7 2e7 8.6e7`, floor `ResistanceMin=2e7`, then silent mid |
 | **Tip-resistance at Done** | Resistances from a finished train (fallback if Rmin hurts selectivity) |
+| **True-class spike** | Neuron response on the target probe (usually first bit of `fires` = 1) |
 | **Capacitance 1e9** | Membrane C=1e9 in the short-span recipe |
 | **Stimulus packs A / B / C** | Different non-target matrices; A = cold train, B/C = matrix clones |
 | **No presynaptic inhibition** | Baseline generator |
@@ -138,6 +139,28 @@ Only pairs with **numeric** test results in the journals. Columns: accuracy (N o
 | FastSpan historical → C1e9 | often 1 of 8 fire-all | 8 / 5 / 7–8 of 8 / yes when PASS | Mixed (neuron + train + tip-resistance) |
 | FastResponse EXPD001/002 | 7 of 8 / yes (one miss) | silent / fire-all | Tip-resistance **broke or hurt** |
 
+### Tip-resistance value generalization
+
+Do successful configs share **one** tip-resistance vector across pattern lengths and learners?
+
+| Class on Test | Vector | Where successful |
+|---------------|--------|------------------|
+| **Rmin canon** | `2e7 2e7 2e7 8.6e7`, ResistanceMin=`2e7` | Most: AsymRm 50/100; Branch 25/50 (+ levers); Branch 100 preinh/nextseg; br480 tiprmin; Phase6 tiprmin; FastSpan C1e9; LtzCal twin 50/100 |
+| **Flat 8.6e7×4** | `8.6e7` four times | **AsymRm / LtzCal twin at 25 ms only** (8 of 8) |
+| **Done (unique)** | train-dependent | **Branch 100 ms gen** (~`7.4e7 8.9e7 1.3e8 5.1e8`, 8 of 8); Phase6 thr_only (~`2.58e7…8.6e7`, 7 of 8 = tiprmin) |
+
+| Span | Learner | Test vector | Acc | Target spike |
+|------|---------|-------------|-----|--------------|
+| 25 ms | AsymRm / LtzCal | flat 8.6e7×4 | 8/8 | yes |
+| 25 ms | Branch / FastSpan C1e9 | Rmin canon | 8/8 | yes |
+| 50 ms | AsymRm / Branch / FastSpan | Rmin canon | 8/8 | yes |
+| 100 ms | AsymRm / Branch preinh·nextseg / FastSpan | Rmin canon | 7–8/8 | yes |
+| 100 ms | Branch **gen** | **Done** (shared A/B/C) | 8/8 | yes |
+| ~480 ms | Phase6 tiprmin / Branch tiprmin | Rmin canon | 7–8/8 | yes |
+| ~480 ms | Phase6 thr_only | Done (≠ Rmin) | 7/8 same as tiprmin | yes |
+
+**Verdict:** The **procedure** (fixed Rmin post-step) generalizes across 50/100/~480 ms and classic/Branch/FastSpan — not a per-run learned optimum. Exceptions: AsymRm25 flat base; Branch100 gen Done. Done vectors differ across trains; on Phase6 classic, Rmin and Done give the **same** accuracy, so “best” resistances are not unique. Full prose: [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.7.
+
 ---
 
 ## 5. Summary matrix: pattern length × family
@@ -168,7 +191,7 @@ Cell: **trust** · test score · cold note.
 
 ---
 
-## 5. Families (detail)
+## 6. Families (detail)
 
 Same columns as the Russian doc: group · length · lever · test · threshold / tip-resistance · PHASE12 · trust · not verified. Full prose comparisons live in [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §5; below is the status detail.
 
@@ -210,7 +233,7 @@ FastResponse tip-resistance, stalled LtzCalBranch, RegressionFull480 harness, fo
 
 ---
 
-## 6. Checklist
+## 7. Checklist
 
 ### Fully confirmed (T1) — working and reproducible
 
@@ -237,7 +260,7 @@ FastResponse tip-resistance, stalled LtzCalBranch, RegressionFull480 harness, fo
 
 ---
 
-## 7. Pointers
+## 8. Pointers
 
 | Document | Role |
 |----------|------|
