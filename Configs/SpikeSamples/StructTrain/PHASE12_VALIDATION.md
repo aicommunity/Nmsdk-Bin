@@ -184,6 +184,10 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-19T07:45Z | EXP_480_ltzcal_twin_gen | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
+| 2026-09-19T07:45Z | EXP_480_preinh250_tiprmin | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
+| 2026-09-19T07:45Z | EXP_480_gen_thr_only | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
+| 2026-09-19T07:45Z | EXP_480_gen_tiprmin | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
 
 ## Wave 3 run log
 
