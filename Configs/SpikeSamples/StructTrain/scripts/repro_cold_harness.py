@@ -27,6 +27,9 @@ from repro_cold_lib import (
     prepare_family,
     prepare_invest,
     post_train_hygiene,
+    enable_post_train_tuning_on,
+    tipr_looks_posttuned,
+    get_tag,
     read_need,
     snapshot_gate,
     verdict_family,
@@ -174,11 +177,25 @@ def pack_root(root: Path, *, dry_run: bool = False, prefix: str = "repro") -> Pa
     return arch
 
 
-def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
+def run_gate(
+    family: Family,
+    root: Path,
+    *,
+    dry_run: bool = False,
+    force_python_hygiene: bool = False,
+) -> None:
     print(f"GATE {root} metric={family.metric}")
     if dry_run:
         return
-    post_train_hygiene(root, family)
+    train_p = root / "Train" / "Parameters_00.xml"
+    tp = train_p.read_text(encoding="utf-8") if train_p.exists() else ""
+    tipr = get_tag(tp, "TipSynapseResistance")
+    skip_tipr_mid = (
+        not force_python_hygiene
+        and enable_post_train_tuning_on(tp)
+        and tipr_looks_posttuned(tipr)
+    )
+    post_train_hygiene(root, family, force_python_hygiene=force_python_hygiene)
     if family.kind == "fastspan":
         cmd = [
             sys.executable,
@@ -202,6 +219,8 @@ def run_gate(family: Family, root: Path, *, dry_run: bool = False) -> None:
             "--test-t",
             "40",
         ]
+        if skip_tipr_mid:
+            cmd.append("--skip-tipr-mid")
     log = root / "Test" / "run_repro_gate.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
@@ -271,7 +290,12 @@ def cmd_run(args: argparse.Namespace) -> None:
         status = run_train(fam, root, dry_run=args.dry_run)
         print(f"TRAIN_STATUS={status}")
         pack_root(root, dry_run=args.dry_run, prefix="repro")
-        run_gate(fam, root, dry_run=args.dry_run)
+        run_gate(
+            fam,
+            root,
+            dry_run=args.dry_run,
+            force_python_hygiene=getattr(args, "force_python_hygiene", False),
+        )
         snap = snapshot_gate(root)
         print(f"SNAP r{rep} {fam.key} cold={mode}: {snap}")
 
@@ -292,7 +316,12 @@ def cmd_invest(args: argparse.Namespace) -> None:
         status = run_train(fam, root, dry_run=args.dry_run)
         print(f"TRAIN_STATUS={status} job={job_id}")
         pack_root(root, dry_run=args.dry_run, prefix="invest")
-        run_gate(fam, root, dry_run=args.dry_run)
+        run_gate(
+            fam,
+            root,
+            dry_run=args.dry_run,
+            force_python_hygiene=getattr(args, "force_python_hygiene", False),
+        )
         append_compare_row(job_id, fam, mode, root)
         snap = snapshot_gate(root)
         print(f"INVEST SNAP {job_id}: {snap}")
@@ -376,6 +405,11 @@ def main() -> None:
     p_run.add_argument("--cold", choices=("soft", "strip"), default="soft")
     p_run.add_argument("--root", type=str, help="explicit experiment root")
     p_run.add_argument("--dry-run", action="store_true")
+    p_run.add_argument(
+        "--force-python-hygiene",
+        action="store_true",
+        help="Always apply Python tiprmin/mid even when C++ PostTune TipR is present",
+    )
     p_run.set_defaults(func=cmd_run)
 
     p_inv = sub.add_parser("invest", help="A/B soft vs strip under _repro/_invest")
@@ -384,6 +418,11 @@ def main() -> None:
     p_inv.add_argument("--force", action="store_true")
     p_inv.add_argument("--prepare-only", action="store_true")
     p_inv.add_argument("--dry-run", action="store_true")
+    p_inv.add_argument(
+        "--force-python-hygiene",
+        action="store_true",
+        help="Always apply Python tiprmin/mid even when C++ PostTune TipR is present",
+    )
     p_inv.set_defaults(func=cmd_invest)
 
     p_cmp = sub.add_parser("compare", help="write REPRO_COLD_RESULT.md")

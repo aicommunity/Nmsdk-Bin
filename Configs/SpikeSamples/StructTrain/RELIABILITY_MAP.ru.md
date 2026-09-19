@@ -242,6 +242,8 @@ flowchart LR
 
 Вопрос: у успешных конфигураций **один и тот же** вектор сопротивлений кончиков на всех длительностях и способах обучения, или каждый раз свой?
 
+**C++ PostTune** (канон / flat / KeepDone / Search внутри учителя): [`POST_TRAIN_TUNING.ru.md`](POST_TRAIN_TUNING.ru.md).
+
 Источник цифр: свойство `TipSynapseResistance` в Test `Parameters_00.xml` успешных корней из [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) и tiprmin-клонов Phase6/Branch ~480 мс (без diag/bak).
 
 #### Классы векторов на успешных Test

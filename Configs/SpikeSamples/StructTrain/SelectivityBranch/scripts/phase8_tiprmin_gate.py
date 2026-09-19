@@ -258,12 +258,13 @@ def prepare_test(
     pack: str = "A",
     *,
     keep_tipr: bool = False,
+    skip_tipr_mid: bool = False,
 ) -> None:
     train, test = root / "Train", root / "Test"
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     L = " ".join(str(x) for x in tips)
     tipr_src = get_tag(train_p, "TipSynapseResistance") or TIPRMIN
-    tipr_use = tipr_src if keep_tipr else TIPRMIN
+    tipr_use = tipr_src if (keep_tipr or skip_tipr_mid) else TIPRMIN
 
     # Fresh Test shell if missing analyzer pattern
     if not (test / "Model_00.xml").exists():
@@ -288,6 +289,10 @@ def prepare_test(
     )
     apply_asym_matrix(test / "Parameters_00.xml", span_ms, pack=pack)
 
+    # Mid threshold: keep Train FixedLTZ when C++ PostTune already wrote it
+    mid_from_train = get_tag(train_p, "FixedLTZThreshold") or SILENT_THR
+    thr_for_test = mid_from_train if skip_tipr_mid else SILENT_THR
+
     for rel, learner_sb in [("Parameters_00.xml", "0"), ("Model_00.xml", "1")]:
         p = test / rel
         t = p.read_text(encoding="utf-8")
@@ -301,11 +306,11 @@ def prepare_test(
         ):
             t = copy_tag(train_p, t, tag)
         t = set_tag(t, "TipSynapseResistance", tipr_use)
-        t = set_tag(t, "ResistanceMin", RMIN)
+        t = set_tag(t, "ResistanceMin", RMIN if not skip_tipr_mid else (get_tag(train_p, "ResistanceMin") or RMIN))
         t = set_tag(t, "DendriteLength", L)
         t = set_tag(t, "IsNeedToTrain", "0")
-        t = set_tag(t, "FixedLTZThreshold", SILENT_THR)
-        t = set_tag(t, "LTZThreshold", SILENT_THR)
+        t = set_tag(t, "FixedLTZThreshold", thr_for_test)
+        t = set_tag(t, "LTZThreshold", thr_for_test)
         t = set_tag(t, "UseFixedLTZThreshold", "1")
         t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0")
         if rel.startswith("Parameters"):
@@ -313,7 +318,7 @@ def prepare_test(
         else:
             t = set_neuron_sb(t, learner_sb="1", neuron_sb="2")
             t = ensure_generator_tips(t, tips)
-            if not keep_tipr:
+            if not keep_tipr and not skip_tipr_mid:
                 t = patch_tip_exc_r(t, tips)
         p.write_text(t, encoding="utf-8")
 
@@ -326,8 +331,8 @@ def prepare_test(
     )
     (test / "Project.ini").write_text(ini, encoding="utf-8")
 
-    # TipR on Train: TipR@Rmin unless keep_tipr (Done TipR path)
-    if not keep_tipr:
+    # TipR on Train: TipR@Rmin unless keep_tipr / skip_tipr_mid (C++ PostTune)
+    if not keep_tipr and not skip_tipr_mid:
         for rel in ["Parameters_00.xml", "Model_00.xml"]:
             p = train / rel
             t = p.read_text(encoding="utf-8")
@@ -337,7 +342,7 @@ def prepare_test(
                 t = patch_tip_exc_r(t, tips)
             p.write_text(t, encoding="utf-8")
     else:
-        print(f"keep-tipr: TipSynapseResistance={tipr_use[:48]}…")
+        print(f"keep-tipr/skip-tipr-mid: TipSynapseResistance={tipr_use[:48]}…")
 
 
 def main() -> None:
@@ -362,21 +367,54 @@ def main() -> None:
         action="store_true",
         help="Do not force TipR@Rmin; keep Train TipSynapseResistance (Done TipR)",
     )
+    ap.add_argument(
+        "--skip-tipr-mid",
+        action="store_true",
+        help="Skip TipR@Rmin + silent mid; keep Train TipR/FixedLTZ (C++ PostTune); still overlay/links/gate",
+    )
+    ap.add_argument(
+        "--force-python-hygiene",
+        action="store_true",
+        help="Ignore --skip-tipr-mid (debug: always Python tiprmin+silent mid)",
+    )
     args = ap.parse_args()
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")
-    print("L=", tips, "pack=", args.pack.upper(), "keep_tipr=", args.keep_tipr)
+    skip_tipr_mid = bool(args.skip_tipr_mid) and not bool(args.force_python_hygiene)
+    print(
+        "L=", tips, "pack=", args.pack.upper(),
+        "keep_tipr=", args.keep_tipr, "skip_tipr_mid=", skip_tipr_mid,
+    )
 
     if not args.skip_prepare:
         prepare_test(
-            root, args.span_ms, tips, pack=args.pack, keep_tipr=args.keep_tipr
+            root,
+            args.span_ms,
+            tips,
+            pack=args.pack,
+            keep_tipr=args.keep_tipr,
+            skip_tipr_mid=skip_tipr_mid,
         )
         print("prepared Test hygiene")
     elif args.matrix_only:
         apply_asym_matrix(test / "Parameters_00.xml", args.span_ms, pack=args.pack)
         # Model Parameters often mirror Matrix — keep Params as gate source of foils
         print(f"matrix overlay pack{args.pack.upper()}")
+
+    if skip_tipr_mid:
+        # Gate with Train mid already on Test; skip silent probe rewrite
+        mid_s = get_tag((test / "Parameters_00.xml").read_text(encoding="utf-8"), "FixedLTZThreshold")
+        print(f"skip silent mid probe; thr={mid_s}")
+        glog = test / "run_gate.log"
+        rc = run_nm(test / "Project.ini", args.test_t, glog)
+        print("gate rc", rc)
+        csv_silent = test / "SelectivityLog" / "results.csv"
+        if not csv_silent.exists():
+            raise SystemExit("no gate results.csv")
+        subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_silent)])
+        print("thr", mid_s)
+        return
 
     for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
         set_fixed_thr(p, SILENT_THR)

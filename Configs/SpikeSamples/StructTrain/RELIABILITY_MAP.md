@@ -57,7 +57,9 @@ Only the intersection is **fully confirmed**.
 | **Soma amplitude sum** | Branch mid metric |
 | **Flat mid-pattern potential** | After cold, mid profile has no usable target/non-target gap |
 | **Tip-resistance at Rmin recipe** | Tip resistances `2e7 2e7 2e7 8.6e7`, floor `ResistanceMin=2e7`, then silent mid |
-| **Tip-resistance at Done** | Resistances from a finished train (fallback if Rmin hurts selectivity) |
+| **Tip-resistance at Done** | Resistances from a finished train (unique per Train; fallback if Rmin hurts) |
+| **Rmin canon** | Fixed post-step vector `2e7 2e7 2e7 8.6e7` |
+| **Flat tip-resistance 8.6e7×4** | All four tips `8.6e7` (AsymRm at 25 ms) |
 | **True-class spike** | Neuron response on the target probe (usually first bit of `fires` = 1) |
 | **Capacitance 1e9** | Membrane C=1e9 in the short-span recipe |
 | **Stimulus packs A / B / C** | Different non-target matrices; A = cold train, B/C = matrix clones |
@@ -142,6 +144,8 @@ Only pairs with **numeric** test results in the journals. Columns: accuracy (N o
 ### Tip-resistance value generalization
 
 Do successful configs share **one** tip-resistance vector across pattern lengths and learners?
+
+**C++ PostTune** (canon / flat / KeepDone / Search in-teacher): [`POST_TRAIN_TUNING.md`](POST_TRAIN_TUNING.md).
 
 | Class on Test | Vector | Where successful |
 |---------------|--------|------------------|

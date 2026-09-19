@@ -84,6 +84,43 @@ def get_tag(text: str, tag: str) -> str | None:
     return m.group(1).strip() if m else None
 
 
+def ensure_tag_after(text: str, after_tag: str, new_tag: str, value: str, attrs: str = ' Type="b" PType="257" IoType="17"') -> str:
+    """Insert <new_tag>…</new_tag> after first </after_tag> if missing."""
+    if get_tag(text, new_tag) is not None:
+        return set_tag(text, new_tag, value, 1)
+    m = re.search(rf"(</{after_tag}>)", text)
+    if not m:
+        return text
+    insert = f"{m.group(1)}\n\t\t\t\t\t<{new_tag}{attrs}>{value}</{new_tag}>"
+    return text[: m.start()] + insert + text[m.end() :]
+
+
+def enable_post_train_tuning_on(params_text: str) -> bool:
+    """Default ON when property absent (ADefault / cold retrain of old XML)."""
+    v = get_tag(params_text, "EnablePostTrainTuning")
+    if v is None:
+        return True
+    return v.strip() not in ("0", "false", "False")
+
+
+def tipr_looks_posttuned(tipr: str | None) -> bool:
+    """True when TipR already matches CanonRmin or FlatLastR recipe vectors."""
+    if not tipr:
+        return False
+    nums = [x for x in tipr.replace(",", " ").split() if x]
+    if len(nums) < 4:
+        return False
+    try:
+        vals = [float(x) for x in nums[:4]]
+    except ValueError:
+        return False
+    canon = [2e7, 2e7, 2e7, 8.6e7]
+    flat = [8.6e7] * 4
+    def close(a: list[float], b: list[float]) -> bool:
+        return all(abs(x - y) <= max(1.0, 0.01 * abs(y)) for x, y in zip(a, b))
+    return close(vals, canon) or close(vals, flat)
+
+
 def clone_root(family: Family, rep: int) -> Path:
     return REPRO_ROOT / family.clone_name / f"r{rep}"
 
@@ -370,8 +407,32 @@ def first_tip_exc_r(model: Path, *, branch: bool, tip_L: int = 1) -> str:
     return (m.group(1).strip().replace(",", ".") if m else "")
 
 
-def post_train_hygiene(root: Path, family: Family) -> None:
-    """FastSpan pre-gate hygiene. Branch full prepare is done by phase8_tiprmin_gate."""
+def post_train_hygiene(
+    root: Path,
+    family: Family,
+    *,
+    force_python_hygiene: bool = False,
+) -> None:
+    """FastSpan pre-gate hygiene. Branch full prepare is done by phase8_tiprmin_gate.
+
+    When Train has EnablePostTrainTuning on (default) and TipR already looks
+    post-tuned (CanonRmin / FlatLastR), skip Python apply_tiprmin / tip Exc patch.
+    Use force_python_hygiene=True to always apply tiprmin (debug).
+    """
+    train_params = root / "Train" / "Parameters_00.xml"
+    tp = train_params.read_text(encoding="utf-8") if train_params.exists() else ""
+    tipr = get_tag(tp, "TipSynapseResistance")
+    if (
+        not force_python_hygiene
+        and enable_post_train_tuning_on(tp)
+        and tipr_looks_posttuned(tipr)
+    ):
+        print(
+            "post_train_hygiene: skip apply_tiprmin/mid "
+            "(EnablePostTrainTuning on + TipR already canon/flat)"
+        )
+        return
+
     if family.kind == "branch":
         # TipR property on Train only; Exc + Test rebuild via phase8 prepare_test
         apply_tiprmin([root / "Train" / "Parameters_00.xml", root / "Train" / "Model_00.xml"])
