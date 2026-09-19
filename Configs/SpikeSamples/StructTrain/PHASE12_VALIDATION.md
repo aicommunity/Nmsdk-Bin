@@ -1,6 +1,7 @@
 # PHASE12 — validation manifest (source of truth)
 
-Живой реестр статусов cold-replay / clone / artifact. Канон и tooling: [`scripts/phase12_validate.py`](scripts/phase12_validate.py), soft-cold harness [`_repro/README.md`](_repro/README.md).
+Живой реестр статусов cold-replay / clone / artifact. Канон и tooling: [`scripts/phase12_validate.py`](scripts/phase12_validate.py), soft-cold harness [`_repro/README.md`](_repro/README.md).  
+**Карта надёжности (подходы / параметры / размер паттерна):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md).
 
 **Срез:** 2026-09-16 · PulseLib pin `780ffc7` · Wave 1 = Branch short packA roots.
 

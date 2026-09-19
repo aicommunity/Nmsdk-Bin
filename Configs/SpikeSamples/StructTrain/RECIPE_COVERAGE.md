@@ -3,6 +3,8 @@
 Рецепт = `TipSynapseResistance` TipR@Rmin `2e7 2e7 2e7 8.6e7` + `ResistanceMin=2e7` + silent mid-thr + clean Test.  
 Для short-span дополнительно **C1e9** neuron + cold Train (Test-only tiprmin на Branch short-span — FAIL).
 
+**Карта надёжности (доверие Test ∩ cold по подходам и размеру паттерна):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md).
+
 Критерии кода не меняются — [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
 Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). GATE: 2026-09-15 · 168 Test · 97 `ok_audit=1` (PHASE11 R1). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
 
