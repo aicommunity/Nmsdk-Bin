@@ -684,6 +684,7 @@ def _update_manifest_status(
     utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     log_line = f"| {utc} | {exp_id} | {status} | | | | {notes} |\n"
     for section, marker in (
+        ("## Wave 5 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 3 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 2 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 1 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
@@ -760,6 +761,7 @@ def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
             spec.exp_id,
             "DEFERRED_PARENT_FAIL",
             notes=spec.skip_reason,
+            path_substr="SelectivityBranch",
         )
         return {"status": "DEFERRED_PARENT_FAIL", "notes": spec.skip_reason}
     if not spec.gold.exists():
@@ -811,7 +813,9 @@ def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
     if not csv_p.exists():
         # restore bak
         _restore_clone_bak(spec, bak)
-        _update_manifest_status(spec.exp_id, "FAIL", notes="no results.csv after gate")
+        _update_manifest_status(
+            spec.exp_id, "FAIL", notes="no results.csv after gate", path_substr="SelectivityBranch"
+        )
         raise SystemExit(f"clone-gate FAIL no csv {spec.exp_id}")
     subprocess.call([sys.executable, str(METRICS), "-v", str(csv_p)])
     snap = snapshot_gate(spec.gold)
@@ -824,9 +828,11 @@ def clone_gate(spec: CloneSpec, *, dry_run: bool = False) -> dict[str, str]:
     notes = f"matrix-only pack{spec.pack}; thr={thr}; acc={acc}; ok_audit={snap.get('ok_audit')}"
     if not ok:
         _restore_clone_bak(spec, bak)
-        _update_manifest_status(spec.exp_id, "FAIL", notes=notes)
+        _update_manifest_status(spec.exp_id, "FAIL", notes=notes, path_substr="SelectivityBranch")
         raise SystemExit(f"clone-gate FAIL {spec.exp_id} {notes}")
-    _update_manifest_status(spec.exp_id, "VALIDATED_CLONE", notes=notes)
+    _update_manifest_status(
+        spec.exp_id, "VALIDATED_CLONE", notes=notes, path_substr="SelectivityBranch"
+    )
     return {"status": "VALIDATED_CLONE", **snap, "notes": notes}
 
 
@@ -847,7 +853,12 @@ def _restore_clone_bak(spec: CloneSpec, bak: Path) -> None:
 def promote_clone(spec: CloneSpec, *, dry_run: bool = False) -> None:
     """Clone gate already wrote Test; promote_clone only re-stamps if needed."""
     if spec.skip_reason:
-        _update_manifest_status(spec.exp_id, "DEFERRED_PARENT_FAIL", notes=spec.skip_reason)
+        _update_manifest_status(
+            spec.exp_id,
+            "DEFERRED_PARENT_FAIL",
+            notes=spec.skip_reason,
+            path_substr="SelectivityBranch",
+        )
         return
     snap = snapshot_gate(spec.gold)
     acc = int(snap.get("acc") or 0)
@@ -860,7 +871,9 @@ def promote_clone(spec: CloneSpec, *, dry_run: bool = False) -> None:
     if dry_run:
         print(f"dry promote-clone {notes}")
         return
-    _update_manifest_status(spec.exp_id, "VALIDATED_CLONE", notes=notes)
+    _update_manifest_status(
+        spec.exp_id, "VALIDATED_CLONE", notes=notes, path_substr="SelectivityBranch"
+    )
 
 
 def bin_commit_paths(paths: list[Path], message: str) -> None:
@@ -966,7 +979,9 @@ def cmd_run_br480(args: argparse.Namespace) -> None:
         status = run_train(spec, root, dry_run=args.dry_run)
         print(f"TRAIN_STATUS={status} r{rep}")
         if status not in ("done", "dry"):
-            _update_manifest_status(spec.exp_id, "FAIL", notes=f"train {status} r{rep}")
+            _update_manifest_status(
+                spec.exp_id, "FAIL", notes=f"train {status} r{rep}", path_substr="SelectivityBranch"
+            )
             raise SystemExit(f"train failed: {status}")
         pack_root(root, dry_run=args.dry_run)
         run_gate(spec, root, dry_run=args.dry_run)
@@ -982,7 +997,9 @@ def cmd_run_br480(args: argparse.Namespace) -> None:
                     f"phase12 W2b: VALIDATED {spec.exp_id}",
                 )
     else:
-        _update_manifest_status(spec.exp_id, "FAIL", notes=f"verdict={v}")
+        _update_manifest_status(
+            spec.exp_id, "FAIL", notes=f"verdict={v}", path_substr="SelectivityBranch"
+        )
         raise SystemExit(f"compare FAIL {v}")
 
 

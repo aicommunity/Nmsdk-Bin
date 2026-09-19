@@ -240,7 +240,7 @@ WAVE4_PHASE6: dict[str, "ExpSpec"] = {
             600,
             "tiprmin",
         ),
-        _p6("EXP_480_ltzcal_twin_gen", "sync", "49 41 25 1", "0.016894", "NSPNeuronGen", 0, "tiprmin"),
+        _p6("EXP_480_ltzcal_twin_gen", "sync", "49 41 25 1", "0.016894", "NSPNeuronGen", 0, "done_tipr"),
     )
 }
 WAVE4_PHASE6_ORDER = list(WAVE4_PHASE6.keys())
@@ -263,29 +263,10 @@ def as_family(spec: "ExpSpec") -> Family:
     )
 
 
-def post_hygiene_fs_asym(spec: "ExpSpec", root: Path) -> None:
-    """TipR hygiene + merge Train→Test for TimeLearner families.
-
-    AsymRm soft-cold: TipR@Rmin flattens ltz mid gap (span25–100). Force TipR
-    86e6×4 (TIPR_COLD) for gate — matches span25 gold; QUALITY thr vs tiprmin golds.
-    """
-    from repro_cold_lib import TIPR_COLD
-
-    fam = as_family(spec)
-    if spec.tipr_recipe == "tiprmin" and spec.kind != "asymrm":
-        post_train_hygiene(root, fam)
-        return
+def _merge_tipr_no_rmin(root: Path, tipr: str) -> None:
+    """Merge Train→Test weights + set TipR without TipR@Rmin force."""
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")
-    tipr = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "TipSynapseResistance") or ""
-    if spec.kind == "asymrm":
-        tipr = TIPR_COLD
-        print(f"  AsymRm soft-cold: force TipR 86e6×4 for mid gap (recipe was {spec.tipr_recipe})")
-    elif spec.tipr_recipe == "tiprmin":
-        post_train_hygiene(root, fam)
-        return
-    else:
-        print(f"  keep TipR (no force): {tipr}")
     for side in (train, test):
         for name in ("Parameters_00.xml", "Model_00.xml"):
             p = side / name
@@ -312,6 +293,39 @@ def post_hygiene_fs_asym(spec: "ExpSpec", root: Path) -> None:
         p.write_text(t, encoding="utf-8")
 
 
+def post_hygiene_fs_asym(spec: "ExpSpec", root: Path) -> None:
+    """TipR hygiene + merge Train→Test for TimeLearner families.
+
+    AsymRm soft-cold: TipR@Rmin flattens ltz mid gap (span25–100). Force TipR
+    86e6×4 (TIPR_COLD) for gate — matches span25 gold; QUALITY thr vs tiprmin golds.
+
+    kind=sync (LtzCal / Phase6 twin): never TipR@Rmin — TipR as synced (or TIPR_COLD).
+    """
+    from repro_cold_lib import TIPR_COLD
+
+    fam = as_family(spec)
+    train = root / "Train"
+    tipr_cur = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "TipSynapseResistance") or ""
+
+    # W5.0: sync twins must not call tiprmin hygiene (destroys TipR86e6 mid gap)
+    if spec.kind == "sync":
+        tipr = tipr_cur or TIPR_COLD
+        print(f"  sync TipR-safe (no TipR@Rmin): {tipr}")
+        _merge_tipr_no_rmin(root, tipr)
+        return
+
+    if spec.kind == "asymrm":
+        print(f"  AsymRm soft-cold: force TipR 86e6×4 for mid gap (recipe was {spec.tipr_recipe})")
+        _merge_tipr_no_rmin(root, TIPR_COLD)
+        return
+
+    if spec.tipr_recipe == "tiprmin":
+        post_train_hygiene(root, fam)
+        return
+
+    print(f"  keep TipR (no force): {tipr_cur}")
+    _merge_tipr_no_rmin(root, tipr_cur)
+
 def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> None:
     """phase9 silent mid on ltz_potential_max; SIGTERM when CSV n>=8."""
     from phase12_validate import METRICS
@@ -337,10 +351,9 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
     csv_path = root / "Test" / "SelectivityLog" / "results.csv"
     tsec = float(test_t)
-    # Slow TimeLearner sims: wall clock >> model -t; never cut before ~10× test-t
-    hard_deadline = max(tsec * 12.0, 600.0)
-    if spec.span_ms >= 100:
-        hard_deadline = max(hard_deadline, 900.0)
+    # Slow TimeLearner sims: wall >> model -t; never cut silent before mid write
+    # W5.0: hard ≥ max(900, 15×test-t)
+    hard_deadline = max(tsec * 15.0, 900.0)
     for _ in range(200):
         time.sleep(8)
         if proc.poll() is not None:
@@ -647,14 +660,14 @@ def sync_ltzcal(exp_id: str, *, dry_run: bool = False) -> str:
     if snap.get("ok_audit") != "1" or acc < 7:
         notes = f"sync gate fail acc={acc} ok={snap.get('ok_audit')}"
         _update_manifest_status(
-            exp_id, "FAIL", notes=notes, path_substr="SelectivityLtzCalibrate"
+            exp_id, "ARTIFACT_KEEP", notes=notes, path_substr="SelectivityLtzCalibrate"
         )
-        raise SystemExit(f"sync-ltzcal FAIL {exp_id} {notes}")
+        raise SystemExit(f"sync-ltzcal ARTIFACT_KEEP {exp_id} {notes}")
     notes = f"sync from AsymRm; thr={snap.get('thr')}; acc={acc}"
     _update_manifest_status(
         exp_id, "VALIDATED", notes=notes, path_substr="SelectivityLtzCalibrate"
     )
-    bin_commit_paths([MANIFEST, dst], f"phase12 W3c: VALIDATED sync {exp_id}")
+    bin_commit_paths([MANIFEST, dst], f"phase12 W5.2: VALIDATED sync {exp_id}")
     return "VALIDATED"
 
 
@@ -785,6 +798,31 @@ def cmd_list_wave3(_args: argparse.Namespace) -> None:
     for eid in WAVE4_PHASE6_ORDER:
         s = WAVE4_PHASE6[eid]
         print(f"{eid}\tkind={s.kind}\tL={s.gold_L}\tthr={s.gold_thr}\trecipe={s.tipr_recipe}")
+
+
+def cmd_list_tails(_args: argparse.Namespace) -> None:
+    """W5 inventory: open tails from PHASE12_VALIDATION.md."""
+    from phase12_validate import MANIFEST
+
+    text = MANIFEST.read_text(encoding="utf-8") if MANIFEST.exists() else ""
+    open_st = (
+        "BLOCKED_FS",
+        "DEFERRED_PARENT_FAIL",
+        "DEFERRED",
+        "FAIL_ROOTCAUSE",
+        "FAIL",
+        "ARTIFACT_KEEP",
+    )
+    print("=== WAVE5 TAILS (open statuses) ===")
+    for line in text.splitlines():
+        if not line.startswith("| EXP_"):
+            continue
+        parts = [p.strip() for p in line.strip("|").split("|")]
+        if len(parts) < 5:
+            continue
+        eid, path, _wave, _kind, status = parts[0], parts[1], parts[2], parts[3], parts[4]
+        if status in open_st:
+            print(f"{status}\t{eid}\t{path}")
 
 
 def cmd_run_fs(args: argparse.Namespace) -> None:
@@ -967,6 +1005,9 @@ def cmd_run_phase6_all(args: argparse.Namespace) -> None:
 def register_wave3_cli(sub: argparse._SubParsersAction) -> None:
     p = sub.add_parser("list-wave3")
     p.set_defaults(func=cmd_list_wave3)
+
+    p = sub.add_parser("list-tails")
+    p.set_defaults(func=cmd_list_tails)
 
     p = sub.add_parser("run-fs")
     p.add_argument("--exp", required=True, choices=WAVE3_FS_ORDER)

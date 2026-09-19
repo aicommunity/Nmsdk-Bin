@@ -27,8 +27,9 @@
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
 | 4 | Phase6 480 tiprmin 7/8 | **done ARTIFACT_KEEP** (gold kept; soft-cold prepare AutoCal) |
+| **5** | Tails closure (Phase6 retry, LtzCal, FS, AsymRm mid, FAIL backlog) | **in progress** |
 | ∞ | ARTIFACT / OUT | marked below |
-| FAIL backlog | nextseg100 packA+B/C + br480×3 | **DEFERRED** investigation (no retry until approve); ARTIFACT §A–C + OUT §K unchanged |
+| FAIL backlog | nextseg100 packA+B/C + br480×3 | **Wave5** close (ARTIFACT_KEEP default / invest) |
 
 ---
 
@@ -178,6 +179,11 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_480_gen_baseline | OUT | EXP00 duplicate |
 
 ---
+
+## Wave 5 run log
+
+| utc | exp_id | status | L | thr | fires | notes |
+|-----|--------|---------|---|-----|-------|-------|
 
 ## Wave 3 run log
 
