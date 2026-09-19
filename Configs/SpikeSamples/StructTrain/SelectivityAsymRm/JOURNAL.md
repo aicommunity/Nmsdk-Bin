@@ -28,3 +28,7 @@ Dip SomaSumPotential — только Watch (кампанийный Statistic н
 ## 2026-09-19 — PHASE12 W5.5 midflat
 
 span25 soft-cold TipR86e6 → VALIDATED. span50/100 soft Need=0 L≡gold but `ltz_potential_max` flat (~0.0379) tiprmin+86e6; `soma_amp_sum`=0 on gold and soft. Closed `ARTIFACT_KEEP` + `_repro/_invest/asym_midflat/ROOTCAUSE.md`. B/C@50/100 → ARTIFACT_KEEP (parent closed).
+
+## 2026-09-19 — PHASE12 W6.3
+
+Overlay TipR tiprmin on soft weights (no retrain) still ltz flat. Confirms TipR-alone insufficient. See updated ROOTCAUSE + [`QUALITY_BACKLOG_PROPOSALS.md`](../QUALITY_BACKLOG_PROPOSALS.md) §B.

@@ -28,7 +28,7 @@
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
 | 4 | Phase6 480 tiprmin 7/8 | **done ARTIFACT_KEEP** (gold kept; soft-cold prepare AutoCal) |
 | **5** | Tails closure (Phase6 retry, LtzCal25 VALIDATED, FS/Asym/Branch close) | **done** (§8: no BLOCKED_FS/DEFERRED*; LtzCal25 VALIDATED×2; rest ARTIFACT_KEEP/FAIL_ROOTCAUSE) |
-| **6** | Quality tails (FS Need C++, AsymRm mid, Phase6/Branch invest, proposals doc) | **in progress** |
+| **6** | Quality tails (FS Need C++, AsymRm mid, Phase6/Branch invest, proposals doc) | **done** (invest exhausted; QUALITY_BACKLOG_PROPOSALS.md; pin 780ffc7) |
 | ∞ | ARTIFACT / OUT | marked below |
 | FAIL backlog | nextseg100 + br480×3 | **closed Wave5** as ARTIFACT_KEEP; Wave6 re-invest |
 
@@ -185,6 +185,37 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-19T09:08Z | EXP_br480_preinh250_tiprmin | ARTIFACT_KEEP | | | | W6.7: soft+strip pilot tiprmin -t180 L stuck; no 2×600; gold 7/8 kept |
+| 2026-09-19T09:08Z | EXP_br480_nextseginh_tiprmin | ARTIFACT_KEEP | | | | W6.7: soft+strip pilot tiprmin -t180 L stuck; no 2×600; gold 7/8 kept |
+| 2026-09-19T09:08Z | EXP_br480_tiprmin | ARTIFACT_KEEP | | | | W6.7: soft+strip pilot tiprmin -t180 L stuck; no 2×600; gold 7/8 kept |
+| 2026-09-19T09:08Z | EXP_br_span100_packC_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W6.6: parent ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T09:08Z | EXP_br_span100_packB_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W6.6: parent ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T09:08Z | EXP_br_span100_packA_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W6.6: soft+strip probe -t200 L stuck `1 1 1 1`; no marathon; gold kept |
+| 2026-09-19T08:52Z | EXP_480_ltzcal_twin_gen | ARTIFACT_KEEP | | | | W6.5: soft+strip probe -t120 L stuck `1 1 1 1`; AutoCal=0; ARTIFACT_KEEP; gold 7/8 |
+| 2026-09-19T08:52Z | EXP_480_preinh250_tiprmin | ARTIFACT_KEEP | | | | W6.5: soft+strip probe -t120 L stuck `1 1 1 1`; AutoCal=0; ARTIFACT_KEEP; gold 7/8 |
+| 2026-09-19T08:52Z | EXP_480_gen_thr_only | ARTIFACT_KEEP | | | | W6.5: soft+strip probe -t120 L stuck `1 1 1 1`; AutoCal=0; ARTIFACT_KEEP; gold 7/8 |
+| 2026-09-19T08:52Z | EXP_480_gen_tiprmin | ARTIFACT_KEEP | | | | W6.5: soft+strip probe -t120 L stuck `1 1 1 1`; AutoCal=0; ARTIFACT_KEEP; gold 7/8 |
+| 2026-09-19T08:37Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | W6.4: parent AsymRm midflat; no sync |
+| 2026-09-19T08:37Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | W6.4: parent AsymRm midflat; no sync |
+| 2026-09-19T08:37Z | EXP_span100ms_packC_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span100ms_packC_gen | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span100ms_packB_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span100ms_packB_gen | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | W6.4: parent AsymRm midflat; no sync |
+| 2026-09-19T08:37Z | EXP_span50ms_packA_gen | ARTIFACT_KEEP | | | | W6.4: parent AsymRm midflat; no sync |
+| 2026-09-19T08:37Z | EXP_span50ms_packC_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span50ms_packC_gen | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span50ms_packB_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span50ms_packB_gen | ARTIFACT_KEEP | | | | W6.4: parent midflat ARTIFACT_KEEP; clone not gated |
+| 2026-09-19T08:37Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | W6.3: overlay tiprmin on soft still ltz flat; ROOTCAUSE updated; gold kept |
+| 2026-09-19T08:37Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | W6.3: overlay tiprmin on soft still ltz flat; ROOTCAUSE updated; gold kept |
+| 2026-09-19T08:37Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | W6.3: overlay tiprmin on soft still ltz flat; ROOTCAUSE updated; gold kept |
+| 2026-09-19T08:37Z | EXP_span50ms_packA_gen | ARTIFACT_KEEP | | | | W6.3: overlay tiprmin on soft still ltz flat; ROOTCAUSE updated; gold kept |
+| 2026-09-19T08:37Z | EXP_span100ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.2: parent FS25 FAIL_ROOTCAUSE; no cold |
+| 2026-09-19T08:37Z | EXP_span100ms_fast_C1e9 | ARTIFACT_KEEP | | | | W6.2: parent FS25 FAIL_ROOTCAUSE; no cold |
+| 2026-09-19T08:37Z | EXP_span50ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.2: parent FS25 FAIL_ROOTCAUSE; no cold |
+| 2026-09-19T08:37Z | EXP_span25ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W6.2: parent FS25 FAIL_ROOTCAUSE; no cold |
+| 2026-09-19T08:37Z | EXP_span25ms_fast_C1e9 | FAIL_ROOTCAUSE | | | | W6.1: NEED_TRACE_W6 code analysis; no pin change (blast-radius); proposals §A |
 
 ## Wave 5 run log
 

@@ -37,6 +37,11 @@ python3 "$ROOT/scripts/phase12_validate.py" run-fs --exp EXP_span25ms_fast_C1e9 
 # PHASE12 Wave5 tails
 python3 "$ROOT/scripts/phase12_validate.py" list-tails
 # bash "$ROOT/scripts/phase12_wave5_run.sh" --ltzcal-only
+
+# PHASE12 Wave6 quality
+python3 "$ROOT/scripts/phase12_validate.py" list-quality-tails
+# bash "$ROOT/scripts/phase12_wave6_run.sh" --fs-only
+# proposals: ../QUALITY_BACKLOG_PROPOSALS.md
 ```
 # Legacy two-family harness
 python3 "$ROOT/scripts/repro_cold_harness.py" prepare --all --cold soft

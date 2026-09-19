@@ -60,3 +60,7 @@ Soft-cold ×3×180: L→`6 5 4 1` but Need stuck 1. Status `FAIL_ROOTCAUSE`. FS�
 ## 2026-09-19 — PHASE12 W5.3/W5.4
 
 Need-trace documented (`_repro/_invest/fs25_unblock/NEED_TRACE.md`). No PulseLib patch (blast-radius on VALIDATED AsymRm25). FS25 remains `FAIL_ROOTCAUSE`; siblings → `ARTIFACT_KEEP` (parent closed).
+
+## 2026-09-19 — PHASE12 W6.1
+
+`NEED_TRACE_W6.md` code path EndOfLearning/AllSynapsesNormalized. Pin unchanged `780ffc7`. Proposals in [`QUALITY_BACKLOG_PROPOSALS.md`](../QUALITY_BACKLOG_PROPOSALS.md) §A.

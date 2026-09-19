@@ -7,6 +7,8 @@
 
 **PHASE12 Wave5 (2026-09-19):** tails closed — see [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) Wave map W5 done; LtzCal25 VALIDATED; §8 no BLOCKED_FS/DEFERRED*.
 
+**PHASE12 Wave6 (2026-09-19):** quality invest exhausted; pin `780ffc7`; proposals [`QUALITY_BACKLOG_PROPOSALS.md`](QUALITY_BACKLOG_PROPOSALS.md).
+
 **GATE T0:** 2026-09-14 · live CSV **154 Test / 64 `ok_audit=1`** (+P1–P3) · [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv).
 
 **Disk prep → PHASE10 S0:** pack StatisticLog/EventsLog — см. [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) §S0.

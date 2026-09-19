@@ -77,6 +77,8 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 
 **PHASE12 Wave 1 (done 8/9):** cold×2 packA roots via [`../scripts/phase12_validate.py`](../scripts/phase12_validate.py); статусы в [`../PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). span25 gen = `VALIDATED` (`REPRO_OK_EXACT` stamp). span100 gen = `done_tipr` (не TipR@Rmin). Wave 2a = B/C matrix-only clones **done** (16 VALIDATED_CLONE; nextseg100 B/C DEFERRED_PARENT_FAIL). Wave 2b = br480 soft-cold **FAIL**×3 (Need≠0 within 4×`-t`600; gold kept — historical tiprmin registry intact).
 
+**PHASE12 Wave6:** nextseg100 + br480 soft/strip L-stuck probes → ARTIFACT_KEEP; proposals [`../QUALITY_BACKLOG_PROPOSALS.md`](../QUALITY_BACKLOG_PROPOSALS.md) §D–E.
+
 ## Антирегрессия
 
 - Не cold-reset: `TimeNeuronTimeLearnerBranch*`, `EXP_br480_tiprmin`, AsymRm PHASE5 PASS, `AsymRmLtzCalBranch/**`.
