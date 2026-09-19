@@ -28,8 +28,9 @@
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
 | 4 | Phase6 480 tiprmin 7/8 | **done ARTIFACT_KEEP** (gold kept; soft-cold prepare AutoCal) |
 | **5** | Tails closure (Phase6 retry, LtzCal25 VALIDATED, FS/Asym/Branch close) | **done** (§8: no BLOCKED_FS/DEFERRED*; LtzCal25 VALIDATED×2; rest ARTIFACT_KEEP/FAIL_ROOTCAUSE) |
+| **6** | Quality tails (FS Need C++, AsymRm mid, Phase6/Branch invest, proposals doc) | **in progress** |
 | ∞ | ARTIFACT / OUT | marked below |
-| FAIL backlog | nextseg100 + br480×3 | **closed Wave5** as ARTIFACT_KEEP |
+| FAIL backlog | nextseg100 + br480×3 | **closed Wave5** as ARTIFACT_KEEP; Wave6 re-invest |
 
 ---
 
@@ -179,6 +180,11 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_480_gen_baseline | OUT | EXP00 duplicate |
 
 ---
+
+## Wave 6 run log
+
+| utc | exp_id | status | L | thr | fires | notes |
+|-----|--------|---------|---|-----|-------|-------|
 
 ## Wave 5 run log
 

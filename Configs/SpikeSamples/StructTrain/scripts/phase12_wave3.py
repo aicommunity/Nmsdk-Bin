@@ -351,8 +351,9 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
     csv_path = root / "Test" / "SelectivityLog" / "results.csv"
     tsec = float(test_t)
-    # Slow TimeLearner sims: wall >> model -t; never cut silent before mid write
-    # W5.0: hard ≥ max(900, 15×test-t)
+    # W6.0: SIGTERM after CSV complete + short grace (W5 hard=900 blocked too long)
+    # Still never cut before mid write: require n>=8 and et > max(120, 3×test-t)
+    soft_deadline = max(tsec * 3.0, 120.0)
     hard_deadline = max(tsec * 15.0, 900.0)
     for _ in range(200):
         time.sleep(8)
@@ -380,8 +381,12 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
                     )
                 except subprocess.CalledProcessError:
                     et = 0
-                if n >= 8 and et > hard_deadline:
-                    print(f"  SIGTERM NM pid={pid_s.name} n={n} et={et} hard={hard_deadline}")
+                deadline = soft_deadline if n >= 8 else hard_deadline
+                if n >= 8 and et > deadline:
+                    print(
+                        f"  SIGTERM NM pid={pid_s.name} n={n} et={et} "
+                        f"soft={soft_deadline} hard={hard_deadline}"
+                    )
                     subprocess.call(["kill", "-TERM", pid_s.name])
     try:
         proc.wait(timeout=300)
@@ -825,6 +830,24 @@ def cmd_list_tails(_args: argparse.Namespace) -> None:
             print(f"{status}\t{eid}\t{path}")
 
 
+def cmd_list_quality_tails(_args: argparse.Namespace) -> None:
+    """W6 inventory: ARTIFACT_KEEP | FAIL_ROOTCAUSE only (quality backlog)."""
+    from phase12_validate import MANIFEST
+
+    text = MANIFEST.read_text(encoding="utf-8") if MANIFEST.exists() else ""
+    want = ("ARTIFACT_KEEP", "FAIL_ROOTCAUSE")
+    print("=== WAVE6 QUALITY TAILS ===")
+    for line in text.splitlines():
+        if not line.startswith("| EXP_"):
+            continue
+        parts = [p.strip() for p in line.strip("|").split("|")]
+        if len(parts) < 5:
+            continue
+        eid, path, _wave, _kind, status = parts[0], parts[1], parts[2], parts[3], parts[4]
+        if status in want:
+            print(f"{status}\t{eid}\t{path}")
+
+
 def cmd_run_fs(args: argparse.Namespace) -> None:
     spec = WAVE3_FS[args.exp]
     fail_st = "FAIL_ROOTCAUSE" if args.exp == "EXP_span25ms_fast_C1e9" else "FAIL"
@@ -1008,6 +1031,9 @@ def register_wave3_cli(sub: argparse._SubParsersAction) -> None:
 
     p = sub.add_parser("list-tails")
     p.set_defaults(func=cmd_list_tails)
+
+    p = sub.add_parser("list-quality-tails")
+    p.set_defaults(func=cmd_list_quality_tails)
 
     p = sub.add_parser("run-fs")
     p.add_argument("--exp", required=True, choices=WAVE3_FS_ORDER)

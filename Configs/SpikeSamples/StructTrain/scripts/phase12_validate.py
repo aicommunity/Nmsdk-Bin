@@ -684,6 +684,7 @@ def _update_manifest_status(
     utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     log_line = f"| {utc} | {exp_id} | {status} | | | | {notes} |\n"
     for section, marker in (
+        ("## Wave 6 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 5 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 3 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
         ("## Wave 2 run log", "|-----|--------|---------|---|-----|-------|-------|\n"),
