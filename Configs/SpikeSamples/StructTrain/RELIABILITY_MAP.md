@@ -1,6 +1,6 @@
 # StructTrain reliability map
 
-**Snapshot:** 2026-09-19 · PulseLib pin `780ffc7`  
+**Snapshot:** 2026-09-19 · PulseLib pin `d6baf6e`  
 **Русская версия (полная):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md)
 
 This document answers: **which solutions are fully trustworthy**, and which have a strong on-disk test result but were **not confirmed** by retrain-from-scratch (cold-replay), or remained only partially selective.
