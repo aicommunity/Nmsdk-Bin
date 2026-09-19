@@ -24,3 +24,7 @@ Dip SomaSumPotential — только Watch (кампанийный Statistic н
 - TRAIN_T=80, TEST_T=15, MAX_JOBS=4.
 - **18/18 fire_all** @ FixedLTZ=0.0115 — как FastSpan; AsymRm не чинит селективность без калибровки LTZ.
 - Next: LtzCalibrate / AutoCalibrate на лучшем pack (A), не новый Rm sweep.
+
+## 2026-09-19 — PHASE12 W5.5 midflat
+
+span25 soft-cold TipR86e6 → VALIDATED. span50/100 soft Need=0 L≡gold but `ltz_potential_max` flat (~0.0379) tiprmin+86e6; `soma_amp_sum`=0 on gold and soft. Closed `ARTIFACT_KEEP` + `_repro/_invest/asym_midflat/ROOTCAUSE.md`. B/C@50/100 → ARTIFACT_KEEP (parent closed).

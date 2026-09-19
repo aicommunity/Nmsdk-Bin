@@ -27,9 +27,9 @@
 | 2 | Branch B/C + NextSeg B/C clones; br480 tiprmin | **done** (W2a: 16 VALIDATED_CLONE + 2 DEFERRED_PARENT_FAIL; W2b: 3 FAIL soft-cold Need≠0) |
 | 3 | FS fix → FastSpan + AsymRm packA → B/C + LtzCal | **done** (FS FAIL_ROOTCAUSE+BLOCKED; AsymRm span25 VALIDATED×2+CLONE×4; span50/100 ARTIFACT_KEEP; LtzCal ARTIFACT_KEEP) |
 | 4 | Phase6 480 tiprmin 7/8 | **done ARTIFACT_KEEP** (gold kept; soft-cold prepare AutoCal) |
-| **5** | Tails closure (Phase6 retry, LtzCal, FS, AsymRm mid, FAIL backlog) | **in progress** |
+| **5** | Tails closure (Phase6 retry, LtzCal25 VALIDATED, FS/Asym/Branch close) | **done** (§8: no BLOCKED_FS/DEFERRED*; LtzCal25 VALIDATED×2; rest ARTIFACT_KEEP/FAIL_ROOTCAUSE) |
 | ∞ | ARTIFACT / OUT | marked below |
-| FAIL backlog | nextseg100 packA+B/C + br480×3 | **Wave5** close (ARTIFACT_KEEP default / invest) |
+| FAIL backlog | nextseg100 + br480×3 | **closed Wave5** as ARTIFACT_KEEP |
 
 ---
 
@@ -80,14 +80,14 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_span25ms_packC_gen | SelectivityAsymRm/EXP_span25ms_packC_gen | 3 | clone | VALIDATED_CLONE | | | | | |
 | EXP_span25ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9 | 3 | clone | VALIDATED_CLONE | | | | | |
 | EXP_span25ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9 | 3 | clone | VALIDATED_CLONE | | | | | |
-| EXP_span50ms_packB_gen | SelectivityAsymRm/EXP_span50ms_packB_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span50ms_packC_gen | SelectivityAsymRm/EXP_span50ms_packC_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span50ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span50ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span100ms_packB_gen | SelectivityAsymRm/EXP_span100ms_packB_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span100ms_packC_gen | SelectivityAsymRm/EXP_span100ms_packC_gen | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span100ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
-| EXP_span100ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9 | 3 | clone | DEFERRED_PARENT_FAIL | | | | | |
+| EXP_span50ms_packB_gen | SelectivityAsymRm/EXP_span50ms_packB_gen | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span50ms_packC_gen | SelectivityAsymRm/EXP_span50ms_packC_gen | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span50ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9 | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span50ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9 | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span100ms_packB_gen | SelectivityAsymRm/EXP_span100ms_packB_gen | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span100ms_packC_gen | SelectivityAsymRm/EXP_span100ms_packC_gen | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span100ms_packB_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9 | 3 | clone | ARTIFACT_KEEP | | | | | |
+| EXP_span100ms_packC_preinh_C1e9 | SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9 | 3 | clone | ARTIFACT_KEEP | | | | | |
 
 ### E. AsymRmLtzCal twin — Wave 3c DEFERRED
 
@@ -113,9 +113,9 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
-| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; L stuck atypical; gold kept | |
-| EXP_br480_nextseginh_tiprmin | SelectivityBranch/EXP_br480_nextseginh_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; gold kept | |
-| EXP_br480_preinh250_tiprmin | SelectivityBranch/EXP_br480_preinh250_tiprmin | 2 | cold | FAIL | soft-cold Need≠0 after 4×600; gold kept | |
+| EXP_br480_tiprmin | SelectivityBranch/EXP_br480_tiprmin | 2 | cold | ARTIFACT_KEEP | soft-cold Need≠0 after 4×600; L stuck atypical; gold kept | |
+| EXP_br480_nextseginh_tiprmin | SelectivityBranch/EXP_br480_nextseginh_tiprmin | 2 | cold | ARTIFACT_KEEP | soft-cold Need≠0 after 4×600; gold kept | |
+| EXP_br480_preinh250_tiprmin | SelectivityBranch/EXP_br480_preinh250_tiprmin | 2 | cold | ARTIFACT_KEEP | soft-cold Need≠0 after 4×600; gold kept | |
 
 ### H. Branch short packA — Wave 1
 
@@ -129,7 +129,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span100_packA_preinh_C1e9 | SelectivityBranch/EXP_br_span100_packA_preinh_C1e9 | 1 | cold | VALIDATED | `22 18 11 1` | tiprmin | 0.0203054 | | |
 | EXP_br_span25_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9 | 1 | cold | VALIDATED | `13 11 7 1` | tiprmin | 0.07179975 | NextSeg=1 | |
 | EXP_br_span50_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9 | 1 | cold | VALIDATED | `14 9 6 1` | tiprmin | 0.0456422 | NextSeg=1 | |
-| EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | FAIL | `21 17 11 1` | tiprmin | 0.014432775 | soft-cold L stuck `1 1 1 1` ×3×320; gold kept; follow-up | |
+| EXP_br_span100_packA_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9 | 1 | cold | ARTIFACT_KEEP | `21 17 11 1` | tiprmin | 0.014432775 | soft-cold L stuck `1 1 1 1` ×3×320; gold kept; follow-up | |
 
 ### I. Branch pack B/C + NextSeg B/C — Wave 2a done
 
@@ -151,18 +151,18 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_br_span25_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
 | EXP_br_span50_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9 | 2 | clone | VALIDATED_CLONE | | |
-| EXP_br_span100_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9 | 2 | clone | DEFERRED_PARENT_FAIL | | |
-| EXP_br_span100_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9 | 2 | clone | DEFERRED_PARENT_FAIL | | |
+| EXP_br_span100_packB_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9 | 2 | clone | ARTIFACT_KEEP | | |
+| EXP_br_span100_packC_nextseginh_C1e9 | SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9 | 2 | clone | ARTIFACT_KEEP | | |
 
 ### J. FastSpan C1e9 — Wave 3 BLOCKED_FS / OUT
 
 | exp_id | path | wave | kind | status | notes | last_commit |
 |--------|------|------|------|--------|-------|-------------|
 | EXP_span25ms_fast_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_C1e9 | 3 | cold | FAIL_ROOTCAUSE | W3a soft-cold Need=1 L=`6 5 4 1` after 180×3; PulseLib pin; no FS×5| |
-| EXP_span25ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9 | 3 | cold | BLOCKED_FS | | |
-| EXP_span50ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9 | 3 | cold | BLOCKED_FS | | |
-| EXP_span100ms_fast_C1e9 | SelectivityFastSpan/EXP_span100ms_fast_C1e9 | 3 | cold | BLOCKED_FS | 7/8 registry | |
-| EXP_span100ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9 | 3 | cold | BLOCKED_FS | | |
+| EXP_span25ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9 | 3 | cold | ARTIFACT_KEEP | | |
+| EXP_span50ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9 | 3 | cold | ARTIFACT_KEEP | | |
+| EXP_span100ms_fast_C1e9 | SelectivityFastSpan/EXP_span100ms_fast_C1e9 | 3 | cold | ARTIFACT_KEEP | 7/8 registry | |
+| EXP_span100ms_fast_preinh_C1e9 | SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9 | 3 | cold | ARTIFACT_KEEP | | |
 | EXP_span50ms_fast_C1e9 | SelectivityFastSpan/EXP_span50ms_fast_C1e9 | ∞ | OUT | OUT | acc5 not in SUCCESSFUL | |
 
 ### K. OUT / demoted
@@ -184,6 +184,33 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-19T08:09Z | EXP_br480_preinh250_tiprmin | ARTIFACT_KEEP | | | | W5.8: soft-cold Need≠0 @4×600 (W2); no marathon; gold 7/8 kept; ARTIFACT_KEEP default |
+| 2026-09-19T08:09Z | EXP_br480_nextseginh_tiprmin | ARTIFACT_KEEP | | | | W5.8: soft-cold Need≠0 @4×600 (W2); no marathon; gold 7/8 kept; ARTIFACT_KEEP default |
+| 2026-09-19T08:09Z | EXP_br480_tiprmin | ARTIFACT_KEEP | | | | W5.8: soft-cold Need≠0 @4×600 (W2); no marathon; gold 7/8 kept; ARTIFACT_KEEP default |
+| 2026-09-19T08:09Z | EXP_br_span100_packC_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W5.7: parent nextseg100 ARTIFACT_KEEP closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_br_span100_packB_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W5.7: parent nextseg100 ARTIFACT_KEEP closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_br_span100_packA_nextseginh_C1e9 | ARTIFACT_KEEP | | | | W5.7: soft-cold L stuck `1 1 1 1` (W1); no marathon; gold kept; closed ARTIFACT_KEEP |
+| 2026-09-19T08:09Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | W5.6: parent AsymRm ARTIFACT_KEEP midflat; no sync |
+| 2026-09-19T08:09Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | W5.6: parent AsymRm ARTIFACT_KEEP midflat; no sync |
+| 2026-09-19T08:09Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | W5.6: parent AsymRm ARTIFACT_KEEP midflat; no sync |
+| 2026-09-19T08:09Z | EXP_span50ms_packA_gen | ARTIFACT_KEEP | | | | W5.6: parent AsymRm ARTIFACT_KEEP midflat; no sync |
+| 2026-09-19T08:09Z | EXP_span100ms_packC_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span100ms_packC_gen | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span100ms_packB_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span100ms_packB_gen | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span50ms_packC_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span50ms_packC_gen | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span50ms_packB_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span50ms_packB_gen | ARTIFACT_KEEP | | | | W5.6: parent packA ARTIFACT_KEEP midflat closed; clone not gated |
+| 2026-09-19T08:09Z | EXP_span100ms_packA_preinh | ARTIFACT_KEEP | | | | W5.5: midflat ROOTCAUSE (_repro/_invest/asym_midflat); soft Need=0 L≡gold; ltz flat tiprmin+86e6; soma=0; gold kept |
+| 2026-09-19T08:09Z | EXP_span100ms_packA_gen | ARTIFACT_KEEP | | | | W5.5: midflat ROOTCAUSE (_repro/_invest/asym_midflat); soft Need=0 L≡gold; ltz flat tiprmin+86e6; soma=0; gold kept |
+| 2026-09-19T08:09Z | EXP_span50ms_packA_preinh | ARTIFACT_KEEP | | | | W5.5: midflat ROOTCAUSE (_repro/_invest/asym_midflat); soft Need=0 L≡gold; ltz flat tiprmin+86e6; soma=0; gold kept |
+| 2026-09-19T08:09Z | EXP_span50ms_packA_gen | ARTIFACT_KEEP | | | | W5.5: midflat ROOTCAUSE (_repro/_invest/asym_midflat); soft Need=0 L≡gold; ltz flat tiprmin+86e6; soma=0; gold kept |
+| 2026-09-19T08:09Z | EXP_span100ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.4: parent FS25 FAIL_ROOTCAUSE closed; no cold; gold kept |
+| 2026-09-19T08:09Z | EXP_span100ms_fast_C1e9 | ARTIFACT_KEEP | | | | W5.4: parent FS25 FAIL_ROOTCAUSE closed; no cold; gold kept |
+| 2026-09-19T08:09Z | EXP_span50ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.4: parent FS25 FAIL_ROOTCAUSE closed; no cold; gold kept |
+| 2026-09-19T08:09Z | EXP_span25ms_fast_preinh_C1e9 | ARTIFACT_KEEP | | | | W5.4: parent FS25 FAIL_ROOTCAUSE closed; no cold; gold kept |
+| 2026-09-19T08:09Z | EXP_span25ms_fast_C1e9 | FAIL_ROOTCAUSE | | | | W5.3: Need-trace documented; no PulseLib patch (blast-radius); pin 780ffc7; §8 terminal |
 | 2026-09-19T08:07Z | EXP_span25ms_packA_preinh | VALIDATED | | | | sync from AsymRm; thr=0.0179375; acc=8 |
 | 2026-09-19T07:57Z | EXP_span25ms_packA_gen | VALIDATED | | | | sync from AsymRm; thr=0.03758795; acc=8 |
 | 2026-09-19T07:45Z | EXP_480_ltzcal_twin_gen | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |

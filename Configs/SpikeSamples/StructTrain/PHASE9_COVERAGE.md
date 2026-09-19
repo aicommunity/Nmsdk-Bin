@@ -5,6 +5,8 @@
 
 **GATE D0:** 2026-09-14 · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (исторически 132/43) · архив [`archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T064705Z_phase9_d0.csv).
 
+**PHASE12 Wave5 (2026-09-19):** tails closed — see [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) Wave map W5 done; LtzCal25 VALIDATED; §8 no BLOCKED_FS/DEFERRED*.
+
 **GATE T0:** 2026-09-14 · live CSV **154 Test / 64 `ok_audit=1`** (+P1–P3) · [`archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv`](archive/AUDIT_GATE_RECOMPUTE_20260914T171405Z_phase9_tail.csv).
 
 **Disk prep → PHASE10 S0:** pack StatisticLog/EventsLog — см. [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) §S0.

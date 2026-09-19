@@ -5,7 +5,7 @@
 
 **Срез метрик:** 2026-09-17 (PHASE12 W2 GATE) · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**174 Test / 103 `ok_audit=1`**) · prior 2026-09-15 (PHASE11 R0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**167 Test / 77 `ok_audit=1`**) · MATRIX [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
 
-**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) (source of truth статусов). Wave 1 = Branch packA ×9 (8 VALIDATED / 1 FAIL nextseg100). Wave 2 **done**: W2a 16 `VALIDATED_CLONE` + 2 `DEFERRED_PARENT_FAIL`; W2b br480 soft-cold **FAIL**×3 (Need≠0; gold kept). Wave 3–4 DEFERRED — [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). PhaseA / PSI / TimeNeuron в реестре ниже — **ARTIFACT (PHASE12)** (исторический audit, без cold-replay).
+**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) (source of truth статусов). Wave 1–2 Branch: 24 OK + FAIL/ARTIFACT_KEEP backlog. Wave 3: AsymRm25 VALIDATED×2+CLONE×4; FS FAIL_ROOTCAUSE. Wave 5 **done** (§8): LtzCal25 VALIDATED×2; Phase6/FS siblings/AsymRm50–100/br480/nextseg100 → ARTIFACT_KEEP|FAIL_ROOTCAUSE. PhaseA / PSI / TimeNeuron в реестре ниже — **ARTIFACT (PHASE12)** (исторический audit, без cold-replay).
 
 
 ## Критерий включения

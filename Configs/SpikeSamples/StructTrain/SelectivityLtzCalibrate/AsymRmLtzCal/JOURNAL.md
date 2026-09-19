@@ -47,3 +47,7 @@
 
 - **1/6** Done+calibrated+test gate PASS (`span25 gen`).
 - **5/6** stall: EndOfLearning не достигнут (amp-нормализация); offline sweep baseline по-прежнему релевантен.
+
+## 2026-09-19 — PHASE12 W5.2 TipR-safe sync
+
+Re-sync from AsymRm25 VALIDATED with `kind=sync` TipR-safe hygiene (no TipR@Rmin). Gate phase9 acc=8/8 → **VALIDATED** gen+preinh. span50/100 remain ARTIFACT_KEEP (parent AsymRm midflat).
