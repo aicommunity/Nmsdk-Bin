@@ -96,7 +96,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 | EXP_span25ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen | 3c | sync | VALIDATED | sync from AsymRm | |
 | EXP_span50ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen | 3c | sync | ARTIFACT_KEEP | | |
 | EXP_span100ms_packA_gen | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen | 3c | sync | ARTIFACT_KEEP | | |
-| EXP_span25ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
+| EXP_span25ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh | 3c | sync | VALIDATED | | |
 | EXP_span50ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
 | EXP_span100ms_packA_preinh | SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh | 3c | sync | ARTIFACT_KEEP | | |
 
@@ -184,6 +184,7 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 | utc | exp_id | status | L | thr | fires | notes |
 |-----|--------|---------|---|-----|-------|-------|
+| 2026-09-19T08:07Z | EXP_span25ms_packA_preinh | VALIDATED | | | | sync from AsymRm; thr=0.0179375; acc=8 |
 | 2026-09-19T07:57Z | EXP_span25ms_packA_gen | VALIDATED | | | | sync from AsymRm; thr=0.03758795; acc=8 |
 | 2026-09-19T07:45Z | EXP_480_ltzcal_twin_gen | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
 | 2026-09-19T07:45Z | EXP_480_preinh250_tiprmin | ARTIFACT_KEEP | | | | W5.1 soft-cold: AutoCal inject OK (=0); L stuck `1 1 1 1` Need=1 @model_t>~140 (no L growth); gold 7/8 registry kept; no marathon |
