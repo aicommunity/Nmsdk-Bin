@@ -122,7 +122,25 @@ Same classic learner + capacitance 1e9. AsymRm ≥50 ms: needs-training alread
 
 ---
 
-## 4. Summary matrix: pattern length × family
+## 4. Comparison: with tip-resistance vs without
+
+Only pairs with **numeric** test results in the journals. Columns: accuracy (N of 8), whether the **true class (target) spiked**, short conclusion. Full tables and caveats: [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.
+
+| Context | Without (acc / target spike) | With tip-resistance at Rmin (acc / target spike) | Takeaway |
+|---------|------------------------------|--------------------------------------------------|----------|
+| Phase6 gen ~480 ms | baseline 4 of 8 / yes; thr_only Done 7 of 8 / yes | tiprmin 7 of 8 / yes (`10000010`) | Rmin ≡ Done+mid; gain vs legacy baseline is mid, not Rmin alone |
+| Phase6 preinh ~480 ms | PSI EXP04 6 of 8 / yes | 7 of 8 / yes | Better; threshold and tip-resistance both changed |
+| Branch ~480 ms gen | legacy demote 6 of 8 / yes | **8 of 8** / yes (`10000000`) | Tip-resistance at Rmin is the key lever |
+| Branch ~480 ms nextseg | demote 7 of 8 / yes | **8 of 8** / yes | Same |
+| Branch ~480 ms preinh | demote 7 of 8 / yes | 7 of 8 / yes | Target ok; one non-target remains |
+| Branch 100 ms gen | — | Rmin **7 of 8** / yes | Done tip-resistance **8 of 8** / yes — Rmin worse here |
+| AsymRm 50/100 ms | no FAIL CSV; base×4 gap negative | **8 of 8** / yes | Rmin needed for positive gap; no paired N/8 “without” |
+| FastSpan historical → C1e9 | often 1 of 8 fire-all | 8 / 5 / 7–8 of 8 / yes when PASS | Mixed (neuron + train + tip-resistance) |
+| FastResponse EXPD001/002 | 7 of 8 / yes (one miss) | silent / fire-all | Tip-resistance **broke or hurt** |
+
+---
+
+## 5. Summary matrix: pattern length × family
 
 Cell: **trust** · test score · cold note.
 
