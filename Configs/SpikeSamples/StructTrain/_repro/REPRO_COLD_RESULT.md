@@ -1,5 +1,7 @@
 # REPRO_COLD_RESULT
 
+> **RU:** [`REPRO_COLD_RESULT.ru.md`](REPRO_COLD_RESULT.ru.md)
+
 Generated: 2026-09-16T11:22:48Z
 
 Cold Train harness (soft-cold default; TipR cold→@Rmin; Need=0; mid gate).

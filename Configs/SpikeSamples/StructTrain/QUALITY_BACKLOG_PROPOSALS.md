@@ -1,5 +1,7 @@
 # PHASE12 Quality backlog — proposals after Wave6
 
+> **Русская версия (основная для чтения):** [`QUALITY_BACKLOG_PROPOSALS.ru.md`](QUALITY_BACKLOG_PROPOSALS.ru.md)
+
 **Date:** 2026-09-19 · PulseLib pin **`780ffc7`** (unchanged) · SoT: [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md)
 
 Wave6 exhausted soft/strip/overlay invests for quality tails left as `ARTIFACT_KEEP` / `FAIL_ROOTCAUSE` after §8 Wave5. This document lists **concrete repair proposals** (config / scripts / **C++**) and **risk analysis** vs already VALIDATED gold (Branch W1–W2, AsymRm25, LtzCal25).
