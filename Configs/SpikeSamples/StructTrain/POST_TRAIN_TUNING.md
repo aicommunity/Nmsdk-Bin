@@ -22,12 +22,22 @@ With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` and `kPh
 
 0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic
 
-## Synthetic foils
+## Mid probes (phase8 / phase9 / pack A parity)
 
-Target first; then shifts, adjacent swaps, ×0.5/×2, zero-one-ISI; drop empty/dupes; cap `PostTrainSyntheticFoilCount`.  
-Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
+**TipR** in Train PostTune; **silent mid** in Test inference (same C++, no Python tiprmin/mid).
+
+| Class | Mid metric | Gate |
+|-------|------------|------|
+| Branch | soma peak | `phase8 --skip-tipr-mid` |
+| TL | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
+
+Train free-run may leave `FixedLTZ=1.0` when landscape is bad; Test `MaybeStartInferenceMidProbes` plays Matrix pack A as-is and writes mid + `posttune_complete.flag`. Gate two-pass when thr is silent.
+
+SearchSynthetic keeps Training-iteration probes. Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
+
+Verify P0: Branch25 CanonRmin / off / AsymRm25 FlatLastR → fires `10000000` — [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md).
 
 ## Scripts
 
 `post_train_hygiene` skips Python tiprmin when PostTune TipR already canon/flat.  
-`phase8_tiprmin_gate.py --skip-tipr-mid` keeps Train TipR/mid and only overlays Test for gate.
+`phase8_tiprmin_gate.py --skip-tipr-mid` / `phase9_preinh_bc_gate.py --skip-tipr-mid`: C++ inference mid then gate.

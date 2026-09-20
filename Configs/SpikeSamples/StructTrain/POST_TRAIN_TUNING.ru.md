@@ -48,24 +48,39 @@
 
 Сводка mode→span: [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.7.
 
-## Алгоритм синтетики
+## Алгоритм mid-зондов (паритет с phase8 / phase9 / pack A)
 
-Вход: ISI-вектор цели длины N (`NumInputDendrite`), значения ≥0.
+**TipR** считается в Train PostTune. **Silent mid** — в **Test inference** (тот же C++, без Python):
 
-1. Добавить **цель** без изменений.
-2. Кандидаты чужих (детерминированный порядок): циклический сдвиг k=1..N−1; swap соседних; все ISI ×0.5 и ×2.0; для каждого i: ISI[i]=0.
-3. Отбросить: сумма ISI==0; полное совпадение с целью; дубликаты.
-4. Обрезать до `PostTrainSyntheticFoilCount`.
-5. Прогон: один burst на паттерн при `PostTrainSilentThreshold`, все tips unmuted, длины зафиксированы.
+| Класс | Метрика mid | Gate |
+|-------|-------------|------|
+| Branch | soma peak | `phase8 --skip-tipr-mid` |
+| TL (AsymRm) | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
 
-**Mid:** `0.5*(tgt + max_foil_below)` иначе `tgt*0.99`; gap = tgt − foil_ref.
+1. Train PostTune: TipR (+ Exc). Если Train free-run даёт инверсии foils / gap≪1 → `FixedLTZ=1.0` (silent), `Need=0`.
+2. Test `ABuild`: при `FixedLTZ≥0.9` — `Dataset.StateGeneration=0` (не играть pack до mid).
+3. Test `MaybeStartInferenceMidProbes`: играет **текущую Matrix** (pack A), без лишнего `Neuron->Reset`; mid = `0.5*(tgt+max_below)` иначе `tgt*0.99`; flag `posttune_complete.flag`. Analyzer на время mid выключен.
+4. Gate `--skip-tipr-mid`: если thr silent → pass1 до flag → flush mid в XML → pass2 gate.
 
-Код: `Libraries/Nmsdk-PulseLib/Core/NNeuronPostTrainTune.{h,cpp}`.
+SearchSynthetic (mode=4) по-прежнему на Training-итерациях в Train.
+
+Код: `NNeuronPostTrainTune.*`, `NNeuronTimeLearner` / `NNeuronTimeLearnerBranch::{MaybeStartInferenceMidProbes,FinalizePostTuneMid,SetupPostTuneFreeRunProbes}`.
+
+## Verify (P0 cold/smoke)
+
+Сводка: [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md) · план: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md)
+
+| case | TipR | mid (C++) | vs gold | fires |
+|------|------|-----------|---------|-------|
+| br25_on CanonRmin | `2e7×3+8.6e7` | ≈0.07180 | ±5% | `10000000` |
+| br25_off CalibrateLtz | ScaleTipR (≠канон) | 0.0163 | (legacy path) | `10000000` |
+| asym25 FlatLastR | `8.6e7×4` | ≈0.037589 | ±5% | `10000000` |
 
 ## Скрипты
 
 - `scripts/repro_cold_lib.py` → `post_train_hygiene`: при PostTune ON и TipR уже канон/flat — **skip** Python tiprmin (`--force-python-hygiene` в harness для отладки).
-- `SelectivityBranch/scripts/phase8_tiprmin_gate.py` → `--skip-tipr-mid`: overlay/links/gate без TipR@Rmin и silent mid.
+- `SelectivityBranch/scripts/phase8_tiprmin_gate.py` → `--skip-tipr-mid`: TipR с Train; mid из C++ inference (два NM, если thr silent).
+- `SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py` → `--skip-tipr-mid`: то же для TL / LTZ mid.
 
 ## Регресс
 

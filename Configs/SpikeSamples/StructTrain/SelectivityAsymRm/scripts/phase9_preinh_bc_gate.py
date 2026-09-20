@@ -14,23 +14,46 @@ NM = Path("/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
 ROOT = Path("/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain")
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 SILENT_THR = "1.0"
-
-
-def set_tag(text: str, tag: str, value: str) -> str:
-    return re.sub(
-        rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)",
-        lambda m: m.group(1) + value + m.group(2),
-        text,
-    )
+sys.path.insert(0, str(ROOT / "scripts"))
+from repro_cold_lib import get_tag, overlay_neuron, set_tag  # noqa: E402
 
 
 def set_fixed_thr(path: Path, thr: str) -> None:
     t = path.read_text(encoding="utf-8")
     for tag in ("FixedLTZThreshold", "LTZThreshold"):
-        t = set_tag(t, tag, thr)
-    t = set_tag(t, "UseFixedLTZThreshold", "1")
-    t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0")
+        t = set_tag(t, tag, thr, 1)
+    t = set_tag(t, "UseFixedLTZThreshold", "1", 1)
+    t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
     path.write_text(t, encoding="utf-8")
+
+
+def overlay_train_params(train: Path, test: Path) -> str:
+    """Copy TipR / mid / lengths from Train (C++ PostTune) onto Test."""
+    train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
+    tipr = get_tag(train_p, "TipSynapseResistance") or ""
+    thr = get_tag(train_p, "FixedLTZThreshold") or SILENT_THR
+    rmin = get_tag(train_p, "ResistanceMin") or "20000000"
+    lens = get_tag(train_p, "DendriteLength") or ""
+    if (train / "Model_00.xml").exists() and (test / "Model_00.xml").exists():
+        overlay_neuron(train / "Model_00.xml", test / "Model_00.xml")
+    for rel in ("Parameters_00.xml", "Model_00.xml"):
+        p = test / rel
+        if not p.exists():
+            continue
+        t = p.read_text(encoding="utf-8")
+        if tipr:
+            t = set_tag(t, "TipSynapseResistance", tipr, 1)
+        if rmin:
+            t = set_tag(t, "ResistanceMin", rmin, 1)
+        if lens:
+            t = set_tag(t, "DendriteLength", lens, 1)
+        t = set_tag(t, "FixedLTZThreshold", thr, 1)
+        t = set_tag(t, "LTZThreshold", thr, 1)
+        t = set_tag(t, "UseFixedLTZThreshold", "1", 1)
+        t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
+        t = set_tag(t, "IsNeedToTrain", "0", 1)
+        p.write_text(t, encoding="utf-8")
+    return thr
 
 
 def run_nm(ini: Path, tsec: float, log: Path) -> int:
@@ -70,10 +93,92 @@ def main() -> None:
         default="ltz_potential_max",
         choices=("ltz_potential_max", "soma_amp_sum"),
     )
+    ap.add_argument(
+        "--skip-tipr-mid",
+        action="store_true",
+        help="Skip silent mid; keep Train TipR/FixedLTZ (C++ PostTune); gate only",
+    )
     args = ap.parse_args()
     root = args.exp_root.resolve()
-    test = root / "Test"
+    train, test = root / "Train", root / "Test"
     csv_path = test / "SelectivityLog" / "results.csv"
+
+    if args.skip_tipr_mid:
+        thr = overlay_train_params(train, test)
+        try:
+            mid_v = float((thr or "1").replace(",", "."))
+        except ValueError:
+            mid_v = 1.0
+        if mid_v >= 0.9:
+            print(
+                f"skip-tipr-mid: thr={thr} (silent) — C++ inference mid then gate"
+            )
+            if csv_path.exists():
+                csv_path.unlink()
+            flag = test / "posttune_complete.flag"
+            if flag.exists():
+                flag.unlink()
+            mlog = test / "run_infer_mid.log"
+            cmd_mid = [str(NM), "-c", str(test / "Project.ini"), "-s", "-t", "40", "-x"]
+            import time as _time
+
+            proc = subprocess.Popen(
+                cmd_mid, stdout=mlog.open("w"), stderr=subprocess.STDOUT
+            )
+            mid_s2 = None
+            for _ in range(120):
+                _time.sleep(5)
+                if flag.exists():
+                    for line in flag.read_text(encoding="utf-8").splitlines():
+                        if line.startswith("mid="):
+                            mid_s2 = line.split("=", 1)[1].split()[0]
+                            break
+                    _time.sleep(2)
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=60)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                    break
+                if proc.poll() is not None:
+                    break
+            else:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=30)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+            if not mid_s2:
+                raise SystemExit("C++ inference mid did not write posttune_complete.flag")
+            try:
+                mid_f = float(mid_s2.replace(",", "."))
+            except ValueError:
+                mid_f = 1.0
+            if mid_f >= 0.9:
+                raise SystemExit(f"inference mid still silent: {mid_s2}")
+            for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
+                if p.exists():
+                    set_fixed_thr(p, mid_s2)
+            print(f"inference mid={mid_s2}; gate pass")
+            if csv_path.exists():
+                csv_path.unlink()
+            glog = test / "run_gate.log"
+            rc = run_nm(test / "Project.ini", args.test_t, glog)
+            print("gate rc", rc)
+            if not csv_path.exists():
+                raise SystemExit("no gate results.csv")
+            subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_path)])
+            print("thr", mid_s2)
+            return
+        print(f"skip silent mid; thr={thr}")
+        glog = test / "run_gate.log"
+        rc = run_nm(test / "Project.ini", args.test_t, glog)
+        print("gate rc", rc)
+        if not csv_path.exists():
+            raise SystemExit("no gate results.csv")
+        subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_path)])
+        print("thr", thr)
+        return
 
     for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
         if p.exists():

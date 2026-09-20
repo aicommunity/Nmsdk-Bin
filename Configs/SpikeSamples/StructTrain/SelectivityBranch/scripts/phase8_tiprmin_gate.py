@@ -403,8 +403,74 @@ def main() -> None:
         print(f"matrix overlay pack{args.pack.upper()}")
 
     if skip_tipr_mid:
-        # Gate with Train mid already on Test; skip silent probe rewrite
+        # Keep Train TipR + C++ FixedLTZ; overlay/links/gate only (no Python tiprmin/mid).
         mid_s = get_tag((test / "Parameters_00.xml").read_text(encoding="utf-8"), "FixedLTZThreshold")
+        try:
+            mid_v = float((mid_s or "1").replace(",", "."))
+        except ValueError:
+            mid_v = 1.0
+        if mid_v >= 0.9:
+            print(
+                f"skip-tipr-mid: thr={mid_s} (silent) — C++ inference mid then gate"
+            )
+            csv_stale = test / "SelectivityLog" / "results.csv"
+            if csv_stale.exists():
+                csv_stale.unlink()
+            flag = test / "posttune_complete.flag"
+            if flag.exists():
+                flag.unlink()
+            # Pass 1: C++ inference mid (analyzer muted); stop when flag appears.
+            mlog = test / "run_infer_mid.log"
+            cmd_mid = [str(NM), "-c", str(test / "Project.ini"), "-s", "-t", "40", "-x"]
+            import time as _time
+            proc = subprocess.Popen(
+                cmd_mid, stdout=mlog.open("w"), stderr=subprocess.STDOUT
+            )
+            mid_s2 = None
+            for _ in range(120):
+                _time.sleep(5)
+                if flag.exists():
+                    for line in flag.read_text(encoding="utf-8").splitlines():
+                        if line.startswith("mid="):
+                            mid_s2 = line.split("=", 1)[1].split()[0]
+                            break
+                    _time.sleep(2)
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=60)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                    break
+                if proc.poll() is not None:
+                    break
+            else:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=30)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+            if not mid_s2:
+                raise SystemExit("C++ inference mid did not write posttune_complete.flag")
+            try:
+                mid_f = float(mid_s2.replace(",", "."))
+            except ValueError:
+                mid_f = 1.0
+            if mid_f >= 0.9:
+                raise SystemExit(f"inference mid still silent: {mid_s2}")
+            for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
+                if p.exists():
+                    set_fixed_thr(p, mid_s2)
+            print(f"inference mid={mid_s2}; gate pass")
+            if csv_stale.exists():
+                csv_stale.unlink()
+            glog = test / "run_gate.log"
+            rc = run_nm(test / "Project.ini", args.test_t, glog)
+            print("gate rc", rc)
+            if not csv_stale.exists():
+                raise SystemExit("no gate results.csv")
+            subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_stale)])
+            print("thr", mid_s2)
+            return
         print(f"skip silent mid probe; thr={mid_s}")
         glog = test / "run_gate.log"
         rc = run_nm(test / "Project.ini", args.test_t, glog)
@@ -444,8 +510,14 @@ def main() -> None:
             sys.exit(3)
 
     mid_s = f"{mid:.12g}"
-    for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
-        set_fixed_thr(p, mid_s)
+    for p in [
+        test / "Parameters_00.xml",
+        test / "Model_00.xml",
+        train / "Parameters_00.xml",
+        train / "Model_00.xml",
+    ]:
+        if p.exists():
+            set_fixed_thr(p, mid_s)
 
     glog = test / "run_gate.log"
     rc = run_nm(test / "Project.ini", args.test_t, glog)
