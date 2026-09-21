@@ -187,9 +187,14 @@ def set_fixed_thr(path: Path, thr: str) -> None:
     path.write_text(t, encoding="utf-8")
 
 
-def run_nm(ini: Path, tsec: float, log: Path, save: bool = False) -> int:
+def run_nm(ini: Path, tsec: float, log: Path, save: bool = False, *, span_ms: int | None = None) -> int:
     """Run NM; SIGTERM when SelectivityLog has ≥8 rows and wall > max(tsec, 100)."""
     import time
+
+    # Drop prior StatisticLog to avoid balloon hang.
+    slog = ini.parent / "StatisticLog"
+    if slog.is_dir():
+        shutil.rmtree(slog, ignore_errors=True)
 
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tsec), "-x"]
     if save:
@@ -197,8 +202,12 @@ def run_nm(ini: Path, tsec: float, log: Path, save: bool = False) -> int:
     csv_path = ini.parent / "SelectivityLog" / "results.csv"
     with log.open("w") as f:
         proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
-    # Do not kill early before 8 samples — span100 silent can exceed 3×-t wall.
-    hard_deadline = time.time() + max(float(tsec) * 8.0, 600.0)
+    # Span-aware hard deadline (see POST_TRAIN_VERIFY / plan Close PostTune Gaps).
+    if span_ms is None:
+        span_ms = 100 if tsec >= 40 else 25
+    mult = {25: 20, 50: 20, 100: 30, 480: 45}.get(span_ms, 30)
+    floor = {25: 900, 50: 1200, 100: 1800, 480: 3600}.get(span_ms, 1800)
+    hard_deadline = time.time() + max(float(tsec) * mult, float(floor))
     while proc.poll() is None:
         if time.time() > hard_deadline:
             print(f"SIGTERM NM (hard deadline) pid={proc.pid}")
@@ -218,7 +227,7 @@ def run_nm(ini: Path, tsec: float, log: Path, save: bool = False) -> int:
                 )
             except subprocess.CalledProcessError:
                 et = 0
-            if n >= 8 and et > max(int(tsec), 100):
+            if n >= 8 and et > max(int(tsec), 180):
                 print(f"SIGTERM NM pid={proc.pid} n={n} et={et}")
                 proc.terminate()
                 break
@@ -313,6 +322,37 @@ def prepare_test(
         t = set_tag(t, "LTZThreshold", thr_for_test)
         t = set_tag(t, "UseFixedLTZThreshold", "1")
         t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0")
+        # Keep PostTune enables for C++ inference mid on Test.
+        if skip_tipr_mid:
+            mode = get_tag(train_p, "PostTrainTipResistanceMode") or "1"
+            t = set_tag(t, "EnablePostTrainTuning", "1")
+            if get_tag(t, "EnablePostTrainMidThreshold") is None:
+                t = re.sub(
+                    r"(</EnablePostTrainTuning>)",
+                    r'\1\n\t\t\t\t\t<EnablePostTrainMidThreshold Type="b" PType="257" IoType="17">1</EnablePostTrainMidThreshold>',
+                    t,
+                    count=1,
+                )
+            else:
+                t = set_tag(t, "EnablePostTrainMidThreshold", "1")
+            if get_tag(t, "PostTrainTipResistanceMode") is None:
+                t = re.sub(
+                    r"(</EnablePostTrainMidThreshold>)",
+                    rf'\1\n\t\t\t\t\t<PostTrainTipResistanceMode Type="i" PType="257" IoType="17">{mode}</PostTrainTipResistanceMode>',
+                    t,
+                    count=1,
+                )
+            else:
+                t = set_tag(t, "PostTrainTipResistanceMode", mode)
+            if get_tag(t, "PostTrainSilentThreshold") is None:
+                t = re.sub(
+                    r"(</PostTrainTipResistanceMode>)",
+                    r'\1\n\t\t\t\t\t<PostTrainSilentThreshold Type="d" PType="257" IoType="17">1</PostTrainSilentThreshold>',
+                    t,
+                    count=1,
+                )
+            else:
+                t = set_tag(t, "PostTrainSilentThreshold", "1")
         if rel.startswith("Parameters"):
             t = set_tag(t, "StructureBuildMode", "0")
         else:
@@ -465,7 +505,7 @@ def main() -> None:
             if csv_stale.exists():
                 csv_stale.unlink()
             glog = test / "run_gate.log"
-            rc = run_nm(test / "Project.ini", args.test_t, glog)
+            rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=args.span_ms)
             print("gate rc", rc)
             if not csv_stale.exists():
                 raise SystemExit("no gate results.csv")
@@ -474,7 +514,7 @@ def main() -> None:
             return
         print(f"skip silent mid probe; thr={mid_s}")
         glog = test / "run_gate.log"
-        rc = run_nm(test / "Project.ini", args.test_t, glog)
+        rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=args.span_ms)
         print("gate rc", rc)
         csv_silent = test / "SelectivityLog" / "results.csv"
         if not csv_silent.exists():
@@ -487,7 +527,7 @@ def main() -> None:
         set_fixed_thr(p, SILENT_THR)
 
     slog = test / "run_silent_probe.log"
-    rc = run_nm(test / "Project.ini", args.test_t, slog)
+    rc = run_nm(test / "Project.ini", args.test_t, slog, span_ms=args.span_ms)
     print("silent rc", rc)
     csv_silent = test / "SelectivityLog" / "results.csv"
     if not csv_silent.exists():
@@ -521,7 +561,7 @@ def main() -> None:
             set_fixed_thr(p, mid_s)
 
     glog = test / "run_gate.log"
-    rc = run_nm(test / "Project.ini", args.test_t, glog)
+    rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=args.span_ms)
     print("gate rc", rc)
     subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_silent)])
     rows = list(csv.DictReader(csv_silent.open(encoding="utf-8")))

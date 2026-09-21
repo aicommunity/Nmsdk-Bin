@@ -15,7 +15,7 @@ ROOT = Path("/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain")
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 SILENT_THR = "1.0"
 sys.path.insert(0, str(ROOT / "scripts"))
-from repro_cold_lib import get_tag, overlay_neuron, set_tag  # noqa: E402
+from repro_cold_lib import ensure_tag_after, get_tag, overlay_neuron, set_tag  # noqa: E402
 
 
 def set_fixed_thr(path: Path, thr: str) -> None:
@@ -28,12 +28,25 @@ def set_fixed_thr(path: Path, thr: str) -> None:
 
 
 def overlay_train_params(train: Path, test: Path) -> str:
-    """Copy TipR / mid / lengths from Train (C++ PostTune) onto Test."""
+    """Copy TipR / mid / lengths / PostTune enables from Train onto Test."""
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     tipr = get_tag(train_p, "TipSynapseResistance") or ""
     thr = get_tag(train_p, "FixedLTZThreshold") or SILENT_THR
+    # Prefer C++ inference mid already written on Test.
+    flag = test / "posttune_complete.flag"
+    if flag.exists():
+        for line in flag.read_text(encoding="utf-8").splitlines():
+            if line.startswith("mid="):
+                mid_s = line.split("=", 1)[1].split()[0]
+                try:
+                    if float(mid_s.replace(",", ".")) < 0.9:
+                        thr = mid_s
+                except ValueError:
+                    pass
+                break
     rmin = get_tag(train_p, "ResistanceMin") or "20000000"
     lens = get_tag(train_p, "DendriteLength") or ""
+    mode = get_tag(train_p, "PostTrainTipResistanceMode") or "1"
     if (train / "Model_00.xml").exists() and (test / "Model_00.xml").exists():
         overlay_neuron(train / "Model_00.xml", test / "Model_00.xml")
     for rel in ("Parameters_00.xml", "Model_00.xml"):
@@ -52,19 +65,65 @@ def overlay_train_params(train: Path, test: Path) -> str:
         t = set_tag(t, "UseFixedLTZThreshold", "1", 1)
         t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
         t = set_tag(t, "IsNeedToTrain", "0", 1)
+        t = set_tag(t, "EnablePostTrainTuning", "1", 1)
+        # Learner StructureBuildMode=1 so tip names match DendriteLength (inference mid).
+        t = set_tag(t, "StructureBuildMode", "1", 1)
+        if get_tag(t, "EnablePostTrainMidThreshold") is None:
+            t = ensure_tag_after(
+                t, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "1",
+                attrs=' Type="b" PType="257" IoType="17"',
+            )
+        else:
+            t = set_tag(t, "EnablePostTrainMidThreshold", "1", 1)
+        if get_tag(t, "PostTrainTipResistanceMode") is None:
+            t = ensure_tag_after(
+                t, "EnablePostTrainMidThreshold", "PostTrainTipResistanceMode", mode,
+                attrs=' Type="i" PType="257" IoType="17"',
+            )
+        else:
+            t = set_tag(t, "PostTrainTipResistanceMode", mode, 1)
+        if get_tag(t, "PostTrainSilentThreshold") is None:
+            t = ensure_tag_after(
+                t, "PostTrainTipResistanceMode", "PostTrainSilentThreshold", "1",
+                attrs=' Type="d" PType="257" IoType="17"',
+            )
+        else:
+            t = set_tag(t, "PostTrainSilentThreshold", "1", 1)
         p.write_text(t, encoding="utf-8")
     return thr
 
 
-def run_nm(ini: Path, tsec: float, log: Path) -> int:
+def hard_deadline_s(tsec: float, span_ms: int | None = None) -> float:
+    """Wall-clock hard stop for NM runs (span-aware)."""
+    if span_ms is None:
+        if tsec >= 80:
+            span_ms = 480
+        elif tsec >= 40:
+            span_ms = 100
+        elif tsec >= 20:
+            span_ms = 50
+        else:
+            span_ms = 25
+    mult = {25: 20, 50: 20, 100: 30, 480: 45}.get(span_ms, 30)
+    floor = {25: 900, 50: 1200, 100: 1800, 480: 3600}.get(span_ms, 1800)
+    return max(float(tsec) * mult, float(floor))
+
+
+def run_nm(ini: Path, tsec: float, log: Path, *, span_ms: int | None = None) -> int:
     """Run NM; SIGTERM when SelectivityLog has ≥8 rows (avoids hang after CSV)."""
     import time
+    import shutil
+
+    # Drop prior StatisticLog to avoid balloon hang.
+    slog = ini.parent / "StatisticLog"
+    if slog.is_dir():
+        shutil.rmtree(slog, ignore_errors=True)
 
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tsec), "-x"]
     csv_path = ini.parent / "SelectivityLog" / "results.csv"
     with log.open("w") as f:
         proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
-    hard_deadline = time.time() + max(float(tsec) * 45.0, 3600.0)
+    hard_deadline = time.time() + hard_deadline_s(tsec, span_ms)
     while proc.poll() is None:
         if time.time() > hard_deadline:
             print(f"SIGTERM NM (hard deadline) pid={proc.pid}")
@@ -133,10 +192,17 @@ def main() -> None:
         action="store_true",
         help="Skip silent mid; keep Train TipR/FixedLTZ (C++ PostTune); gate only",
     )
+    ap.add_argument(
+        "--span-ms",
+        type=int,
+        default=None,
+        help="Pattern span for NM hard-deadline (25|50|100|480)",
+    )
     args = ap.parse_args()
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     csv_path = test / "SelectivityLog" / "results.csv"
+    span_ms = args.span_ms
 
     if args.skip_tipr_mid:
         thr = overlay_train_params(train, test)
@@ -153,9 +219,20 @@ def main() -> None:
             flag = test / "posttune_complete.flag"
             if flag.exists():
                 flag.unlink()
+            # Ensure learner StructureBuildMode=1 for tip name resolution.
+            for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
+                if p.exists():
+                    t = p.read_text(encoding="utf-8")
+                    t = set_tag(t, "StructureBuildMode", "1", 1)
+                    p.write_text(t, encoding="utf-8")
             mlog = test / "run_infer_mid.log"
             cmd_mid = [str(NM), "-c", str(test / "Project.ini"), "-s", "-t", "40", "-x"]
             import time as _time
+            import shutil as _shutil
+
+            slog = test / "StatisticLog"
+            if slog.is_dir():
+                _shutil.rmtree(slog, ignore_errors=True)
 
             proc = subprocess.Popen(
                 cmd_mid, stdout=mlog.open("w"), stderr=subprocess.STDOUT
@@ -198,8 +275,10 @@ def main() -> None:
             print(f"inference mid={mid_s2}; gate pass")
             if csv_path.exists():
                 csv_path.unlink()
+            if slog.is_dir():
+                _shutil.rmtree(slog, ignore_errors=True)
             glog = test / "run_gate.log"
-            rc = run_nm(test / "Project.ini", args.test_t, glog)
+            rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=span_ms)
             print("gate rc", rc)
             if not csv_path.exists():
                 raise SystemExit("no gate results.csv")
@@ -208,7 +287,7 @@ def main() -> None:
             return
         print(f"skip silent mid; thr={thr}")
         glog = test / "run_gate.log"
-        rc = run_nm(test / "Project.ini", args.test_t, glog)
+        rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=span_ms)
         print("gate rc", rc)
         if not csv_path.exists():
             raise SystemExit("no gate results.csv")
@@ -221,7 +300,7 @@ def main() -> None:
             set_fixed_thr(p, args.silent_thr)
 
     slog = test / "run_silent_probe.log"
-    rc = run_nm(test / "Project.ini", args.test_t, slog)
+    rc = run_nm(test / "Project.ini", args.test_t, slog, span_ms=span_ms)
     print("silent rc", rc)
     if not csv_path.exists():
         raise SystemExit("no silent results.csv")
@@ -249,7 +328,7 @@ def main() -> None:
             set_fixed_thr(p, mid_s)
 
     glog = test / "run_gate.log"
-    rc = run_nm(test / "Project.ini", args.test_t, glog)
+    rc = run_nm(test / "Project.ini", args.test_t, glog, span_ms=span_ms)
     print("gate rc", rc)
     subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_path)])
     rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))

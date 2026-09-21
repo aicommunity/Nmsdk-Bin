@@ -62,7 +62,8 @@
 3. Test `MaybeStartInferenceMidProbes`: играет **текущую Matrix** (pack A), без лишнего `Neuron->Reset`; mid = `0.5*(tgt+max_below)` иначе `tgt*0.99`; flag `posttune_complete.flag`. Analyzer на время mid выключен.
 4. Gate `--skip-tipr-mid`: если thr silent → pass1 до flag → flush mid в XML → pass2 gate.
 
-SearchSynthetic (mode=4) по-прежнему на Training-итерациях в Train.
+SearchSynthetic (mode=4) выполняется **только** в Train PostTune loop (coordinate descent по tip×mult, `PostTrainTipSearchIters` полных pass).  
+**Test-only / `--skip-train` smoke ≠ валидация Search** — TipR может совпасть с keep-клоном без вызова цикла. Приёмка: `posttune_verify --case br100_search` (без skip-train); PASS если TipR≠keep **или** `search_reverted=1` в flag; mid только `cpp`. См. [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
 
 Код: `NNeuronPostTrainTune.*`, `NNeuronTimeLearner` / `NNeuronTimeLearnerBranch::{MaybeStartInferenceMidProbes,FinalizePostTuneMid,SetupPostTuneFreeRunProbes}`.
 

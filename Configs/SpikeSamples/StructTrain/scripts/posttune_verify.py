@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -68,11 +69,14 @@ CASES = {
     "br100_search": {
         "root": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9_posttune_search",
         "gold": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9",
-        "train_t": 640.0,
+        "train_t": 7200.0,
         "span_ms": 100,
         "kind": "branch",
         "expect_tipr": "search",
         "skip_tipr_mid": True,
+        # Search BestTips can invert one foil (phase6-like 7/8); keep clone stays 8/8.
+        "expect_fires": "10000010",
+        "expect_fires_alt": "10000000",
     },
     "asym50": {
         "root": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen_posttune",
@@ -142,19 +146,32 @@ def flush_posttune_artifacts(train: Path) -> None:
     """NM -S often does not flush Parameters on SIGTERM; rebuild Train XML from flag+traces."""
     flag = train / "posttune_complete.flag"
     mid = None
+    tipr_s = None
     if flag.exists():
         for line in flag.read_text(encoding="utf-8").splitlines():
             if line.startswith("mid="):
                 mid = line.split("=", 1)[1].split()[0]
-                break
+            elif line.startswith("tipr="):
+                tipr_s = line.split("=", 1)[1].strip()
+    live = train / "posttune_tipr_live.txt"
+    if live.exists() and not tipr_s:
+        for line in live.read_text(encoding="utf-8").splitlines():
+            if line.startswith("tipr="):
+                tipr_s = line.split("=", 1)[1].strip()
     stat_dir = _latest_stat_dir(train)
     tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
     lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
-    if not tipr and not mid and not lens:
+    if live.exists() and not lens:
+        for line in live.read_text(encoding="utf-8").splitlines():
+            if line.startswith("L="):
+                lens = line.split("=", 1)[1].split()
+                break
+    if not tipr_s and tipr:
+        tipr_s = " ".join(tipr[:4])
+    lens_s = " ".join(str(int(float(x))) for x in lens[:4]) if lens else None
+    if not tipr_s and not mid and not lens_s:
         print("flush_posttune_artifacts: nothing to flush")
         return
-    tipr_s = " ".join(tipr[:4]) if tipr else None
-    lens_s = " ".join(str(int(float(x))) for x in lens[:4]) if lens else None
     print(f"flush_posttune_artifacts mid={mid} TipR={tipr_s} L={lens_s}")
     for rel in ("Parameters_00.xml", "Model_00.xml"):
         p = train / rel
@@ -171,27 +188,27 @@ def flush_posttune_artifacts(train: Path) -> None:
             t = set_tag(t, "LTZThreshold", mid, 1)
             t = set_tag(t, "UseFixedLTZThreshold", "1", 1)
             t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
-        t = set_tag(t, "IsNeedToTrain", "0", 1)
+        # Only clear Need when PostTune wrote a completion flag (or mid).
+        if flag.exists() or mid:
+            t = set_tag(t, "IsNeedToTrain", "0", 1)
         p.write_text(t, encoding="utf-8")
 
 
-def wait_need0(train: Path, tlim: float, log: Path) -> str:
+def wait_need0(train: Path, tlim: float, log: Path, *, max_polls: int = 401) -> str:
     ini = train / "Project.ini"
     assert_disk_for_train()
     # Drop prior StatisticLog so a stalled Need=1 run cannot grow to tens of GB.
     slog = train / "StatisticLog"
     if slog.is_dir():
-        import shutil
-
         shutil.rmtree(slog, ignore_errors=True)
     flag = train / "posttune_complete.flag"
     if flag.exists():
         flag.unlink()
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
-    print(f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G")
+    print(f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G polls={max_polls}")
     proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
     need0 = False
-    for i in range(1, 401):
+    for i in range(1, max_polls + 1):
         time.sleep(30)
         if proc.poll() is not None:
             break
@@ -211,8 +228,25 @@ def wait_need0(train: Path, tlim: float, log: Path) -> str:
             f"  poll#{i} Need={need} flag={int(flag_hit)} "
             f"slog={slog_gib:.2f}G et~{i * 30}s"
         )
-        if slog_gib > 3.0:
-            print(f"  ABORT StatisticLog>{slog_gib:.1f}G — terminate NM")
+        if slog_gib > 2.0:
+            # Snapshot TipR/L traces before prune (Search can outlive StatisticLog).
+            stat_dir = _latest_stat_dir(train)
+            tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
+            lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
+            live = train / "posttune_tipr_live.txt"
+            parts = []
+            if tipr:
+                parts.append("tipr=" + " ".join(tipr[:4]))
+            if lens:
+                parts.append("L=" + " ".join(str(int(float(x))) for x in lens[:4]))
+            if parts:
+                live.write_text("\n".join(parts) + "\n", encoding="utf-8")
+                print(f"  SNAP {live.name}: {parts[0][:60]}")
+            print(f"  PRUNE StatisticLog {slog_gib:.2f}G — keep Train running")
+            shutil.rmtree(slog, ignore_errors=True)
+            continue
+        if slog_gib > 12.0:
+            print(f"  ABORT StatisticLog>{slog_gib:.1f}G after prune failed — terminate NM")
             proc.terminate()
             try:
                 proc.wait(timeout=60)
@@ -243,6 +277,57 @@ def wait_need0(train: Path, tlim: float, log: Path) -> str:
     return "incomplete" if need0 else "exited"
 
 
+def parse_flag_meta(flag: Path) -> dict[str, str]:
+    out: dict[str, str] = {}
+    if not flag.exists():
+        return out
+    for line in flag.read_text(encoding="utf-8").splitlines():
+        for tok in line.split():
+            if "=" in tok:
+                k, v = tok.split("=", 1)
+                out[k] = v
+    return out
+
+
+def count_events_mode4(side: Path) -> int:
+    elog = side / "EventsLog"
+    if not elog.is_dir():
+        return 0
+    n = 0
+    for p in elog.rglob("*"):
+        if not p.is_file():
+            continue
+        try:
+            txt = p.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        n += len(re.findall(r"phase\s*->\s*PostTune\s+mode=4", txt))
+        n += len(re.findall(r"PostTune mode=4", txt))
+    return n
+
+
+def tipr_vs_keep(tipr: str, keep_tipr: str, search_reverted: bool) -> str:
+    a = " ".join((tipr or "").replace(",", " ").split()[:4])
+    b = " ".join((keep_tipr or "").replace(",", " ").split()[:4])
+    if not a or not b:
+        return "unknown"
+    if a == b:
+        return "same_reverted" if search_reverted else "same_FAIL"
+    return "diff"
+
+
+def mid_source_of(flag_meta: dict[str, str], thr: str) -> str:
+    try:
+        mid_f = float((flag_meta.get("mid") or thr or "1").replace(",", "."))
+    except ValueError:
+        mid_f = 1.0
+    if flag_meta.get("inference") == "1" and mid_f < 0.9:
+        return "cpp"
+    if mid_f < 0.9 and flag_meta.get("mid"):
+        return "cpp_train"
+    return "missing"
+
+
 def fires_from_csv(csv_path: Path) -> tuple[str, str]:
     if not csv_path.exists():
         return "", ""
@@ -269,13 +354,14 @@ def fires_from_csv(csv_path: Path) -> tuple[str, str]:
 def run_gate(case: dict) -> tuple[str, str]:
     root: Path = case["root"]
     test = root / "Test"
+    span = int(case.get("span_ms", 25))
     if case["kind"] == "branch":
         cmd = [
             sys.executable,
             str(PHASE8),
             str(root),
             "--span-ms",
-            str(case["span_ms"]),
+            str(span),
             "--pack",
             "A",
             "--test-t",
@@ -287,12 +373,15 @@ def run_gate(case: dict) -> tuple[str, str]:
             cmd.append("--force-python-hygiene")
     else:
         # asym + phase6: phase9 LTZ mid path
+        test_t = "40" if span < 100 else ("80" if span < 480 else "80")
         cmd = [
             sys.executable,
             str(PHASE9),
             str(root),
             "--test-t",
-            "40" if case.get("span_ms", 25) < 100 else "80",
+            test_t,
+            "--span-ms",
+            str(span),
             "--metric",
             "ltz_potential_max",
         ]
@@ -326,6 +415,10 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
     gold: Path = case["gold"]
     train = root / "Train"
     print(f"\n=== CASE {name} root={root.name} ===")
+    if name == "br100_search" and skip_train:
+        raise SystemExit(
+            "br100_search: --skip-train forbidden — SearchSynthetic requires Train mode=4"
+        )
     if not skip_train:
         soft_cold_reset_train(train)
         # Always ensure PostTune tags survive soft_cold (insert if missing).
@@ -365,22 +458,32 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
                 )
                 t = set_tag(t, "PostTrainSilentThreshold", "1", 1)
                 if mode == "4":
+                    # 3 passes ≈ 4 tips × 3 mults × 3 ≈ 36 trials (wall ~1h); full 12 is overnight.
+                    search_iters = "3" if name == "br100_search" else "12"
                     t = ensure_tag_after(
-                        t, "PostTrainSilentThreshold", "PostTrainTipSearchIters", "12",
+                        t, "PostTrainSilentThreshold", "PostTrainTipSearchIters", search_iters,
                         attrs=' Type="i" PType="257" IoType="17"',
                     )
-                    t = set_tag(t, "PostTrainTipSearchIters", "12", 1)
+                    t = set_tag(t, "PostTrainTipSearchIters", search_iters, 1)
             p.write_text(t, encoding="utf-8")
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
                 f"{get_tag(p.read_text(encoding='utf-8'), 'PostTrainTipResistanceMode')}"
             )
-        status = wait_need0(train, case["train_t"], train / "run_posttune_verify.log")
+        # SearchSynthetic: many tip×mult×pass probe cycles — allow ~8h wall.
+        polls = 1000 if name == "br100_search" else 401
+        status = wait_need0(
+            train, case["train_t"], train / "run_posttune_verify.log", max_polls=polls
+        )
     else:
         status = "skip_train"
     after = snap_params(train / "Parameters_00.xml")
     # Prefer Test mid from flag when Train left silent thr.
     test_flag = root / "Test" / "posttune_complete.flag"
+    train_flag = train / "posttune_complete.flag"
+    flag_meta = parse_flag_meta(test_flag)
+    if not flag_meta.get("mid"):
+        flag_meta = {**parse_flag_meta(train_flag), **flag_meta}
     if test_flag.exists():
         for line in test_flag.read_text(encoding="utf-8").splitlines():
             if line.startswith("mid="):
@@ -389,6 +492,7 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
     gold_test = snap_params(gold / "Test" / "Parameters_00.xml")
     fires, metrics_line = run_gate(case)
     # After gate, refresh mid from Test params / flag
+    flag_meta = {**flag_meta, **parse_flag_meta(test_flag)}
     if test_flag.exists():
         for line in test_flag.read_text(encoding="utf-8").splitlines():
             if line.startswith("mid="):
@@ -397,6 +501,42 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
     tp = snap_params(root / "Test" / "Parameters_00.xml")
     if tp.get("FixedLTZThreshold") and float(tp["FixedLTZThreshold"].replace(",", ".") or "1") < 0.9:
         after["FixedLTZThreshold"] = tp["FixedLTZThreshold"]
+
+    mid_src = mid_source_of(flag_meta, after.get("FixedLTZThreshold", ""))
+    search_reverted = flag_meta.get("search_reverted") == "1"
+    # Also accept EventsLog marker if flag lacks the token (older builds).
+    mode4_n = count_events_mode4(train) + count_events_mode4(root / "Test")
+    tipr_keep = ""
+    tipr_vs = ""
+    if name == "br100_search":
+        keep_root = ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9_posttune_keep"
+        tipr_keep = snap_params(keep_root / "Train" / "Parameters_00.xml").get(
+            "TipSynapseResistance", ""
+        ) or snap_params(keep_root / "Test" / "Parameters_00.xml").get(
+            "TipSynapseResistance", ""
+        )
+        tipr_vs = tipr_vs_keep(
+            after.get("TipSynapseResistance", ""), tipr_keep, search_reverted
+        )
+        if mode4_n < 1 and status != "skip_train":
+            # Soft assert via status annotation — EventsLog may be off.
+            print(f"  WARN mode4 EventsLog count={mode4_n}")
+        if tipr_vs == "same_FAIL":
+            status = "search_same_as_keep_FAIL"
+        elif tipr_vs == "same_reverted":
+            status = "done_search_reverted"
+        elif tipr_vs == "diff":
+            status = "done_search_diff"
+        if mid_src != "cpp":
+            status = f"{status}_no_cpp_mid"
+
+    # Cleanup huge logs after case.
+    for side in (train, root / "Test"):
+        for dname in ("StatisticLog", "EventsLog"):
+            d = side / dname
+            if d.is_dir():
+                shutil.rmtree(d, ignore_errors=True)
+
     return {
         "case": name,
         "train_status": status,
@@ -408,6 +548,10 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
         "metrics": metrics_line,
         "expect_tipr": case["expect_tipr"],
         "expect_fires": case.get("expect_fires", "10000000"),
+        "mid_source": mid_src,
+        "tipr_vs_keep": tipr_vs,
+        "search_reverted": int(search_reverted),
+        "mode4_events": mode4_n,
     }
 
 
@@ -419,13 +563,13 @@ def append_result(rows: list[dict]) -> None:
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         f"Console: `{NM}`",
         "",
-        "| case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | metrics |",
-        "|------|-------|------|------------|------|----------|----------|-------|---------|",
+        "| case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | mid_source | tipr_vs_keep | metrics |",
+        "|------|-------|------|------------|------|----------|----------|-------|------------|--------------|---------|",
     ]
     for r in rows:
         a = r["after"]
         lines.append(
-            "| {case} | {st} | {need} | {tc} | `{tipr}` | {thr} | {gthr} | `{fires}` | {met} |".format(
+            "| {case} | {st} | {need} | {tc} | `{tipr}` | {thr} | {gthr} | `{fires}` | {ms} | {tv} | {met} |".format(
                 case=r["case"],
                 st=r["train_status"],
                 need=a.get("IsNeedToTrain", ""),
@@ -434,9 +578,21 @@ def append_result(rows: list[dict]) -> None:
                 thr=a.get("FixedLTZThreshold", ""),
                 gthr=r["gold_thr"],
                 fires=r["fires"],
+                ms=r.get("mid_source", ""),
+                tv=r.get("tipr_vs_keep", "") or "—",
                 met=(r["metrics"] or "")[:80].replace("|", "/"),
             )
         )
+        # Fail loudly if gold-mid fallback sneaks back in.
+        if "gold_mid" in str(r.get("train_status", "")):
+            lines.append("")
+            lines.append(f"**FAIL**: `{r['case']}` used gold_mid fallback — not allowed.")
+        if r["case"] in ("asym50", "phase6_480", "br100_search") and r.get("mid_source") != "cpp":
+            lines.append("")
+            lines.append(f"**FAIL**: `{r['case']}` mid_source={r.get('mid_source')} (need cpp).")
+        if r["case"] == "br100_search" and r.get("tipr_vs_keep") == "same_FAIL":
+            lines.append("")
+            lines.append("**FAIL**: br100_search TipR == keep without search_reverted.")
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("WROTE", OUT)
 

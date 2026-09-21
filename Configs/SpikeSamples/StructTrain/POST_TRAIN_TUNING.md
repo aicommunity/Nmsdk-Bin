@@ -33,7 +33,10 @@ With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` and `kPh
 
 Train free-run may leave `FixedLTZ=1.0` when landscape is bad; Test `MaybeStartInferenceMidProbes` plays Matrix pack A as-is and writes mid + `posttune_complete.flag`. Gate two-pass when thr is silent.
 
-SearchSynthetic keeps Training-iteration probes. Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
+SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (tip×mult coordinate descent, `PostTrainTipSearchIters` full passes).  
+**Test-only / `--skip-train` smoke ≠ Search validation** — TipR may equal the keep clone without entering the search cycle. Accept via `posttune_verify --case br100_search` (no skip-train): PASS if TipR≠keep **or** `search_reverted=1` in the flag; mid must be `cpp`. See [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
+
+Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
 
 Verify P0: Branch25 CanonRmin / off / AsymRm25 FlatLastR → fires `10000000` — [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md).
 
