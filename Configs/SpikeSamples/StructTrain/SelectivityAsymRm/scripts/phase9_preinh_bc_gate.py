@@ -57,9 +57,44 @@ def overlay_train_params(train: Path, test: Path) -> str:
 
 
 def run_nm(ini: Path, tsec: float, log: Path) -> int:
+    """Run NM; SIGTERM when SelectivityLog has ≥8 rows (avoids hang after CSV)."""
+    import time
+
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tsec), "-x"]
+    csv_path = ini.parent / "SelectivityLog" / "results.csv"
     with log.open("w") as f:
-        return subprocess.call(cmd, stdout=f, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
+    hard_deadline = time.time() + max(float(tsec) * 45.0, 3600.0)
+    while proc.poll() is None:
+        if time.time() > hard_deadline:
+            print(f"SIGTERM NM (hard deadline) pid={proc.pid}")
+            proc.terminate()
+            break
+        if csv_path.exists():
+            try:
+                n = sum(1 for _ in csv_path.open(encoding="utf-8")) - 1
+            except OSError:
+                n = 0
+            try:
+                et = int(
+                    subprocess.check_output(
+                        ["ps", "-o", "etimes=", "-p", str(proc.pid)], text=True
+                    ).strip()
+                    or "0"
+                )
+            except subprocess.CalledProcessError:
+                et = 0
+            # span50/100: wait until 8 rows; allow long wall before early stop
+            if n >= 8 and et > max(int(tsec), 180):
+                print(f"SIGTERM NM pid={proc.pid} n={n} et={et}")
+                proc.terminate()
+                break
+        time.sleep(2)
+    try:
+        return proc.wait(timeout=60)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        return proc.wait(timeout=30)
 
 
 def col_from_csv(csv_path: Path, col: str) -> list[float]:
@@ -126,7 +161,8 @@ def main() -> None:
                 cmd_mid, stdout=mlog.open("w"), stderr=subprocess.STDOUT
             )
             mid_s2 = None
-            for _ in range(120):
+            # Matrix free-run mid ~7–15 min wall; allow ~30 min
+            for _ in range(360):
                 _time.sleep(5)
                 if flag.exists():
                     for line in flag.read_text(encoding="utf-8").splitlines():

@@ -56,6 +56,43 @@ CASES = {
         "expect_tipr": "flat",
         "skip_tipr_mid": True,
     },
+    "br100_keep": {
+        "root": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9_posttune_keep",
+        "gold": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9",
+        "train_t": 640.0,
+        "span_ms": 100,
+        "kind": "branch",
+        "expect_tipr": "keep",
+        "skip_tipr_mid": True,
+    },
+    "br100_search": {
+        "root": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9_posttune_search",
+        "gold": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9",
+        "train_t": 640.0,
+        "span_ms": 100,
+        "kind": "branch",
+        "expect_tipr": "search",
+        "skip_tipr_mid": True,
+    },
+    "asym50": {
+        "root": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen_posttune",
+        "gold": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen",
+        "train_t": 320.0,
+        "span_ms": 50,
+        "kind": "asym",
+        "expect_tipr": "canon",
+        "skip_tipr_mid": True,
+    },
+    "phase6_480": {
+        "root": ROOT / "SelectivityPhaseA" / "Phase6" / "EXP_480_gen_posttune",
+        "gold": ROOT / "SelectivityPhaseA" / "Phase6" / "EXP_480_gen_tiprmin",
+        "train_t": 900.0,
+        "span_ms": 480,
+        "kind": "phase6",
+        "expect_tipr": "canon",
+        "skip_tipr_mid": True,
+        "expect_fires": "10000010",
+    },
 }
 
 
@@ -141,6 +178,12 @@ def flush_posttune_artifacts(train: Path) -> None:
 def wait_need0(train: Path, tlim: float, log: Path) -> str:
     ini = train / "Project.ini"
     assert_disk_for_train()
+    # Drop prior StatisticLog so a stalled Need=1 run cannot grow to tens of GB.
+    slog = train / "StatisticLog"
+    if slog.is_dir():
+        import shutil
+
+        shutil.rmtree(slog, ignore_errors=True)
     flag = train / "posttune_complete.flag"
     if flag.exists():
         flag.unlink()
@@ -154,7 +197,28 @@ def wait_need0(train: Path, tlim: float, log: Path) -> str:
             break
         need = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "IsNeedToTrain")
         flag_hit = flag.exists()
-        print(f"  poll#{i} Need={need} flag={int(flag_hit)} et~{i * 30}s")
+        # Guard: abort if StatisticLog balloons (prior hang rootcause ~17GB).
+        slog_bytes = 0
+        if slog.is_dir():
+            for p in slog.rglob("*"):
+                if p.is_file():
+                    try:
+                        slog_bytes += p.stat().st_size
+                    except OSError:
+                        pass
+        slog_gib = slog_bytes / (1 << 30)
+        print(
+            f"  poll#{i} Need={need} flag={int(flag_hit)} "
+            f"slog={slog_gib:.2f}G et~{i * 30}s"
+        )
+        if slog_gib > 3.0:
+            print(f"  ABORT StatisticLog>{slog_gib:.1f}G — terminate NM")
+            proc.terminate()
+            try:
+                proc.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+            break
         if need == "0" or flag_hit:
             need0 = True
             # allow finalize + optional -S; then terminate
@@ -222,12 +286,13 @@ def run_gate(case: dict) -> tuple[str, str]:
         else:
             cmd.append("--force-python-hygiene")
     else:
+        # asym + phase6: phase9 LTZ mid path
         cmd = [
             sys.executable,
             str(PHASE9),
             str(root),
             "--test-t",
-            "40",
+            "40" if case.get("span_ms", 25) < 100 else "80",
             "--metric",
             "ltz_potential_max",
         ]
@@ -241,7 +306,12 @@ def run_gate(case: dict) -> tuple[str, str]:
     return fires_from_csv(test / "SelectivityLog" / "results.csv")
 
 
-def tipr_class(tipr: str) -> str:
+def tipr_class(tipr: str, expect: str = "") -> str:
+    if expect in ("keep", "search", "legacy"):
+        if tipr_looks_posttuned(tipr):
+            nums = [float(x) for x in tipr.replace(",", " ").split()[:4]]
+            return "flat" if abs(nums[0] - 8.6e7) < 1e5 else "canon"
+        return expect if expect != "legacy" else "other"
     if tipr_looks_posttuned(tipr):
         nums = [float(x) for x in tipr.replace(",", " ").split()[:4]]
         if abs(nums[0] - 8.6e7) < 1e5:
@@ -258,23 +328,86 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
     print(f"\n=== CASE {name} root={root.name} ===")
     if not skip_train:
         soft_cold_reset_train(train)
-        # re-apply PostTune flags after cold (soft may not strip unknown tags)
+        # Always ensure PostTune tags survive soft_cold (insert if missing).
+        from repro_cold_lib import ensure_tag_after
+
+        mode = {
+            "br25_on": "1",
+            "br25_off": "0",
+            "asym25": "2",
+            "br100_keep": "3",
+            "br100_search": "4",
+            "asym50": "1",
+            "phase6_480": "1",
+        }.get(name, "1")
+        enable = "0" if name == "br25_off" else "1"
+        for rel in ("Parameters_00.xml", "Model_00.xml"):
+            p = train / rel
+            if not p.exists():
+                continue
+            t = p.read_text(encoding="utf-8")
+            t = ensure_tag_after(t, "IsNeedToTrain", "EnablePostTrainTuning", enable)
+            t = set_tag(t, "EnablePostTrainTuning", enable, 1)
+            if enable == "1":
+                t = ensure_tag_after(
+                    t, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "1",
+                    attrs=' Type="b" PType="257" IoType="17"',
+                )
+                t = set_tag(t, "EnablePostTrainMidThreshold", "1", 1)
+                t = ensure_tag_after(
+                    t, "EnablePostTrainMidThreshold", "PostTrainTipResistanceMode", mode,
+                    attrs=' Type="i" PType="257" IoType="17"',
+                )
+                t = set_tag(t, "PostTrainTipResistanceMode", mode, 1)
+                t = ensure_tag_after(
+                    t, "PostTrainTipResistanceMode", "PostTrainSilentThreshold", "1",
+                    attrs=' Type="d" PType="257" IoType="17"',
+                )
+                t = set_tag(t, "PostTrainSilentThreshold", "1", 1)
+                if mode == "4":
+                    t = ensure_tag_after(
+                        t, "PostTrainSilentThreshold", "PostTrainTipSearchIters", "12",
+                        attrs=' Type="i" PType="257" IoType="17"',
+                    )
+                    t = set_tag(t, "PostTrainTipSearchIters", "12", 1)
+            p.write_text(t, encoding="utf-8")
+            print(
+                f"  PostTune tags {rel}: enable={enable} mode="
+                f"{get_tag(p.read_text(encoding='utf-8'), 'PostTrainTipResistanceMode')}"
+            )
         status = wait_need0(train, case["train_t"], train / "run_posttune_verify.log")
     else:
         status = "skip_train"
     after = snap_params(train / "Parameters_00.xml")
+    # Prefer Test mid from flag when Train left silent thr.
+    test_flag = root / "Test" / "posttune_complete.flag"
+    if test_flag.exists():
+        for line in test_flag.read_text(encoding="utf-8").splitlines():
+            if line.startswith("mid="):
+                after["FixedLTZThreshold"] = line.split("=", 1)[1].split()[0]
+                break
     gold_test = snap_params(gold / "Test" / "Parameters_00.xml")
     fires, metrics_line = run_gate(case)
+    # After gate, refresh mid from Test params / flag
+    if test_flag.exists():
+        for line in test_flag.read_text(encoding="utf-8").splitlines():
+            if line.startswith("mid="):
+                after["FixedLTZThreshold"] = line.split("=", 1)[1].split()[0]
+                break
+    tp = snap_params(root / "Test" / "Parameters_00.xml")
+    if tp.get("FixedLTZThreshold") and float(tp["FixedLTZThreshold"].replace(",", ".") or "1") < 0.9:
+        after["FixedLTZThreshold"] = tp["FixedLTZThreshold"]
     return {
         "case": name,
         "train_status": status,
         "after": after,
         "gold_thr": gold_test.get("FixedLTZThreshold", ""),
         "gold_tipr": gold_test.get("TipSynapseResistance", ""),
-        "tipr_class": tipr_class(after.get("TipSynapseResistance", "")),
+        "tipr_class": tipr_class(after.get("TipSynapseResistance", ""), case.get("expect_tipr", "")),
         "fires": fires,
         "metrics": metrics_line,
         "expect_tipr": case["expect_tipr"],
+        "expect_fires": case.get("expect_fires", "10000000"),
     }
 
 

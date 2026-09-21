@@ -219,8 +219,8 @@ def run_gate(
             "--test-t",
             "40",
         ]
-        if skip_tipr_mid:
-            cmd.append("--skip-tipr-mid")
+    if skip_tipr_mid:
+        cmd.append("--skip-tipr-mid")
     log = root / "Test" / "run_repro_gate.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)

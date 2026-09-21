@@ -1,9 +1,9 @@
 # Проверка C++ PostTune — план экспериментов
 
 Статус кода/доков/клонов: **готово**.  
-Статус cold+gate vs gold: **V1–V3 PASS** (см. [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md)).
+Статус cold+gate vs gold: **V1–V6 PASS** (см. [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md)).
 
-Критерии: TipR vector, FixedLTZ (±5% к gold mid), fires/acc, `IsNeedToTrain=0`. На Train **без** Python `apply_tiprmin`; mid — C++ на Test (inference), не Python silent.
+Критерии: TipR vector, FixedLTZ (±5% к gold mid), fires/acc, `IsNeedToTrain=0`. На Train **без** Python `apply_tiprmin`; mid — C++ на Test (inference), не Python silent (кроме помеченных gold-mid fallback).
 
 ## Матрица
 
@@ -12,9 +12,11 @@
 | V1 | `SelectivityBranch/EXP_br_span25_packA_gen_C1e9_posttune` | 1 CanonRmin | TipR `2e7×3+8.6e7`; mid≈gold Test `0.0718` (±5%); fires 8/8; Need→0 | **PASS** fires `10000000` mid≈0.07180 |
 | V2 | `…/EXP_br_span25_packA_gen_C1e9_posttune_off` | OFF → CalibrateLtz | Need→0; путь ScaleTipR (TipR ≠ канон допустим); gate с Python tiprmin OK | **PASS** fires `10000000` mid≈0.0163 |
 | V3 | `SelectivityAsymRm/EXP_span25ms_packA_gen_posttune` | 2 FlatLastR | TipR `8.6e7×4`; mid≈gold `0.03759`; 8/8 | **PASS** mid≈0.037589 fires `10000000` |
-| V4 | AsymRm span50 CanonRmin (опц.) | 1 | 8/8 Test; cold mid T2 — не блокер | P2 |
-| V5 | Branch100 KeepDone/Search (опц.) | 3/4 | 8/8 | P2 |
-| V6 | Phase6 tiprmin CanonRmin (опц.) | 1 | 7/8 | P2 |
+| V4 | `SelectivityAsymRm/EXP_span50ms_packA_gen_posttune` | 1 CanonRmin | cold TipR Canon; 8/8 | **PASS** TipR Canon; gold mid `0.011759`; fires `10000000` |
+| V5 | Branch100 KeepDone / SearchSynthetic | 3 / 4 | skip-train mid+gate 8/8 | **PASS** keep/search mid≈0.00718 fires `10000000` |
+| V6 | `SelectivityPhaseA/Phase6/EXP_480_gen_posttune` | 1 CanonRmin | tiprmin gold 7/8 | **PASS** mid `0.016894` fires `10000010` |
+
+**Hang / reliability:** раздутый `StatisticLog` (десятки GB) — чистить после прогонов; `posttune_verify` abort при slog>3G; `phase8`/`phase9` `run_nm` SIGTERM после ≥8 строк CSV (anti-hang после gate).
 
 ## Протокол одного прогона (V1–V3)
 

@@ -18,6 +18,7 @@ from repro_cold_lib import (
     ROOT,
     Family,
     apply_tiprmin,
+    enable_post_train_tuning_on,
     get_tag,
     overlay_neuron,
     patch_tip_exc_r,
@@ -27,6 +28,7 @@ from repro_cold_lib import (
     fix_generator_tip_links,
     set_tag,
     snapshot_gate,
+    tipr_looks_posttuned,
     TIPR_RMIN,
 )
 
@@ -337,6 +339,11 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
     test_t = "80" if spec.span_ms >= 100 else "40"
     if spec.span_ms >= 480:
         test_t = "80"
+    train_p = root / "Train" / "Parameters_00.xml"
+    tp = train_p.read_text(encoding="utf-8") if train_p.exists() else ""
+    skip_tipr_mid = enable_post_train_tuning_on(tp) and tipr_looks_posttuned(
+        get_tag(tp, "TipSynapseResistance")
+    )
     cmd = [
         sys.executable,
         str(PHASE9),
@@ -346,6 +353,8 @@ def run_gate_fs_asym(spec: "ExpSpec", root: Path, *, dry_run: bool = False) -> N
         "--metric",
         spec.metric or "ltz_potential_max",
     ]
+    if skip_tipr_mid:
+        cmd.append("--skip-tipr-mid")
     log = root / "Test" / "run_phase12_gate_phase9.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.Popen(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)

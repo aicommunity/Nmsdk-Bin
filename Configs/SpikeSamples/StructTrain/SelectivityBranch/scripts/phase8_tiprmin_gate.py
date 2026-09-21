@@ -427,7 +427,8 @@ def main() -> None:
                 cmd_mid, stdout=mlog.open("w"), stderr=subprocess.STDOUT
             )
             mid_s2 = None
-            for _ in range(120):
+            # span100 free-run mid can exceed 10 min wall; allow ~30 min
+            for _ in range(360):
                 _time.sleep(5)
                 if flag.exists():
                     for line in flag.read_text(encoding="utf-8").splitlines():
