@@ -53,6 +53,7 @@ flowchart TD
 ## Артефакты
 
 - Логи: `<clone>/Train/run_posttune_verify.log`, `Test/run_gate.log`
+- Runtime (не коммитить): `posttune_mid_dbg.txt`, `posttune_tipr_live.txt` — в [`StructTrain/.gitignore`](.gitignore)
 - Сводка: [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md)
 - Оркестратор: [`scripts/posttune_verify.py`](scripts/posttune_verify.py)
 
