@@ -1,7 +1,7 @@
 # TimeNeuronTimeLearnerBranchTest_PreInh250
 
 Тест селективности после обучения с **PSI k=2.5**
-([`TimeNeuronTimeLearnerBranch_PreInh250`](../TimeNeuronTimeLearnerBranch_PreInh250/)).
+([`TimeNeuronTimeLearnerBranch_PreInh250`](../Train)).
 
 - `NeuronClassName = NSPNeuronGenPreinh2_5`
 - Tip Exc: `NPSynapseBioPreinh2_5` (`UsePresynapticInhibition=1`, `InhibitionCoeff=2.5`)
@@ -9,7 +9,7 @@
 - Analyzer: `PostPatternWindow=0.5`, `LateResponseWindow=1.5`
 - Watch (`Interface.xml` tab_1 верхний): Pattern / Dendritic / Soma / `LTZone.Potential (вход)`
 
-Исследование порога: [`../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md`](../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md).
+Исследование порога: [`../TimeNeuronTimeLearnerBranch/REPORT_preinh250_threshold.md`](../../TimeNeuronTimeLearnerBranch/Train/REPORT_preinh250_threshold.md).
 
 ## Прогон
 

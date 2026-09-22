@@ -14,7 +14,7 @@ Baseline reference: [`TimeNeuronTimeLearner/Test`](../TimeNeuronTimeLearner/Test
 |-----|-------|------|----------------|:--------:|:--------:|
 | EXP00 | [`EXP00_baseline/Train`](EXP00_baseline/Train/) | [`EXP00_baseline/Test`](EXP00_baseline/Test/) | контроль | нет | **4/8** |
 | EXP01 | веса EXP00 | [`EXP01_ltz_threshold_sweep/Test_thr*`](EXP01_ltz_threshold_sweep/) | `FixedLTZThreshold` | нет | **6/8** (thr=0.0135) |
-| EXP02 | веса EXP00 | [`Test_avg0`](EXP02_ltzone_average_mode/Test_avg0/), [`Test_avg1`](EXP02_ltzone_average_mode/Test_avg1/) | `UseAverageLTZonePotential` | нет | 4/8 / 4/8 |
+| EXP02 | веса EXP00 | [`Test_avg0`](EXP02_ltzone_average_mode/Test_avg0/), [`Test_avg1`] (исторический путь `EXP02_ltzone_average_mode/Test_avg1/`; файл/каталог отсутствует в текущем checkout) | `UseAverageLTZonePotential` | нет | 4/8 / 4/8 |
 | EXP03 | [`EXP03.../Train`](EXP03_sync_tolerance_015/Train/) | [`Test`](EXP03_sync_tolerance_015/Test/) | `SyncTolerance=0.015` | да + `-S` | **3/8** |
 | EXP04 | [`EXP04.../Train`](EXP04_sync_tolerance_010/Train/) | [`Test`](EXP04_sync_tolerance_010/Test/) | `SyncTolerance=0.010` | да + `-S` | **4/8** |
 | EXP05 | [`EXP05.../Train`](EXP05_resistance_gain_025/Train/) | [`Test`](EXP05_resistance_gain_025/Test/) | `ResistanceAdjustGain=0.25` | да + `-S` | **4/8** |
@@ -129,7 +129,7 @@ Cold retrain за 160 с не ушёл от уже settled длин (старт 
 
 - **Best EXP:** EXP01 `Test_thr00135` (и эквивалент EXP06 NPLTZone thr=0.0135)
 - **Best accuracy:** **6/8**
-- **Recommended snapshot:** [`EXP01_ltz_threshold_sweep/Test_thr00135/Parameters_00.xml`](EXP01_ltz_threshold_sweep/Test_thr00135/Parameters_00.xml)  
+- **Recommended snapshot:** [`EXP01_ltz_threshold_sweep/Test_thr00135/Parameters_00.xml`] (исторический путь `EXP01_ltz_threshold_sweep/Test_thr00135/Parameters_00.xml`; файл/каталог отсутствует в текущем checkout)\
   `FixedLTZThreshold=0.0135`, веса нейрона = EXP00 Train (`L=49/41/25/1`)
 - Оставшиеся FP: trial 4 (close pair start), trial 6 (early cluster)
 

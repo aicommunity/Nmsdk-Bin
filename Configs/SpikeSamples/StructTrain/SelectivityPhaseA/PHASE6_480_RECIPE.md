@@ -71,7 +71,7 @@ Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PH
 
 | Item | Value |
 |------|-------|
-| Source | clone PSI [`EXP04_preinh_250`](../../SelectivityPresynapticInhib/EXP04_preinh_250/) |
+| Source | clone PSI [`EXP04_preinh_250`](../SelectivityPresynapticInhib/EXP04_preinh_250) |
 | TipR / Rmin | @Rmin / `2e7` |
 | Silent | tgt=`0.039342` foil_max=`0.041606` (gap **−2.3e-3**) |
 | FixedLTZ | **0.038722** |
@@ -83,7 +83,7 @@ Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PH
 
 | Item | Value |
 |------|-------|
-| Train shell | [`RegressionFull480/EXP_baseline_gen`](../../SelectivityLtzCalibrate/RegressionFull480/EXP_baseline_gen/) + Model/Parameters from tiprmin |
+| Train shell | [`RegressionFull480/EXP_baseline_gen`](../SelectivityLtzCalibrate/RegressionFull480/EXP_baseline_gen) + Model/Parameters from tiprmin |
 | Test | **clone clean Test** tiprmin (не dirty inject) |
 | GTS | 2000 (совпадает с tiprmin) |
 | Gate | **7/8** selective — воспроизводит tiprmin |

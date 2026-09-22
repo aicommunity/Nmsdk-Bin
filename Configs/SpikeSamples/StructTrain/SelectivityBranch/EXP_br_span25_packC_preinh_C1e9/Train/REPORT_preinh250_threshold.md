@@ -1,7 +1,7 @@
 # PreInh250: порог CalibrateLtz vs recognition
 
 Date: 2026-08-21  
-Конфиги: [`TimeNeuronTimeLearnerBranch_PreInh250`](../TimeNeuronTimeLearnerBranch_PreInh250/) → [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../TimeNeuronTimeLearnerBranchTest_PreInh250/)  
+Конфиги: [`TimeNeuronTimeLearnerBranch_PreInh250`](../../../TimeNeuronTimeLearnerBranch_PreInh250/Train) → [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../../../TimeNeuronTimeLearnerBranch_PreInh250/Test)\
 Сводный контекст: [`REPORT_ampeq_nextseginh.md`](REPORT_ampeq_nextseginh.md)
 
 ---

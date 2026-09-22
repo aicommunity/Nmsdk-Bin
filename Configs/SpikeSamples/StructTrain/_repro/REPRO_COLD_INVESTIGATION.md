@@ -7,7 +7,7 @@ Exact gold match optional.
 
 ## A/B results (2026-09-16)
 
-See [`COMPARE.md`](COMPARE.md).
+See [`COMPARE.md`] (исторический путь `COMPARE.md`; файл/каталог отсутствует в текущем checkout).
 
 | ID | cold | Need | L | acc | fires | vs gold |
 |----|------|------|---|-----|-------|---------|

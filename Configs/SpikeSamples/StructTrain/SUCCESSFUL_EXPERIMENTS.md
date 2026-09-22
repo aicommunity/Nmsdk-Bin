@@ -1,5 +1,8 @@
 # Реестр успешных экспериментов StructTrain
 
+**Уточнение аудита 2026-09-22:** таблицы ниже — исторические результаты при указанных pins и gate. Они не доказывают held-out качество текущего HEAD. Каталог PHASE12 содержит 12 VALIDATED (включая две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения. Известны дефекты окон, strict/last-pulse и inference-mid. [Разбор и актуальный контракт](AUDIT_2026-09-22.md).
+
+
 Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
 Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).  
 **Карта надёжности (что полностью подтверждено vs только золото на диске):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md).  
@@ -15,7 +18,7 @@
 В реестр входит только канонический `<root>/Test` с:
 
 1. `ok_audit = ok_strict ∧ (response_quality = ok_single) ∧ (n = 8)`
-2. **Last-pulse:** на цели `neuron_t_rel ≥ 0.8 · pattern_end` (`pattern_end = Σ ISI` пробы)
+2. **Исторический ручной last-pulse (не строгая граница):** на цели `neuron_t_rel ≥ 0.8 · pattern_end` (`pattern_end = Σ ISI` пробы)
 3. Предпочтительно acc ≥ 7 и без FP; soft 6/8 + early-spike на цели — **не** включать
 
 Точность в таблице — `acc_legacy` (при PASS совпадает с `acc_strict`). Режим — `mode_legacy` из CSV (`selective` / `partial_FA`).
@@ -24,9 +27,11 @@
 
 Термины: глоссарий в CAMPAIGN_REPORT (алгоритм обучения, ответ/спайк, тип компонента LTZone, last-pulse).
 
+Функция audit_structtrain.last_pulse_ok расходится с ручным правилом: использует 0.8*max(ISI). Для строгой новой проверки нужна sum(ISI) с допуском дискретизации.
+
 ### Слои ворот (без изменения порогов кода)
 
-Реализация: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py); mid-pattern spike на цели **не** ставит `neuron_fired` после фикса `kMinStimForInWindowFire` в `NPatternResponseAnalyzer` (PulseLib; нужен полный 4-pulse паттерн и окно после последнего стимула).
+Реализация: [selectivity_metrics.py](scripts/selectivity_metrics.py). Проверка kMinStimForInWindowFire не гарантирует отсутствие раннего PASS: случай одного уже наблюдавшегося стимула считается полным. Strict также не учитывает одиночный ранний foil-spike при нулевых fire/late-флагах.
 
 | Слой | Что считает | Порог PASS | Late на чужом | Acc |
 |------|-------------|------------|---------------|-----|
@@ -39,7 +44,7 @@
 
 - Канонический **`ok_audit` не требует 8/8**: PhaseA / PSI / TimeNeuron с **4–6/8** `partial_FA` могут иметь `ok_audit=1` и числятся в реестре ниже — это audit-PASS при частичных in-window FP, не «полная селективность».
 - Кампании **PHASE5 (AsymRm 25/50/100)** и **PHASE6 (@480 мс)** дополнительно целят **8/8 selective** + last-pulse (процедурная цель волны, не смена формулы `ok_audit`).
-- Mid-pattern / early edge на цели без in-window после last stim → `neuron_fired=0`; late-only на цели → `late_fn`.
+- Ранний target-спайк после первого стимула может установить neuron_fired; late-only на цели учитывается как late_fn.
 
 Ошибки на чужом (nontarget):
 

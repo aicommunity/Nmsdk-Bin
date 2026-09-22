@@ -45,7 +45,7 @@ flowchart TD
 | Neuron Sums | `SomaSumPotential` | avg `Output` каналов сомы |
 
 `DendriticSumPotential ≈ mean(DendriteNeuronAmplitude[1..4]) = DendriteNeuronAmplitude[0]/4`.  
-Подробнее: [корневой README серии](../../README.md).
+Подробнее: [корневой README серии](../../../../SelectivityPresynapticInhib/README.md).
 
 ### Использование
 
@@ -54,10 +54,10 @@ flowchart TD
 NeuroModelerConsole -c Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_autothr/Test/Project.ini -s -t 20 -x
 ```
 
-Родительский обзор: [`../README.md`](../README.md).
+Родительский обзор: [`../README.md`](../../../../SelectivityPresynapticInhib/README.md).
 
 ### Связанные материалы
 
-- [`REPORT_k_sweep.md`](../../REPORT_k_sweep.md) — сводка k-sweep
-- [`REPORT_gui_autothr.md`](../../REPORT_gui_autothr.md) — GUI/autothr
+- [`REPORT_k_sweep.md`](../../../../SelectivityPresynapticInhib/REPORT_k_sweep.md) — сводка k-sweep
+- [`REPORT_gui_autothr.md`](../../../../SelectivityPresynapticInhib/REPORT_gui_autothr.md) — GUI/autothr
 - Компоненты: `Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTimeLearner.md`

@@ -36,7 +36,7 @@ Wave6 exhausted soft/strip/overlay invests for quality tails left as `ARTIFACT_K
 ### Proposals
 1. **Config/protocol:** soft-cold with `EnableDebug=1` on FS25 Train; capture logger ampDt/synced dumps to `_repro/_invest/fs25_unblock/`.
 2. **Scripts:** one-shot `run-fs --exp …` after pin bump; auto-regress hook Branch25+AsymRm25.
-3. **C++** ([`NNeuronTimeLearner.cpp`](../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp)):
+3. **C++** ([`NNeuronTimeLearner.cpp`](../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp)):
    - **A1 (P0):** In `EndOfLearning` (~3471), when `EnableDebug`, log `AllDendritesSynced`, `AllSynapsesNormalized`, per-dend `|Initial-MaxAmp|`, `ResistanceStatus`.
    - **A2 (P0):** Plateau Need-clear: if `AllDendritesSynced()` and L unchanged for M epochs and `max_i|ampDt|<2e-5`, call `SetIsNeedToTrain(false)` — **guard** with FastSpan / EstDelay / neuron-class flag (not global).
    - **A3 (P1):** Do **not** raise global `kAmpNormEps` without AsymRm25 thr regress.
@@ -132,7 +132,7 @@ NextSegInh @span100 blocks length growth under cold reset (Branch short nextseg2
 ### Proposals
 1. **Config:** soft `-t`640 with train-extend (one controlled attempt); compare MatrixData to nextseg50 VALIDATED; toggle NextSeg 1→0 diagnostic clone (not promote).
 2. **Scripts:** assert `EnableNextSegmentInhibition` in prepare; full phase8 only after Need=0.
-3. **C++** ([`NNeuronTimeLearnerBranch.cpp`](../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)) — **only after config exhaust**:
+3. **C++** ([`NNeuronTimeLearnerBranch.cpp`](../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)) — **only after config exhaust**:
    - **D1 (P1):** Log NextSeg interaction with `ChangeDendriteStatus` / length grow when EnableNextSegmentInhibition.
    - **D2 (P2):** Scoped exception for span≥100 NextSeg cold start — high risk to Branch VALIDATED.
 

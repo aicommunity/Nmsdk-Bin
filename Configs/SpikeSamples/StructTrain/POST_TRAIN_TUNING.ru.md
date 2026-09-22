@@ -1,124 +1,70 @@
 # Пост-тюнинг в модуле-учителе (PostTune)
 
-**English:** [`POST_TRAIN_TUNING.md`](POST_TRAIN_TUNING.md)  
-**Связано:** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.7 · [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) · [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)
+[English](POST_TRAIN_TUNING.md) · [Аудит текущей реализации](AUDIT_2026-09-22.md) · [Историческая карта рецептов](RELIABILITY_MAP.ru.md)
 
-После синхронизации длин и нормализации амплитуд учитель может сам выполнить рецепт **tip-resistance + silent mid FixedLTZ**, без обязательного Python `apply_tiprmin` / silent probe.
-
-**По умолчанию этап включён** (`EnablePostTrainTuning=true` в `ADefault`). Старые XML без свойства при cold retrain получают PostTune.
+Сверено с PulseLib 9a6cee0b / Bin 2d1d0214 и объединённой рабочей документацией; пересмотр 2026-09-23. Учитель выполняет tip-resistance + silent-mid FixedLTZ. `EnablePostTrainTuning=true` по умолчанию; старые XML без свойства наследуют PostTune.
 
 ## Фазы
 
-| | `NNeuronTimeLearner` | `NNeuronTimeLearnerBranch` |
-|--|--|--|
-| 0 | Sync | Sync |
-| 1 | Normalize | Normalize |
+| Значение | NNeuronTimeLearner | NNeuronTimeLearnerBranch |
+|----------|-------------------|-------------------------|
+| 0 | Joint sync + normalize | Joint sync + normalize, обратный порядок |
+| 1 | Не назначается | Не назначается |
 | 2 | Done | Done |
-| 3 | **PostTune** | CalibrateLtz (legacy, только если tuning **OFF**) |
-| 4 | — | **PostTune** |
+| 3 | PostTune | Legacy CalibrateLtz при PostTune OFF |
+| 4 | — | PostTune |
 
-Порядок: Sync → Normalize → (PostTune **или** legacy CalibrateLtz) → Done.
+При включённом PostTune Branch пропускает обычный переход через legacy CalibrateLtz. SearchSynthetic вызывает ScaleTipR для snapshot отката. Done допускает best-effort завершение, а не только точное совпадение пиков и амплитуд.
 
-При `EnablePostTrainTuning=1` Branch **не** вызывает `ScaleTipResistancesForParallelActivation` и **не** входит в `kPhaseCalibrateLtz`.
-
-## Свойства (оба класса)
+## Свойства и режимы
 
 | Свойство | Default | Смысл |
-|----------|---------|--------|
-| `EnablePostTrainTuning` | `true` | Мастер-флаг |
-| `PostTrainTipResistanceMode` | `1` (CanonRmin) | 0 Off · 1 CanonRmin · 2 FlatLastR · 3 KeepDone · 4 SearchSynthetic |
-| `EnablePostTrainMidThreshold` | `true` | Silent-mid FixedLTZ |
-| `PostTrainMidMetric` | `0` Auto | TL→LTZ peak; Branch→**shared soma amp** (= CSV `soma_amp_sum` / SomaNeuronAmplitude row0) |
-| `TipResistanceCanonFloor` | `2e7` | Пол / первые tips CanonRmin |
-| `TipResistanceCanonLast` | `8.6e7` | Последний tip / FlatLastR |
-| `PostTrainSilentThreshold` | `1.0` | Порог на время зондов |
-| `PostTrainSyntheticFoilCount` | `8` | Макс. чужих паттернов |
-| `PostTrainTipSearchIters` | `12` | Лимит для mode=4 |
-| `PostTrainTuneComplete` | `false` | Служебно: PostTune закончен |
-| `AutoScaleIterationGap` | `true` | gap/delay = span+settle+slack (XML `IterationGap` не поднимает пол) |
+|----------|---------|-------|
+| EnablePostTrainTuning | true | Включение этапа |
+| PostTrainTipResistanceMode | 1 | 0 Off; 1 CanonRmin; 2 FlatLastR; 3 KeepDone; 4 SearchSynthetic |
+| EnablePostTrainMidThreshold | true | Калибровка порога |
+| PostTrainMidMetric | 0 Auto | TL: LTZ; Branch: shared soma (SomaNeuronAmplitude row0 / CSV soma_amp_sum); режимы 1/2 требуют учёта ограничений ниже |
+| TipResistanceCanonFloor / TipResistanceCanonLast | 2e7 / 8.6e7 | Сопротивления канона |
+| PostTrainSilentThreshold | 1.0 | Порог silent-зондов |
+| PostTrainSyntheticFoilCount | 8 | Максимум синтетических foils |
+| PostTrainTipSearchIters | 12 | Число проходов поиска |
+| PostTrainTuneComplete | false | Служебный признак завершения, не pass избирательности |
+| AutoScaleIterationGap | true | gap=span+settle+slack; dataset delay=settle+slack |
 
-Канон тайминга: [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
+[Формулы тайминга](docs/TIMING_AND_GAP.ru.md). При AutoScale=1 XML IterationGap не является нижним пределом.
 
-## Режимы tip-resistance
+Off сохраняет TipR; CanonRmin задаёт floor для первых N−1 tips и last для последнего, синхронизирует Exc; FlatLastR задаёт last всем tips; KeepDone использует состояние после joint train. Search начинает с канона, изменяет TipR, принимает BestTips только при LandscapeOk и улучшении gap, иначе возвращает snapshot.
 
-| Mode | Действие |
-|------|----------|
-| 0 Off | TipR не трогать; mid по текущему |
-| 1 CanonRmin | `[floor]×(N−1)+[last]`; `ResistanceMin≥floor`; Exc sync |
-| 2 FlatLastR | `[last]×N` (AsymRm span25) |
-| 3 KeepDone | snapshot с конца Normalize |
-| 4 SearchSynthetic | старт CanonRmin; tip×mult×pass; BestTips при trial `landscape_ok`; после apply — free-run mid: fail → `free_run_reject_best` → **KeepDone snapshot** (Branch: ScaleTipR×N до Canon) |
+## Mid и ограничения корректности
 
-Сводка mode→span: [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.7.
+В Train плохой landscape может оставить FixedLTZ=1.0. В inference при FixedLTZ>=0.9 `MaybeStartInferenceMidProbes` играет текущую Test Matrix с выключенным Analyzer, вычисляет mid, записывает flag, сбрасывает dataset/analyzer и повторяет ту же Matrix.
 
-```mermaid
-flowchart LR
-  Sync --> Normalize --> PostTune[PostTune_TipR] --> Done[Need0_silent_mid]
-```
+Первые N строк Matrix считаются target; MatrixClasses не определяет выбор target. Калибровка на той же Test Matrix является принятой особенностью текущего алгоритма (A07), а не ошибкой. Полученная оценка описывает качество на калибровочном наборе; независимая оценка обобщения потребовала бы отдельного исследования. Перестановка sample 0 меняет калибруемую цель по этому контракту.
 
-## Алгоритм mid-зондов (паритет с phase8 / phase9 / pack A)
+Формула mid: 0.5*(target+max_foil_below), иначе target*0.99. Helper по-прежнему исключает foils выше target. В **Branch 9a6cee0b** плохой finite landscape оставляет silent-порог и в Train, и в inference. В обычном **TimeLearner** guard остаётся только для Train. Проверки NaN/полноты метрик отсутствуют у обоих; Branch при target=0.5 и foil=NaN всё ещё сохраняет mid=0.495.
 
-**TipR** считается в Train PostTune. **Silent mid** — в **Test inference** (тот же C++, без Python):
+После выбора BestTips в Branch Search добавлен отдельный free-run. Если он отклоняет BestTips, возвращается KeepDone/ScaleTipR snapshot с search_reverted=1. При включённом расчёте mid Train Search оставляет silent-порог даже при хорошем landscape; PostTuneInferenceMidDone=true запрещает второй inference-mid в оставшемся окне этого процесса. Для Test-калибровки нужен новый процесс/reset.
 
-| Класс | Метрика mid | Gate |
-|-------|-------------|------|
-| Branch | shared soma amp (`soma_amp_sum`) | `phase8 --skip-tipr-mid` |
-| TL (AsymRm) | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
+Это частичное исправление A08–A09: нормальный Branch-путь больше не рассчитывает mid по последнему постороннему кандидату. Однако:
+- сбой SetupPostTuneFreeRunProbes всё ещё приводит к Finalize на нулевых метриках и PostTrainTuneComplete=true;
+- после free-run reject метрики в flag относятся к отклонённым BestTips, а tipr уже содержит snapshot; повторного измерения snapshot в Train нет;
+- плохой inference-landscape оставляет silent-порог, но Complete/InferenceMidDone=true; это завершение процедуры, не успешная калибровка;
+- обычный TimeLearner не получил повторный замер выбранных Tips;
+- Branch mode=1 (LTZ) всё ещё игнорируется в free-run, а iteration-путь использует max(LTZ,soma). Коммит daf9c23 уточнил комментарии об Auto/Soma, не исправил выбор LTZ.
 
-1. Train PostTune: TipR (+ Exc). Если Train free-run даёт инверсии foils / gap≪1 → `FixedLTZ=1.0` (silent), `Need=0`.
-2. Test `ABuild`: при `FixedLTZ≥0.9` — `Dataset.StateGeneration=0` (не играть pack до mid).
-3. Test `MaybeStartInferenceMidProbes`: играет **текущую Matrix** (pack A), без лишнего `Neuron->Reset`; mid = `0.5*(tgt+max_below)` иначе `tgt*0.99`; flag `posttune_complete.flag`. Analyzer на время mid выключен.
-4. Gate `--skip-tipr-mid`: если thr silent → pass1 до flag → flush mid в XML → pass2 gate.
+[Доказательства и обновлённый план](AUDIT_2026-09-22.md).
 
-SearchSynthetic (mode=4) выполняется **только** в Train PostTune loop (`PostTrainTipSearchIters=12` полных pass).  
-Кандидат в BestTips только если `LandscapeOk(tgt, foils)` (все foils &lt; tgt) **и** `gap > BestGap`. После `apply_best` — Train free-run mid; если `!landscape_ok` → `free_run_reject_best` → snapshot + `search_reverted=1`.  
-**Train всегда оставляет silent mid** после Search (Test C++ inference mid); Train не запускает второй mid в leftover-окне.  
-**Test-only / `--skip-train` smoke ≠ валидация Search**. Приёмка: `posttune_verify --case br100_search` (без skip-train); PASS если TipR≠keep **или** `search_reverted=1`; mid только `cpp`; fires **строго** `10000000`. См. [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
+## Проверки и воспроизводимость
 
-```mermaid
-flowchart TD
-  snap[snapshot_TipR] --> trial[Canon_then_tip_x_mult_x_pass]
-  trial --> ok{landscape_ok}
-  ok -->|yes and gap_gt_Best| best[update_BestTips]
-  ok -->|no| skip[skip_candidate]
-  best --> more{pass_lt_Iters}
-  skip --> more
-  more -->|yes| trial
-  more -->|no Best empty| rev[revert_snapshot]
-  more -->|no Best ok| apply[apply_best]
-  apply --> fr{free_run_landscape}
-  fr -->|ok| keep[keep_BestTips]
-  fr -->|fail| rej[free_run_reject_best]
-```
+[План проверки](POST_TRAIN_VERIFY.ru.md) описывает желаемые критерии. Текущий `posttune_verify.py` не обеспечивает все эти критерии автоматически: expect_fires/expect_tipr не превращены в обязательный failure, а неуспех дочернего gate не исключает чтение старых результатов.
 
-```mermaid
-flowchart LR
-  FixedLTZ[FixedLTZ_ge_0_9] --> Mid[MaybeStartInferenceMid]
-  Mid --> Flag[posttune_complete_flag]
-  Flag --> Gate[gate_skip_tipr_mid]
-```
+[Сохранённый результат](_repro/POSTTUNE_VERIFY_RESULT.md) содержит новый срез 16:47:46Z с одной строкой br100_search; старые br25_on/asym25 skip_train сохранены отдельно как срез 11:33:05Z. Он не подтверждает cold retrain всех вариантов или полный план V3–V6.
 
-Код: `NNeuronPostTrainTune.*` (`LandscapeOk`, `ComputeMidThreshold`), `NNeuronTimeLearner` / `Branch::{MaybeStartInferenceMidProbes,FinalizePostTuneMid,SetupPostTuneFreeRunProbes}`.
+`--skip-tipr-mid` отключает внешний Python-рецепт в phase8/phase9; при silent-пороге возможны два запуска Test: mid, затем gate. `post_train_hygiene` пропускает tiprmin для уже canon/flat; force-python-hygiene меняет процедуру и должен фиксироваться в provenance.
 
-## Verify (P0 cold/smoke)
+`EnablePostTrainTuning=0` возвращает legacy ветку, но побайтовой эквивалентности старому pin не гарантирует: AutoScaleIterationGap и другие defaults изменились. Для регрессии фиксировать исходники, бинарник, XML, начальное состояние и все overrides.
 
-Сводка: [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md) · план: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md)
 
-| case | TipR | mid (C++) | vs gold | fires |
-|------|------|-----------|---------|-------|
-| br25_on CanonRmin | `2e7×3+8.6e7` | ≈0.07180 | ±5% | `10000000` |
-| br25_off CalibrateLtz | ScaleTipR (≠канон) | 0.0163 | (legacy path) | `10000000` |
-| asym25 FlatLastR | `8.6e7×4` | ≈0.037589 | ±5% | `10000000` |
+## Тайминг и аварийный откат
 
-## Скрипты
-
-- `scripts/repro_cold_lib.py` → `post_train_hygiene`: при PostTune ON и TipR уже канон/flat — **skip** Python tiprmin (`--force-python-hygiene` в harness для отладки).
-- `SelectivityBranch/scripts/phase8_tiprmin_gate.py` → `--skip-tipr-mid`: TipR с Train; mid из C++ inference (два NM, если thr silent).
-- `SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py` → `--skip-tipr-mid`: то же для TL / LTZ mid.
-
-## Регресс
-
-Клон с явным `EnablePostTrainTuning=0` сохраняет прежний путь Branch CalibrateLtz (байт-в-байт относительно pin до PostTune).  
-Примеры: `SelectivityBranch/EXP_br_span25_packA_gen_C1e9_posttune_off`.
-
-Аварийный откат AutoScale: см. [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md) §«Аварийный откат» (`AutoScaleIterationGap=0` или ADefault=false + pin на posttune-клонах). `kMinSettle=0.20` откатывать отдельно.
+AutoScaleIterationGap=0 возвращает max(configured, physical); изменение kMinSettle — отдельное изменение модели. Замеры 85/90 секунд wall соответствуют отношению примерно 1.06, а 6× относится только к gap 1.5/0.25. Они не доказывают шестикратное ускорение всей программы. [Исходные числа и ограничения](docs/TIMING_AND_GAP.ru.md).

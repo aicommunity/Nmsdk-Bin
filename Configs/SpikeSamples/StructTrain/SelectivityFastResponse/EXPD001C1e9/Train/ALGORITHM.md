@@ -1,8 +1,11 @@
 # NNeuronTimeLearner — алгоритм обучения
 
+**Актуализация 2026-09-22:** текущие defaults, фазы PostTune и ограничения измерений описаны в [контракте и аудите](../../../AUDIT_2026-09-22.md). Численные примеры ниже относятся к рецептам соответствующих экспериментов; для воспроизведения необходим их исходный pin.
+
+
 Обучение временного паттерна: один burst `NDatasetMatrix` (fan-out `Generator1`) на все дендриты; **joint train** — one-dendrite-per-burst подбор длины плюс нормализация амплитуд синапсами (как `NNeuronLearner`).
 
-Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
+Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp`](../../../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
 
 ## Wiring
 
@@ -26,7 +29,7 @@ DatasetMatrix.Generator1.Output
 | 1 | (legacy) | Не выставляется |
 | 2 | Done | `TrainingPattern` / индексы на нейроне |
 
-`EndOfLearning` → Done при `AllDendritesSynced() ∧ AllSynapsesNormalized()` (без Sync→Normalize).
+`EndOfLearning` вызывается при `AllDendritesSynced() ∧ AllSynapsesNormalized()`; при EnablePostTrainTuning=true сначала выполняется PostTune (фаза 3), затем Done. Предикаты допускают best-effort.
 
 **Два контура:**
 
@@ -37,7 +40,7 @@ Feedforward `r_model` — ориентир, не hard floor: при `amp < Initi
 
 ## Итерация
 
-1. `EffectiveIterationGap = max(IterationGap, span+settle+slack)`.
+1. `EffectiveIterationGap = AutoScaleIterationGap ? span+settle+slack : max(IterationGap, span+settle+slack)`.
 2. `BeginTrainingIteration` — cumsum ISI.
 3. `MeasureMaxPotentialAndTime`: для `i < N−1` окно ±margin вокруг `Expected[i]+(L_i−1)·EstDelayPerSeg`, не заходя в зону пика следующего импульса; эталон — `pattern_end+settle`.
 4. `FinishTrainingIteration`:

@@ -19,7 +19,7 @@ Tip-синапс (`NPulseSynapse::ACalculate2`):
 - канон: `C = 4k/R` → пик **`1/R`** (как линейный режим при `p → 1`);
 - legacy bug в `SetInhibitionCoeff`: `C = 4(k+1)/R` → пик `(1+1/k)/R` (для k=0.5 → `3/R`).
 
-**Исправление (PulseLib):** `SetInhibitionCoeff` выровнен с `SetResistance` / `SetUsePresynapticInhibition`: при PSI и `k>0` → `C=4k/R`, иначе `1/R`. То же для `NPulseSynChannel` / `NContinuesSynChannel::SetInhibitionCoeff` (убрать `+1`). Docs: [`NPulseSynapse.md`](../../../../Libraries/Nmsdk-PulseLib/Docs/Components/NPulseSynapse.md).
+**Исправление (PulseLib):** `SetInhibitionCoeff` выровнен с `SetResistance` / `SetUsePresynapticInhibition`: при PSI и `k>0` → `C=4k/R`, иначе `1/R`. То же для `NPulseSynChannel` / `NContinuesSynChannel::SetInhibitionCoeff` (убрать `+1`). Docs: [`NPulseSynapse.md`](../../../../../Libraries/Nmsdk-PulseLib/Docs/Components/NPulseSynapse.md).
 
 `R` у `NPSynapseBio` **не меняли** (`2e7*4.3`).
 

@@ -12,7 +12,7 @@ cmake --build build/linux-gcc-debug-local --target Nmsdk-PulseLib.core NeuroMode
   -s -t 160 -x -S
 ```
 
-Test: [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/).
+Test: [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../Test).
 
 После Done (пример): `L≈[89,46,25,1]`, Inh@`{90,47,26,2}`, `gen_links=8`, `FixedLTZ≈0.065`, tip[N−1] после amp-eq ≫ Base×N. Test → **7/8** (fn=0, fp=1).
 

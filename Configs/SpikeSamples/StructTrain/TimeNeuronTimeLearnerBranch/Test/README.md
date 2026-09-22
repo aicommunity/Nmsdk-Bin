@@ -1,6 +1,6 @@
 # TimeNeuronTimeLearnerBranchTest
 
-Тест селективности обученного `NNeuronTimeLearnerBranch` на 8 стимулах (1 целевой + 7 отрицательных). Алгоритм: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../TimeNeuronTimeLearnerBranch/ALGORITHM.md).
+Тест селективности обученного `NNeuronTimeLearnerBranch` на 8 стимулах (1 целевой + 7 отрицательных). Алгоритм: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../Train/ALGORITHM.md).
 
 Analyzer: `PostPatternWindow=0.5`, `LateResponseWindow=1.5`.
 

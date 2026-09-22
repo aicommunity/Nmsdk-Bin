@@ -1,9 +1,9 @@
 # TimeNeuronTimeLearnerBranchTest_NextSegInh
 
 Тест селективности после обучения с **`EnableNextSegmentInhibition=1`**
-([`TimeNeuronTimeLearnerBranch_NextSegInh`](../TimeNeuronTimeLearnerBranch_NextSegInh/)).
+([`TimeNeuronTimeLearnerBranch_NextSegInh`](../Train)).
 
-Алгоритм: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../TimeNeuronTimeLearnerBranch/ALGORITHM.md).
+Алгоритм: [../TimeNeuronTimeLearnerBranch/ALGORITHM.md](../../TimeNeuronTimeLearnerBranch/Train/ALGORITHM.md).
 
 ## Проводка (из learner)
 

@@ -5,7 +5,7 @@ Date: 2026-08-14
 
 ## 1. Механизм
 
-После `EndOfLearning()` (до `SetIsNeedToTrain(false)`) опционально вызывается `CalibrateFixedLTZThresholdFromTraining()` в [`NNeuronTimeLearner`](../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
+После `EndOfLearning()` (до `SetIsNeedToTrain(false)`) опционально вызывается `CalibrateFixedLTZThresholdFromTraining()` в [`NNeuronTimeLearner`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
 
 **Трекинг:** на каждой training-итерации (при `TrainingLTZThreshold=100`) записываются min/max `LTZone.Potential`. На последней итерации с `AllDendritesSynced()` — snapshot в `LastSyncedMinLTZ` / `LastSyncedMaxLTZ`.
 

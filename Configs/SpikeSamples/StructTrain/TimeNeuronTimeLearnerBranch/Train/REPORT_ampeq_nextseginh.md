@@ -6,7 +6,7 @@ Date: 2026-08-20
 Метрика: `NPatternResponseAnalyzer` → `SelectivityLog/results.csv` (`match` 0/1 + `error_class` / `late_fired`), 8 trials (1 target + 7 negative).
 `PostPatternWindow=0.5`, `LateResponseWindow=1.5` (поздние LTZone-спайки вне окна match → `late_fp` / `late_fn`).
 
-Код: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)  
+Код: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)\
 Алгоритм: [`ALGORITHM.md`](ALGORITHM.md)
 
 PulseLib: `df1bdfa` — tip amp-eq + `EnableNextSegmentInhibition`.  
@@ -46,7 +46,7 @@ Mute-solo вклады выравниваются к distal target, затем �
 | Done / CalibrateLtz | все пары → **2N** links |
 | Inh R | без отдельного тюна в первом прогоне |
 
-ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/NNeuronTimeLearnerBranch.xml).
+ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../../ClDesc/PulseLibrary/ru-RU/NNeuronTimeLearnerBranch.xml).
 
 ---
 
@@ -55,11 +55,11 @@ ClDesc: [`NNeuronTimeLearnerBranch.xml`](../../../../ClDesc/PulseLibrary/ru-RU/N
 | Роль | Путь | Флаг Inh | Accuracy |
 |------|------|:--------:|:--------:|
 | Train baseline | [`TimeNeuronTimeLearnerBranch`](./) | 0 | — (train) |
-| Test baseline | [`TimeNeuronTimeLearnerBranchTest`](../TimeNeuronTimeLearnerBranchTest/) | 0 | **6/8** |
-| Train NextSegInh | [`TimeNeuronTimeLearnerBranch_NextSegInh`](../TimeNeuronTimeLearnerBranch_NextSegInh/) | 1 (seg) | — (train) |
-| Test NextSegInh | [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/) | 1 (seg) | **7/8** |
-| Train PreInh250 | [`TimeNeuronTimeLearnerBranch_PreInh250`](../TimeNeuronTimeLearnerBranch_PreInh250/) | PSI k=2.5 | — (train) |
-| Test PreInh250 | [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../TimeNeuronTimeLearnerBranchTest_PreInh250/) | PSI k=2.5 | **7/8** |
+| Test baseline | [`TimeNeuronTimeLearnerBranchTest`](../Test) | 0 | **6/8** |
+| Train NextSegInh | [`TimeNeuronTimeLearnerBranch_NextSegInh`](../../TimeNeuronTimeLearnerBranch_NextSegInh/Train) | 1 (seg) | — (train) |
+| Test NextSegInh | [`TimeNeuronTimeLearnerBranchTest_NextSegInh`](../../TimeNeuronTimeLearnerBranch_NextSegInh/Test) | 1 (seg) | **7/8** |
+| Train PreInh250 | [`TimeNeuronTimeLearnerBranch_PreInh250`](../../TimeNeuronTimeLearnerBranch_PreInh250/Train) | PSI k=2.5 | — (train) |
+| Test PreInh250 | [`TimeNeuronTimeLearnerBranchTest_PreInh250`](../../TimeNeuronTimeLearnerBranch_PreInh250/Test) | PSI k=2.5 | **7/8** |
 | Static Inh (ручной XML, до learner-флага) | тот же Test_NextSegInh (старый прогон) | XML-hack | **7/8** (fn=1) |
 
 ---
@@ -124,7 +124,7 @@ PSI меняет форму tip-тока (`C=4k/R`); калибровка FixedL
 
 ### 5.2 Baseline amp-eq — trials
 
-CSV: [`TimeNeuronTimeLearnerBranchTest/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest/SelectivityLog/results.csv)
+CSV: [`TimeNeuronTimeLearnerBranchTest/SelectivityLog/results.csv`](../Test/SelectivityLog/results.csv)
 
 | trial | class | fired | late | late_t_rel | soma_amp_sum | match | error_class |
 |------:|------:|------:|-----:|-----------:|-------------:|------:|:-----------:|
@@ -141,7 +141,7 @@ In-window FP: trials **2** и **6**. Дополнительно **2× late_fp** 
 
 ### 5.3 Trained NextSegInh — trials
 
-CSV: [`TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv)
+CSV: [`TimeNeuronTimeLearnerBranchTest_NextSegInh/SelectivityLog/results.csv`](../../TimeNeuronTimeLearnerBranch_NextSegInh/Test/SelectivityLog/results.csv)
 
 | trial | class | fired | late | late_t_rel | soma_amp_sum | match | error_class |
 |------:|------:|------:|-----:|-----------:|-------------:|------:|:-----------:|
@@ -159,7 +159,7 @@ In-window: **7/8** (fn=0, fp=1 на trial 6).
 
 ### 5.4 PreInh250 (PSI k=2.5) — trials (после полного sync)
 
-CSV: [`TimeNeuronTimeLearnerBranchTest_PreInh250/SelectivityLog/results.csv`](../TimeNeuronTimeLearnerBranchTest_PreInh250/SelectivityLog/results.csv)  
+CSV: [`TimeNeuronTimeLearnerBranchTest_PreInh250/SelectivityLog/results.csv`](../../TimeNeuronTimeLearnerBranch_PreInh250/Test/SelectivityLog/results.csv)\
 Отчёт порога: [`REPORT_preinh250_threshold.md`](REPORT_preinh250_threshold.md).
 
 | trial | class | fired | late | soma_amp_sum | match | error_class |
@@ -239,9 +239,9 @@ cmake --build build/linux-gcc-debug-local \
 ## 8. Связанные материалы
 
 - [`ALGORITHM.md`](ALGORITHM.md) — amp-eq и § EnableNextSegmentInhibition  
-- [`TimeNeuronTimeLearnerBranchTest/README.md`](../TimeNeuronTimeLearnerBranchTest/README.md)  
-- [`TimeNeuronTimeLearnerBranchTest_NextSegInh/README.md`](../TimeNeuronTimeLearnerBranchTest_NextSegInh/README.md)  
-- [`TimeNeuronTimeLearnerBranch_NextSegInh/README.md`](../TimeNeuronTimeLearnerBranch_NextSegInh/README.md)  
-- [`TimeNeuronTimeLearnerBranch_PreInh250/README.md`](../TimeNeuronTimeLearnerBranch_PreInh250/README.md)  
-- [`TimeNeuronTimeLearnerBranchTest_PreInh250/README.md`](../TimeNeuronTimeLearnerBranchTest_PreInh250/README.md)  
+- [`TimeNeuronTimeLearnerBranchTest/README.md`](../Test/README.md)\
+- [`TimeNeuronTimeLearnerBranchTest_NextSegInh/README.md`](../../TimeNeuronTimeLearnerBranch_NextSegInh/Test/README.md)\
+- [`TimeNeuronTimeLearnerBranch_NextSegInh/README.md`](../../TimeNeuronTimeLearnerBranch_NextSegInh/Train/README.md)\
+- [`TimeNeuronTimeLearnerBranch_PreInh250/README.md`](../../TimeNeuronTimeLearnerBranch_PreInh250/Train/README.md)\
+- [`TimeNeuronTimeLearnerBranchTest_PreInh250/README.md`](../../TimeNeuronTimeLearnerBranch_PreInh250/Test/README.md)\
 - [`REPORT_preinh250_threshold.md`](REPORT_preinh250_threshold.md) — исследование FN / CalibrateLtz vs sync

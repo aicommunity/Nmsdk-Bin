@@ -1,53 +1,21 @@
-# Post-train tuning in the teacher module (PostTune)
+# Post-train tuning in the teacher module
 
-**Russian:** [`POST_TRAIN_TUNING.ru.md`](POST_TRAIN_TUNING.ru.md)  
-**See also:** [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md) §4.7 · [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md)
+[Russian contract and property table](POST_TRAIN_TUNING.ru.md) · [Current implementation audit](AUDIT_2026-09-22.md)
 
-After length sync and amp normalize, the learner can apply the **tip-resistance + silent mid FixedLTZ** recipe inside C++ (`NNeuronTimeLearner` / `NNeuronTimeLearnerBranch`) without requiring Python `apply_tiprmin` / silent probe.
+Checked against PulseLib 9a6cee0b / Bin 2d1d0214 and reconciled working-tree documentation, 2026-09-23. Both learners perform joint synchronization and amplitude normalization in phase 0. Phase 1 is unused, Done is 2; PostTune is 3 for TimeLearner and 4 for Branch. Branch phase 3 is legacy CalibrateLtz with PostTune disabled. Best-effort exits mean Done is not a selectivity certificate.
 
-**Default: ON** (`EnablePostTrainTuning=true` in `ADefault`). Old XML without the property gets PostTune on cold retrain.
+Defaults: EnablePostTrainTuning=true, AutoScaleIterationGap=true. Old XML inherits these defaults. Disabling PostTune alone does not reproduce an older binary's behavior.
 
-## Phases
+Tip modes: 0 Off; 1 CanonRmin (2e7 for first N−1 tips, 8.6e7 last); 2 FlatLastR (8.6e7 all); 3 KeepDone; 4 SearchSynthetic. Branch search still calls ScaleTipR for its fallback snapshot. Branch now starts a fresh free-run for selected BestTips, reverting to its KeepDone/ScaleTipR snapshot on failure. With mid enabled, Search Train keeps a silent threshold and marks inference-mid done to prevent a second calibration in that process. Ordinary TimeLearner still has the old candidate/metric mismatch. Branch setup failure can still finalize zero metrics, and fallback flags can pair snapshot weights with rejected-candidate metrics.
 
-| | TimeLearner | Branch |
-|--|--|--|
-| 0–1 | Sync → Normalize | same |
-| 2 | Done | Done |
-| 3 | **PostTune** | CalibrateLtz (legacy, tuning **OFF** only) |
-| 4 | — | **PostTune** |
+Timing: gap=span+settle+slack; dataset delay=settle+slack. AutoScale=1 ignores the XML floor; AutoScale=0 takes max(configured, physical). See [timing](docs/TIMING_AND_GAP.ru.md).
 
-With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` during Normalize→CalibrateLtz; SearchSynthetic still runs ScaleTipR once as KeepDone revert snapshot.
+Inference-mid probes the current Test Matrix, treating sample 0 as target regardless of MatrixClasses, then evaluates the same matrix. This is the accepted current algorithm contract (A07), not a defect. Its measurements describe calibration-set quality; held-out generalization would be a separate research objective.
 
-## Tip modes (default CanonRmin=1)
+Ordinary TimeLearner inference may still commit a threshold for an invalid landscape. Branch now keeps the silent threshold for bad finite metrics, but NaN bypasses validation (target .5, foil NaN yields mid .495). Complete/InferenceMidDone remain true after a failed finite calibration. Branch Auto/Soma means shared soma (CSV soma_amp_sum); explicit LTZ selection is still ignored by free-run.
 
-0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic (trial BestTips if `landscape_ok`; free-run fail → `free_run_reject_best` → KeepDone/ScaleTipR)
+The [saved verification table](_repro/POSTTUNE_VERIFY_RESULT.md) separates the new 16:47:46Z one-case br100_search report from the old 11:33:05Z smoke rows. It does not demonstrate all cold-training cases in the [verification plan](POST_TRAIN_VERIFY.ru.md). The verifier does not currently enforce every declared fires/TipR expectation or reject all stale child-run results.
 
-## Timing
+The phase8/phase9 --skip-tipr-mid gates use C++ mid and may run Test twice when the initial threshold is silent. Record all overrides and data provenance; retain same-matrix calibration as the current contract; a held-out assessment is optional separate research.
 
-`AutoScaleIterationGap=true` (default): `EffectiveIterationGap = span + settle + slack` — XML `IterationGap=1.5` does not raise the floor.  
-Canon: [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
-
-## Mid probes (phase8 / phase9 / pack A parity)
-
-**TipR** in Train PostTune; **silent mid** in Test inference (same C++, no Python tiprmin/mid).
-
-| Class | Mid metric | Gate |
-|-------|------------|------|
-| Branch | shared soma amp (`soma_amp_sum`) | `phase8 --skip-tipr-mid` |
-| TL | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
-
-Train free-run may leave `FixedLTZ=1.0` when landscape is bad; Test `MaybeStartInferenceMidProbes` plays Matrix pack A as-is and writes mid + `posttune_complete.flag`. Gate two-pass when thr is silent.
-
-SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (`PostTrainTipSearchIters=12`). BestTips update when trial `LandscapeOk` and `gap > BestGap`; after `apply_best`, Train free-run mid must also pass — else `free_run_reject_best` → snapshot (`search_reverted=1`). Train always leaves **silent** mid after Search so Test C++ inference mid can run.  
-**Test-only / `--skip-train` smoke ≠ Search validation**. Accept via `posttune_verify --case br100_search` (no skip-train): TipR≠keep **or** `search_reverted=1`; mid `cpp`; fires **`10000000`**. See [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
-
-Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
-
-Verify P0: Branch25 CanonRmin / off / AsymRm25 FlatLastR → fires `10000000` — [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md).
-
-AutoScale emergency rollback: set `AutoScaleIterationGap=0` (or ADefault false + pin on posttune clones only). See [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
-
-## Scripts
-
-`post_train_hygiene` skips Python tiprmin when PostTune TipR already canon/flat.  
-`phase8_tiprmin_gate.py --skip-tipr-mid` / `phase9_preinh_bc_gate.py --skip-tipr-mid`: C++ inference mid then gate.
+Timing rollback: AutoScaleIterationGap=0 restores max(configured, physical); changing kMinSettle is separate. The reported 85/90 s wall measurements imply about 1.06x, whereas 6x is only the simulation-gap ratio, not an established end-to-end speedup.

@@ -2,7 +2,7 @@
 
 Прогон **обученного** `NNeuronTimeLearner` (`IsNeedToTrain=0`, `DendriteLength=49/41/25/1`) по **8 ISI-паттернам один раз** через `DatasetMatrix` (`LoopSamples=0`, `AdvanceSampleAfterBurst=1`). У всех сэмплов одно окно **first→last = 0.48 с** (onset `0.01`, last spike на `t=0.49`). Результаты — CSV в `SelectivityLog/results.csv` (`NPatternResponseAnalyzer`).
 
-Обучение: см. [TimeNeuronTimeLearner](../TimeNeuronTimeLearner/README.md) и [ALGORITHM.md](ALGORITHM.md).
+Обучение: см. [TimeNeuronTimeLearner](../Train/README.md) и [ALGORITHM.md](ALGORITHM.md).
 
 ## Tip R vs r_model (не завышение цели)
 

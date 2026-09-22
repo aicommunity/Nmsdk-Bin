@@ -2,7 +2,7 @@
 
 Кампания: **Pack A AsymRm** × span 100/50/25 × gen/preinh + **AutoCalibrate FixedLTZ** (peak_fraction 0.99).  
 Каталог: `SelectivityLtzCalibrate/AsymRmLtzCal/`.  
-Baseline: [`SelectivityAsymRm/REPORT.md`](../SelectivityAsymRm/REPORT.md) — 18/18 `fire_all` @ FixedLTZ=0.0115.
+Baseline: [`SelectivityAsymRm/REPORT.md`](../../SelectivityAsymRm/REPORT.md) — 18/18 `fire_all` @ FixedLTZ=0.0115.
 
 ## Протокол цели
 
@@ -37,7 +37,7 @@ Operational readout: **MatchMode=0** (LTZ rising edge). `MatchMode=1` не в ga
 
 §4 двухфазный fallback (AutoCalibrate off → train 80t → on → train 40t) на 5 stall — **без эффекта**.
 
-Полная таблица: [`grid_summary.csv`](grid_summary.csv).
+Полная таблица: [`grid_summary.csv`] (исторический путь `grid_summary.csv`; файл/каталог отсутствует в текущем checkout).
 
 ### Вывод repair
 

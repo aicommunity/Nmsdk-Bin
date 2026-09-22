@@ -1,5 +1,8 @@
 # Карта надёжности StructTrain
 
+**Уточнение аудита 2026-09-22:** таблицы ниже — исторические результаты при указанных pins и gate. Они не доказывают held-out качество текущего HEAD. Каталог PHASE12 содержит 12 VALIDATED (включая две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения. Известны дефекты окон, strict/last-pulse и inference-mid. [Разбор и актуальный контракт](AUDIT_2026-09-22.md).
+
+
 **Срез:** 2026-09-19 · библиотека PulseLib pin `d6baf6e`  
 **English:** [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md)
 

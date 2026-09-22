@@ -22,4 +22,4 @@
 ## PHASE10 S0 (актуально)
 
 Полный pack 2026-09-14 (≥200M StatisticLog/EventsLog по всему StructTrain):  
-[`../../archives/statisticlog_20260914T161650Z/`](../../archives/statisticlog_20260914T161650Z/) — MANIFEST + README. Avail `/`: 142G → 308G.
+[`../../archives/statisticlog_20260914T161650Z/`](../../../archives/statisticlog_20260914T161650Z) — MANIFEST + README. Avail `/`: 142G → 308G.

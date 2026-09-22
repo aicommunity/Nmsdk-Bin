@@ -1,8 +1,11 @@
 # NNeuronTimeLearnerBranch — алгоритм обучения
 
+**Актуализация 2026-09-22:** текущие defaults, фазы PostTune и ограничения измерений описаны в [контракте и аудите](../../../../AUDIT_2026-09-22.md). Численные примеры ниже относятся к рецептам соответствующих экспериментов; для воспроизведения необходим их исходный pin.
+
+
 Один дендрит: N импульсов паттерна подключаются на **разном расстоянии** от единственной сомы. `NumInputDendrite=N` — число импульсов, не дендритов. **На сому входные синапсы не ставятся** — только на сегменты `Dendrite1_*`.
 
-Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp).
+Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp).
 
 ## Физика
 
@@ -29,7 +32,7 @@ Dataset: `NumFeatures=1`, `MaxSpikesPerFeature=N`. `InputPattern` — ISI N×1.
 
 Done: все `PulseSynced[0..N-2]` и amp в ε (или best-effort).
 
-После sync+amp обучение **не** сразу ставит recognition-порог. Два завершающих этапа:
+При EnablePostTrainTuning=true после sync+amp выполняется PostTune (фаза 4). При false используются два legacy этапа ниже:
 
 1. **Параллельная нормализация R (1/N + amp-eq):** mute-обученные tip-R рассчитаны на один активный синапс; якорь `N−1` **не** amp-tune в mute (`ChangeSynapseResistanceStatus` early-return), поэтому его `InitialSomaPotential` обычно ~10× выше distal. Перед recognition: `I_ref = mean(Initial[0..N−2])`, затем `TipSynapseResistance[k] *= N × (Initial[k] / I_ref)` (`ScaleTipResistancesForParallelActivation`; при `Initial≤0` — только `×N`). Solo-вклады выравниваются, каждый tip даёт ~1/N суммарной проводимости. Затем все tip подключаются к `Generator1`.
 2. **Калибровка FixedLTZ:** фаза `CalibrateLtz` — один прогон паттерна с `TrainingLTZ` (без раннего спайка). Итерация **ждёт полный cable settle** (не early `all_locked`), иначе пик занижается. Непрерывный max сомы/`LTZ` → `FixedLTZThreshold = peak × CalibrateLTZThresholdFraction` (по умолчанию **0.99**, mode=`peak_fraction`, clamp `[CalibrateLTZThresholdMin, CalibrateLTZThresholdMax]`, max по умолчанию **1.0**). Затем `phase → Done`, `IsNeedToTrain=0`.

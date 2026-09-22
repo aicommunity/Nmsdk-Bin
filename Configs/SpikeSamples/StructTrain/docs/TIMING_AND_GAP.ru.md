@@ -8,7 +8,7 @@
 |----------|----------------------|--------|
 | `IterationGap` | часто `1.5` в XML | Ручной пол (sec) между итерациями Train / mid free-run |
 | `Delay` | часто `1.5` | Пауза Dataset между bursts |
-| `AutoScaleIterationGap` | **`true`** | Игнорировать XML-пол: gap/delay = физика span+settle+slack |
+| `AutoScaleIterationGap` | **`true`** | Игнорировать XML-пол: gap=span+settle+slack; delay=settle+slack |
 | `EstDelayPerSeg` | online | Если &gt;0 — используется в `SettleMarginSec` |
 
 Константы (`.h`): `kGapSlack=0.05`, `kMinSettle=0.20`, `kDelayPerSegDefault=0.005`.
@@ -44,7 +44,7 @@ XML `IterationGap=1.5` **не** менять массово: при `AutoScale=0
 | 1 | **0.25** | 0.25 | ~85 s (sim mid ≪ `-t`; wall ≈ console overhead + slog) |
 | 0 (legacy) | **1.5** | 1.5 | ~90 s |
 
-Sim-gap отношение **1.5/0.25 = 6×**. Полный Search br100 @12 iters ранее ~5010 s wall при `gapEff≈0.35` (vs многочасовой при gap=1.5).
+Отношение sim-gap 1.5/0.25 равно 6; наблюдаемое wall-отношение 90/85 — около 1.06. При фиксированном -t сравнение включает разные объёмы полезной работы/ожидания; один замер на нагруженном хосте не доказывает ускорение полного Search. Значения ~5010 s в этом документе и ~4050 s в новом RESULT относятся к разным описанным прогонам и не образуют контролируемую пару AutoScale ON/OFF. Для вывода об ускорении нужны одинаковый критерий завершения, повторения и отдельный учёт startup/logging.
 
 В EventsLog (`EnableDebug=1`): `InferenceMid: … delay=… gapEff=… auto_gap=1` (INFO).  
 Train DEBUG: `BeginTrainingIteration: … gapEff=… gapPhys=… auto_gap=…`.

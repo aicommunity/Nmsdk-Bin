@@ -2,7 +2,7 @@
 
 ## 1. Краткий вердикт
 
-**Цель этапа (канон):** нейрон стреляет на **обученном** ISI-паттерне и **молчит** без стимула / на чужих входах (**pattern vs silence**). Восемь сэмплов Test — это **1 target + 7 distractors** (проба FP), а не классификация «какой из 8 порядков». Роли distractors — [`TimeNeuronTimeLearnerTest/README.md`](../TimeNeuronTimeLearnerTest/README.md): reverse / permute mid / uniform / early-late pairs / clusters. Gate: `target_hit ∧ ¬fire_all ∧ Acc≥4`. **Не цель:** order-ID / exact permutation classification / `MatchMode=1` (ISI oracle).
+**Цель этапа (канон):** нейрон стреляет на **обученном** ISI-паттерне и **молчит** без стимула / на чужих входах (**pattern vs silence**). Восемь сэмплов Test — это **1 target + 7 distractors** (проба FP), а не классификация «какой из 8 порядков». Роли distractors — [`TimeNeuronTimeLearnerTest/README.md`](../TimeNeuronTimeLearner/Test/README.md): reverse / permute mid / uniform / early-late pairs / clusters. Gate: `target_hit ∧ ¬fire_all ∧ Acc≥4`. **Не цель:** order-ID / exact permutation classification / `MatchMode=1` (ISI oracle).
 
 После исправления масштабирования паттернов (16/16 verify PASS, span 25/50/100 мс совпадает с меткой) **gate pattern-vs-silence по-прежнему не достигается**: 6 EXP при TS=2000 — `fire_all` (acc=1/8, fp=7); 2 EXP ts10k — `silent` (acc=7/8, target_hit=0).
 
@@ -10,7 +10,7 @@
 
 1. Обучение (`NNeuronTimeLearner`) выравнивает coincidence на **training order**; Test прогоняет target + 7 FP-проб (не «8 перестановок одного multiset» как order-ID задачу).
 2. Инференс — **бинарный порог LTZ** (`FixedLTZThreshold=0.0115`), а не dual-thr vs max(distractor). `MatchMode=1` (ISI vs TrainingPattern) — oracle, **не** operational gate.
-3. `PatternRecognition()` — **заглушка** (`return true`) в [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) и Branch-варианте; **не вызывается** из Training loop.
+3. `PatternRecognition()` — **заглушка** (`return true`) в [`NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) и Branch-варианте; **не вызывается** из Training loop.
 4. При fast EPSP target и многие distractors дают схожий `ltz_potential_max` (0.017–0.026), **выше** порога 0.0115 → fire_all; порог 0.04 (ts10k) — **выше** пиков target (~0.023) → silent.
 
 Проблема **не только** в span/паттерне (это уже исправлено), а в **пороге LTZ без калибровки** и узком LTZ-gap target↔distractor на short span.
@@ -19,20 +19,20 @@
 
 ## 2. Результаты valid-rerun (база для анализа)
 
-Источник: [`grid_summary.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/grid_summary.csv), [`REPORT.md`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/REPORT.md).
+Источник: [`grid_summary.csv`](../SelectivityFastSpan/grid_summary.csv), [`REPORT.md`](../SelectivityFastSpan/REPORT.md).
 
 | Группа | Acc | mode | L (span25) | FixedLTZ | Интерпретация |
 |--------|-----|------|------------|----------|---------------|
 | 6× fast/preinh TS=2000 | 1/8 | fire_all | 7 6 4 1 | 0.0115 | target + 7 distractors стреляют |
 | 2× ts10k | 7/8 | silent | 6 6 4 1 | 0.04 | никто не стреляет, target fn |
 
-**Контроль:** [`SelectivityFastResponse`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastResponse/REPORT.md) — span 480 мс, паттерн OK, **тот же acc=1/8, fp=7** у всех train_ok ячеек. Значит узкий span — **усугубление**, но не **единственная** причина.
+**Контроль:** [`SelectivityFastResponse`](../SelectivityFastResponse/REPORT.md) — span 480 мс, паттерн OK, **тот же acc=1/8, fp=7** у всех train_ok ячеек. Значит узкий span — **усугубление**, но не **единственная** причина.
 
-**Исторический контроль (другой протокол):** [`SelectivityPresynapticInhib`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/REPORT_time_compress.md) — на несжатом 480 мс EXP04+Preinh давал **6/8**; на span 100 мс с Preinh — **5/8** (`partial_FA`). Текущий FastSpan с D=0.002 хуже по readout, хотя обучение (Done, L) сходится.
+**Исторический контроль (другой протокол):** [`SelectivityPresynapticInhib`](../SelectivityPresynapticInhib/REPORT_time_compress.md) — на несжатом 480 мс EXP04+Preinh давал **6/8**; на span 100 мс с Preinh — **5/8** (`partial_FA`). Текущий FastSpan с D=0.002 хуже по readout, хотя обучение (Done, L) сходится.
 
 ### Пример CSV (span25, TS=2000)
 
-[`EXP_span25ms_fast/Test/SelectivityLog/results.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/EXP_span25ms_fast/Test/SelectivityLog/results.csv):
+[`EXP_span25ms_fast/Test/SelectivityLog/results.csv`](../SelectivityFastSpan/EXP_span25ms_fast/Test/SelectivityLog/results.csv):
 
 - trial 0 (target): `ltz_max=0.0210`, soma `[0.021, 0.030, 0.027, 0.033]`
 - trial 1 (distractor): `ltz_max=0.0224`, soma `[0.028, 0.038, 0.032, 0.027]`
@@ -41,7 +41,7 @@
 
 ### ts10k (span25)
 
-[`EXP_span25ms_fast_ts10k/.../results.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/EXP_span25ms_fast_ts10k/Test/SelectivityLog/results.csv): target `ltz_max=0.0235`, distractors 0.021–0.029 — все **ниже** 0.04 → `silent`. Порог выбран без калибровки по фактическим пикам.
+[`EXP_span25ms_fast_ts10k/.../results.csv`](../SelectivityFastSpan/EXP_span25ms_fast_ts10k/Test/SelectivityLog/results.csv): target `ltz_max=0.0235`, distractors 0.021–0.029 — все **ниже** 0.04 → `silent`. Порог выбран без калибровки по фактическим пикам.
 
 ---
 
@@ -49,7 +49,7 @@
 
 ### 3.1 Элементная модель (Bio)
 
-Из [`ANALYSIS_timing_mismatch.md`](Bin/Configs/SpikeSamples/NeuralElements/ANALYSIS_timing_mismatch.md):
+Из [`ANALYSIS_timing_mismatch.md`](../../NeuralElements/ANALYSIS_timing_mismatch.md):
 
 - **Синапс:** `DissociationTC`, `SecretionTC` → экспоненциальный хвост; дискретно `PreOutput *= (1 - 1/VDissociationTC)`.
 - **Мембрана:** RC ≈ R×C; при C=2.5e-10 и R~1e7 → τ_m ~ **2.5 мс**.
@@ -59,7 +59,7 @@ Gate элементных бенчей: FWHM ≤ 0.5×min_ISI(T), separability d
 
 ### 3.2 Кабельная задержка (structural timing)
 
-`EstDelayPerSeg = 0.005` с ([`NNeuronTimeLearner.h`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.h)). Обучение подбирает `L_i`, чтобы:
+`EstDelayPerSeg = 0.005` с ([`NNeuronTimeLearner.h`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.h)). Обучение подбирает `L_i`, чтобы:
 
 ```
 needed[k] = PrevPeakRel[ref] - Expected[k]
@@ -102,7 +102,7 @@ flowchart LR
 
 ## 4. Алгоритм обучения — глубокий разбор
 
-Документация: [`TimeNeuronTimeLearner/ALGORITHM.md`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/ALGORITHM.md), код: [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
+Документация: [`TimeNeuronTimeLearner/ALGORITHM.md`](../TimeNeuronTimeLearner/Train/ALGORITHM.md), код: [`NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp).
 
 ### 4.1 Фазы и критерий Done
 
@@ -135,7 +135,7 @@ flowchart LR
 
 ### 4.5 Альтернатива: Branch learner
 
-[`TimeNeuronTimeLearnerBranch/ALGORITHM.md`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerBranch/ALGORITHM.md):
+[`TimeNeuronTimeLearnerBranch/ALGORITHM.md`](../TimeNeuronTimeLearnerBranch/Train/ALGORITHM.md):
 
 - Один физический дендрит, N импульсов на **разных сегментах** (mute → reverse sync).
 - После Done: **parallel activation** (scale tip R × N), фаза **CalibrateLtz** с `CalibrateFixedLTZFromParallelPeak`.
@@ -145,15 +145,15 @@ flowchart LR
 
 ## 5. Конвейер тестирования (readout)
 
-[`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp):
+[`NPatternResponseAnalyzer.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp):
 
 - `neuron_fired` = rising edge на **NeuronOutputs** (LTZone) в окне `[t_last_stim, t_last_stim + PostPatternWindow]`.
 - `match` = (target→fired) / (nontarget→!fired).
 - CSV логирует `ltz_potential_max`, `soma_amp_0..3`, **но gate их не использует**.
 
-Порог LTZ на Test: [`SetIsNeedToTrain(false)`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) → `SetLTZThreshold(FixedLTZThreshold)` независимо от `UseFixedLTZThreshold` в XML.
+Порог LTZ на Test: [`SetIsNeedToTrain(false)`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) → `SetLTZThreshold(FixedLTZThreshold)` независимо от `UseFixedLTZThreshold` в XML.
 
-**FixedLTZ=0.0115** — legacy от PhaseA/EXP04 ([`SelectivityFastResponse/REPORT.md`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastResponse/REPORT.md)), **не** перекалиброван под D=0.002 / сжатые span.
+**FixedLTZ=0.0115** — legacy от PhaseA/EXP04 ([`SelectivityFastResponse/REPORT.md`](../SelectivityFastResponse/REPORT.md)), **не** перекалиброван под D=0.002 / сжатые span.
 
 ---
 
@@ -193,11 +193,11 @@ flowchart LR
 
 | Каталог | Что сохраняем |
 |---------|----------------|
-| [`SelectivityFastSpan/`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/) | 8 EXP, `REPORT.md`, `JOURNAL.md`, `grid_summary.csv`, valid-rerun 2026-08-23 |
-| [`SelectivityFastResponse/`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastResponse/) | 9 EXP, `REPORT.md`, `grid_summary.csv` |
-| [`SelectivityPresynapticInhib/`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/) | EXP00/04 margprops, time_compress — golden regression |
-| [`TimeNeuronTimeLearner/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/) | шаблон Train (только чтение через `copy_config.sh`) |
-| [`TimeNeuronTimeLearnerTest/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerTest/) | шаблон Test |
+| [`SelectivityFastSpan/`](../SelectivityFastSpan) | 8 EXP, `REPORT.md`, `JOURNAL.md`, `grid_summary.csv`, valid-rerun 2026-08-23 |
+| [`SelectivityFastResponse/`](../SelectivityFastResponse) | 9 EXP, `REPORT.md`, `grid_summary.csv` |
+| [`SelectivityPresynapticInhib/`](../SelectivityPresynapticInhib) | EXP00/04 margprops, time_compress — golden regression |
+| [`TimeNeuronTimeLearner/`](../TimeNeuronTimeLearner/Train) | шаблон Train (только чтение через `copy_config.sh`) |
+| [`TimeNeuronTimeLearnerTest/`](../TimeNeuronTimeLearner/Test) | шаблон Test |
 
 **Все новые эксперименты** — только в новой кампании (§12). Новые `REPORT.md` / `JOURNAL.md` / `grid_summary.csv` — только там.
 
@@ -213,24 +213,24 @@ flowchart LR
 
 | Компонент | Статус | Где |
 |-----------|--------|-----|
-| `CalibrateFixedLTZThresholdFromTraining()` | **Реализовано** | [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) — вызывается в `EndOfLearning()` при `AutoCalibrateFixedLTZThreshold=1` |
+| `CalibrateFixedLTZThresholdFromTraining()` | **Реализовано** | [`NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp) — вызывается в `EndOfLearning()` при `AutoCalibrateFixedLTZThreshold=1` |
 | Сбор min/max LTZ в train | **Реализовано** | `UpdateIterLTZPotential()` → `LastSyncedMinLTZ` / `LastSyncedMaxLTZ` на synced-итерации |
 | Параметры калибровки | **Реализовано** | `CalibrateLTZThresholdMode` (0=gap_fraction, 1=peak_fraction), `Fraction`, `Min`, `Max`; default classic: gap **0.85**, min **0.0115**, max **0.05** |
 | `CalibratedFixedLTZThreshold` | **State output** | Записывается при калибровке; default `AutoCalibrate=false` |
-| Фаза `CalibrateLtz` + parallel peak | **Только Branch** | [`NNeuronTimeLearnerBranch.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) — `kPhaseCalibrateLtz`, `CalibrateFixedLTZFromParallelPeak()` после `ScaleTipResistancesForParallelActivation()` |
+| Фаза `CalibrateLtz` + parallel peak | **Только Branch** | [`NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) — `kPhaseCalibrateLtz`, `CalibrateFixedLTZFromParallelPeak()` после `ScaleTipResistancesForParallelActivation()` |
 
 **Вывод:** базовая калибровка для classic TimeLearner **есть**, но **не используется**; Branch-варiant **точнее** (измеряет peak в recognition-режиме, fraction default **0.99**).
 
 #### 8.0.2 Почему сейчас не работает (конфиг, не C++)
 
-1. [`setup_fastspan.sh`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/setup_fastspan.sh) — `set_fixed_ltz(..., 0.0115)` / `0.04` **перезаписывает** порог до и после Train.
-2. Train/Test XML: `AutoCalibrateFixedLTZThreshold=0` ([`EXP_span25ms_fast/Train/Parameters_00.xml`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/EXP_span25ms_fast/Train/Parameters_00.xml)).
-3. [`run_fastspan.sh`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/run_fastspan.sh) sync копирует только `FixedLTZThreshold`, **не** `AutoCalibrateFixedLTZThreshold` / `CalibratedFixedLTZThreshold` / `CalibrateLTZThreshold*`.
+1. [`setup_fastspan.sh`](../SelectivityFastSpan/scripts/setup_fastspan.sh) — `set_fixed_ltz(..., 0.0115)` / `0.04` **перезаписывает** порог до и после Train.
+2. Train/Test XML: `AutoCalibrateFixedLTZThreshold=0` ([`EXP_span25ms_fast/Train/Parameters_00.xml`](../SelectivityFastSpan/EXP_span25ms_fast/Train/Parameters_00.xml)).
+3. [`run_fastspan.sh`](../SelectivityFastSpan/scripts/run_fastspan.sh) sync копирует только `FixedLTZThreshold`, **не** `AutoCalibrateFixedLTZThreshold` / `CalibratedFixedLTZThreshold` / `CalibrateLTZThreshold*`.
 4. Classic learner калибрует по LTZ **во время muted sync-train**, а не по финальному recognition-burst (Branch делает отдельную фазу).
 
 #### 8.0.3 План реализации Tier 0 (только новые конфиги §12)
 
-**Не править** [`setup_fastspan.sh`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/setup_fastspan.sh) / [`run_fastspan.sh`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/run_fastspan.sh). Логику перенести в `SelectivityLtzCalibrate/scripts/`.
+**Не править** [`setup_fastspan.sh`](../SelectivityFastSpan/scripts/setup_fastspan.sh) / [`run_fastspan.sh`](../SelectivityFastSpan/scripts/run_fastspan.sh). Логику перенести в `SelectivityLtzCalibrate/scripts/`.
 
 **Фаза A — конфиг + протокол (после regression §14 PASS)**
 
@@ -242,7 +242,7 @@ flowchart LR
    - `CalibrateLTZThresholdMin=0.001` (не блокировать подъём порога)
    - `CalibrateLTZThresholdMax=0.10` (Preinh peaks ~0.031)
    - **Не** вызывать `set_fixed_ltz(0.0115)`
-2. **`run_ltz_grid.sh` sync:** использовать [`merge_train_weights.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/merge_train_weights.py) (уже мержит `FixedLTZThreshold`, `CalibratedFixedLTZThreshold`, все `CalibrateLTZThreshold*`, `UseFixedLTZThreshold`) через [`copy_config.sh sync`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/copy_config.sh) + `inject_analyzer.py` на Test Model.
+2. **`run_ltz_grid.sh` sync:** использовать [`merge_train_weights.py`](../SelectivityFastSpan/scripts/merge_train_weights.py) (уже мержит `FixedLTZThreshold`, `CalibratedFixedLTZThreshold`, все `CalibrateLTZThreshold*`, `UseFixedLTZThreshold`) через [`copy_config.sh sync`](../SelectivityFastSpan/scripts/copy_config.sh) + `inject_analyzer.py` на Test Model.
 3. **Verify post-Train:** в `Train/Parameters_00.xml` — `TrainingPhase=2`, `CalibratedFixedLTZThreshold>0`, `FixedLTZThreshold` ≠ 0.0115 для fast/preinh.
 
 **Фаза B — доработка C++ (если Фаза A + regression OK, но grid fire_all)**
@@ -251,7 +251,7 @@ Classic learner измеряет LTZ на **training** wiring (fan-out, Training
 
 1. **Вариант B1 (минимальный diff):** в `NNeuronTimeLearner::EndOfLearning()` перед `CalibrateFixedLTZThresholdFromTraining()` — один post-sync measurement burst с `TrainingLTZThreshold` (без ΔL), track `IterMaxLTZPotential` → calibrate (упрощённый аналог Branch `CalibrateLtz`).
 2. **Вариант B2 (reuse):** экспериментальная ветка на `TimeNeuronTimeLearnerBranch` + fast neuron (`NSPNeuronGenD002C25e11`) на span 100 мс — встроенная калибровка уже есть.
-3. **Документация:** обновить [`TimeNeuronTimeLearner/ALGORITHM.md`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/ALGORITHM.md) и [`NNeuronTimeLearner.md`](Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTimeLearner.md) — когда вызывается calibrate, что пишется в XML.
+3. **Документация:** обновить [`TimeNeuronTimeLearner/ALGORITHM.md`](../TimeNeuronTimeLearner/Train/ALGORITHM.md) и [`NNeuronTimeLearner.md`](../../../../../Libraries/Nmsdk-PulseLib/Docs/Components/NNeuronTimeLearner.md) — когда вызывается calibrate, что пишется в XML.
 
 **Критерий успеха Tier 0**
 
@@ -299,7 +299,7 @@ flowchart TD
 **B2. Включить Branch + CalibrateLtz**
 
 - Конфиг `TimeNeuronTimeLearnerBranch` + fast neuron class на span 25–100 мс.
-- Использовать [`CalibrateFixedLTZFromParallelPeak`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) после parallel phase.
+- Использовать [`CalibrateFixedLTZFromParallelPeak`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) после parallel phase.
 
 **B3. Двухпороговая LTZ-калибровка**
 
@@ -361,22 +361,22 @@ flowchart TD
 
 ### Целевой файл
 
-[`Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`](Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/ANALYSIS_structural_learning.md)
+[`Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`](ANALYSIS_structural_learning.md)
 
 ### Содержание документа
 
 - **§1–§14** — полный план (диагноз, roadmap, код, конфиги, regression)
-- Таблицы из **read-only** [`SelectivityFastSpan/grid_summary.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/grid_summary.csv)
+- Таблицы из **read-only** [`SelectivityFastSpan/grid_summary.csv`](../SelectivityFastSpan/grid_summary.csv)
 
 ### Обновления после сохранения (только новые/внешние файлы)
 
-1. [`NeuralElements/JOURNAL_timing_elements.md`](Bin/Configs/SpikeSamples/NeuralElements/JOURNAL_timing_elements.md) — одна ссылка на `SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`
-2. **Не менять** [`SelectivityFastSpan/JOURNAL.md`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/JOURNAL.md) / `REPORT.md`
+1. [`NeuralElements/JOURNAL_timing_elements.md`](../../NeuralElements/JOURNAL_timing_elements.md) — одна ссылка на `SelectivityLtzCalibrate/ANALYSIS_structural_learning.md`
+2. **Не менять** [`SelectivityFastSpan/JOURNAL.md`](../SelectivityFastSpan/JOURNAL.md) / `REPORT.md`
 3. По итогам Tier 0 — append «Tier 0 results» в ANALYSIS новой кампании
 
 ### Дополнительно
 
-- [`SelectivityLtzCalibrate/scripts/analyze_separability.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/scripts/analyze_separability.py)
+- [`SelectivityLtzCalibrate/scripts/analyze_separability.py`](scripts/analyze_separability.py)
 
 ---
 
@@ -384,21 +384,21 @@ flowchart TD
 
 | Роль | Путь |
 |------|------|
-| **Новая кампания** | [`SelectivityLtzCalibrate/`](Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/) |
-| Golden regression | [`EXP00_baseline_margprops`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_margprops/), [`EXP04_preinh_250_margprops`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_margprops/) |
-| Алгоритм train | [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp), [`ALGORITHM.md`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/ALGORITHM.md) |
-| Branch + LTZ cal | [`NNeuronTimeLearnerBranch.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) |
-| Sync LTZ tags | [`merge_train_weights.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/merge_train_weights.py) |
-| Test analyzer | [`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp) |
-| Read-only rerun | [`SelectivityFastSpan/grid_summary.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/grid_summary.csv) |
-| Test matrix (8 orders) | `REF_TEST_MATRIX` in [`patch_pattern_scale.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/patch_pattern_scale.py) |
-| Элементная физика | [`ANALYSIS_timing_mismatch.md`](Bin/Configs/SpikeSamples/NeuralElements/ANALYSIS_timing_mismatch.md) |
+| **Новая кампания** | [`SelectivityLtzCalibrate/`](.) |
+| Golden regression | [`EXP00_baseline_margprops`](../SelectivityPresynapticInhib/EXP00_baseline_margprops), [`EXP04_preinh_250_margprops`](../SelectivityPresynapticInhib/EXP04_preinh_250_margprops) |
+| Алгоритм train | [`NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp), [`ALGORITHM.md`](../TimeNeuronTimeLearner/Train/ALGORITHM.md) |
+| Branch + LTZ cal | [`NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp) |
+| Sync LTZ tags | [`merge_train_weights.py`](../SelectivityFastSpan/scripts/merge_train_weights.py) |
+| Test analyzer | [`NPatternResponseAnalyzer.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp) |
+| Read-only rerun | [`SelectivityFastSpan/grid_summary.csv`](../SelectivityFastSpan/grid_summary.csv) |
+| Test matrix (8 orders) | `REF_TEST_MATRIX` in [`patch_pattern_scale.py`](../SelectivityFastSpan/scripts/patch_pattern_scale.py) |
+| Элементная физика | [`ANALYSIS_timing_mismatch.md`](../../NeuralElements/ANALYSIS_timing_mismatch.md) |
 
 ---
 
 ## 12. Новая кампания конфигов: `SelectivityLtzCalibrate`
 
-Корень: [`Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/`](Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/)
+Корень: [`Bin/Configs/SpikeSamples/StructTrain/SelectivityLtzCalibrate/`](.)
 
 ```
 SelectivityLtzCalibrate/
@@ -439,8 +439,8 @@ SelectivityLtzCalibrate/
 
 ### 12.1 Шаблоны и copy
 
-- **Источник Train:** [`../TimeNeuronTimeLearner/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearner/) через `copy_config.sh train`
-- **Источник Test:** [`../TimeNeuronTimeLearnerTest/`](Bin/Configs/SpikeSamples/StructTrain/TimeNeuronTimeLearnerTest/) — `MatrixData` 32×1, 1 target + 7 distractors ([`patch_pattern_scale.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/patch_pattern_scale.py) `REF_TEST_MATRIX`; роли — Test README)
+- **Источник Train:** [`../TimeNeuronTimeLearner/`](../TimeNeuronTimeLearner/Train) через `copy_config.sh train`
+- **Источник Test:** [`../TimeNeuronTimeLearnerTest/`](../TimeNeuronTimeLearner/Test) — `MatrixData` 32×1, 1 target + 7 distractors ([`patch_pattern_scale.py`](../SelectivityFastSpan/scripts/patch_pattern_scale.py) `REF_TEST_MATRIX`; роли — Test README)
 - **Train pattern (full480):** `InputPattern = [0.01, 0.08, 0.16, 0.24]` — **без** `--span-ms`
 - **FastSpanLtzCal:** `--span-ms {100|50|25}` как в FastSpan, floor 0.5 ms
 
@@ -453,8 +453,8 @@ SelectivityLtzCalibrate/
 
 Golden CSV (read-only):
 
-- [`SelectivityPresynapticInhib/EXP00_baseline_margprops/Test/SelectivityLog/results.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP00_baseline_margprops/Test/SelectivityLog/results.csv)
-- [`SelectivityPresynapticInhib/EXP04_preinh_250_margprops/Test/SelectivityLog/results.csv`](Bin/Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/EXP04_preinh_250_margprops/Test/SelectivityLog/results.csv)
+- [`SelectivityPresynapticInhib/EXP00_baseline_margprops/Test/SelectivityLog/results.csv`](../SelectivityPresynapticInhib/EXP00_baseline_margprops/Test/SelectivityLog/results.csv)
+- [`SelectivityPresynapticInhib/EXP04_preinh_250_margprops/Test/SelectivityLog/results.csv`](../SelectivityPresynapticInhib/EXP04_preinh_250_margprops/Test/SelectivityLog/results.csv)
 
 ### 12.3 `grid_cells.tsv` (FastSpanLtzCal, после regression)
 
@@ -472,7 +472,7 @@ Golden CSV (read-only):
 
 ### 13.1 NNeuronTimeLearner — свойства калибровки LTZ
 
-Файлы: [`NNeuronTimeLearner.h`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.h), [`NNeuronTimeLearner.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp)
+Файлы: [`NNeuronTimeLearner.h`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.h), [`NNeuronTimeLearner.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp)
 
 | Свойство | Default (`ADefault`) | Роль |
 |----------|----------------------|------|
@@ -508,7 +508,7 @@ Test: NPatternResponseAnalyzer
 
 ### 13.3 NNeuronTimeLearnerBranch — эталон для Tier 0b
 
-Файл: [`NNeuronTimeLearnerBranch.cpp`](Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)
+Файл: [`NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp)
 
 - `kPhaseCalibrateLtz` после sync+amp
 - `ScaleTipResistancesForParallelActivation()` — выравнивание tip R под parallel fan-in
@@ -517,7 +517,7 @@ Test: NPatternResponseAnalyzer
 
 ### 13.4 Sync Train → Test (исправление протокола)
 
-[`merge_train_weights.py`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/merge_train_weights.py) уже мержит:
+[`merge_train_weights.py`](../SelectivityFastSpan/scripts/merge_train_weights.py) уже мержит:
 
 `FixedLTZThreshold`, `UseFixedLTZThreshold`, `CalibratedFixedLTZThreshold`, `AutoCalibrateFixedLTZThreshold`, `CalibrateLTZThresholdMode/Fraction/Min/Max`, `TrainingPattern`, `DendriteLength`, `TipSynapseResistance`, …
 
@@ -529,11 +529,11 @@ copy_config.sh sync "$TRAIN" "$TEST"
 python3 inject_analyzer.py "$TRAIN/Model_00.xml" "$TEST/Model_00.xml"
 ```
 
-Не дублировать урезанный python-sync из [`run_fastspan.sh`](Bin/Configs/SpikeSamples/StructTrain/SelectivityFastSpan/scripts/run_fastspan.sh) (только FixedLTZ).
+Не дублировать урезанный python-sync из [`run_fastspan.sh`](../SelectivityFastSpan/scripts/run_fastspan.sh) (только FixedLTZ).
 
 ### 13.5 NPatternResponseAnalyzer (без изменений в Tier 0)
 
-[`NPatternResponseAnalyzer.cpp`](Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp): `PostPatternWindow=0.5`, rising edge LTZ, CSV `ltz_potential_max` — operational MatchMode=0; B1 = offline dual-thr / диагностика, не MatchMode=1 gate.
+[`NPatternResponseAnalyzer.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp): `PostPatternWindow=0.5`, rising edge LTZ, CSV `ltz_potential_max` — operational MatchMode=0; B1 = offline dual-thr / диагностика, не MatchMode=1 gate.
 
 ### 13.6 Изменения C++ (Tier 0b, только если warm/smoke PASS + train Done на grid + fire_all)
 

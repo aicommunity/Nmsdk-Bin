@@ -2,4 +2,4 @@
 
 Clean clone of tiprmin Test. [`SelectivityLog/results.csv`](SelectivityLog/results.csv)
 
-See [`../../PHASE6_480_RECIPE.md`](../../PHASE6_480_RECIPE.md).
+See [`../../PHASE6_480_RECIPE.md`](../../../PHASE6_480_RECIPE.md).

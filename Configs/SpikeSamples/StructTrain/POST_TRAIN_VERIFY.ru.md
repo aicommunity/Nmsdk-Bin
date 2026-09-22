@@ -1,13 +1,16 @@
 # Проверка C++ PostTune — план экспериментов
 
-Статус кода/доков/клонов: **готово**.  
-Статус cold+gate vs gold: **V1–V6 PASS** при `mid_source=cpp` (см. [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md)).
+**Уточнение аудита 2026-09-22:** таблицы ниже — исторические результаты при указанных pins и gate. Они не доказывают held-out качество текущего HEAD. Каталог PHASE12 содержит 12 VALIDATED (включая две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения. Известны дефекты окон, strict/last-pulse и inference-mid. [Разбор и актуальный контракт](AUDIT_2026-09-22.md).
+
+
+Состояние: Branch-код обновлён до 9a6cee0b; остаются открытые замечания A08–A10/A16.\
+Статус cold+gate vs gold: **V1–V6 PASS заявлен исторически, но не подтверждён единым комплектом свежих артефактов**. Новый срез [_repro/POSTTUNE_VERIFY_RESULT.md](_repro/POSTTUNE_VERIFY_RESULT.md) содержит одну строку V5b; старые smoke-строки выделены отдельно.
 
 Критерии: TipR vector, FixedLTZ (±5% к gold mid), fires/acc, `IsNeedToTrain=0`. На Train **без** Python `apply_tiprmin`; mid — **только** C++ на Test (`inference=1` в `posttune_complete.flag`). Статусы `*_gold_mid` **запрещены**.
 
 ## Матрица
 
-| # | Клон | TipR mode | Ожидание | Статус |
+| # | Клон | TipR mode | Ожидание | Исторически заявленный результат |
 |---|------|-----------|----------|--------|
 | V1 | `SelectivityBranch/EXP_br_span25_packA_gen_C1e9_posttune` | 1 CanonRmin | TipR `2e7×3+8.6e7`; mid≈gold Test `0.0718` (±5%); fires 8/8; Need→0 | **PASS** fires `10000000` mid≈0.07180 |
 | V2 | `…/EXP_br_span25_packA_gen_C1e9_posttune_off` | OFF → CalibrateLtz | Need→0; путь ScaleTipR (TipR ≠ канон допустим); gate с Python tiprmin OK | **PASS** fires `10000000` mid≈0.0163 |
@@ -21,8 +24,8 @@
 
 1. Soft-cold Train + `PostTrainTipResistanceMode=4`, `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1`.
 2. В EventsLog: `phase -> PostTune mode=4`, `gapEff=` ≪1.5, `SearchSynthetic:` (`skip_candidate` / `apply_best` / `free_run_reject_best` / `revert`).
-3. После Train: TipR **≠** keep-клон **или** `search_reverted=1` в flag (trial BestTips + free-run reject).
-4. Test: C++ inference mid (`inference=1`, mid&lt;0.9) + gate fires **`10000000`** (не `10000010`).
+3. После Train: доказать выбор BestTips либо откат по flag/trace текущего run; численно сопоставить вектор с его собственным snapshot. Отличие от отдельного keep-клона само по себе не доказывает успех поиска.
+4. Test: конечные полные метрики, landscape_ok=1 и C++ mid (inference=1, mid<0.9), затем fires **10000000**. Калибровка на том же наборе — принятый контракт A07.
 5. `--skip-train` для `br100_search` **запрещён** в `posttune_verify.py`.
 6. `train_t≈2400` (при AutoScale gapEff≈0.3); polls≥800.
 
@@ -51,6 +54,10 @@ flowchart TD
    - V1/V3/V4/V5/V6: `phase8` / `phase9` с `--skip-tipr-mid` (overlay + C++ inference mid two-pass).
    - V2: обычный tiprmin+mid (legacy) **или** `--force-python-hygiene`.
 6. Сравнить с gold Test: TipR, thr (±5%), fires mask, `acc_legacy`, last-pulse; колонки RESULT: `mid_source`, `tipr_vs_keep`.
+
+## Дополнительная приёмка после 9a6cee0b
+
+Проверять отдельно выбранный best, отсутствие допустимого best, free-run reject, setup failure, NaN/timeout, неверную метрику и разные Train/Test процессы. Silent/Complete не считать quality PASS. После отката метрики должны относиться к snapshot или иметь явную отметку недействительности. Перенос исправления в обычный TimeLearner ещё требуется.
 
 ## Артефакты
 

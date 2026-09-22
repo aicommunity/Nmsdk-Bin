@@ -1,8 +1,11 @@
 # NNeuronTimeLearnerBranch — алгоритм обучения
 
+**Актуализация 2026-09-22:** текущие defaults, фазы PostTune и ограничения измерений описаны в [контракте и аудите](../../AUDIT_2026-09-22.md). Численные примеры ниже относятся к рецептам соответствующих экспериментов; для воспроизведения необходим их исходный pin.
+
+
 Один дендрит: N импульсов паттерна подключаются на **разном расстоянии** от единственной сомы. `NumInputDendrite=N` — число импульсов, не дендритов. **На сому входные синапсы не ставятся** — только на сегменты `Dendrite1_*`.
 
-Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp).
+Реализация: [`Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp`](../../../../../../Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp).
 
 ## Физика
 

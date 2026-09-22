@@ -1,5 +1,8 @@
 # StructTrain reliability map
 
+**Audit update, 2026-09-22:** historical tables retain their original pins and gates. PHASE12 contains 12 VALIDATED entries (including two inherited LtzCal copies) and 20 VALIDATED_CLONE entries, not 32 independent cold-training results. Current analyzer, strict/last-pulse and inference-mid defects limit the interpretation. See the [audit](AUDIT_2026-09-22.md).
+
+
 **Snapshot:** 2026-09-19 · PulseLib pin `d6baf6e`  
 **Русская версия (полная):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md)
 
