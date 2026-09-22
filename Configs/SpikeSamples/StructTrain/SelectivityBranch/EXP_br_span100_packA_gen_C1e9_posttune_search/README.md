@@ -1,6 +1,6 @@
 Clone of Branch100 packA gen for C++ PostTune **SearchSynthetic** (mode=4).
 
-**Pin:** `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1` (physics gap ≪ XML 1.5). BestTips only if `landscape_ok`; expect Test fires `10000000`.
+**Pin:** `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1` (physics gap ≪ XML 1.5). Search/mid metric = **shared soma amp** (CSV `soma_amp_sum`). BestTips only if trial `landscape_ok`; after apply, Train **free-run** must also pass landscape — else `free_run_reject_best` → KeepDone/ScaleTipR (`search_reverted=1`). Train leaves **silent** mid; Test C++ inference mid. Expect Test fires `10000000`.
 
 **Validation:** full soft-cold **Train** with `PostTrainTipResistanceMode=4` (not Test-only / `--skip-train` smoke). After Train, TipR must differ from the keep clone **or** `posttune_complete.flag` must contain `search_reverted=1`. Then Test C++ inference mid + gate.
 

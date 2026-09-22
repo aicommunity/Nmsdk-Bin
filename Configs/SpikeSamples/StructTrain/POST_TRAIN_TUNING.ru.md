@@ -28,7 +28,7 @@
 | `EnablePostTrainTuning` | `true` | Мастер-флаг |
 | `PostTrainTipResistanceMode` | `1` (CanonRmin) | 0 Off · 1 CanonRmin · 2 FlatLastR · 3 KeepDone · 4 SearchSynthetic |
 | `EnablePostTrainMidThreshold` | `true` | Silent-mid FixedLTZ |
-| `PostTrainMidMetric` | `0` Auto | TL→LTZ peak; Branch→soma peak |
+| `PostTrainMidMetric` | `0` Auto | TL→LTZ peak; Branch→**shared soma amp** (= CSV `soma_amp_sum` / SomaNeuronAmplitude row0) |
 | `TipResistanceCanonFloor` | `2e7` | Пол / первые tips CanonRmin |
 | `TipResistanceCanonLast` | `8.6e7` | Последний tip / FlatLastR |
 | `PostTrainSilentThreshold` | `1.0` | Порог на время зондов |
@@ -47,7 +47,7 @@
 | 1 CanonRmin | `[floor]×(N−1)+[last]`; `ResistanceMin≥floor`; Exc sync |
 | 2 FlatLastR | `[last]×N` (AsymRm span25) |
 | 3 KeepDone | snapshot с конца Normalize |
-| 4 SearchSynthetic | старт CanonRmin; tip×mult×pass; BestTips **только** при `landscape_ok`; иначе revert на **KeepDone snapshot** (Branch: ScaleTipR×N до Canon) |
+| 4 SearchSynthetic | старт CanonRmin; tip×mult×pass; BestTips при trial `landscape_ok`; после apply — free-run mid: fail → `free_run_reject_best` → **KeepDone snapshot** (Branch: ScaleTipR×N до Canon) |
 
 Сводка mode→span: [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) §4.7.
 
@@ -62,7 +62,7 @@ flowchart LR
 
 | Класс | Метрика mid | Gate |
 |-------|-------------|------|
-| Branch | soma peak | `phase8 --skip-tipr-mid` |
+| Branch | shared soma amp (`soma_amp_sum`) | `phase8 --skip-tipr-mid` |
 | TL (AsymRm) | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
 
 1. Train PostTune: TipR (+ Exc). Если Train free-run даёт инверсии foils / gap≪1 → `FixedLTZ=1.0` (silent), `Need=0`.
@@ -71,7 +71,8 @@ flowchart LR
 4. Gate `--skip-tipr-mid`: если thr silent → pass1 до flag → flush mid в XML → pass2 gate.
 
 SearchSynthetic (mode=4) выполняется **только** в Train PostTune loop (`PostTrainTipSearchIters=12` полных pass).  
-Кандидат в BestTips только если `LandscapeOk(tgt, foils)` (все foils &lt; tgt) **и** `gap > BestGap`. Иначе в конце — `search_reverted=1` + snapshot.  
+Кандидат в BestTips только если `LandscapeOk(tgt, foils)` (все foils &lt; tgt) **и** `gap > BestGap`. После `apply_best` — Train free-run mid; если `!landscape_ok` → `free_run_reject_best` → snapshot + `search_reverted=1`.  
+**Train всегда оставляет silent mid** после Search (Test C++ inference mid); Train не запускает второй mid в leftover-окне.  
 **Test-only / `--skip-train` smoke ≠ валидация Search**. Приёмка: `posttune_verify --case br100_search` (без skip-train); PASS если TipR≠keep **или** `search_reverted=1`; mid только `cpp`; fires **строго** `10000000`. См. [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
 
 ```mermaid
@@ -85,6 +86,9 @@ flowchart TD
   more -->|yes| trial
   more -->|no Best empty| rev[revert_snapshot]
   more -->|no Best ok| apply[apply_best]
+  apply --> fr{free_run_landscape}
+  fr -->|ok| keep[keep_BestTips]
+  fr -->|fail| rej[free_run_reject_best]
 ```
 
 ```mermaid
@@ -116,3 +120,5 @@ flowchart LR
 
 Клон с явным `EnablePostTrainTuning=0` сохраняет прежний путь Branch CalibrateLtz (байт-в-байт относительно pin до PostTune).  
 Примеры: `SelectivityBranch/EXP_br_span25_packA_gen_C1e9_posttune_off`.
+
+Аварийный откат AutoScale: см. [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md) §«Аварийный откат» (`AutoScaleIterationGap=0` или ADefault=false + pin на posttune-клонах). `kMinSettle=0.20` откатывать отдельно.

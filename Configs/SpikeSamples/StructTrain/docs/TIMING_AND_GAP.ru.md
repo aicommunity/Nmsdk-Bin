@@ -37,6 +37,15 @@ XML `IterationGap=1.5` **не** менять массово: при `AutoScale=0
 | 100 мс | 25 | 0.20–0.125→0.20 | **~0.35** | ~4× |
 | 480 мс | 30 | 0.20 | **~0.73** | ~2× |
 
+## Замер wall (br25 Test mid, 2026-09-22)
+
+| AutoScale | gapEff | delay | wall `-t 5` (нагруженный хост) |
+|-----------|--------|-------|--------------------------------|
+| 1 | **0.25** | 0.25 | ~85 s (sim mid ≪ `-t`; wall ≈ console overhead + slog) |
+| 0 (legacy) | **1.5** | 1.5 | ~90 s |
+
+Sim-gap отношение **1.5/0.25 = 6×**. Полный Search br100 @12 iters ранее ~5010 s wall при `gapEff≈0.35` (vs многочасовой при gap=1.5).
+
 В EventsLog (`EnableDebug=1`): `InferenceMid: … delay=… gapEff=… auto_gap=1` (INFO).  
 Train DEBUG: `BeginTrainingIteration: … gapEff=… gapPhys=… auto_gap=…`.
 
@@ -58,4 +67,11 @@ flowchart LR
 Free-run mid budget и Train iteration pacing используют `EffectiveIterationGapSec` / `EffectiveDatasetDelaySec`.  
 Verify и phase8/9 Test overlay **ensure** `AutoScaleIterationGap=1`.
 
-Аварийный откат: `AutoScaleIterationGap=0` (или default false + pin только на posttune-клонах) при пропуске пиков на smoke.
+## Аварийный откат AutoScale
+
+Оставить `ADefault AutoScaleIterationGap=true`, пока smoke/V5b зелёные.
+
+1. XML: `<AutoScaleIterationGap Type="b" …>0</AutoScaleIterationGap>` → legacy `max(XML 1.5, phys)`.
+2. Или в PulseLib `ADefault=false` + pin `=1` только на posttune-клонах: asym25/50, br25 on/off, br100 keep/search, phase6 `EXP_480_gen_posttune`.
+3. Триггер: smoke fires≠`10000000` / mid вне ±5% / peak bleed после укорочения settle.
+4. `kMinSettle=0.20` откатывать **отдельно** от AutoScale.

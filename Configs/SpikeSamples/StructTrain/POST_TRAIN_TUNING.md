@@ -20,7 +20,7 @@ With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` during N
 
 ## Tip modes (default CanonRmin=1)
 
-0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic (BestTips only if `landscape_ok`; else revert KeepDone/ScaleTipR snapshot)
+0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic (trial BestTips if `landscape_ok`; free-run fail → `free_run_reject_best` → KeepDone/ScaleTipR)
 
 ## Timing
 
@@ -33,17 +33,19 @@ Canon: [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
 
 | Class | Mid metric | Gate |
 |-------|------------|------|
-| Branch | soma peak | `phase8 --skip-tipr-mid` |
+| Branch | shared soma amp (`soma_amp_sum`) | `phase8 --skip-tipr-mid` |
 | TL | LTZ peak (Auto) | `phase9 --skip-tipr-mid` |
 
 Train free-run may leave `FixedLTZ=1.0` when landscape is bad; Test `MaybeStartInferenceMidProbes` plays Matrix pack A as-is and writes mid + `posttune_complete.flag`. Gate two-pass when thr is silent.
 
-SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (`PostTrainTipSearchIters=12`). BestTips update only when `LandscapeOk` (all foils &lt; tgt) and `gap > BestGap`; else revert snapshot (`search_reverted=1`).  
+SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (`PostTrainTipSearchIters=12`). BestTips update when trial `LandscapeOk` and `gap > BestGap`; after `apply_best`, Train free-run mid must also pass — else `free_run_reject_best` → snapshot (`search_reverted=1`). Train always leaves **silent** mid after Search so Test C++ inference mid can run.  
 **Test-only / `--skip-train` smoke ≠ Search validation**. Accept via `posttune_verify --case br100_search` (no skip-train): TipR≠keep **or** `search_reverted=1`; mid `cpp`; fires **`10000000`**. See [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
 
 Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
 
 Verify P0: Branch25 CanonRmin / off / AsymRm25 FlatLastR → fires `10000000` — [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md).
+
+AutoScale emergency rollback: set `AutoScaleIterationGap=0` (or ADefault false + pin on posttune clones only). See [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
 
 ## Scripts
 

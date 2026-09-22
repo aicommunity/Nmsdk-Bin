@@ -14,17 +14,19 @@
 | V3 | `SelectivityAsymRm/EXP_span25ms_packA_gen_posttune` | 2 FlatLastR | TipR `8.6e7×4`; mid≈gold `0.03759`; 8/8 | **PASS** mid≈0.037589 fires `10000000` |
 | V4 | `SelectivityAsymRm/EXP_span50ms_packA_gen_posttune` | 1 CanonRmin | TipR Canon; **cpp** mid ±5% к `0.011759`; fires `10000000` | **PASS** mid≈0.011646 `mid_source=cpp` |
 | V5 | `…/EXP_br_span100_…_posttune_keep` | 3 KeepDone | TipR snapshot; cpp mid; fires `10000000` | **PASS** mid≈0.00718 |
-| V5b | `…/EXP_br_span100_…_posttune_search` | 4 SearchSynthetic | **полный Train** mode=4, `SearchIters=12`, `AutoScaleIterationGap=1`; TipR≠keep **или** `search_reverted=1`; cpp mid; fires **строго** `10000000` | **PASS** TipR≈ScaleTipR KeepDone `search_reverted=1`; mid≈0.00714; fires `10000000` |
+| V5b | `…/EXP_br_span100_…_posttune_search` | 4 SearchSynthetic | **полный Train** mode=4, `SearchIters=12`, `AutoScaleIterationGap=1`; trial BestTips + free-run reject; TipR≠keep **или** `search_reverted=1`; cpp mid; fires **строго** `10000000` | **PASS** TipR search `search_reverted=1` (Train silent); mid≈0.00714; fires `10000000` |
 | V6 | `SelectivityPhaseA/Phase6/EXP_480_gen_posttune` | 1 CanonRmin | TipR Canon; **cpp** mid ±5% к tiprmin `0.016894`; fires `10000010` | **PASS** mid≈0.016896 `mid_source=cpp` |
 
 ### SearchSynthetic PASS criteria (V5b)
 
 1. Soft-cold Train + `PostTrainTipResistanceMode=4`, `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1`.
-2. В EventsLog: `phase -> PostTune mode=4`, `gapEff=` ≪1.5, `SearchSynthetic:` (`skip_candidate` / `apply_best` / `revert`).
-3. После Train: TipR **≠** keep-клон **или** `search_reverted=1` в flag (BestTips только при `landscape_ok`).
+2. В EventsLog: `phase -> PostTune mode=4`, `gapEff=` ≪1.5, `SearchSynthetic:` (`skip_candidate` / `apply_best` / `free_run_reject_best` / `revert`).
+3. После Train: TipR **≠** keep-клон **или** `search_reverted=1` в flag (trial BestTips + free-run reject).
 4. Test: C++ inference mid (`inference=1`, mid&lt;0.9) + gate fires **`10000000`** (не `10000010`).
 5. `--skip-train` для `br100_search` **запрещён** в `posttune_verify.py`.
 6. `train_t≈2400` (при AutoScale gapEff≈0.3); polls≥800.
+
+**Wall:** Search@12 при `gapEff≈0.35` — порядка ~1.5 h wall (замер ~5010 s); mid br25 Auto `gapEff=0.25` vs legacy `1.5` (sim ~6×). См. [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
 
 ```mermaid
 flowchart TD
