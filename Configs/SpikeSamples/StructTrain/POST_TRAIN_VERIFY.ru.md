@@ -14,16 +14,26 @@
 | V3 | `SelectivityAsymRm/EXP_span25ms_packA_gen_posttune` | 2 FlatLastR | TipR `8.6e7×4`; mid≈gold `0.03759`; 8/8 | **PASS** mid≈0.037589 fires `10000000` |
 | V4 | `SelectivityAsymRm/EXP_span50ms_packA_gen_posttune` | 1 CanonRmin | TipR Canon; **cpp** mid ±5% к `0.011759`; fires `10000000` | **PASS** mid≈0.011646 `mid_source=cpp` |
 | V5 | `…/EXP_br_span100_…_posttune_keep` | 3 KeepDone | TipR snapshot; cpp mid; fires `10000000` | **PASS** mid≈0.00718 |
-| V5b | `…/EXP_br_span100_…_posttune_search` | 4 SearchSynthetic | **полный Train** mode=4 (не `--skip-train`); TipR≠keep **или** `search_reverted=1`; cpp mid; fires `10000000` или `10000010` (BestTips may invert one foil) | **PASS** TipR `2e7×3+4.3e7` ≠keep; mid cpp; fires `10000010` |
+| V5b | `…/EXP_br_span100_…_posttune_search` | 4 SearchSynthetic | **полный Train** mode=4, `SearchIters=12`, `AutoScaleIterationGap=1`; TipR≠keep **или** `search_reverted=1`; cpp mid; fires **строго** `10000000` | **PASS** TipR≈ScaleTipR KeepDone `search_reverted=1`; mid≈0.00714; fires `10000000` |
 | V6 | `SelectivityPhaseA/Phase6/EXP_480_gen_posttune` | 1 CanonRmin | TipR Canon; **cpp** mid ±5% к tiprmin `0.016894`; fires `10000010` | **PASS** mid≈0.016896 `mid_source=cpp` |
 
 ### SearchSynthetic PASS criteria (V5b)
 
-1. Soft-cold Train + `PostTrainTipResistanceMode=4`, `PostTrainTipSearchIters=12`.
-2. В EventsLog есть `phase -> PostTune mode=4` (при `EventsLogMode=1`).
-3. После Train: TipR **≠** keep-клон **или** в `posttune_complete.flag` есть `search_reverted=1` (ветка `BestGap≤0` → snapshot).
-4. Test: C++ inference mid (`inference=1`, mid&lt;0.9) + gate fires `10000000`.
-5. `--skip-train` для `br100_search` **запрещён** в `posttune_verify.py` (smoke ≠ валидация Search).
+1. Soft-cold Train + `PostTrainTipResistanceMode=4`, `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1`.
+2. В EventsLog: `phase -> PostTune mode=4`, `gapEff=` ≪1.5, `SearchSynthetic:` (`skip_candidate` / `apply_best` / `revert`).
+3. После Train: TipR **≠** keep-клон **или** `search_reverted=1` в flag (BestTips только при `landscape_ok`).
+4. Test: C++ inference mid (`inference=1`, mid&lt;0.9) + gate fires **`10000000`** (не `10000010`).
+5. `--skip-train` для `br100_search` **запрещён** в `posttune_verify.py`.
+6. `train_t≈2400` (при AutoScale gapEff≈0.3); polls≥800.
+
+```mermaid
+flowchart TD
+  soft[soft_cold_ensure_PostTune_AutoScale] --> train[Train_mode4_Iters12]
+  train --> slog[slog_prune_tipr_in_flag]
+  slog --> test[Test_inference_mid]
+  test --> gate[phase8_skip_tipr_mid]
+  gate --> res[RESULT_mid_source_tipr_vs_keep]
+```
 
 **Hang / reliability:** чистить `StatisticLog`/`EventsLog` после кейса; abort при slog&gt;3G; `phase8`/`phase9` `run_nm` — span-aware hard deadline + SIGTERM после ≥8 строк CSV.
 

@@ -89,6 +89,14 @@ def overlay_train_params(train: Path, test: Path) -> str:
             )
         else:
             t = set_tag(t, "PostTrainSilentThreshold", "1", 1)
+        # Physics-based iteration gap on Test (inference mid free-run).
+        if get_tag(t, "AutoScaleIterationGap") is None:
+            t = ensure_tag_after(
+                t, "IterationGap", "AutoScaleIterationGap", "1",
+                attrs=' Type="b" PType="257" IoType="17"',
+            )
+        else:
+            t = set_tag(t, "AutoScaleIterationGap", "1", 1)
         p.write_text(t, encoding="utf-8")
     return thr
 

@@ -244,7 +244,8 @@ flowchart LR
 
 **C++ PostTune** (канон / flat / KeepDone / Search внутри учителя): [`POST_TRAIN_TUNING.ru.md`](POST_TRAIN_TUNING.ru.md).  
 Pin verify: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) · RESULT [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md).  
-**SearchSynthetic validated** только полным Train mode=4 (`br100_search`); skip-train smoke не считается.
+**AutoScale gap** (`AutoScaleIterationGap=1`): физический gap ≪ XML 1.5 — [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).  
+**SearchSynthetic validated @12** только полным Train mode=4 (`br100_search`, `SearchIters=12`, fires `10000000`, landscape_ok); skip-train smoke не считается.
 
 Источник цифр: свойство `TipSynapseResistance` в Test `Parameters_00.xml` успешных корней из [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) и tiprmin-клонов Phase6/Branch ~480 мс (без diag/bak).
 

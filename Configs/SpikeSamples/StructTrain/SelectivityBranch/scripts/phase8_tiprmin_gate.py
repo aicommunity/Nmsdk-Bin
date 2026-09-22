@@ -353,6 +353,15 @@ def prepare_test(
                 )
             else:
                 t = set_tag(t, "PostTrainSilentThreshold", "1")
+            if get_tag(t, "AutoScaleIterationGap") is None:
+                t = re.sub(
+                    r"(</IterationGap>)",
+                    r'\1\n\t\t\t\t\t<AutoScaleIterationGap Type="b" PType="257" IoType="17">1</AutoScaleIterationGap>',
+                    t,
+                    count=1,
+                )
+            else:
+                t = set_tag(t, "AutoScaleIterationGap", "1")
         if rel.startswith("Parameters"):
             t = set_tag(t, "StructureBuildMode", "0")
         else:

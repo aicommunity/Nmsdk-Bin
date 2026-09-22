@@ -69,14 +69,12 @@ CASES = {
     "br100_search": {
         "root": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9_posttune_search",
         "gold": ROOT / "SelectivityBranch" / "EXP_br_span100_packA_gen_C1e9",
-        "train_t": 7200.0,
+        "train_t": 2400.0,
         "span_ms": 100,
         "kind": "branch",
         "expect_tipr": "search",
         "skip_tipr_mid": True,
-        # Search BestTips can invert one foil (phase6-like 7/8); keep clone stays 8/8.
-        "expect_fires": "10000010",
-        "expect_fires_alt": "10000000",
+        "expect_fires": "10000000",
     },
     "asym50": {
         "root": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen_posttune",
@@ -441,6 +439,12 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
             t = p.read_text(encoding="utf-8")
             t = ensure_tag_after(t, "IsNeedToTrain", "EnablePostTrainTuning", enable)
             t = set_tag(t, "EnablePostTrainTuning", enable, 1)
+            # Physics-based gap: ignore XML IterationGap=1.5 floor.
+            t = ensure_tag_after(
+                t, "IterationGap", "AutoScaleIterationGap", "1",
+                attrs=' Type="b" PType="257" IoType="17"',
+            )
+            t = set_tag(t, "AutoScaleIterationGap", "1", 1)
             if enable == "1":
                 t = ensure_tag_after(
                     t, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "1",
@@ -458,20 +462,20 @@ def run_case(name: str, *, skip_train: bool = False) -> dict:
                 )
                 t = set_tag(t, "PostTrainSilentThreshold", "1", 1)
                 if mode == "4":
-                    # 3 passes ≈ 4 tips × 3 mults × 3 ≈ 36 trials (wall ~1h); full 12 is overnight.
-                    search_iters = "3" if name == "br100_search" else "12"
                     t = ensure_tag_after(
-                        t, "PostTrainSilentThreshold", "PostTrainTipSearchIters", search_iters,
+                        t, "PostTrainSilentThreshold", "PostTrainTipSearchIters", "12",
                         attrs=' Type="i" PType="257" IoType="17"',
                     )
-                    t = set_tag(t, "PostTrainTipSearchIters", search_iters, 1)
+                    t = set_tag(t, "PostTrainTipSearchIters", "12", 1)
             p.write_text(t, encoding="utf-8")
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
-                f"{get_tag(p.read_text(encoding='utf-8'), 'PostTrainTipResistanceMode')}"
+                f"{get_tag(p.read_text(encoding='utf-8'), 'PostTrainTipResistanceMode')} "
+                f"auto_gap="
+                f"{get_tag(p.read_text(encoding='utf-8'), 'AutoScaleIterationGap')}"
             )
-        # SearchSynthetic: many tip×mult×pass probe cycles — allow ~8h wall.
-        polls = 1000 if name == "br100_search" else 401
+        # SearchSynthetic: AutoScale gapEff≈0.3 → ~8h wall budget still ample.
+        polls = 800 if name == "br100_search" else 401
         status = wait_need0(
             train, case["train_t"], train / "run_posttune_verify.log", max_polls=polls
         )

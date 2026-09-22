@@ -68,7 +68,7 @@ delay_len = (L_k - 1) × EstDelayPerSeg
 
 Для span 25 мс: Expected ≈ `[0, 0.00417, 0.0125, 0.025]` с → L ≈ `[7, 6, 4, 1]`. Длины **масштабируются** с span (100 мс → `[23,19,13,1]`). **Обучение сходится** — это не баг паттерна.
 
-`SettleMarginSec` использует `kDelayPerSegDefault×max(L)`, не адаптированный `EstDelayPerSeg` — при коротком span settle может быть **завышен** (лишние итерации, не корень fire_all).
+`SettleMarginSec` использует `EstDelayPerSeg` если &gt;0, иначе `kDelayPerSegDefault×max(L)` (**D2 закрыт** вместе с `AutoScaleIterationGap`). См. [`docs/TIMING_AND_GAP.ru.md`](../docs/TIMING_AND_GAP.ru.md).
 
 ### 3.3 Почему «узкий EPSP» не ⇒ селективность
 
@@ -328,7 +328,7 @@ flowchart TD
 
 **D1. Раздельные Exc/Inh C и Dissoc** (см. FastResponse §сноска).
 
-**D2. PeakMeasureMargin / SettleMargin** — привязать к `PatternSpanSec` и **адаптированному** `EstDelayPerSeg`, не только `kDelayPerSegDefault×max(L)` (старый блокер tune на 10/25 мс).
+**D2. PeakMeasureMargin / SettleMargin** — **закрыто:** `SettleMarginSec` → `EstDelayPerSeg` (fallback default); `AutoScaleIterationGap` даёт `gapEff = span+settle+slack` без пола XML 1.5.
 
 **D3. GlobalTimeStep** — ts10k (dt=0.1 мс) меняет динамику; любой sweep порога **отдельно** для TS.
 

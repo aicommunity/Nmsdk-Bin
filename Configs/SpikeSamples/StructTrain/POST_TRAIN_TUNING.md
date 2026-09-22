@@ -16,11 +16,16 @@ After length sync and amp normalize, the learner can apply the **tip-resistance 
 | 3 | **PostTune** | CalibrateLtz (legacy, tuning **OFF** only) |
 | 4 | — | **PostTune** |
 
-With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` and `kPhaseCalibrateLtz`.
+With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` during Normalize→CalibrateLtz; SearchSynthetic still runs ScaleTipR once as KeepDone revert snapshot.
 
 ## Tip modes (default CanonRmin=1)
 
-0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic
+0 Off · 1 CanonRmin `2e7×(N−1)+8.6e7` · 2 FlatLastR `8.6e7×N` · 3 KeepDone · 4 SearchSynthetic (BestTips only if `landscape_ok`; else revert KeepDone/ScaleTipR snapshot)
+
+## Timing
+
+`AutoScaleIterationGap=true` (default): `EffectiveIterationGap = span + settle + slack` — XML `IterationGap=1.5` does not raise the floor.  
+Canon: [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
 
 ## Mid probes (phase8 / phase9 / pack A parity)
 
@@ -33,8 +38,8 @@ With tuning ON, Branch skips `ScaleTipResistancesForParallelActivation` and `kPh
 
 Train free-run may leave `FixedLTZ=1.0` when landscape is bad; Test `MaybeStartInferenceMidProbes` plays Matrix pack A as-is and writes mid + `posttune_complete.flag`. Gate two-pass when thr is silent.
 
-SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (tip×mult coordinate descent, `PostTrainTipSearchIters` full passes).  
-**Test-only / `--skip-train` smoke ≠ Search validation** — TipR may equal the keep clone without entering the search cycle. Accept via `posttune_verify --case br100_search` (no skip-train): PASS if TipR≠keep **or** `search_reverted=1` in the flag; mid must be `cpp`. See [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
+SearchSynthetic (mode=4) runs **only** in the Train PostTune loop (`PostTrainTipSearchIters=12`). BestTips update only when `LandscapeOk` (all foils &lt; tgt) and `gap > BestGap`; else revert snapshot (`search_reverted=1`).  
+**Test-only / `--skip-train` smoke ≠ Search validation**. Accept via `posttune_verify --case br100_search` (no skip-train): TipR≠keep **or** `search_reverted=1`; mid `cpp`; fires **`10000000`**. See [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) §V5b.
 
 Mid: `0.5*(tgt+max_foil_below)` else `tgt*0.99`.
 
