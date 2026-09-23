@@ -113,5 +113,43 @@ class TestVerdict(unittest.TestCase):
         self.assertEqual(pv.verdict_rows([{"row_fail": False, "train_status": "x_FAIL_y"}]), 1)
 
 
+class TestProvenanceHash(unittest.TestCase):
+    def test_sha256_file_roundtrip(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "x.bin"
+            p.write_bytes(b"nmsdk-a16")
+            digest = pv.sha256_file(p)
+            self.assertEqual(len(digest), 64)
+            self.assertEqual(digest, pv.sha256_file(p))
+            self.assertIsNone(pv.sha256_file(Path(td) / "missing"))
+
+    def test_sha256_paths_keys(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "a.txt"
+            p.write_text("a", encoding="utf-8")
+            d = pv.sha256_paths([p])
+            self.assertEqual(len(d), 1)
+            self.assertTrue(all(v and len(v) == 64 for v in d.values()))
+
+
+class TestTiprExpect(unittest.TestCase):
+    def test_tipr_matches_expect_canon_flat(self):
+        self.assertTrue(pv.tipr_matches_expect("canon", "canon"))
+        self.assertTrue(pv.tipr_matches_expect("flat", "flat"))
+        self.assertFalse(pv.tipr_matches_expect("flat", "canon"))
+
+    def test_tipr_matches_expect_legacy(self):
+        self.assertTrue(pv.tipr_matches_expect("other", "legacy"))
+        self.assertTrue(pv.tipr_matches_expect("legacy", "legacy"))
+        self.assertFalse(pv.tipr_matches_expect("canon", "legacy"))
+
+    def test_tipr_expect_fail_fixture(self):
+        """Canon case with flat TipR must fail the expect gate."""
+        tipr = "8.6e7 8.6e7 8.6e7 8.6e7"
+        got = pv.tipr_class(tipr, "canon")
+        self.assertEqual(got, "flat")
+        self.assertFalse(pv.tipr_matches_expect(got, "canon"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import re
 import shutil
@@ -20,6 +21,14 @@ from pathlib import Path
 from typing import Literal, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+NMSDK_ROOT = Path(__file__).resolve().parents[5]
+PROVENANCE_SOURCE_REL = (
+    "Libraries/Nmsdk-PulseLib/Core/NPatternResponseAnalyzer.cpp",
+    "Libraries/Nmsdk-PulseLib/Core/NNeuronPostTrainTune.cpp",
+    "Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp",
+    "Rdk/GUI/Qt/UModernDiagramLinkRouter.cpp",
+    "App/NeuroModelerConsole/main.cpp",
+)
 sys.path.insert(0, str(ROOT / "scripts"))
 from repro_cold_lib import (  # noqa: E402
     NM,
@@ -545,6 +554,30 @@ def run_gate(case: dict) -> GateResult:
     )
 
 
+def sha256_file(path: Path | str) -> str | None:
+    p = Path(path)
+    if not p.is_file():
+        return None
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def sha256_paths(paths: Sequence[Path | str]) -> dict[str, str | None]:
+    out: dict[str, str | None] = {}
+    for path in paths:
+        p = Path(path)
+        key = str(p)
+        try:
+            key = str(p.resolve().relative_to(NMSDK_ROOT))
+        except ValueError:
+            key = p.name
+        out[key] = sha256_file(p)
+    return out
+
+
 def tipr_class(tipr: str, expect: str = "") -> str:
     if expect in ("keep", "search", "legacy"):
         if tipr_looks_posttuned(tipr):
@@ -557,6 +590,13 @@ def tipr_class(tipr: str, expect: str = "") -> str:
             return "flat"
         return "canon"
     return "other"
+
+
+def tipr_matches_expect(got: str, expect: str) -> bool:
+    """True when classified TipR matches case expect_tipr."""
+    if expect == "legacy":
+        return got in ("legacy", "other")
+    return got == expect
 
 
 def _copy_if_exists(src: Path, dst: Path) -> None:
@@ -633,6 +673,8 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
                 f"auto_gap="
                 f"{get_tag(p.read_text(encoding='utf-8'), 'AutoScaleIterationGap')}"
             )
+        # A16: config SHA after soft_cold+inject, before Train wait.
+        config_sha256 = sha256_file(train / "Parameters_00.xml")
         polls = 800 if name == "br100_search" else 401
         status = wait_need0(
             train, case["train_t"], train / "run_posttune_verify.log", max_polls=polls
@@ -642,6 +684,7 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
             params_source = "nm_save"
     else:
         status = "skip_train"
+        config_sha256 = sha256_file(train / "Parameters_00.xml")
 
     after = snap_params(train / "Parameters_00.xml")
     train_flag = train / "posttune_complete.flag"
@@ -718,17 +761,26 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
         )
     if tipr_final:
         (run_dir / "Train" / "tipr_final.txt").write_text(tipr_final + "\n", encoding="utf-8")
+    expect_tipr = case["expect_tipr"]
+    got_tipr_class = tipr_class(tipr_final, expect_tipr)
+    source_paths = [NMSDK_ROOT / rel for rel in PROVENANCE_SOURCE_REL]
     provenance = {
         "case": name,
         "nm": str(NM),
         "nm_mtime": NM.stat().st_mtime if Path(NM).exists() else None,
+        "binary_sha256": sha256_file(NM),
+        "source_sha256": sha256_paths(source_paths),
+        "config_sha256": config_sha256,
         "params_source": params_source,
         "train_status": status,
         "search_reverted_train": int(search_reverted),
         "tipr_vs_snapshot": tipr_vs,
+        "tipr_class": got_tipr_class,
+        "expect_tipr": expect_tipr,
         "mid_source": mid_src,
         "gate_rc": gate.rc,
         "gate_ok": gate.ok,
+        "quality_class": "calibration-quality",
     }
     (run_dir / "provenance.json").write_text(
         json.dumps(provenance, indent=2) + "\n", encoding="utf-8"
@@ -741,7 +793,6 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
                 shutil.rmtree(d, ignore_errors=True)
 
     expect_fires = case.get("expect_fires", "10000000")
-    expect_tipr = case["expect_tipr"]
     row_fail = False
     fail_notes: list[str] = []
     if not gate.ok:
@@ -756,6 +807,9 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
     if expect_fires and fires and fires != expect_fires:
         row_fail = True
         fail_notes.append(f"fires={fires} expect={expect_fires}")
+    if tipr_final and not tipr_matches_expect(got_tipr_class, expect_tipr):
+        row_fail = True
+        fail_notes.append(f"tipr_class={got_tipr_class} expect={expect_tipr}")
 
     return {
         "case": name,
@@ -763,7 +817,7 @@ def run_case(name: str, *, skip_train: bool = False, run_dir: Path | None = None
         "after": after,
         "gold_thr": gold_test.get("FixedLTZThreshold", ""),
         "gold_tipr": gold_test.get("TipSynapseResistance", ""),
-        "tipr_class": tipr_class(tipr_final, expect_tipr),
+        "tipr_class": got_tipr_class,
         "fires": fires,
         "metrics": metrics_line,
         "expect_tipr": expect_tipr,
