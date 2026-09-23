@@ -45,6 +45,7 @@ flowchart TD
 ## Протокол одного прогона (V1–V3)
 
 1. Пересобрать `NeuroModelerConsole` с pin PostTune (символ `EnablePostTrainTuning`).
+   Runtime path для `posttune_verify` / gates: **`Bin/Platform/Linux/NeuroModelerConsole`** (hardcode в `repro_cold_lib.NM`). После pin PulseLib — пересобрать этот binary; иначе cold PASS на stale семантике.
 2. Soft-cold Train (`repro_cold_lib.soft_cold_reset_train`).
 3. Train: `NeuroModelerConsole -c Train/Project.ini -s -t <T> -x -S` до `IsNeedToTrain=0`  
    - Branch25: `-t 320`  
