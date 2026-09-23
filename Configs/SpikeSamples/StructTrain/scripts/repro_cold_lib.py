@@ -253,6 +253,10 @@ def _cold_params_common(t: str, neuron: str) -> str:
     t = set_tag(t, "DendriteLength", L_COLD, 1)
     t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
     t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
+    # Gold Done/tiprmin XML often leaves a recognition mid; force silent for cold train.
+    t = set_tag(t, "FixedLTZThreshold", "1", 1) if re.search(r"<FixedLTZThreshold\b", t) else _ensure_tag(t, "FixedLTZThreshold", "1", after_tag="IsNeedToTrain")
+    t = set_tag(t, "LTZThreshold", "1", 1) if re.search(r"<LTZThreshold\b", t) else t
+    t = set_tag(t, "CalibratedFixedLTZThreshold", "1", 1) if re.search(r"<CalibratedFixedLTZThreshold\b", t) else t
     # Gold Done XML often lacks this tag — must inject or soft-cold never rebuilds
     t = _ensure_tag(t, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
     t = set_tag(t, "UseFixedLTZThreshold", "0", 1) if re.search(r"<UseFixedLTZThreshold\b", t) else _ensure_tag(t, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
@@ -270,6 +274,12 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     mt = set_tag(mt, "InitialSomaPotential", "0 0 0 0", 1)
     mt = set_tag(mt, "IsNeedToTrain", "1", 1)
     mt = set_tag(mt, "StructureBuildMode", "1", 1)
+    if re.search(r"<FixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "FixedLTZThreshold", "1", 1)
+    if re.search(r"<LTZThreshold\b", mt):
+        mt = set_tag(mt, "LTZThreshold", "1", 1)
+    if re.search(r"<CalibratedFixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "CalibratedFixedLTZThreshold", "1", 1)
     mt = _ensure_tag(mt, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
     mt = _ensure_tag(mt, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
     mt = _ensure_tag(mt, "AutoCalibrateFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
