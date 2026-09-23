@@ -1,9 +1,17 @@
-Clone of Branch100 packA gen for C++ PostTune **KeepDone** (mode=3).
+# EXP_br_span100_packA_gen_C1e9
 
-**Pin:** `AutoScaleIterationGap=1` (see [`docs/TIMING_AND_GAP.ru.md`](../../docs/TIMING_AND_GAP.ru.md)).
+PHASE8 Branch short-span packA **gen** @100 ms, `NSPNeuronGenAsymRmD001C1e9`, GTS=20000.
 
-Keep = TipR snapshot from end of Normalize (reference TipR for comparing SearchSynthetic). Gate: `phase8_tiprmin_gate.py --skip-tipr-mid`.
+| Field | Value |
+|-------|-------|
+| Status | **PASS** `ok_audit=1` (S2) |
+| Train L | `25 21 11 1` |
+| TipR | **Done TipR** (TipR@Rmin дал amp-inversion foil6>target → 7/8 FP) |
+| Mid thr | ≈0.0071818 (`soma_amp_sum`) |
+| Gate | fires `10000000`, `ok_single`, `t_rel=0.24755` |
+| CSV | [`Test/SelectivityLog/results.csv`](Test/SelectivityLog/results.csv) |
 
-Search clone (mode=4 after Train): [`../EXP_br_span100_packA_gen_C1e9_posttune_search`](../EXP_br_span100_packA_gen_C1e9_posttune_search).
+Parent: [`../PHASE8_SHORTSPAN.md`](../PHASE8_SHORTSPAN.md).
 
-See [`POST_TRAIN_TUNING.ru.md`](../../POST_TRAIN_TUNING.ru.md).
+> Working soft_cold clone for posttune_verify (calibration-quality). Not PHASE12 VALIDATED_CLONE.
+Gold: `EXP_br_span100_packA_gen_C1e9`. Soft_cold via `scripts/posttune_verify.py`.

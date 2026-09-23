@@ -1,5 +1,4 @@
-AsymRm span50 packA gen clone for C++ PostTune **CanonRmin** (mode=1).
+# EXP_span50ms_packA_gen_posttune
 
-Gate: `phase9_preinh_bc_gate.py --skip-tipr-mid`.
-
-See [`POST_TRAIN_TUNING.ru.md`](../../POST_TRAIN_TUNING.ru.md).
+> Working soft_cold clone for posttune_verify (calibration-quality). Not PHASE12 VALIDATED_CLONE.
+Gold: `EXP_span50ms_packA_gen`.
