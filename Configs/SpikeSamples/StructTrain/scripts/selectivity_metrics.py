@@ -109,12 +109,19 @@ def classify_trial_morphology(
         isis = [stim_times[i + 1] - stim_times[i] for i in range(len(stim_times) - 1)]
         min_isi = min(isis) if isis else PER_STIM_WINDOW_FLOOR
         win = max(2.0 * min_isi, PER_STIM_WINDOW_FLOOR)
-        covered = 0
+        # Injective: each spike matches at most one stim.
+        used = [False] * len(times)
+        matched = 0
         for st in stim_times:
-            if any(st <= sp <= st + win for sp in times):
-                covered += 1
+            for i, sp in enumerate(times):
+                if used[i]:
+                    continue
+                if st - 1e-12 <= sp <= st + win + 1e-12:
+                    used[i] = True
+                    matched += 1
+                    break
         need = int(math.ceil(PER_STIM_MIN_FRAC * stim_count))
-        per_stim = covered >= need
+        per_stim = matched >= need
 
     ok_single = spike_count == 1 and not burst and not per_stim
     return {
@@ -175,6 +182,11 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "n_per_stim_trials": 0,
         "max_spike_count": 0,
         "median_spike_count": 0,
+        "metrics_version": 2,
+        "schema_ok": 1,
+        "ok_audit_legacy": 0,
+        "ok_audit_v2": 0,
+        "fa_strict_v2": 0,
     }
     if n == 0:
         return empty
@@ -190,27 +202,36 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     )
     ok_legacy = 1 if (n == 8 and target_hit_legacy == 1 and fire_all_legacy == 0 and acc_legacy >= 4) else 0
 
-    # Strict: late_fp on nontarget = FA; late_fn / late-only on target = miss
+    # Strict v2: any foil spike in the observation window is FP (not only flags).
     fires_eff: list[int] = []
     matches_strict: list[int] = []
     late_fp = late_fn = 0
+    schema_ok = 1
     for r in rows:
         fired = 1 if r.get("neuron_fired") == "1" else 0
         late = 1 if r.get("late_fired") == "1" else 0
         target = _i(r.get("target_class"))
         err = (r.get("error_class") or "").strip()
+        times = _parse_spike_times(r)
+        spike_count = _i(r.get("neuron_spike_count"), len(times))
+        if "neuron_spike_count" in r and "neuron_spike_times" in r:
+            if spike_count != len(times) and (spike_count > 0 or times):
+                # Allow empty times with count 0; otherwise require consistency.
+                if not (spike_count == 0 and not times):
+                    if abs(spike_count - len(times)) > 0 and times:
+                        schema_ok = 0
+        has_spike = spike_count > 0 or bool(times)
         if err == "late_fp" or (target == 0 and late and not fired):
             late_fp += 1
         if err == "late_fn" or (target != 0 and late and not fired):
             late_fn += 1
-        effective_fire = 1 if (fired or late) else 0
+        # v2 effective fire: flags OR any recorded spike
+        effective_fire = 1 if (fired or late or has_spike) else 0
         fires_eff.append(effective_fire)
         if target != 0:
-            # need in-window fire for target_hit_strict
             matches_strict.append(1 if fired else 0)
         else:
-            # nontarget ok only if no in-window and no late
-            matches_strict.append(1 if (not fired and not late) else 0)
+            matches_strict.append(1 if not effective_fire else 0)
 
     acc_strict = sum(matches_strict)
     fa_strict = sum(1 for i in range(1, n) if fires_eff[i] == 1) if n > 1 else 0
@@ -221,6 +242,7 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     )
     ok_strict = 1 if (
         n == 8 and target_hit_strict == 1 and fire_all_strict == 0 and acc_strict >= 4
+        and schema_ok == 1
     ) else 0
 
     morphs = [classify_trial_morphology(r, burst_isi_max=burst_isi_max) for r in rows]
@@ -269,15 +291,29 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
                 response_quality = "ok_single"
 
     complete = 1 if n == 8 else 0
-    ok_audit = 1 if (
+    ok_audit_legacy = 1 if (
         ok_strict == 1 and response_quality == "ok_single" and complete == 1
     ) else 0
+    # v2 audit gate: same shape but uses spike-aware FA; reject bad schema.
+    ok_audit_v2 = 1 if (
+        schema_ok == 1
+        and ok_strict == 1
+        and response_quality == "ok_single"
+        and complete == 1
+        and fa_strict == 0
+    ) else 0
+    # Default ok_audit follows v2 (hidden foil spikes count as FP).
+    ok_audit = ok_audit_v2
 
     return {
         "ok": ok_legacy,  # backward compat
         "ok_legacy": ok_legacy,
         "ok_strict": ok_strict,
         "ok_audit": ok_audit,
+        "ok_audit_legacy": ok_audit_legacy,
+        "ok_audit_v2": ok_audit_v2,
+        "metrics_version": 2,
+        "schema_ok": schema_ok,
         "n": n,
         "acc": acc_legacy,
         "acc_legacy": acc_legacy,
@@ -296,6 +332,7 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "fa": fa_legacy,
         "fa_legacy": fa_legacy,
         "fa_strict": fa_strict,
+        "fa_strict_v2": fa_strict,
         "late_fp": late_fp,
         "late_fn": late_fn,
         "complete": complete,
