@@ -94,6 +94,104 @@ class TestMidSource(unittest.TestCase):
         meta = {"inference": "1", "mid": "0.05", "landscape_ok": "1"}
         self.assertEqual(pv.mid_source_of(meta, "0.05"), "cpp")
 
+    def test_mid_source_rejects_nonfinite(self):
+        meta = {"inference": "1", "mid": "-inf", "landscape_ok": "1"}
+        self.assertEqual(pv.mid_source_of(meta, "-inf"), "invalid_nonfinite")
+
+
+class TestTiprNan(unittest.TestCase):
+    def test_tipr_close_rejects_nan(self):
+        a = [float("nan"), 2e7, 2e7, 8.6e7]
+        b = [float("nan"), 2e7, 2e7, 8.6e7]
+        self.assertFalse(pv.tipr_close(a, b))
+
+
+class TestAcceptRun(unittest.TestCase):
+    def test_search_diff_after_revert_fails(self):
+        row = {
+            "train_status": "done_search_diff",
+            "after": {
+                "TipSynapseResistance": "3e7 3e7 3e7 9e7",
+                "FixedLTZThreshold": "0.05",
+                "IsNeedToTrain": "0",
+            },
+            "fires": "10000000",
+            "tipr_vs_snapshot": "diff_after_revert",
+            "mid_source": "cpp",
+            "tipr_class": "canon",
+            "gate_ok": True,
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="search", mode="search", need="0"
+        )
+        self.assertFalse(ok)
+        self.assertTrue(any("search_tipr" in r for r in reasons))
+
+    def test_need1_exited_fails(self):
+        row = {
+            "train_status": "exited",
+            "after": {
+                "TipSynapseResistance": "2e7 2e7 2e7 8.6e7",
+                "FixedLTZThreshold": "0.05",
+                "IsNeedToTrain": "1",
+            },
+            "fires": "10000000",
+            "tipr_vs_snapshot": "",
+            "mid_source": "cpp",
+            "tipr_class": "canon",
+            "gate_ok": True,
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="canon", mode="cold", need="1"
+        )
+        self.assertFalse(ok)
+
+    def test_empty_fires_fails(self):
+        row = {
+            "train_status": "done",
+            "after": {
+                "TipSynapseResistance": "2e7 2e7 2e7 8.6e7",
+                "FixedLTZThreshold": "0.05",
+                "IsNeedToTrain": "0",
+            },
+            "fires": "",
+            "tipr_vs_snapshot": "",
+            "mid_source": "cpp",
+            "tipr_class": "canon",
+            "gate_ok": True,
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="canon", mode="cold", need="0"
+        )
+        self.assertFalse(ok)
+        self.assertTrue(any("fires" in r for r in reasons))
+
+
+class TestCleanWorkdir(unittest.TestCase):
+    def test_prepare_clean_excludes_flag(self):
+        with tempfile.TemporaryDirectory() as td:
+            archive = Path(td) / "EXP"
+            for side in ("Train", "Test"):
+                (archive / side).mkdir(parents=True)
+                (archive / side / "Parameters_00.xml").write_text("<P/>", encoding="utf-8")
+                (archive / side / "Model_00.xml").write_text("<M/>", encoding="utf-8")
+                (archive / side / "Project.ini").write_text("[x]\n", encoding="utf-8")
+            (archive / "Test" / "posttune_complete.flag").write_text(
+                "mid=0.0116458 inference=1 landscape_ok=1\n", encoding="utf-8"
+            )
+            (archive / "Train" / "posttune_tipr_live.txt").write_text(
+                "tipr=91 92 93 94\n", encoding="utf-8"
+            )
+            old_root = pv.RUNS_ROOT
+            try:
+                pv.RUNS_ROOT = Path(td) / "runs"
+                work = pv.prepare_clean_case("tcase", archive)
+                self.assertFalse((work / "Test" / "posttune_complete.flag").exists())
+                self.assertFalse((work / "Train" / "posttune_tipr_live.txt").exists())
+                self.assertTrue((work / "Train" / "Parameters_00.xml").exists())
+            finally:
+                pv.RUNS_ROOT = old_root
+
 
 class TestSlog(unittest.TestCase):
     def test_classify_slog_order(self):

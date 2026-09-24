@@ -28,14 +28,18 @@ def set_fixed_thr(path: Path, thr: str) -> None:
 
 
 def overlay_train_params(train: Path, test: Path) -> str:
-    """Copy TipR / mid / lengths / PostTune enables from Train onto Test."""
+    """Copy TipR / mid / lengths / PostTune enables from Train onto Test.
+
+    Never reuse a pre-existing Test posttune_complete.flag mid (R06 stale cpp).
+    Fresh inference mid is obtained only after this overlay when thr is silent.
+    """
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     tipr = get_tag(train_p, "TipSynapseResistance") or ""
     thr = get_tag(train_p, "FixedLTZThreshold") or SILENT_THR
-    # Prefer C++ inference mid already written on Test.
-    flag = test / "posttune_complete.flag"
-    if flag.exists():
-        for line in flag.read_text(encoding="utf-8").splitlines():
+    # Prefer Train-flag mid from the current run only (not stale Test flag).
+    train_flag = train / "posttune_complete.flag"
+    if train_flag.exists():
+        for line in train_flag.read_text(encoding="utf-8").splitlines():
             if line.startswith("mid="):
                 mid_s = line.split("=", 1)[1].split()[0]
                 try:
@@ -44,6 +48,9 @@ def overlay_train_params(train: Path, test: Path) -> str:
                 except ValueError:
                     pass
                 break
+    stale_test_flag = test / "posttune_complete.flag"
+    if stale_test_flag.exists():
+        stale_test_flag.unlink()
     rmin = get_tag(train_p, "ResistanceMin") or "20000000"
     lens = get_tag(train_p, "DendriteLength") or ""
     mode = get_tag(train_p, "PostTrainTipResistanceMode") or "1"

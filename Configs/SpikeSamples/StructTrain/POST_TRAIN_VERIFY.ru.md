@@ -18,15 +18,25 @@
 
 ## Текущие ограничения автоматизации
 
-posttune_verify.py уже добавил gate rc/fresh CSV checks, численный TipR comparator, раздельные Train/Test metadata, часть SHA/ожиданий и machine verdict. TL получил выбранный-best reprobe. Называть эти исправления отсутствующими неверно.
+posttune_verify.py (после remediation R06): `prepare_clean_case` копирует allowlist в чистый workdir; `accept_run` блокирует Need≠0 / incomplete / `diff_after_revert` / empty fires / nonfinite TipR·mid; `wait_need0` удаляет live до Train и не делает salvage без `--allow-salvage`; phase9 не читает stale Test flag. Режимы: cold (default), `--allow-salvage`, inherited/smoke отдельно.
 
-Однако текущий run_dir архивирует результат после исполнения старого case-каталога. Старый Test flag может подставить mid (в частности tracked Asym50 .0116458); Need=1/incomplete и некоторые Search snapshot нарушения могут не блокировать PASS. Live salvage может принять старый файл после child crash. Probes 15/15 не покрывают эти пути. Поэтому этот скрипт пока не реализует весь контракт выше.
+CLI:
 
-C++ free-run требует дополнительных visited/finite checks: timeout/NaN может дать mid; Result не сбрасывается на новом attempt; explicit LTZ/Soma пути ещё не согласованы. Analyzer может сократить окно на sample advance. Эти ошибки проверяются до интерпретации cold FAIL как дефекта морфогенеза.
+```text
+python3 scripts/posttune_verify.py --case br25_on
+python3 scripts/posttune_verify.py --case asym50
+# debug only:
+python3 scripts/posttune_verify.py --case br25_on --use-archive-inplace
+python3 scripts/posttune_verify.py --case br25_on --allow-salvage
+```
+
+Контрольные опыты P1.5: [_repro/CONTROL_RUNS_P15.md](_repro/CONTROL_RUNS_P15.md). Морфогенез P2 только после FAIL: [_repro/MORPHOGENESIS_P2.md](_repro/MORPHOGENESIS_P2.md).
+
+C++ (R01–R05): SampleState / Timeout без Success mid; сброс PostTuneResult на attempt; delay≥LateResponseWindow; analyzer sample-close-first + censored CSV; единый collector (Branch без soma side-channel). Требуется пересборка Console перед cold PASS.
 
 ## Запуск и артефакты
 
-Текущий orchestrator: [scripts/posttune_verify.py](scripts/posttune_verify.py). CLI: python3 scripts/posttune_verify.py --case br25_on (или all). Для Search --skip-train не допускается. Исполнение меняет clone-каталоги; для новых подтверждающих исследований сначала реализовать изоляцию по плану.
+Текущий orchestrator: [scripts/posttune_verify.py](scripts/posttune_verify.py). По умолчанию **не** меняет EXP_* archive — работает в `_repro/runs/<case>_*_work`.
 
 Console/gates используют Linux-путь Bin/Platform/Linux/NeuroModelerConsole через repro_cold_lib.NM. Нужна пересборка именно используемого runtime и сохранение его manifest.
 

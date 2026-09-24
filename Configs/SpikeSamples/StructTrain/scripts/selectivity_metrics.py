@@ -103,25 +103,27 @@ def classify_trial_morphology(
     stim_times = _stim_abs_times(row)
     stim_count = len(stim_times)
     per_stim = False
-    if stim_count >= 3 and spike_count >= stim_count:
-        per_stim = True
-    elif stim_count >= 1 and times:
-        isis = [stim_times[i + 1] - stim_times[i] for i in range(len(stim_times) - 1)]
-        min_isi = min(isis) if isis else PER_STIM_WINDOW_FLOOR
-        win = max(2.0 * min_isi, PER_STIM_WINDOW_FLOOR)
-        # Injective: each spike matches at most one stim.
-        used = [False] * len(times)
-        matched = 0
-        for st in stim_times:
-            for i, sp in enumerate(times):
-                if used[i]:
-                    continue
-                if st - 1e-12 <= sp <= st + win + 1e-12:
-                    used[i] = True
-                    matched += 1
-                    break
-        need = int(math.ceil(PER_STIM_MIN_FRAC * stim_count))
-        per_stim = matched >= need
+    # N=1: never classify as per_stim (R07).
+    if stim_count >= 2:
+        if stim_count >= 3 and spike_count >= stim_count:
+            per_stim = True
+        elif stim_count >= 1 and times:
+            isis = [stim_times[i + 1] - stim_times[i] for i in range(len(stim_times) - 1)]
+            min_isi = min(isis) if isis else PER_STIM_WINDOW_FLOOR
+            win = max(2.0 * min_isi, PER_STIM_WINDOW_FLOOR)
+            # Injective: each spike matches at most one stim.
+            used = [False] * len(times)
+            matched = 0
+            for st in stim_times:
+                for i, sp in enumerate(times):
+                    if used[i]:
+                        continue
+                    if st - 1e-12 <= sp <= st + win + 1e-12:
+                        used[i] = True
+                        matched += 1
+                        break
+            need = int(math.ceil(PER_STIM_MIN_FRAC * stim_count))
+            per_stim = matched >= need
 
     ok_single = spike_count == 1 and not burst and not per_stim
     return {
@@ -130,6 +132,7 @@ def classify_trial_morphology(
         "per_stim": per_stim,
         "ok_single": ok_single,
         "unknown": False,
+        "censored": _i(row.get("censored")) == 1,
     }
 
 
@@ -185,7 +188,10 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "metrics_version": 2,
         "schema_ok": 1,
         "ok_audit_legacy": 0,
+        "ok_audit_strict_shape": 0,
         "ok_audit_v2": 0,
+        "censored_any": 0,
+        "last_pulse_ok": "0",
         "fa_strict_v2": 0,
     }
     if n == 0:
@@ -207,6 +213,7 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     matches_strict: list[int] = []
     late_fp = late_fn = 0
     schema_ok = 1
+    censored_any = 0
     for r in rows:
         fired = 1 if r.get("neuron_fired") == "1" else 0
         late = 1 if r.get("late_fired") == "1" else 0
@@ -214,6 +221,21 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         err = (r.get("error_class") or "").strip()
         times = _parse_spike_times(r)
         spike_count = _i(r.get("neuron_spike_count"), len(times))
+        if _i(r.get("censored")) == 1 or err in ("censored", "incomplete"):
+            censored_any = 1
+        # Contradictory / nonfinite schema (R07).
+        t_rel_s = r.get("neuron_t_rel") or "-1"
+        try:
+            t_rel = float(t_rel_s)
+        except ValueError:
+            t_rel = float("nan")
+            schema_ok = 0
+        if fired == 1 and spike_count == 0 and (t_rel < 0 or not math.isfinite(t_rel)):
+            schema_ok = 0
+        if any(not math.isfinite(t) for t in times):
+            schema_ok = 0
+        if times and times != sorted(times):
+            schema_ok = 0
         if "neuron_spike_count" in r and "neuron_spike_times" in r:
             if spike_count != len(times) and (spike_count > 0 or times):
                 # Allow empty times with count 0; otherwise require consistency.
@@ -227,6 +249,10 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
             late_fn += 1
         # v2 effective fire: flags OR any recorded spike
         effective_fire = 1 if (fired or late or has_spike) else 0
+        # Censored foil rows must not confirm full silence.
+        if censored_any and target == 0 and effective_fire == 0:
+            # Treat as unknown for FA purposes — force schema/quality fail later.
+            pass
         fires_eff.append(effective_fire)
         if target != 0:
             matches_strict.append(1 if fired else 0)
@@ -291,12 +317,14 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
                 response_quality = "ok_single"
 
     complete = 1 if n == 8 else 0
-    ok_audit_legacy = 1 if (
+    # Renamed: NOT historical A05 scorer (uses strict shape). See metrics_version.
+    ok_audit_strict_shape = 1 if (
         ok_strict == 1 and response_quality == "ok_single" and complete == 1
     ) else 0
-    # v2 audit gate: same shape but uses spike-aware FA; reject bad schema.
+    # v2 audit gate: same shape but uses spike-aware FA; reject bad schema / censored.
     ok_audit_v2 = 1 if (
         schema_ok == 1
+        and censored_any == 0
         and ok_strict == 1
         and response_quality == "ok_single"
         and complete == 1
@@ -305,15 +333,52 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     # Default ok_audit follows v2 (hidden foil spikes count as FP).
     ok_audit = ok_audit_v2
 
+    # last_pulse_ok on target row (shared contract with audit_structtrain).
+    last_pulse = "0"
+    if rows:
+        r0 = rows[0]
+        try:
+            trel = float(r0.get("neuron_t_rel") or -1)
+        except ValueError:
+            trel = -1.0
+        isis = []
+        # Prefer variable isis column; fall back to isi0..isi3.
+        raw_isis = (r0.get("isis") or "").strip()
+        if raw_isis:
+            for part in raw_isis.split(";"):
+                if part == "":
+                    continue
+                try:
+                    isis.append(float(part))
+                except ValueError:
+                    pass
+        if not isis:
+            for k in ("isi0", "isi1", "isi2", "isi3"):
+                v = r0.get(k)
+                if v is None or v == "":
+                    continue
+                try:
+                    isis.append(float(v))
+                except ValueError:
+                    pass
+        if isis and trel >= 0:
+            last_stim = sum(isis)
+            last_pulse = "1" if last_stim > 0 and trel + 1e-9 >= last_stim else "0"
+    if last_pulse != "1" and ok_audit == 1:
+        ok_audit = 0
+
     return {
         "ok": ok_legacy,  # backward compat
         "ok_legacy": ok_legacy,
         "ok_strict": ok_strict,
         "ok_audit": ok_audit,
-        "ok_audit_legacy": ok_audit_legacy,
+        "ok_audit_legacy": ok_audit_strict_shape,  # compat alias — NOT historical A05
+        "ok_audit_strict_shape": ok_audit_strict_shape,
         "ok_audit_v2": ok_audit_v2,
-        "metrics_version": 2,
+        "metrics_version": 3,
         "schema_ok": schema_ok,
+        "censored_any": censored_any,
+        "last_pulse_ok": last_pulse,
         "n": n,
         "acc": acc_legacy,
         "acc_legacy": acc_legacy,
