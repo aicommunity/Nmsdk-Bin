@@ -211,6 +211,43 @@ def _last_trace_vector(stat_dir: Path, name: str) -> list[str] | None:
     return parts[2:]
 
 
+def flush_current_train_flag(train: Path) -> str:
+    """Sync Parameters/Model from THIS workdir's Train flag when -S lagged.
+
+    Console SaveProject runs only after IsCalcFinished (A15). Early stop after
+    posttune_complete.flag often leaves TipR/Need stale in XML while the flag
+    already has Finalize's TipSynapseResistance (T3 H2). This is not archive
+    salvage: the flag must exist in the current clean workdir.
+    """
+    flag = train / "posttune_complete.flag"
+    if not flag.exists():
+        return "none"
+    meta = parse_flag_file(flag)
+    if not meta.get("result") and not meta.get("tipr"):
+        return "none"
+    tipr = meta.get("tipr")
+    mid = meta.get("FixedLTZ") or meta.get("mid")
+    changed = False
+    for rel in ("Parameters_00.xml", "Model_00.xml"):
+        p = train / rel
+        if not p.exists():
+            continue
+        t = p.read_text(encoding="utf-8")
+        if tipr:
+            tipr_xml = tipr.replace("+", "")
+            t = set_tag(t, "TipSynapseResistance", tipr_xml, 1)
+            changed = True
+        if meta.get("result") is not None:
+            t = set_tag(t, "IsNeedToTrain", "0", 1)
+            changed = True
+        if mid:
+            t = set_tag(t, "FixedLTZThreshold", mid, 1)
+            t = set_tag(t, "LTZThreshold", mid, 1)
+            changed = True
+        p.write_text(t, encoding="utf-8")
+    return "flag_flush" if changed else "none"
+
+
 def parse_flag_file(path: Path) -> dict[str, str]:
     """Line-aware flag parser: tipr=/tipr_snapshot=/metrics= take rest-of-line."""
     out: dict[str, str] = {}
@@ -451,10 +488,14 @@ def accept_run(
             # -15/-9 = SIGTERM/SIGKILL after Need=0 stop — allowed if Need cleared
             if need != "0" and "done" not in status:
                 reasons.append(f"child_rc={child_rc}")
-        if status in ("exited", "incomplete", "abort") or "FAIL" in status:
+        if status in ("exited", "incomplete", "abort", "incomplete_flag_need1") or "FAIL" in status:
             reasons.append(f"train_incomplete:{status}")
         if need not in ("0", "") and not skip_train and "skip" not in status:
             if "done" not in status and status != "skip_train":
+                reasons.append(f"Need={need}")
+            elif status == "incomplete_flag_need1" or (
+                need == "1" and "flag" in status
+            ):
                 reasons.append(f"Need={need}")
     tipr = (row.get("after") or {}).get("TipSynapseResistance") or row.get("tipr_final") or ""
     tipr_vec = parse_tipr_vec(tipr)
@@ -652,13 +693,35 @@ def wait_need0(
             continue
         if need == "0" or flag_hit:
             need0 = True
-            time.sleep(20)
-            proc.terminate()
-            try:
-                proc.wait(timeout=90)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait(timeout=30)
+            # Console SaveProject runs only when IsCalcFinished (-t exhausted) with
+            # -S/-x latch (A15). Early SIGTERM skips Save → Parameters TipR/Need
+            # lag behind posttune_complete.flag (T3 H2 / audit A16-adjacent).
+            # Prefer natural exit so -S can flush; terminate only after grace.
+            grace_s = 90.0
+            t_end = time.time() + grace_s
+            print(
+                f"  post-flag: wait up to {grace_s:.0f}s for NM -S exit "
+                f"(Need={need} flag={int(flag_hit)})"
+            )
+            while proc.poll() is None and time.time() < t_end:
+                time.sleep(5)
+                need = get_tag(
+                    (train / "Parameters_00.xml").read_text(encoding="utf-8"),
+                    "IsNeedToTrain",
+                )
+                if need == "0" and flag.exists():
+                    # Likely saved; give I/O a beat then wait for quit.
+                    time.sleep(3)
+                    if proc.poll() is not None:
+                        break
+            if proc.poll() is None:
+                print("  post-flag grace expired — terminate NM")
+                proc.terminate()
+                try:
+                    proc.wait(timeout=90)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    proc.wait(timeout=30)
             break
     else:
         proc.terminate()
@@ -672,12 +735,23 @@ def wait_need0(
         params_source = flush_posttune_artifacts(train)
     else:
         # Cold path: do not lift live/stale salvage into Parameters.
-        if flag.exists() or get_tag(
+        need_now = get_tag(
             (train / "Parameters_00.xml").read_text(encoding="utf-8"), "IsNeedToTrain"
-        ) == "0":
+        )
+        if flag.exists() and need_now == "1":
+            # Current-run flag flush (H2): not archive/live salvage.
+            params_source = flush_current_train_flag(train)
+            print(f"  flag_flush={params_source}")
+        elif flag.exists() or need_now == "0":
             params_source = "nm_save"
     need = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "IsNeedToTrain")
-    if need == "0" or flag.exists():
+    if need == "0" and params_source == "flag_flush":
+        status = "done_flag_flush"
+    elif need == "0":
+        status = "done"
+    elif flag.exists() and need == "1":
+        status = "incomplete_flag_need1"
+    elif flag.exists():
         status = "done"
     else:
         status = "incomplete" if need0 else "exited"

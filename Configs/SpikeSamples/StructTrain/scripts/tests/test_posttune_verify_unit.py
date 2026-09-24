@@ -192,6 +192,30 @@ class TestCleanWorkdir(unittest.TestCase):
             finally:
                 pv.RUNS_ROOT = old_root
 
+    def test_flush_current_train_flag_not_archive_salvage(self):
+        """H2: current-run flag TipR/Need sync when Console -S lagged."""
+        with tempfile.TemporaryDirectory() as td:
+            train = Path(td) / "Train"
+            train.mkdir()
+            (train / "Parameters_00.xml").write_text(
+                "<root><TipSynapseResistance>86000000 86000000 86000000 86000000"
+                "</TipSynapseResistance><IsNeedToTrain>1</IsNeedToTrain>"
+                "<FixedLTZThreshold>1</FixedLTZThreshold>"
+                "<LTZThreshold>1</LTZThreshold></root>",
+                encoding="utf-8",
+            )
+            (train / "posttune_complete.flag").write_text(
+                "mid=1 gap=-0.001 landscape_ok=0 inference=0 result=2 FixedLTZ=1\n"
+                "tipr=2e+07 2e+07 2e+07 8.6e+07\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(pv.flush_current_train_flag(train), "flag_flush")
+            t = (train / "Parameters_00.xml").read_text(encoding="utf-8")
+            self.assertEqual(pv.get_tag(t, "IsNeedToTrain"), "0")
+            tipr = pv.get_tag(t, "TipSynapseResistance") or ""
+            self.assertEqual(pv.tipr_class(tipr, "canon"), "canon")
+            self.assertEqual(pv.flush_current_train_flag(Path(td) / "missing"), "none")
+
 
 class TestSlog(unittest.TestCase):
     def test_classify_slog_order(self):
