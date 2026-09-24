@@ -13,3 +13,7 @@
 Ограничения протокола и план: [повторный аудит](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md), [исправления и контроли](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/PLAN.ru.md).
 
 search_reverted означает fallback к собственному snapshot; PASS fallback не доказывает улучшение Search.
+
+**Workspace:** `posttune_verify` по умолчанию копирует allowlist в `_repro/runs/*_work` и **не** использует этот EXP_* как исполняемый dirty tree. Current cold verdict — только после свежего run-bundle; inherited gold baseline — отдельно.
+
+Remediation R01–R07: см. [REMEDIATION_NOTES.ru.md](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/REMEDIATION_NOTES.ru.md), [CONTROL_RUNS_P15.md](../../_repro/CONTROL_RUNS_P15.md).

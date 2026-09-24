@@ -1,35 +1,17 @@
-# PostTune verify result
+# PostTune verify result — T2 control runs (tails)
 
-**Примечание повторного аудита 2026-09-24:** ниже сохранена сводка разработчика. Полные свежие run-bundles недоступны в этой checkout; 2/7 PASS независимо не подтверждены и не объявлены ложными. Обнаружены пути старой Test-калибровки и неполной приёмки Train: [разбор](../../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md).
+Generated: 2026-09-24T18:39:45Z  
+Console: `/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole`  
+SHA256: `5e7829bf9beb1901336ed15b7595786d5708c40d0dd9c9f2f1329bff3c3a1b63`  
+Batch: `_repro/T2_control_batch_20260924T165948Z.log`  
+Evidence: `Docs/Audit/TimeLearner-2026-09-24-review/evidence/tails/T2_summary.json`
 
-Generated: 2026-09-23T23:03:59Z
-Console: `/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole`
+| case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | mid_source | notes |
+|------|-------|------|------------|------|----------|----------|-------|------------|-------|
+| br25_on gold `--skip-train` | skip_train | 0 | canon | `20000000×3+86000000` | 0.0718001 | 0.07179975 | `10000000` | cpp | **PASS** |
+| br25_on soft_cold | done_gate_FAIL | 1 | flat | `86000000×4` | 1 | 0.07179975 | `` | missing | **FAIL** NonSeparable; flag tipr=canon |
+| asym50 cold | exited | 1 | canon | `20000000×3+86000000` | 0.0100962 | 0.011759 | `10000000` | cpp | **FAIL** Need=1; mid≠archive `.0116458` |
 
-| case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | mid_source | tipr_vs_snapshot | search_reverted | metrics |
-|------|-------|------|------------|------|----------|----------|-------|------------|------------------|-----------------|---------|
-| br100_search | done_search_reverted | 0 | search | `7.42148e+07 8.9215e+07 1.33473e+08 5.2067e+08` | 0.00714187 | 0.007181835 | `10000000` | cpp | same_reverted | 1 | ok=1 n=8 acc=8 target_hit=1 fire_all=0 mode=selective fires=10000000 matches=111 |
+**R06:** Asym50 archive Test mid `.0116458` did not enter the clean workdir result (fresh mid `.0100962`).
 
-## Calibration-quality follow-up 2026-09-23
-
-Generated: 2026-09-23T23:04:49Z
-Console: `Bin/Platform/Linux/NeuroModelerConsole` SHA `1b719f6f140e82a0da3999ab02c7fce0d183a0c34b5e7521b623c730ec48720f`
-quality_class=`calibration-quality` (A07 same-Matrix). Not PHASE12 VALIDATED / not held-out.
-
-| case | verdict | train_status | tipr_class | mid_source | fires | run |
-|------|---------|--------------|------------|------------|-------|-----|
-| br25_on | FAIL | done_gate_FAIL_gate_rc=1 | canon | missing | `0` | 20260923T144228Z |
-| br25_off | FAIL | exited | other | missing | `11110000` | 20260923T144521Z |
-| asym25 | FAIL | done_gate_FAIL_gate_rc=1 | flat | missing | `` | 20260923T122748Z |
-| asym50 | PASS | done | canon | cpp | `10000000` | 20260923T123001Z |
-| br100_keep | FAIL | done_gate_FAIL_gate_rc=1 | keep | missing | `0` | 20260923T124019Z |
-| phase6_480 | FAIL | exited_gate_FAIL_gate_rc=1 | canon | missing | `` | 20260923T190804Z |
-| br100_search | PASS | done_search_reverted | search | cpp | `10000000` | 20260923T215645Z |
-
-### Notes
-- A01: Branch DatasetMatrix bind + legacy `IsPatternComplete>=4`; Test `stim_count=4`.
-- soft_cold: force `FixedLTZThreshold=1` (tiprmin mid leak stalled Phase6).
-- Gold Branch Test still PASS on new Console (inherited weights, mid≈0.0718).
-- **PASS:** `asym50`, `br100_search` (`search_reverted`, mid_source=cpp, fires=10000000).
-- **FAIL:** Branch soft_cold retrain NonSeparable / wrong fires (`br25_on/off`, `br100_keep`); `asym25`; `phase6_480` gate.
-- A12 Euler diagnostic remains FAIL (deferred).
-
+**Morphogenesis:** soft_cold FAIL after R01–R07 measurement fixes → P2 opened (H1 Canon vs Keep: Keep also NonSeparable).
