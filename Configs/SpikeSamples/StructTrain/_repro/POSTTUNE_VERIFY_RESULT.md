@@ -1,5 +1,7 @@
 # PostTune verify result
 
+**Примечание повторного аудита 2026-09-24:** ниже сохранена сводка разработчика. Полные свежие run-bundles недоступны в этой checkout; 2/7 PASS независимо не подтверждены и не объявлены ложными. Обнаружены пути старой Test-калибровки и неполной приёмки Train: [разбор](../../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md).
+
 Generated: 2026-09-23T23:03:59Z
 Console: `/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole`
 

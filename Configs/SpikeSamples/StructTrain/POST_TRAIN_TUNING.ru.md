@@ -1,70 +1,55 @@
 # Пост-тюнинг в модуле-учителе (PostTune)
 
-[English](POST_TRAIN_TUNING.md) · [Аудит текущей реализации](AUDIT_2026-09-22.md) · [Историческая карта рецептов](RELIABILITY_MAP.ru.md)
+[English](POST_TRAIN_TUNING.md) · [Повторный аудит](../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md) · [Историческая карта рецептов](RELIABILITY_MAP.ru.md)
 
-Сверено с PulseLib 9a6cee0b / Bin 2d1d0214 и объединённой рабочей документацией; пересмотр 2026-09-23. Учитель выполняет tip-resistance + silent-mid FixedLTZ. `EnablePostTrainTuning=true` по умолчанию; старые XML без свойства наследуют PostTune.
+Сверено с PulseLib d4149190 / Bin 9733281, 2026-09-24. Исправления после исходного аудита существенны, но полного закрытия A08–A10/A16 нет.
 
-## Фазы
+## Фазы и свойства
 
-| Значение | NNeuronTimeLearner | NNeuronTimeLearnerBranch |
-|----------|-------------------|-------------------------|
+| Значение фазы | NNeuronTimeLearner | NNeuronTimeLearnerBranch |
+|---|---|---|
 | 0 | Joint sync + normalize | Joint sync + normalize, обратный порядок |
 | 1 | Не назначается | Не назначается |
 | 2 | Done | Done |
 | 3 | PostTune | Legacy CalibrateLtz при PostTune OFF |
 | 4 | — | PostTune |
 
-При включённом PostTune Branch пропускает обычный переход через legacy CalibrateLtz. SearchSynthetic вызывает ScaleTipR для snapshot отката. Done допускает best-effort завершение, а не только точное совпадение пиков и амплитуд.
+Done допускает best-effort остановку. Need=0 не доказывает выполнение всех sync/amp допусков или избирательность.
 
-## Свойства и режимы
+| Свойство | Default / смысл |
+|---|---|
+| EnablePostTrainTuning | true; старые XML без свойства наследуют PostTune |
+| PostTrainTipResistanceMode | 1; 0 Off, 1 CanonRmin, 2 FlatLastR, 3 KeepDone, 4 SearchSynthetic |
+| EnablePostTrainMidThreshold | true |
+| PostTrainMidMetric | 0 Auto: TL LTZ, Branch shared soma; 1 LTZ, 2 Soma |
+| TipResistanceCanonFloor / TipResistanceCanonLast | 2e7 / 8.6e7 |
+| PostTrainSilentThreshold | 1.0 |
+| PostTrainSyntheticFoilCount / PostTrainTipSearchIters | 8 / 12 |
+| PostTrainTuneComplete | false; завершение процедуры, не quality PASS |
+| PostTuneResult | 0 None, 1 Success, 2 NonSeparable, 3 SetupFailure, 4 Timeout, 5 InvalidMetrics |
+| AutoScaleIterationGap | true |
 
-| Свойство | Default | Смысл |
-|----------|---------|-------|
-| EnablePostTrainTuning | true | Включение этапа |
-| PostTrainTipResistanceMode | 1 | 0 Off; 1 CanonRmin; 2 FlatLastR; 3 KeepDone; 4 SearchSynthetic |
-| EnablePostTrainMidThreshold | true | Калибровка порога |
-| PostTrainMidMetric | 0 Auto | TL: LTZ; Branch: shared soma (SomaNeuronAmplitude row0 / CSV soma_amp_sum); режимы 1/2 требуют учёта ограничений ниже |
-| TipResistanceCanonFloor / TipResistanceCanonLast | 2e7 / 8.6e7 | Сопротивления канона |
-| PostTrainSilentThreshold | 1.0 | Порог silent-зондов |
-| PostTrainSyntheticFoilCount | 8 | Максимум синтетических foils |
-| PostTrainTipSearchIters | 12 | Число проходов поиска |
-| PostTrainTuneComplete | false | Служебный признак завершения, не pass избирательности |
-| AutoScaleIterationGap | true | gap=span+settle+slack; dataset delay=settle+slack |
+Off не меняет tips; Canon задаёт floor первым N−1 и last последнему; Flat задаёт last всем; Keep использует веса после joint train. Search начинает с канона, ищет допустимый лучший gap и имеет fallback snapshot; Branch перед поиском использует ScaleTipR. BestTips получают новый free-run в обоих учителях. Ошибка setup финального Search free-run имеет отдельный статус; после rejected-best/fallback метрики очищаются/инвалидируются, чтобы не приписывать их snapshot.
 
-[Формулы тайминга](docs/TIMING_AND_GAP.ru.md). При AutoScale=1 XML IterationGap не является нижним пределом.
+## Mid: текущий контракт и ограничения
 
-Off сохраняет TipR; CanonRmin задаёт floor для первых N−1 tips и last для последнего, синхронизирует Exc; FlatLastR задаёт last всем tips; KeepDone использует состояние после joint train. Search начинает с канона, изменяет TipR, принимает BestTips только при LandscapeOk и улучшении gap, иначе возвращает snapshot.
+Inference при silent FixedLTZ>=.9 проигрывает текущую Test Matrix с выключенным Analyzer, калибрует mid, затем сбрасывает dataset/analyzer и оценивает ту же Matrix. Sample 0 считается target независимо от MatrixClasses. Это принятая особенность A07; независимый held-out не требуется этой процедурой.
 
-## Mid и ограничения корректности
+При допустимом landscape mid располагается между target и максимальным foil. ComputeMidThreshold сохраняет формулу midpoint с max_foil_below (либо .99*target), но gap теперь считается относительно **глобального** максимума foil. Helper проверяет конечность. Finalize обоих учителей оставляет silent на плохом landscape. Branch Search Train с включённым mid сохраняет silent, предполагая отдельную Test-калибровку. TL Search при хорошем landscape может сохранить mid, вычисленный в Train; это не свежая Test-калибровка.
 
-В Train плохой landscape может оставить FixedLTZ=1.0. В inference при FixedLTZ>=0.9 `MaybeStartInferenceMidProbes` играет текущую Test Matrix с выключенным Analyzer, вычисляет mid, записывает flag, сбрасывает dataset/analyzer и повторяет ту же Matrix.
+Остаются воспроизводимые ограничения:
 
-Первые N строк Matrix считаются target; MatrixClasses не определяет выбор target. Калибровка на той же Test Matrix является принятой особенностью текущего алгоритма (A07), а не ошибкой. Полученная оценка описывает качество на калибровочном наборе; независимая оценка обобщения потребовала бы отдельного исследования. Перестановка sample 0 меняет калибруемую цель по этому контракту.
+- Free-run нули не различают измеренную тишину и непосещённый sample. NaN live-сигнала теряется при сравнении с текущим максимумом. Timeout/partial trace может дать mid=.25 при [.5,0]; TL даже сообщает Success, Branch сообщает Timeout, но применяет mid.
+- PostTuneResult не сбрасывается на новом attempt: возможно сочетание старого Success с новым nonseparable/silent результатом. Result/Complete без проверки измерений недостаточны для приёмки.
+- Branch explicit LTZ всё ещё загрязняется soma accumulator в ACalculate. TL Soma iteration измеряет сумму в конце итерации, а free-run — максимум суммы во времени.
+- Same-Matrix является контрактом; неполное наблюдение Analyzer и старые Test flags являются отдельными ошибками измерения/provenance.
 
-Формула mid: 0.5*(target+max_foil_below), иначе target*0.99. Helper по-прежнему исключает foils выше target. В **Branch 9a6cee0b** плохой finite landscape оставляет silent-порог и в Train, и в inference. В обычном **TimeLearner** guard остаётся только для Train. Проверки NaN/полноты метрик отсутствуют у обоих; Branch при target=0.5 и foil=NaN всё ещё сохраняет mid=0.495.
+## Тайминг и воспроизводимость
 
-После выбора BestTips в Branch Search добавлен отдельный free-run. Если он отклоняет BestTips, возвращается KeepDone/ScaleTipR snapshot с search_reverted=1. При включённом расчёте mid Train Search оставляет silent-порог даже при хорошем landscape; PostTuneInferenceMidDone=true запрещает второй inference-mid в оставшемся окне этого процесса. Для Test-калибровки нужен новый процесс/reset.
+[Тайминг](docs/TIMING_AND_GAP.ru.md): gap=span+settle+slack, dataset delay=settle+slack. AutoScale=1 игнорирует XML floor; AutoScale=0 берёт max(configured,physical). PostTune=0 сам по себе не воспроизводит прежний pin.
 
-Это частичное исправление A08–A09: нормальный Branch-путь больше не рассчитывает mid по последнему постороннему кандидату. Однако:
-- сбой SetupPostTuneFreeRunProbes всё ещё приводит к Finalize на нулевых метриках и PostTrainTuneComplete=true;
-- после free-run reject метрики в flag относятся к отклонённым BestTips, а tipr уже содержит snapshot; повторного измерения snapshot в Train нет;
-- плохой inference-landscape оставляет silent-порог, но Complete/InferenceMidDone=true; это завершение процедуры, не успешная калибровка;
-- обычный TimeLearner не получил повторный замер выбранных Tips;
-- Branch mode=1 (LTZ) всё ещё игнорируется в free-run, а iteration-путь использует max(LTZ,soma). Коммит daf9c23 уточнил комментарии об Auto/Soma, не исправил выбор LTZ.
+[Сводка разработчика](_repro/POSTTUNE_VERIFY_RESULT.md) сообщает 2/7 cold PASS. Полные run-bundles и соответствующий Linux Console отсутствуют в доступной checkout; независимо эта сводка не принята. Текущий verifier уже проверяет gate rc, некоторые SHA/ожидания и собственный snapshot, но сохраняет stale Test mid и допускает некоторые незавершённые Train/Search. [Требования к проверке](POST_TRAIN_VERIFY.ru.md).
 
-[Доказательства и обновлённый план](AUDIT_2026-09-22.md).
+soft_cold теперь сбрасывает FixedLTZ=1. Это полезная правка, но не доказательство полной новой инициализации fat Model. Значение Search reverted означает возврат к собственному snapshot; успешный fallback не доказывает улучшение поиска.
 
-## Проверки и воспроизводимость
-
-[План проверки](POST_TRAIN_VERIFY.ru.md) описывает желаемые критерии. Текущий `posttune_verify.py` не обеспечивает все эти критерии автоматически: expect_fires/expect_tipr не превращены в обязательный failure, а неуспех дочернего gate не исключает чтение старых результатов.
-
-[Сохранённый результат](_repro/POSTTUNE_VERIFY_RESULT.md) содержит новый срез 16:47:46Z с одной строкой br100_search; старые br25_on/asym25 skip_train сохранены отдельно как срез 11:33:05Z. Он не подтверждает cold retrain всех вариантов или полный план V3–V6.
-
-`--skip-tipr-mid` отключает внешний Python-рецепт в phase8/phase9; при silent-пороге возможны два запуска Test: mid, затем gate. `post_train_hygiene` пропускает tiprmin для уже canon/flat; force-python-hygiene меняет процедуру и должен фиксироваться в provenance.
-
-`EnablePostTrainTuning=0` возвращает legacy ветку, но побайтовой эквивалентности старому pin не гарантирует: AutoScaleIterationGap и другие defaults изменились. Для регрессии фиксировать исходники, бинарник, XML, начальное состояние и все overrides.
-
-
-## Тайминг и аварийный откат
-
-AutoScaleIterationGap=0 возвращает max(configured, physical); изменение kMinSettle — отдельное изменение модели. Замеры 85/90 секунд wall соответствуют отношению примерно 1.06, а 6× относится только к gap 1.5/0.25. Они не доказывают шестикратное ускорение всей программы. [Исходные числа и ограничения](docs/TIMING_AND_GAP.ru.md).
+Замеры 85/90 секунд wall означают отношение около 1.06; 6× относится к gap 1.5/.25, а не доказанному ускорению всей программы. A12 отложен при достаточно малом шаге.

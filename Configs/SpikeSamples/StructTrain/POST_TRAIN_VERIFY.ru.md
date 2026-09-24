@@ -1,14 +1,51 @@
-# Проверка C++ PostTune — план экспериментов
+# Проверка C++ PostTune — контракт и состояние
 
-**Уточнение аудита 2026-09-22:** таблицы ниже — исторические результаты при указанных pins и gate. Они не доказывают held-out качество текущего HEAD. Каталог PHASE12 содержит 12 VALIDATED (включая две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения. Известны дефекты окон, strict/last-pulse и inference-mid. [Разбор и актуальный контракт](AUDIT_2026-09-22.md).
+Сверено с PulseLib d4149190 / Bin 9733281, 2026-09-24. [Повторный аудит](../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md) и [план исправлений/контролей](../../../../Docs/Audit/TimeLearner-2026-09-24-review/PLAN.ru.md).
 
+Сводка разработчика сообщает 2/7 cold PASS: asym50 и br100_search. Пять FAIL: br25_on/off, asym25, br100_keep, phase6_480. [Результаты](_repro/POSTTUNE_VERIFY_RESULT.md) не сопровождаются доступным полным комплектом свежих run-артефактов. Повторный аудит не объявляет эти результаты ложными, но не принимает их как независимую проверку всего HEAD.
 
-Состояние: Branch-код обновлён до 9a6cee0b; остаются открытые замечания A08–A10/A16.\
-Статус cold+gate vs gold: **V1–V6 PASS заявлен исторически, но не подтверждён единым комплектом свежих артефактов**. Новый срез [_repro/POSTTUNE_VERIFY_RESULT.md](_repro/POSTTUNE_VERIFY_RESULT.md) содержит одну строку V5b; старые smoke-строки выделены отдельно.
+## Требования к новому run
 
-Критерии: TipR vector, FixedLTZ (±5% к gold mid), fires/acc, `IsNeedToTrain=0`. На Train **без** Python `apply_tiprmin`; mid — **только** C++ на Test (`inference=1` в `posttune_complete.flag`). Статусы `*_gold_mid` **запрещены**.
+1. Новый исполняемый каталог с явно заданными Model/Parameters/Matrix/ini. Старые flags/live/CSV не являются входами. soft_cold поверх fat Model отдельно обозначается и не приравнивается к полной новой инициализации.
+2. Связанный build manifest: root/gitlinks/dirty diff, compiler/options, библиотеки, Console SHA. Зафиксировать входы, overrides и scripts до запуска.
+3. Train до доказанного завершения с raw rc/termination reason, Need, Phase, Complete, Result и конечными weights. Salvage и контролируемый stop отмечаются отдельно; exited/incomplete сами по себе не успех.
+4. Test-калибровка должна быть свежей для этих weights/Matrix. Cpp mid требует current-run inference flag, конечных полных метрик и пригодного landscape. Один inference=1 в старом файле недостаточен.
+5. Gate проверяет полную Matrix и observation window, один target-spike после последнего стимула и отсутствие foil-spikes; invalid/censored измерения не считаются тишиной.
+6. Search сравнивается с собственным snapshot: applied_best либо подтверждённый same_reverted. Keep проверяет собственные веса. Отличие от другого Keep-клона не является свидетельством работы Search.
+7. В run-bundle сохраняются параметры до/после Train→Test, flags, traces, CSV, hashes, команды, raw exit codes и verdict reasons.
 
-## Матрица
+Калибровка и оценка по одной Matrix — принятый A07. Held-out не обязателен. A12 отложен при достаточно малом шаге.
+
+## Текущие ограничения автоматизации
+
+posttune_verify.py уже добавил gate rc/fresh CSV checks, численный TipR comparator, раздельные Train/Test metadata, часть SHA/ожиданий и machine verdict. TL получил выбранный-best reprobe. Называть эти исправления отсутствующими неверно.
+
+Однако текущий run_dir архивирует результат после исполнения старого case-каталога. Старый Test flag может подставить mid (в частности tracked Asym50 .0116458); Need=1/incomplete и некоторые Search snapshot нарушения могут не блокировать PASS. Live salvage может принять старый файл после child crash. Probes 15/15 не покрывают эти пути. Поэтому этот скрипт пока не реализует весь контракт выше.
+
+C++ free-run требует дополнительных visited/finite checks: timeout/NaN может дать mid; Result не сбрасывается на новом attempt; explicit LTZ/Soma пути ещё не согласованы. Analyzer может сократить окно на sample advance. Эти ошибки проверяются до интерпретации cold FAIL как дефекта морфогенеза.
+
+## Запуск и артефакты
+
+Текущий orchestrator: [scripts/posttune_verify.py](scripts/posttune_verify.py). CLI: python3 scripts/posttune_verify.py --case br25_on (или all). Для Search --skip-train не допускается. Исполнение меняет clone-каталоги; для новых подтверждающих исследований сначала реализовать изоляцию по плану.
+
+Console/gates используют Linux-путь Bin/Platform/Linux/NeuroModelerConsole через repro_cold_lib.NM. Нужна пересборка именно используемого runtime и сохранение его manifest.
+
+Исторические времена Train: Branch25 320, Asym25 160, Branch100Keep 640, Search 2400, Asym50 320, Phase6 900 модельных секунд. Увеличение времени допускается как отдельный зафиксированный override, а не скрытая смена протокола.
+
+Логи: Train/run_posttune_verify.log и Test/run_gate.log. Runtime debug/live исключены .gitignore; необходимые доказательства сохраняются явно в run-bundle. Политика ограничений logs/deadline должна соответствовать используемым скриптам, а не старому универсальному порогу.
+
+## Разные типы приёмки
+
+- Gold/inherited weights — контроль уже существующего состояния.
+- Cold calibration-quality — новое обучение и свежий same-Matrix mid/gate при полной provenance.
+- Search reverted PASS — работоспособность fallback; улучшение поиска требует положительного сравнения с собственным snapshot.
+- Phase6 CASES ожидает 10000010: это regression-pass с одним foil FP. Строгая избирательность 10000000 оценивается отдельно.
+
+Gold thresholds и допуск ±5% — сравнительный исторический ориентир при сопоставимом протоколе, а не универсальный признак правильности новых весов. Branch25 ≈.0718 и Branch100 ≈.00718 не следует смешивать.
+
+## Историческая матрица прежнего протокола
+
+Таблица ниже сохранена из предыдущей версии документа как запись заявлений прежнего среза. Она не означает текущий PASS и не заменяет новые требования. Историческое условие V5b «TipR≠keep» заменено выше сравнением с собственным snapshot. PHASE12 содержит 12 VALIDATED (в том числе две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения.
 
 | # | Клон | TipR mode | Ожидание | Исторически заявленный результат |
 |---|------|-----------|----------|--------|
@@ -19,54 +56,3 @@
 | V5 | `…/EXP_br_span100_…_posttune_keep` | 3 KeepDone | TipR snapshot; cpp mid; fires `10000000` | **PASS** mid≈0.00718 |
 | V5b | `…/EXP_br_span100_…_posttune_search` | 4 SearchSynthetic | **полный Train** mode=4, `SearchIters=12`, `AutoScaleIterationGap=1`; trial BestTips + free-run reject; TipR≠keep **или** `search_reverted=1`; cpp mid; fires **строго** `10000000` | **PASS** TipR search `search_reverted=1` (Train silent); mid≈0.00714; fires `10000000` |
 | V6 | `SelectivityPhaseA/Phase6/EXP_480_gen_posttune` | 1 CanonRmin | TipR Canon; **cpp** mid ±5% к tiprmin `0.016894`; fires `10000010` | **PASS** mid≈0.016896 `mid_source=cpp` |
-
-### SearchSynthetic PASS criteria (V5b)
-
-1. Soft-cold Train + `PostTrainTipResistanceMode=4`, `PostTrainTipSearchIters=12`, `AutoScaleIterationGap=1`.
-2. В EventsLog: `phase -> PostTune mode=4`, `gapEff=` ≪1.5, `SearchSynthetic:` (`skip_candidate` / `apply_best` / `free_run_reject_best` / `revert`).
-3. После Train: доказать выбор BestTips либо откат по flag/trace текущего run; численно сопоставить вектор с его собственным snapshot. Отличие от отдельного keep-клона само по себе не доказывает успех поиска.
-4. Test: конечные полные метрики, landscape_ok=1 и C++ mid (inference=1, mid<0.9), затем fires **10000000**. Калибровка на том же наборе — принятый контракт A07.
-5. `--skip-train` для `br100_search` **запрещён** в `posttune_verify.py`.
-6. `train_t≈2400` (при AutoScale gapEff≈0.3); polls≥800.
-
-**Wall:** Search@12 при `gapEff≈0.35` — порядка ~1.5 h wall (замер ~5010 s); mid br25 Auto `gapEff=0.25` vs legacy `1.5` (sim ~6×). См. [`docs/TIMING_AND_GAP.ru.md`](docs/TIMING_AND_GAP.ru.md).
-
-```mermaid
-flowchart TD
-  soft[soft_cold_ensure_PostTune_AutoScale] --> train[Train_mode4_Iters12]
-  train --> slog[slog_prune_tipr_in_flag]
-  slog --> test[Test_inference_mid]
-  test --> gate[phase8_skip_tipr_mid]
-  gate --> res[RESULT_mid_source_tipr_vs_keep]
-```
-
-**Hang / reliability:** чистить `StatisticLog`/`EventsLog` после кейса; abort при slog&gt;3G; `phase8`/`phase9` `run_nm` — span-aware hard deadline + SIGTERM после ≥8 строк CSV.
-
-## Протокол одного прогона (V1–V3)
-
-1. Пересобрать `NeuroModelerConsole` с pin PostTune (символ `EnablePostTrainTuning`).
-   Runtime path для `posttune_verify` / gates: **`Bin/Platform/Linux/NeuroModelerConsole`** (hardcode в `repro_cold_lib.NM`). После pin PulseLib — пересобрать этот binary; иначе cold PASS на stale семантике.
-2. Soft-cold Train (`repro_cold_lib.soft_cold_reset_train`).
-3. Train: `NeuroModelerConsole -c Train/Project.ini -s -t <T> -x -S` до `IsNeedToTrain=0`  
-   - Branch25: `-t 320`  
-   - AsymRm25: `-t 160` (как FastSpan family floor; при Need=1 — удлинить)
-4. Снять с Train **до** Python hygiene: `TipSynapseResistance`, `FixedLTZThreshold`, `ResistanceMin`, `IsNeedToTrain`, `PostTrainTuneComplete`, `TrainingPhase`.
-5. Gate:
-   - V1/V3/V4/V5/V6: `phase8` / `phase9` с `--skip-tipr-mid` (overlay + C++ inference mid two-pass).
-   - V2: обычный tiprmin+mid (legacy) **или** `--force-python-hygiene`.
-6. Сравнить с gold Test: TipR, thr (±5%), fires mask, `acc_legacy`, last-pulse; колонки RESULT: `mid_source`, `tipr_vs_keep`.
-
-## Дополнительная приёмка после 9a6cee0b
-
-Проверять отдельно выбранный best, отсутствие допустимого best, free-run reject, setup failure, NaN/timeout, неверную метрику и разные Train/Test процессы. Silent/Complete не считать quality PASS. После отката метрики должны относиться к snapshot или иметь явную отметку недействительности. Перенос исправления в обычный TimeLearner ещё требуется.
-
-## Артефакты
-
-- Логи: `<clone>/Train/run_posttune_verify.log`, `Test/run_gate.log`
-- Runtime (не коммитить): `posttune_mid_dbg.txt`, `posttune_tipr_live.txt` — в [`StructTrain/.gitignore`](.gitignore)
-- Сводка: [`_repro/POSTTUNE_VERIFY_RESULT.md`](_repro/POSTTUNE_VERIFY_RESULT.md)
-- Оркестратор: [`scripts/posttune_verify.py`](scripts/posttune_verify.py)
-
-## Вне scope этой проверки
-
-Pack B/C matrix, InitSoma overlay, FastSpan plateau Need, полный PHASE12 wave.

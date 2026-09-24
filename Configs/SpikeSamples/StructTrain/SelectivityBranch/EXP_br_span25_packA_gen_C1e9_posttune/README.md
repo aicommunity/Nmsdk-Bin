@@ -1,19 +1,13 @@
-# EXP_br_span25_packA_gen_C1e9
+# EXP_br_span25_packA_gen_C1e9_posttune
 
-PHASE8 Branch short-span packA **gen** @25 ms, neuron `NSPNeuronGenAsymRmD001C1e9`, GTS=20000.
+Рабочий soft_cold-клон для posttune_verify; не PHASE12 VALIDATED_CLONE. Case: br25_on.
 
-| Field | Value |
-|-------|-------|
-| Status | **PASS** `ok_audit=1` (S1) |
-| Train L | `13 11 7 1` (`IsNeedToTrain=0`) |
-| TipR@Rmin | `2e7 2e7 2e7 8.6e7` |
-| Mid thr | `0.07179975` (`soma_amp_sum`) |
-| Gate | fires `10000000`, `late_fp=0`, `ok_single`, `t_rel=0.1128` ≥ 0.8·pattern_end |
-| CSV | [`Test/SelectivityLog/results.csv`](Test/SelectivityLog/results.csv) |
+| Уровень | Статус |
+|---|---|
+| Follow-up разработчика 2026-09-23 | **FAIL** |
+| Независимая проверка 2026-09-24 | Свежий cold-result не подтверждён полным run-bundle |
+| Reference | [Gold EXP_br_span25_packA_gen_C1e9](../EXP_br_span25_packA_gen_C1e9/README.md) |
 
-Hygiene: overlay Train Neuron tree into Test; Generator tips `Dendrite1_{13,11,7,1}`; Parameters Matrix from AsymRm packA; Model SB Learner=1 / Neuron=2.
+Источник заявленного verdict: [POSTTUNE_VERIFY_RESULT.md](../../_repro/POSTTUNE_VERIFY_RESULT.md). Сохранённые Model/Parameters/CSV/flags не обновлялись этим follow-up; их нельзя выдавать за свежий полный run. Gold PASS относится к reference, а не автоматически к этому клону.
 
-Parent: [`../PHASE8_SHORTSPAN.md`](../PHASE8_SHORTSPAN.md).
-
-> Working soft_cold clone for posttune_verify (calibration-quality). Not PHASE12 VALIDATED_CLONE.
-Gold: `EXP_br_span25_packA_gen_C1e9`. Soft_cold via `scripts/posttune_verify.py`.
+Ограничения протокола и план: [повторный аудит](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md), [исправления и контроли](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/PLAN.ru.md).
