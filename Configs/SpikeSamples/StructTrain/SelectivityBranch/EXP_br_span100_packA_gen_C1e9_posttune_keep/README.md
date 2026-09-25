@@ -15,3 +15,5 @@
 **Workspace:** `posttune_verify` по умолчанию копирует allowlist в `_repro/runs/*_work` и **не** использует этот EXP_* как исполняемый dirty tree. Current cold verdict — только после свежего run-bundle; inherited gold baseline — отдельно.
 
 Remediation R01–R07: см. [REMEDIATION_NOTES.ru.md](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/REMEDIATION_NOTES.ru.md), [CONTROL_RUNS_P15.md](../../_repro/CONTROL_RUNS_P15.md).
+
+**Current D4/T3 verdict (2026-09-25):** D4 `br100_keep_20260924T234016Z` rc=1 (gate FAIL). Matrix: [D4_matrix_summary.json](../../../../../../Docs/Audit/TimeLearner-2026-09-24-review/evidence/tails/D4_matrix_summary.json).

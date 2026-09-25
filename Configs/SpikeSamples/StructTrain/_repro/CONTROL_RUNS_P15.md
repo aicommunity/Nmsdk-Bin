@@ -56,6 +56,16 @@ Save under `_repro/runs/<case>_<utc>/`:
 
 Do **not** weaken `LandscapeOk`. Negative landscape → `NonSeparable`, not PASS.
 
+## Actual T2 bundles (2026-09-24)
+
+| Case | Bundle |
+|------|--------|
+| br25 gold skip | `_repro/runs/br25_on_20260924T165949Z` (+ `_work`) |
+| br25 soft_cold | `_repro/runs/br25_on_20260924T170503Z` (+ `_work`) |
+| asym50 cold | `_repro/runs/asym50_20260924T171141Z` (+ `_work`) |
+
+Batch: `_repro/runs/T2_control_batch.sh`. After H2, cold path may set `params_source=flag_flush` when Need stayed 1 with a current Train flag.
+
 ## Interpretation
 
 Inherited gold PASS + soft_cold FAIL does **not** localize to morphogenesis alone

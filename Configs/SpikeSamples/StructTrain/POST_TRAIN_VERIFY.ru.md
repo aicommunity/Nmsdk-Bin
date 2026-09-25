@@ -32,6 +32,8 @@ python3 scripts/posttune_verify.py --case br25_on --allow-salvage
 
 Контрольные опыты P1.5: [_repro/CONTROL_RUNS_P15.md](_repro/CONTROL_RUNS_P15.md). Морфогенез P2 только после FAIL: [_repro/MORPHOGENESIS_P2.md](_repro/MORPHOGENESIS_P2.md).
 
+`flush_current_train_flag` (harness H2): синхронизирует **текущий** Train `posttune_complete.flag` → Parameters/Model TipR/Need/mid, когда Console `-S` отстаёт от Finalize. Это **не** `--allow-salvage` и **не** поднятие archive/live артефактов: flag должен лежать в clean workdir текущего прогона.
+
 C++ (R01–R05): SampleState / Timeout без Success mid; сброс PostTuneResult на attempt; delay≥LateResponseWindow; analyzer sample-close-first + censored CSV; единый collector (Branch без soma side-channel). Требуется пересборка Console перед cold PASS.
 
 ## Запуск и артефакты
@@ -40,7 +42,7 @@ C++ (R01–R05): SampleState / Timeout без Success mid; сброс PostTuneRe
 
 Console/gates используют Linux-путь Bin/Platform/Linux/NeuroModelerConsole через repro_cold_lib.NM. Нужна пересборка именно используемого runtime и сохранение его manifest.
 
-Исторические времена Train: Branch25 320, Asym25 160, Branch100Keep 640, Search 2400, Asym50 320, Phase6 900 модельных секунд. Увеличение времени допускается как отдельный зафиксированный override, а не скрытая смена протокола.
+Исторические времена Train: Branch25 320, Asym25 160, Branch100Keep 640, Search 2400, Asym50 **640** (D2: 320 оставлял Need=1 без Train flag), Phase6 900 модельных секунд. Увеличение времени допускается как отдельный зафиксированный override, а не скрытая смена протокола. Provenance: `weights_identity.tipr_sha256` + `params_source` ∈ {`nm_save`,`flag_flush`,`none`}.
 
 Логи: Train/run_posttune_verify.log и Test/run_gate.log. Runtime debug/live исключены .gitignore; необходимые доказательства сохраняются явно в run-bundle. Политика ограничений logs/deadline должна соответствовать используемым скриптам, а не старому универсальному порогу.
 

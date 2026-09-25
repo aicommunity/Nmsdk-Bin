@@ -146,6 +146,28 @@ class TestAcceptRun(unittest.TestCase):
         )
         self.assertFalse(ok)
 
+    def test_need1_with_gate_ok_still_fails(self):
+        """D2.3: Need=1 + full fires + cpp mid must still fail accept_run."""
+        row = {
+            "train_status": "incomplete_flag_need1",
+            "after": {
+                "TipSynapseResistance": "2e7 2e7 2e7 8.6e7",
+                "FixedLTZThreshold": "0.05",
+                "IsNeedToTrain": "1",
+            },
+            "fires": "10000000",
+            "tipr_vs_snapshot": "",
+            "mid_source": "cpp",
+            "tipr_class": "canon",
+            "gate_ok": True,
+            "require_cpp_mid": True,
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="canon", mode="cold", need="1"
+        )
+        self.assertFalse(ok)
+        self.assertTrue(any("Need=1" in r for r in reasons))
+
     def test_empty_fires_fails(self):
         row = {
             "train_status": "done",
@@ -215,6 +237,32 @@ class TestCleanWorkdir(unittest.TestCase):
             tipr = pv.get_tag(t, "TipSynapseResistance") or ""
             self.assertEqual(pv.tipr_class(tipr, "canon"), "canon")
             self.assertEqual(pv.flush_current_train_flag(Path(td) / "missing"), "none")
+
+    def test_weights_identity_mismatch_before_flush(self):
+        """D2.2: params TipR ≠ flag TipR before flush → match False."""
+        with tempfile.TemporaryDirectory() as td:
+            train = Path(td) / "Train"
+            train.mkdir()
+            (train / "Parameters_00.xml").write_text(
+                "<root><TipSynapseResistance>86000000 86000000 86000000 86000000"
+                "</TipSynapseResistance><DendriteLength>1 1 1 1</DendriteLength>"
+                "<IsNeedToTrain>1</IsNeedToTrain>"
+                "<FixedLTZThreshold>1</FixedLTZThreshold>"
+                "<LTZThreshold>1</LTZThreshold></root>",
+                encoding="utf-8",
+            )
+            (train / "posttune_complete.flag").write_text(
+                "mid=0.05 landscape_ok=1 inference=1 result=1 FixedLTZ=0.05\n"
+                "tipr=2e+07 2e+07 2e+07 8.6e+07\n",
+                encoding="utf-8",
+            )
+            before = pv.tipr_weights_identity(train, params_source="none")
+            self.assertFalse(before["flag_params_tipr_match"])
+            self.assertTrue(before["tipr_sha256"])
+            self.assertEqual(pv.flush_current_train_flag(train), "flag_flush")
+            after = pv.tipr_weights_identity(train, params_source="flag_flush")
+            self.assertTrue(after["flag_params_tipr_match"])
+            self.assertEqual(after["params_source"], "flag_flush")
 
 
 class TestSlog(unittest.TestCase):

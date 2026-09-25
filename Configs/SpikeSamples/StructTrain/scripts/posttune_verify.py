@@ -121,7 +121,8 @@ CASES = {
     "asym50": {
         "root": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen_posttune",
         "gold": ROOT / "SelectivityAsymRm" / "EXP_span50ms_packA_gen",
-        "train_t": 320.0,
+        # D2.1: 320s left Need=1 / no Train flag (Finalize not reached). Bump with provenance note.
+        "train_t": 640.0,
         "span_ms": 50,
         "kind": "asym",
         "expect_tipr": "canon",
@@ -425,12 +426,51 @@ def prepare_clean_case(case_name: str, archive_root: Path) -> Path:
     return work
 
 
+def tipr_weights_identity(
+    train: Path,
+    *,
+    params_source: str = "none",
+) -> dict[str, Any]:
+    """TipR identity block for provenance (R06/A16): params vs flag + sha256."""
+    tipr_params = ""
+    length_params = ""
+    params = train / "Parameters_00.xml"
+    if params.exists():
+        snap = snap_params(params)
+        tipr_params = snap.get("TipSynapseResistance") or ""
+        length_params = snap.get("DendriteLength") or snap.get("Length") or ""
+    tipr_flag = ""
+    flag = train / "posttune_complete.flag"
+    if flag.exists():
+        meta = parse_flag_file(flag)
+        tipr_flag = (meta.get("tipr") or "").replace("+", "")
+    tipr_sha = None
+    if tipr_params:
+        tipr_sha = hashlib.sha256(tipr_params.encode("utf-8")).hexdigest()
+    match = False
+    if tipr_params and tipr_flag:
+        vp = parse_tipr_vec(tipr_params)
+        vf = parse_tipr_vec(tipr_flag)
+        match = vp is not None and vf is not None and tipr_close(vp, vf)
+    elif tipr_params and not tipr_flag and params_source == "nm_save":
+        match = True
+    return {
+        "tipr_params": tipr_params,
+        "tipr_flag": tipr_flag,
+        "tipr_sha256": tipr_sha,
+        "length_params": length_params,
+        "flag_params_tipr_match": bool(match),
+        "params_source": params_source,
+    }
+
+
 def build_provenance(
     work: Path,
     *,
     case: str,
     run_id: str,
     config_sha_before: dict[str, str | None] | None = None,
+    params_source: str = "none",
 ) -> dict[str, Any]:
     source_paths = [NMSDK_ROOT / rel for rel in PROVENANCE_SOURCE_REL]
     gitlinks: dict[str, str | None] = {}
@@ -455,6 +495,7 @@ def build_provenance(
         ).strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         root_git = None
+    train = work / "Train"
     return {
         "case": case,
         "run_id": run_id,
@@ -466,6 +507,7 @@ def build_provenance(
         "gitlinks": gitlinks,
         "source_sha256": sha256_paths(source_paths),
         "config_sha256_before": config_sha_before or {},
+        "weights_identity": tipr_weights_identity(train, params_source=params_source),
     }
 
 
@@ -1013,6 +1055,8 @@ def run_case(
             params_source = flush_posttune_artifacts(train)
             if params_source == "none":
                 params_source = "nm_save"
+        elif status == "done_flag_flush":
+            params_source = "flag_flush"
         else:
             params_source = "nm_save"
     else:
@@ -1109,12 +1153,18 @@ def run_case(
     expect_tipr = case["expect_tipr"]
     got_tipr_class = tipr_class(tipr_final, expect_tipr)
     provenance = build_provenance(
-        root, case=name, run_id=run_id, config_sha_before=config_sha_before
+        root,
+        case=name,
+        run_id=run_id,
+        config_sha_before=config_sha_before,
+        params_source=params_source,
     )
     provenance.update(
         {
             "config_sha256": config_sha256,
             "params_source": params_source,
+            "weights_identity": tipr_weights_identity(train, params_source=params_source),
+
             "train_status": status,
             "child_rc": child_rc,
             "search_reverted_train": int(search_reverted),
