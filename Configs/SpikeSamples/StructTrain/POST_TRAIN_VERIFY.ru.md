@@ -32,6 +32,8 @@ python3 scripts/posttune_verify.py --case br25_on --allow-salvage
 
 Контрольные опыты P1.5: [_repro/CONTROL_RUNS_P15.md](_repro/CONTROL_RUNS_P15.md). Морфогенез P2 только после FAIL: [_repro/MORPHOGENESIS_P2.md](_repro/MORPHOGENESIS_P2.md).
 
+Актуальная сводка постановок и результатов cold-прогонов после исправлений (без исторических ярлыков V1–V6): [EXPERIMENTS_AFTER_FIXES.ru.md](../../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md). Табличный HEAD-срез: [EXPERIMENTS.md](EXPERIMENTS.md) · [SUCCESSFUL_EXPERIMENTS.md](SUCCESSFUL_EXPERIMENTS.md).
+
 `flush_current_train_flag` (harness H2): синхронизирует **текущий** Train `posttune_complete.flag` → Parameters/Model TipR/Need/mid, когда Console `-S` отстаёт от Finalize. Это **не** `--allow-salvage` и **не** поднятие archive/live артефактов: flag должен лежать в clean workdir текущего прогона.
 
 C++ (R01–R05): SampleState / Timeout без Success mid; сброс PostTuneResult на attempt; delay≥LateResponseWindow; analyzer sample-close-first + censored CSV; единый collector (Branch без soma side-channel). Требуется пересборка Console перед cold PASS.

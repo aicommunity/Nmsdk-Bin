@@ -1,247 +1,76 @@
 # Реестр успешных экспериментов StructTrain
 
-**Уточнение аудита 2026-09-22:** таблицы ниже — исторические результаты при указанных pins и gate. Они не доказывают held-out качество текущего HEAD. Каталог PHASE12 содержит 12 VALIDATED (включая две LtzCal-копии) и 20 VALIDATED_CLONE, а не 32 независимых cold-обучения. Известны дефекты окон, strict/last-pulse и inference-mid. [Разбор и актуальный контракт](AUDIT_2026-09-22.md).
+**Срез HEAD 2026-09-25:** Console SHA-256 `5e7829bf9beb1901336ed15b7595786d5708c40d0dd9c9f2f1329bff3c3a1b63` · PulseLib `8d429e7` · Bin `0600e38`.
 
+Только строки со статусом HEAD **PASS** (алгоритм + параметры + протокол на текущем runtime).  
+Полный реестр (PASS + FAIL + NOT_RETESTED) → [`EXPERIMENTS.md`](EXPERIMENTS.md).  
+Контракт cold: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md). Narrative: [`EXPERIMENTS_AFTER_FIXES.ru.md`](../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md).  
+Уровни T1–T5 (PHASE12-era) → [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md); **здесь вердикт только HEAD PASS**.
 
-Живой список **audit-PASS** конфигов с критерием **last-pulse**: результаты и ссылки на Train/Test.  
-Это не хроника кампании — полный контекст в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md), разбор ворот — в [`AUDIT_REPORT.md`](AUDIT_REPORT.md).  
-**Карта надёжности (что полностью подтверждено vs только золото на диске):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md).  
-**Пост-тюнинг в модуле-учителе (C++ PostTune):** [`POST_TRAIN_TUNING.ru.md`](POST_TRAIN_TUNING.ru.md) · [`POST_TRAIN_TUNING.md`](POST_TRAIN_TUNING.md).
+## Антипутаница
 
-**Срез метрик:** 2026-09-17 (PHASE12 W2 GATE) · [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**174 Test / 103 `ok_audit=1`**) · prior 2026-09-15 (PHASE11 R0) · источник [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (**167 Test / 77 `ok_audit=1`**) · MATRIX [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) · архивы [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv). Журналы: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
+1. Одна строка = алгоритм + отличимые параметры + **протокол**. Acc gold и soft-cold — разные строки ([`EXPERIMENTS.md`](EXPERIMENTS.md) §A).
+2. PHASE12 `VALIDATED` / RELIABILITY T1 **≠** запись в этом файле.
+3. `ok_audit=1` (Acc≥4) сам по себе не даёт места в SUCCESSFUL.
+4. Короткое **Имя**; полный путь — в **Конфиги**. Twin LtzCal — префикс `LtzCal/…`.
+5. Pack B/C MatrixClone не смешивать с cold родителя.
+6. Нет хроники remediation; только текущий вердикт.
 
-**PHASE12:** cold-replay валидация — манифест [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). Wave 1–5: §8 done; LtzCal25 VALIDATED. Wave 6: quality invest exhausted (no new VALIDATED*); backlog proposals [`QUALITY_BACKLOG_PROPOSALS.md`](QUALITY_BACKLOG_PROPOSALS.md). PhaseA / PSI / TimeNeuron ниже — **ARTIFACT (PHASE12)**.
+## Легенда статусов HEAD
 
+| Статус | В этом файле |
+|--------|----------------|
+| **PASS** | да |
+| FAIL / NOT_RETESTED | нет → [`EXPERIMENTS.md`](EXPERIMENTS.md) |
 
-## Критерий включения
+## Колонки
 
-В реестр входит только канонический `<root>/Test` с:
+| Имя | Алгоритм | Параметры | Протокол | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
+|-----|----------|-----------|----------|-----|------|-------|------|----------|------------|---------|
 
-1. `ok_audit = ok_strict ∧ (response_quality = ok_single) ∧ (n = 8)`
-2. **Исторический ручной last-pulse (не строгая граница):** на цели `neuron_t_rel ≥ 0.8 · pattern_end` (`pattern_end = Σ ISI` пробы)
-3. Предпочтительно acc ≥ 7 и без FP; soft 6/8 + early-spike на цели — **не** включать
-
-Точность в таблице — `acc_legacy` (при PASS совпадает с `acc_strict`). Режим — `mode_legacy` из CSV (`selective` / `partial_FA`).
-
-**Не включать:** только `ok_legacy`, Branch demoted (late_fp / per-stim), `fire_all`, burst/per-stim, неполные `n≠8`, early-spike target (`t_rel ≪ pattern_end`), варианты `Test_<tag>/` без gate-CSV.
-
-Термины: глоссарий в CAMPAIGN_REPORT (алгоритм обучения, ответ/спайк, тип компонента LTZone, last-pulse).
-
-Функция audit_structtrain.last_pulse_ok расходится с ручным правилом: использует 0.8*max(ISI). Для строгой новой проверки нужна sum(ISI) с допуском дискретизации.
-
-### Слои ворот (без изменения порогов кода)
-
-Реализация: [selectivity_metrics.py](scripts/selectivity_metrics.py). Проверка kMinStimForInWindowFire не гарантирует отсутствие раннего PASS: случай одного уже наблюдавшегося стимула считается полным. Strict также не учитывает одиночный ранний foil-spike при нулевых fire/late-флагах.
-
-| Слой | Что считает | Порог PASS | Late на чужом | Acc |
-|------|-------------|------------|---------------|-----|
-| **`ok_legacy`** | in-window `neuron_fired` / `match` | `n=8`, target hit, не `fire_all` | **игнорируется** (тишина) | **≥4** |
-| **`ok_strict`** | effective fire = in-window ∨ late | target in-window; чужой: ни fire, ни late | **`late_fp` = ошибка** | **≥4** |
-| **`ok_audit`** | `ok_strict` ∧ `ok_single` ∧ `n=8` | один спайк/trial (не burst/per_stim) | как strict | **≥4** (не 8/8) |
-| **Last-pulse (реестр)** | `neuron_t_rel ≥ 0.8·pattern_end` на цели | ручная проверка поверх audit | — | — |
-
-Важно:
-
-- Канонический **`ok_audit` не требует 8/8**: PhaseA / PSI / TimeNeuron с **4–6/8** `partial_FA` могут иметь `ok_audit=1` и числятся в реестре ниже — это audit-PASS при частичных in-window FP, не «полная селективность».
-- Кампании **PHASE5 (AsymRm 25/50/100)** и **PHASE6 (@480 мс)** дополнительно целят **8/8 selective** + last-pulse (процедурная цель волны, не смена формулы `ok_audit`).
-- Ранний target-спайк после первого стимула может установить neuron_fired; late-only на цели учитывается как late_fn.
-
-Ошибки на чужом (nontarget):
-
-| Сигнал | `ok_legacy` | `ok_strict` / audit |
-|--------|-------------|---------------------|
-| In-window FP (`neuron_fired=1`) | FA (снижает acc) | FA |
-| Late FP (`late_fired=1`, in-window тишина) | **не** FA | **FA** (`late_fp`) |
-| `fire_all` | FAIL gate | FAIL gate |
-| burst / per_stim | не ломает legacy | `ok_audit=0` (`response_quality`) |
+- **Acc** — успешные пробы / 8.
+- **Цель** — срабатывание на правильном примере (`да` / `нет` / `—`). При Acc&lt;8/8 колонка обязательна для чтения результата.
 
 ## Как обновлять
 
-1. При необходимости прогнать Test (`scripts/rerun_all_tests.sh` или точечный NeuroModelerConsole).
-2. Пересчитать метрики через [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py) и обновить `AUDIT_GATE_RECOMPUTE.csv` (или его преемник).
-3. Проверить last-pulse на цели; синхронизировать таблицы ниже.
-4. При demote — удалить строку; кратко зафиксировать причину в AUDIT_REPORT.
+1. Новый прогон с PASS → добавить строку сюда и в [`EXPERIMENTS.md`](EXPERIMENTS.md).
+2. Строка перестала проходить → удалить отсюда; в EXPERIMENTS поставить FAIL.
+3. Cold: [`scripts/posttune_verify.py`](scripts/posttune_verify.py), clean workdir, bundle в `_repro/runs/`.
 
-## Phase A
+---
 
-Audit-PASS при **partial_FA 4–6/8** (канон `ok_audit` допускает acc≥4). Кампания рецепта @480 мс: [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) / [`Phase6/`](SelectivityPhaseA/Phase6/).
+## A. PostTune / строгий cold (текущий HEAD)
 
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP00_baseline | база (порог 0.0115) | 4/8 | partial_FA | [Train](SelectivityPhaseA/EXP00_baseline/Train) · [Test](SelectivityPhaseA/EXP00_baseline/Test) · [CSV](SelectivityPhaseA/EXP00_baseline/Test/SelectivityLog/results.csv) |
-| EXP01_ltz_threshold_sweep | порог FixedLTZ | 6/8 | selective | [Train](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Train) · [Test](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test) · [CSV](SelectivityPhaseA/EXP01_ltz_threshold_sweep/Test/SelectivityLog/results.csv) |
-| EXP02_ltzone_average_mode | `UseAverageLTZonePotential` | 4/8 | partial_FA | [Train](SelectivityPhaseA/EXP02_ltzone_average_mode/Train) · [Test](SelectivityPhaseA/EXP02_ltzone_average_mode/Test) · [CSV](SelectivityPhaseA/EXP02_ltzone_average_mode/Test/SelectivityLog/results.csv) |
-| EXP06_ltzone_integration | тип компонента LTZone / τ | 4/8 | partial_FA | [Train](SelectivityPhaseA/EXP06_ltzone_integration/Train) · [Test](SelectivityPhaseA/EXP06_ltzone_integration/Test) · [CSV](SelectivityPhaseA/EXP06_ltzone_integration/Test/SelectivityLog/results.csv) |
+На срезе подтверждён один PASS: контроль на frozen gold-весах Branch 25 мс (обучение не запускалось).  
+Строгая cold-матрица 6 клонов: **0 PASS** — FAIL в [`EXPERIMENTS.md`](EXPERIMENTS.md) §A.
 
-Алгоритм: `NNeuronTimeLearner` (несколько дендритов).
+| Имя | Алгоритм | Параметры | Протокол | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
+|-----|----------|-----------|----------|-----|------|-------|------|----------|------------|---------|
+| br25_posttune | NNeuronTimeLearnerBranch | span25 TipR canon mid≈0.0718 | SkipTrainGold | 8/8 | да | selective | **PASS** | — | fires `10000000`; mid 0.0718001 cpp | [корень](SelectivityBranch/EXP_br_span25_packA_gen_C1e9_posttune) · [`bundle`](_repro/runs/br25_on_20260924T165949Z) |
 
-## Пресинаптическое торможение (PSI)
+Связанный gold-корень (те же веса): [`EXP_br_span25_packA_gen_C1e9`](SelectivityBranch/EXP_br_span25_packA_gen_C1e9) — в полном реестре как GoldTest NOT_RETESTED; SoftCold на HEAD — **FAIL** ([`EXPERIMENTS.md`](EXPERIMENTS.md) §A).
 
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP01_preinh_050 | preinh k=0.5 | 4/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP01_preinh_050/Train) · [Test](SelectivityPresynapticInhib/EXP01_preinh_050/Test) · [CSV](SelectivityPresynapticInhib/EXP01_preinh_050/Test/SelectivityLog/results.csv) |
-| EXP14_preinh_260 | preinh k=2.6 | 6/8 | selective | [Train](SelectivityPresynapticInhib/EXP14_preinh_260/Train) · [Test](SelectivityPresynapticInhib/EXP14_preinh_260/Test) · [CSV](SelectivityPresynapticInhib/EXP14_preinh_260/Test/SelectivityLog/results.csv) |
-| EXP15_preinh_270 | preinh k=2.7 | 5/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP15_preinh_270/Train) · [Test](SelectivityPresynapticInhib/EXP15_preinh_270/Test) · [CSV](SelectivityPresynapticInhib/EXP15_preinh_270/Test/SelectivityLog/results.csv) |
-| EXP21_span100ms_preinh250 | span 100 мс + k=2.5 | 5/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP21_span100ms_preinh250/Train) · [Test](SelectivityPresynapticInhib/EXP21_span100ms_preinh250/Test) · [CSV](SelectivityPresynapticInhib/EXP21_span100ms_preinh250/Test/SelectivityLog/results.csv) |
-| EXP31_span200ms_preinh250 | span 200 мс + k=2.5 | 5/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP31_span200ms_preinh250/Train) · [Test](SelectivityPresynapticInhib/EXP31_span200ms_preinh250/Test) · [CSV](SelectivityPresynapticInhib/EXP31_span200ms_preinh250/Test/SelectivityLog/results.csv) |
-| EXP32_span300ms_baseline | span 300 мс baseline | 4/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP32_span300ms_baseline/Train) · [Test](SelectivityPresynapticInhib/EXP32_span300ms_baseline/Test) · [CSV](SelectivityPresynapticInhib/EXP32_span300ms_baseline/Test/SelectivityLog/results.csv) |
-| EXP33_span300ms_preinh250 | span 300 мс + k=2.5 | 4/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP33_span300ms_preinh250/Train) · [Test](SelectivityPresynapticInhib/EXP33_span300ms_preinh250/Test) · [CSV](SelectivityPresynapticInhib/EXP33_span300ms_preinh250/Test/SelectivityLog/results.csv) |
-| EXP34_span400ms_baseline | span 400 мс baseline | 4/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP34_span400ms_baseline/Train) · [Test](SelectivityPresynapticInhib/EXP34_span400ms_baseline/Test) · [CSV](SelectivityPresynapticInhib/EXP34_span400ms_baseline/Test/SelectivityLog/results.csv) |
-| EXP35_span400ms_preinh250 | span 400 мс + k=2.5 | 5/8 | partial_FA | [Train](SelectivityPresynapticInhib/EXP35_span400ms_preinh250/Train) · [Test](SelectivityPresynapticInhib/EXP35_span400ms_preinh250/Test) · [CSV](SelectivityPresynapticInhib/EXP35_span400ms_preinh250/Test/SelectivityLog/results.csv) |
+Секции B–H в SUCCESSFUL пусты: других HEAD PASS нет.
 
-## TimeNeuron (классический алгоритм)
+---
 
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| TimeNeuronTimeLearner | `NNeuronTimeLearner` (несколько дендритов) | 4/8 | partial_FA | [Train](TimeNeuronTimeLearner/Train) · [Test](TimeNeuronTimeLearner/Test) · [CSV](TimeNeuronTimeLearner/Test/SelectivityLog/results.csv) |
+## Риск при NOT_RETESTED (соседние строки в полном реестре)
 
-## AsymRm (short-span)
+| Риск | Когда | Примеры |
+|------|-------|---------|
+| **high** | SoftCold Train+PostTune; Search/Keep | cold FAIL в EXPERIMENTS §A; br480; nextseg100 |
+| **med** | GoldTest на старых весах | Asym50/100; Phase6 7/8; Branch short packA |
+| **low** | MatrixClone B/C; ARTIFACT partial_FA | VALIDATED_CLONE; Phase A / PSI |
 
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_span25ms_packA_gen | C1e9 + EstDelay=0.002 + Rmin=2e7 + TipR base + FixedLTZ=0.00962 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packA_preinh | + Preinh2.5 C1e9; thr≈0.00469 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_preinh/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packB_preinh_C1e9 | PHASE9 P2 clone A; thr≈0.00469 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packC_preinh_C1e9 | PHASE9 P2 clone A; thr≈0.00469 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packB_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packB_gen/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packC_gen | recipe→C1e9; thr≈0.00700 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span25ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packC_gen/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packA_gen | C1e9; TipR@Rmin `2e7×3+8.6e7`; thr=0.011759; L=`25 23 15 1` | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packA_preinh | Preinh C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_preinh/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packB_preinh_C1e9 | PHASE9 P2; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packC_preinh_C1e9 | PHASE9 P2; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packB_gen | clone A→C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packB_gen/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packC_gen | clone A→C1e9; thr=0.011759 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span50ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packC_gen/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packA_gen | C1e9; TipR@Rmin; thr=0.006681; L=`52 48 27 1` | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packA_preinh | Preinh C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packA_preinh/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packA_preinh/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packB_preinh_C1e9 | PHASE9 P2 TipR@Rmin; thr≈0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packC_preinh_C1e9 | PHASE9 P2 TipR@Rmin; thr≈0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packB_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packB_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packB_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packB_gen/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packC_gen | clone A→C1e9; thr=0.006681 | 8/8 | selective | [Train](SelectivityAsymRm/EXP_span100ms_packC_gen/Train) · [Test](SelectivityAsymRm/EXP_span100ms_packC_gen/Test) · [CSV](SelectivityAsymRm/EXP_span100ms_packC_gen/Test/SelectivityLog/results.csv) |
+---
 
-## AsymRmLtzCal twin
+## Указатели
 
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_span25ms_packA_gen | clone Model/Parameters с AsymRm эталона · **VALIDATED sync (PHASE12 W5)** | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packA_gen | clone Test эталона; GTS=20000; thr=0.011759 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packA_gen | clone Test эталона; GTS=20000; thr=0.006681 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packA_preinh | PHASE10 T2 Test hygiene from AsymRm A_preinh; thr=0.004686425 · **VALIDATED sync (PHASE12 W5)** | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span25ms_packA_preinh/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packA_preinh | T2 TipR@Rmin; thr=0.011759 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span50ms_packA_preinh/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_packA_preinh | T2 TipR@Rmin; thr=0.006681015 | 8/8 | selective | [Train](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Train) · [Test](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Test) · [CSV](SelectivityLtzCalibrate/AsymRmLtzCal/EXP_span100ms_packA_preinh/Test/SelectivityLog/results.csv) |
-
-Алгоритм: `NNeuronTimeLearner`; last-pulse на цели. Разбор: [`SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md`](SelectivityAsymRm/DIAG_LAST_PULSE_span25_packA.md), фаза 50/100: [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md).
-
-**Робастность порога:** PASS на 25/50/100 и gen/preinh/twin/B·C — перенос рецепта и last-pulse, **не** широкий амплитудный запас. Зазор «максимум потенциала зоны на цели − на самом трудном чужом»: @25/~1.5e-4, @50/~1.7e-4 (та же хрупкость), @100/~5e-6 (на порядок хуже). Эталон ~480 мс: зазор ~6e-6 при частичных ложных, не «широкий порог». Диагноз и probe: конфиг tip на Done Test зазор ≥5e-4 не даёт; модель нейрона не меняем. [`SelectivityAsymRm/THR_FRAGILITY_DIAG.md`](SelectivityAsymRm/THR_FRAGILITY_DIAG.md).
-
-## Phase6 @480 мс (рецепт PHASE5-процедуры)
-
-Журнал: [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md). Исторические EXP00/TimeNeuron/PSI **не** перезаписаны — только клоны в `Phase6/`. Цель волны 8/8 не достигнута (hard foil trial6); ниже — audit-PASS **7/8** selective + last-pulse.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_480_gen_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.016894 | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_480_gen_thr_only | mid-thr=0.014386, TipR Done | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_thr_only/Test/SelectivityLog/results.csv) |
-| EXP_480_preinh250_tiprmin | PSI EXP04 + TipR@Rmin; thr=0.038722 | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_480_ltzcal_twin_gen | twin clean Test tiprmin | 7/8 | selective | [Train](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_ltzcal_twin_gen/Test/SelectivityLog/results.csv) |
-
-Зеркало EXP00 (4/8): [`Phase6/EXP_480_gen_baseline`](SelectivityPhaseA/Phase6/EXP_480_gen_baseline/) — не отдельная строка реестра (дубликат EXP00).
-
-## Branch @480 мс (PHASE7)
-
-Журнал: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md). Исторический канон Branch trio **demoted** (late_fp+per_stim) — сохранён как эталон «до рецепта». PASS — только клоны TipR@Rmin + mid thr по `soma_amp_sum`.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_br480_tiprmin | TipR@Rmin + Rmin=2e7 + thr=0.05149 · **FAIL (PHASE12 W2 soft-cold)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_br480_nextseginh_tiprmin | NextSegInh + tiprmin; thr=0.036298 · **FAIL (PHASE12 W2 soft-cold)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_nextseginh_tiprmin/Test/SelectivityLog/results.csv) |
-| EXP_br480_preinh250_tiprmin | Preinh2.5 + tiprmin; thr=0.111136 · **FAIL (PHASE12 W2 soft-cold)** | 7/8 | selective | [Train](SelectivityBranch/EXP_br480_preinh250_tiprmin/Train) · [Test](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test) · [CSV](SelectivityBranch/EXP_br480_preinh250_tiprmin/Test/SelectivityLog/results.csv) |
-
-## Branch short-span (PHASE8)
-
-Журнал: [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md). Cold Train Branch C1e9 + TipR@Rmin + mid thr по `soma_amp_sum`. Test: overlay Train Neuron + Generator tips `Dendrite1_{L[i]}`.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_br_span25_packA_gen_C1e9 | L=`13 11 7 1`; TipR@Rmin; thr≈0.0718 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_gen_C1e9/Test/SelectivityLog/results.csv) · repro soft-cold [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
-| EXP_br_span50_packA_gen_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0644 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packA_gen_C1e9 | L=`25 21 11 1`; Done TipR (не Rmin); thr≈0.00718 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packA_preinh_C1e9 | L=`7 6 4 1`; TipR@Rmin; thr≈0.0517 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packA_preinh_C1e9 | L=`13 11 6 1`; TipR@Rmin; thr≈0.0301 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packA_preinh_C1e9 | L=`22 18 11 1`; TipR@Rmin; thr≈0.0203 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packB_gen_C1e9 | clone packA; thr≈0.0718 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packC_gen_C1e9 | clone packA; thr≈0.0718 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packB_preinh_C1e9 | clone packA; thr≈0.0517 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packC_preinh_C1e9 | clone packA; thr≈0.0517 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packB_gen_C1e9 | clone packA; thr≈0.0644 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packC_gen_C1e9 | clone packA; thr≈0.0644 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packB_preinh_C1e9 | clone packA; thr≈0.0301 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packC_preinh_C1e9 | clone packA; thr≈0.0301 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packB_gen_C1e9 | Done TipR; thr≈0.00718 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packC_gen_C1e9 | Done TipR; thr≈0.00718 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_gen_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packB_preinh_C1e9 | TipR@Rmin; thr≈0.0203 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packC_preinh_C1e9 | TipR@Rmin; thr≈0.0203 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_preinh_C1e9/Test/SelectivityLog/results.csv) |
-
-PHASE9 P1: pack B/C — [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md).
-
-
-## Branch NextSegInh short-span (PHASE9 P3)
-
-Журнал: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Cold Train + `EnableNextSegmentInhibition=1` + TipR@Rmin + mid soma.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_br_span25_packA_nextseginh_C1e9 | L=`13 11 7 1`; thr≈0.0476 · **VALIDATED (PHASE12 W1)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packA_nextseginh_C1e9 | L=`13 11 6 1`; thr≈0.0413 · **VALIDATED (PHASE12 W1)** QUALITY | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packA_nextseginh_C1e9 | L=`21 17 11 1`; thr≈0.0144 · **PHASE12 W1 FAIL** (soft-cold L stuck; gold kept) | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-
-## Branch NextSegInh short pack B/C (PHASE11 R2.1)
-
-Clone packA + Matrix overlay B/C via `phase8_tiprmin_gate.py --skip-prepare --matrix-only` (no cold Train). Mid `soma_amp_sum`.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_br_span25_packB_nextseginh_C1e9 | thr≈0.0476 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span25_packC_nextseginh_C1e9 | thr≈0.0476 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span25_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packB_nextseginh_C1e9 | thr≈0.0456 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span50_packC_nextseginh_C1e9 | thr≈0.0456 · **VALIDATED_CLONE (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packB_nextseginh_C1e9 | thr≈0.0144 · **DEFERRED_PARENT_FAIL (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packB_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_br_span100_packC_nextseginh_C1e9 | thr≈0.0144 · **DEFERRED_PARENT_FAIL (PHASE12 W2)** | 8/8 | selective | [Train](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packC_nextseginh_C1e9/Test/SelectivityLog/results.csv) |
-
-## FastSpan short C1e9 (PHASE10)
-
-Журнал: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) P10.2. AsymRm C1e9 neuron + cold Train + TipR@Rmin + mid `ltz`. Last-pulse на цели.
-
-| Имя | Рычаг | Acc | Режим | Конфиги |
-|-----|--------|-----|-------|---------|
-| EXP_span25ms_fast_C1e9 | AsymRmD001C1e9; thr=0.0328372 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_C1e9/Test/SelectivityLog/results.csv) · FS soft-cold repro open [`_repro`](_repro/REPRO_COLD_INVESTIGATION.md) |
-| EXP_span25ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.01563085 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span25ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.0112976 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span50ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_fast_C1e9 | AsymRmD001C1e9; thr=0.01568185 | 7/8 | selective | [Train](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span100ms_fast_C1e9/Test/SelectivityLog/results.csv) |
-| EXP_span100ms_fast_preinh_C1e9 | Preinh2_5AsymRm; thr=0.00708053 | 8/8 | selective | [Train](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Train) · [Test](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Test) · [CSV](SelectivityFastSpan/EXP_span100ms_fast_preinh_C1e9/Test/SelectivityLog/results.csv) |
-
-`EXP_span50ms_fast_C1e9` — `ok_audit=1` partial_FA acc5; не в реестре.
-
-## Вне реестра
-
-- **Branch канон** (`TimeNeuronTimeLearnerBranch*`) без tiprmin: legacy 6–7/8 demoted (`ok_audit=0`, late_fp + per_stim) — см. [`AUDIT_REPORT.md`](AUDIT_REPORT.md); PHASE7: [`SelectivityBranch/PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
-- Short-span BranchFastSpan / `EXP_br_span25_tiprmin` — fire_all / FAIL (superseded PHASE8 C1e9).
-- Хронология кампаний — [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md).
-- Раскладка каталогов — [`LAYOUT.md`](LAYOUT.md).
-
-## Отложено
-
-- PHASE6 foil trial6 / br480 preinh250 FP: mid-only **FAIL** (amp inversion) — см. [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) P4 notes; T1 TipR still 7/8.
-- FastResponse tiprmin P10.3 — silent / fire_all; D/C sweep вне scope.
-- PSI short C1e9 — `ok_audit` partial_FA; cold Train deferred.
-- PhaseA EXP03–05 / FastSpanLtzCal — P10.4 docs skip.
-- PHASE6 Wave 2 pack B/C @480 мс — нет foil-pack аналогов. См. [`PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md).
-- AsymRmLtzCalBranch stall ×6 — не overwrite; замена = PHASE8. См. [`PHASE7_BRANCH_QUALITY.md`](SelectivityBranch/PHASE7_BRANCH_QUALITY.md).
-
-
-## PHASE12 Wave3 badges (2026-09-18)
-
-- AsymRm `EXP_span25ms_packA_{gen,preinh}` **VALIDATED** (soft-cold TipR 86e6)
-- AsymRm span25 packB/C gen+preinh **VALIDATED_CLONE** ×4
-- AsymRm span50/100 packA **ARTIFACT_KEEP** (soft-cold mid flat)
-- FastSpan FS25 **FAIL_ROOTCAUSE**; FS×5 **BLOCKED_FS**
-- AsymRmLtzCal **ARTIFACT_KEEP** (sync; gate tiprmin hygiene)
+| Документ | Роль |
+|----------|------|
+| [`EXPERIMENTS.md`](EXPERIMENTS.md) | полный HEAD-срез |
+| [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) | исторические cold-бейджи |
+| [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) | T1–T5 |
+| [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md) | контракт PostTune |
+| [`LAYOUT.md`](LAYOUT.md) | раскладка каталогов |
+| [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) | gate CSV |

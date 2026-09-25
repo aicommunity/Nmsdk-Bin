@@ -8,7 +8,7 @@
 
 This document answers: **which solutions are fully trustworthy**, and which have a strong on-disk test result but were **not confirmed** by retrain-from-scratch (cold-replay), or remained only partially selective.
 
-Authoritative per-experiment cold statuses: [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). Strong-test registry: [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md). Here: **interpretation** by learning approach, neuron parameter group, pattern length, and trust level.
+Authoritative per-experiment cold statuses: [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). Current HEAD tabular slice: [`EXPERIMENTS.md`](EXPERIMENTS.md) (PASS+FAIL+NOT_RETESTED) and [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) (PASS only). T1–T5 below are PHASE12-era interpretation and do **not** replace the HEAD column. Here: **interpretation** by learning approach, neuron parameter group, pattern length, and trust level.
 
 Pattern lengths (25 / 50 / 100 / ~480 / 200–400 ms) and experiment families are treated **evenly**. PHASE12 wave numbers are not the organizing axis.
 
@@ -273,7 +273,8 @@ FastResponse tip-resistance, stalled LtzCalBranch, RegressionFull480 harness, fo
 |----------|------|
 | [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) | Full Russian narrative (preferred for reading) |
 | [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) | Per-id cold statuses |
-| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Strong-test registry |
+| [`EXPERIMENTS.md`](EXPERIMENTS.md) | Full HEAD slice PASS/FAIL/NOT_RETESTED |
+| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | HEAD PASS only |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | Recipe coverage by family |
 | [`QUALITY_BACKLOG_PROPOSALS.ru.md`](QUALITY_BACKLOG_PROPOSALS.ru.md) | Next steps for T2/T4 |
 | Phase journals PHASE5–11, Branch PHASE7–8, Phase6 recipe, `_repro/_invest/` | Campaign detail |

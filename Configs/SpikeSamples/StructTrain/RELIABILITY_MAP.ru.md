@@ -8,7 +8,7 @@
 
 Этот документ отвечает на вопрос: **каким решениям можно доверять полностью**, а какие имеют сильный результат на диске, но **не подтверждены** повторным обучением с нуля (cold-replay), либо так и остались со слабой селективностью.
 
-Статусы по каждому эксперименту по-прежнему ведутся в [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). Реестр сильных тестов — в [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md). Здесь — **интерпретация**: подходы к обучению, группы параметров нейрона, размер паттерна, уровень доверия.
+Статусы по каждому эксперименту по-прежнему ведутся в [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md). Табличный срез **текущего HEAD**: [`EXPERIMENTS.md`](EXPERIMENTS.md) (PASS+FAIL+NOT_RETESTED) и [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) (только PASS). Уровни T1–T5 ниже — интерпретация PHASE12-era; они **не** подменяют колонку HEAD в реестрах. Здесь — **интерпретация**: подходы к обучению, группы параметров нейрона, размер паттерна, уровень доверия.
 
 Размеры паттерна (25 / 50 / 100 / ~480 / 200–400 мс) и семьи экспериментов изложены **равноправно**. Ось «волны PHASE12» здесь не используется.
 
@@ -480,7 +480,8 @@ flowchart TD
 | Документ | Роль |
 |----------|------|
 | [`PHASE12_VALIDATION.md`](PHASE12_VALIDATION.md) | Статусы cold-replay по каждому id |
-| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Реестр сильных тестов |
+| [`EXPERIMENTS.md`](EXPERIMENTS.md) | Полный HEAD-срез PASS/FAIL/NOT_RETESTED |
+| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Только HEAD PASS |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | Покрытие рецепта по семьям |
 | [`QUALITY_BACKLOG_PROPOSALS.ru.md`](QUALITY_BACKLOG_PROPOSALS.ru.md) | Что пробовать дальше по T2/T4 |
 | [`SelectivityAsymRm/PHASE5_SPAN50_100.md`](SelectivityAsymRm/PHASE5_SPAN50_100.md) | Кампания AsymRm short |

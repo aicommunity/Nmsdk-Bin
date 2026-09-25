@@ -351,7 +351,8 @@ Path base: `Bin/Configs/SpikeSamples/StructTrain/`.
 
 ## Links
 
-- [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)
+- [`EXPERIMENTS.md`](EXPERIMENTS.md) — tabular HEAD slice (PASS/FAIL/NOT_RETESTED); PHASE12 badges below are historical reference, not HEAD verdict
+- [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) — HEAD PASS only
 - [`SelectivityBranch/PHASE8_SHORTSPAN.md`](SelectivityBranch/PHASE8_SHORTSPAN.md)
 - [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md) · [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) · [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md)
 - [`_repro/REPRO_COLD_RESULT.md`](_repro/REPRO_COLD_RESULT.md) · [`_repro/REPRO_COLD_INVESTIGATION.md`](_repro/REPRO_COLD_INVESTIGATION.md)

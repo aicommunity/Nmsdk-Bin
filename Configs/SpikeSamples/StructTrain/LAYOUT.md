@@ -31,8 +31,9 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 
 | Doc | Role |
 |-----|------|
-| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Реестр audit-PASS (`ok_audit=1`) + слои ворот + ссылки |
-| [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md) | Карта надёжности: подходы, параметры нейрона, размер паттерна, уровни доверия |
+| [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) | Реестр только HEAD **PASS** (алгоритм + параметры + протокол) |
+| [`EXPERIMENTS.md`](EXPERIMENTS.md) | Полный HEAD-срез: PASS + FAIL + NOT_RETESTED |
+| [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md) | Карта надёжности: подходы, параметры нейрона, размер паттерна, уровни доверия (T1–T5; не подменяет колонку HEAD) |
 | [`AUDIT_REPORT.md`](AUDIT_REPORT.md) | Ворота, demote, морфология ответа |
 | [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md) | Хроника кампаний |
 | [`SelectivityPhaseA/PHASE6_480_RECIPE.md`](SelectivityPhaseA/PHASE6_480_RECIPE.md) | PHASE6 рецепт @480 мс (клоны в `Phase6/`) |
