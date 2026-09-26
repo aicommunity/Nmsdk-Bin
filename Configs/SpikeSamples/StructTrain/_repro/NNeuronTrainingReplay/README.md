@@ -16,6 +16,8 @@
 | `TestTrain_AutoPreset_LearnerOnly_Fresh240` | `Bin/Configs/Bakhshiev/TestTrain` | Только `NNeuronLearner`, `UseAutoPreset=1`; компонент Trainer и его связи исключены из клона. Прогон сошёлся. |
 | `TestTrain_LearnerOnly_AutoSaveFresh` | `Bin/Configs/Bakhshiev/TestTrain` | Чистая копия baseline Learner с `ProjectAutoSaveModelTimeInterval=2`, готовая к повторному запуску. |
 | `TestTrain_LearnerOnly_AutoSaveProbe` | `Bin/Configs/Bakhshiev/TestTrain` | Снимки двух запусков с интервалом 2 секунды; журнал и временные метки подтверждают промежуточную запись `Model_00.xml` и `Parameters_00.xml`. Не чистый стартовый результат. |
+| `TestTrain_LearnerOnly_AutoSaveBaseline_Monitored_20260926` | `Bin/Configs/Bakhshiev/TestTrain` | Зафиксированный Release-прогон baseline с интервалом 10 модельных секунд; обучение не сошлось к 101 секунде. |
+| `TestTrain_LearnerOnly_AutoPreset_AutoSave_Monitored_20260926` | `Bin/Configs/Bakhshiev/TestTrain` | Зафиксированный Release-прогон с `UseAutoPreset=1`, завершившийся на 240 модельных секундах. |
 | `TestTrain_AutoPreset_DebugLogCheck` | `Bin/Configs/Bakhshiev/TestTrain` | Короткая проверка записи AutoPreset с подробным журналом; не использовать для оценки скорости. |
 | `SpikeIrisClassifier_Fresh240` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Чистый классификационный прогон на 240 модельных секундах. |
 | `SpikeIrisClassifier_Fresh1000` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Клон на исходном пределе проекта 1000 модельных секунд; остановлен до финального сохранения при сужении работ до Learner. |
@@ -43,6 +45,17 @@
 - После обучения сравнивайте `DendriteLength`, `NumSynapse`, `TrainingDendIndexes` и `TrainingSynapsisNum`. Параметры мембран/каналов и существующих синапсов должны сохраниться. Новые синапсы получают начальное сопротивление `SynapseResistanceStep`; пока обучение активно, `LTZThreshold` может быть равен `TrainingLTZThreshold`.
 - В режиме AutoPreset журнал должен содержать `Auto_Preset initial DendriteLength=[...]` либо предупреждение о fallback. Последний дендрит обязан остаться длиной 1; числа синапсов остаются начальными до дальнейшей обычной структурной процедуры Learner.
 - Для классификатора проверяйте штатную работу трёх обучаемых нейронов и сохранённое распознавание исходных примеров по выходам/статистике проекта.
+
+## Контрольные точки с модельным автосохранением
+
+26.09.2026 выполнены два параллельных Release-прогона чистых клонов `TestTrain`, содержащих только `NNeuronLearner`; у обоих оставлены исходные `TimeStep=2000`, `CalculationMode=3` и физические параметры нейрона. В `Project.ini` задано `ProjectAutoSaveModelTimeInterval=10`, запуск — `-c .\project.ini -s -t 240 -x -S`. Исходные конфиги не изменялись.
+
+- [AutoPreset](TestTrain_LearnerOnly_AutoPreset_AutoSave_Monitored_20260926/README.md) штатно достиг 240 модельных секунд примерно за 4 минуты. Итог: `DendriteLength=[4,3,2,1]`, `NumSynapse=[1,1,1,1]`, `IsNeedToTrain=0`; обе обучающие матрицы содержат по четыре строки. Оценка изменила начальные длины, число синапсов осталось исходным.
+- [Baseline](TestTrain_LearnerOnly_AutoSaveBaseline_Monitored_20260926/README.md) запущен на 240 секунд, но остановлен после примерно 20 минут wall-clock, чтобы не тратить дополнительное время на повторение уже известной незавершённой траектории. Последняя подтверждённая журналом точка — 101 модельная секунда: `DendriteLength=[4,3,2,1]`, `NumSynapse=[154,154,154,1]`, `IsNeedToTrain=1`, обучающие матрицы пусты. Рост числа синапсов на первых трёх входах наблюдался на каждом снимке; на ранее завершённом независимом прогоне в 120 секунд оно достигло `[179,179,179,1]`, обучение также оставалось активным.
+- В конце остановки baseline пара XML-файлов ещё раз обновилась: файлы разбираются и содержат `NumSynapse=[167,167,167,1]`, но соответствующей строки об окончании автосохранения нет, поэтому точное модельное время этой последней пары неизвестно. Для количественного сравнения используйте подтверждённые отметки журнала и завершённый снимок на 120 секундах.
+- Точки `Model_00.xml` и `Parameters_00.xml` могут иметь разные настенные временные метки: консоль сначала пишет модель, затем параметры. В журнале отметка о завершении появляется после вызова сохранения. При ручном наблюдении считайте снимок согласованным после обновления обоих файлов; точное модельное время берите из сообщения `Project auto-save call completed ...`.
+
+На этом примере начальная оценка позволила завершить обучение значительно раньше baseline. Это подтверждение только для данной входной последовательности, не общая гарантия сходимости.
 
 ## Зафиксированные результаты
 
