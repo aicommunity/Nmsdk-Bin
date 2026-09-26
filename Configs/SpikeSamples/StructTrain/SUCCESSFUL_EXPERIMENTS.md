@@ -1,6 +1,6 @@
 # Реестр успешных экспериментов StructTrain
 
-**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin *(this commit: harness failure_class/provenance + asym25 P2 note)* · GoldTest wave G historically used Console `4917a2bc…`.
+**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin `24a1905` · GoldTest wave G historically used Console `4917a2bc…`.
 
 Только строки со статусом HEAD **PASS** в таблицах. Ось и нумерация разделов — как в [`EXPERIMENTS.md`](EXPERIMENTS.md).  
 В каждом разделе ниже таблицы PASS — блок **Провалы / вне PASS** (краткие причины FAIL/DEFER); полные FAIL-строки протоколов — в [`EXPERIMENTS.md`](EXPERIMENTS.md).
