@@ -48,6 +48,7 @@ ALLOWLIST_INPUTS = (
     "Model_00.xml",
     "Parameters_00.xml",
     "Project.ini",
+    "Interface.xml",
 )
 ALLOWLIST_OPTIONAL_GLOBS = (
     "Matrix*.xml",
@@ -139,6 +140,95 @@ CASES = {
         "expect_fires": "10000010",
     },
 }
+
+# SoftCold wave C1/C2: packA/parent archives as templates (clean workdir via prepare_clean_case).
+# Excludes canons already SoftCold-tested on HEAD (br25_on/off, br100_*, asym25/50, phase6_480).
+def _case(
+    root: Path,
+    *,
+    train_t: float,
+    span_ms: int,
+    kind: str,
+    expect_tipr: str = "canon",
+    skip_tipr_mid: bool = True,
+    expect_fires: str | None = None,
+    gold: Path | None = None,
+) -> dict:
+    d: dict = {
+        "root": root,
+        "gold": gold or root,
+        "train_t": train_t,
+        "span_ms": span_ms,
+        "kind": kind,
+        "expect_tipr": expect_tipr,
+        "skip_tipr_mid": skip_tipr_mid,
+    }
+    if expect_fires is not None:
+        d["expect_fires"] = expect_fires
+    return d
+
+
+BR = ROOT / "SelectivityBranch"
+ASYM = ROOT / "SelectivityAsymRm"
+P6 = ROOT / "SelectivityPhaseA" / "Phase6"
+FS = ROOT / "SelectivityFastSpan"
+LTZ = ROOT / "SelectivityLtzCalibrate" / "AsymRmLtzCal"
+PA = ROOT / "SelectivityPhaseA"
+PSI = ROOT / "SelectivityPresynapticInhib"
+
+CASES.update(
+    {
+        # --- C1 Branch ---
+        "br50_gen": _case(BR / "EXP_br_span50_packA_gen_C1e9", train_t=320, span_ms=50, kind="branch"),
+        "br25_preinh": _case(BR / "EXP_br_span25_packA_preinh_C1e9", train_t=320, span_ms=25, kind="branch"),
+        "br50_preinh": _case(BR / "EXP_br_span50_packA_preinh_C1e9", train_t=320, span_ms=50, kind="branch"),
+        "br100_preinh": _case(BR / "EXP_br_span100_packA_preinh_C1e9", train_t=640, span_ms=100, kind="branch"),
+        "br25_nextseg": _case(BR / "EXP_br_span25_packA_nextseginh_C1e9", train_t=320, span_ms=25, kind="branch"),
+        "br50_nextseg": _case(BR / "EXP_br_span50_packA_nextseginh_C1e9", train_t=320, span_ms=50, kind="branch"),
+        "br100_nextseg": _case(BR / "EXP_br_span100_packA_nextseginh_C1e9", train_t=640, span_ms=100, kind="branch"),
+        "br480_tiprmin": _case(BR / "EXP_br480_tiprmin", train_t=900, span_ms=480, kind="branch"),
+        "br480_nextseg": _case(BR / "EXP_br480_nextseginh_tiprmin", train_t=900, span_ms=480, kind="branch"),
+        "br480_preinh": _case(BR / "EXP_br480_preinh250_tiprmin", train_t=900, span_ms=480, kind="branch"),
+        # --- C1 AsymRm ---
+        "asym25_preinh": _case(ASYM / "EXP_span25ms_packA_preinh", train_t=160, span_ms=25, kind="asym"),
+        "asym50_preinh": _case(ASYM / "EXP_span50ms_packA_preinh", train_t=640, span_ms=50, kind="asym"),
+        "asym100_gen": _case(ASYM / "EXP_span100ms_packA_gen", train_t=640, span_ms=100, kind="asym"),
+        "asym100_preinh": _case(ASYM / "EXP_span100ms_packA_preinh", train_t=640, span_ms=100, kind="asym"),
+        # --- C1 Phase6 ---
+        "phase6_thr_only": _case(P6 / "EXP_480_gen_thr_only", train_t=900, span_ms=480, kind="phase6"),
+        "phase6_preinh250": _case(P6 / "EXP_480_preinh250_tiprmin", train_t=900, span_ms=480, kind="phase6"),
+        "phase6_ltzcal_twin": _case(P6 / "EXP_480_ltzcal_twin_gen", train_t=900, span_ms=480, kind="phase6"),
+        # --- C1 FastSpan ---
+        "fs25_gen": _case(FS / "EXP_span25ms_fast_C1e9", train_t=160, span_ms=25, kind="asym"),
+        "fs25_preinh": _case(FS / "EXP_span25ms_fast_preinh_C1e9", train_t=160, span_ms=25, kind="asym"),
+        "fs50_preinh": _case(FS / "EXP_span50ms_fast_preinh_C1e9", train_t=320, span_ms=50, kind="asym"),
+        "fs100_gen": _case(FS / "EXP_span100ms_fast_C1e9", train_t=640, span_ms=100, kind="asym"),
+        "fs100_preinh": _case(FS / "EXP_span100ms_fast_preinh_C1e9", train_t=640, span_ms=100, kind="asym"),
+        # --- C2 LtzCal ---
+        "ltz25_gen": _case(LTZ / "EXP_span25ms_packA_gen", train_t=160, span_ms=25, kind="asym"),
+        "ltz25_preinh": _case(LTZ / "EXP_span25ms_packA_preinh", train_t=160, span_ms=25, kind="asym"),
+        "ltz50_gen": _case(LTZ / "EXP_span50ms_packA_gen", train_t=640, span_ms=50, kind="asym"),
+        "ltz50_preinh": _case(LTZ / "EXP_span50ms_packA_preinh", train_t=640, span_ms=50, kind="asym"),
+        "ltz100_gen": _case(LTZ / "EXP_span100ms_packA_gen", train_t=640, span_ms=100, kind="asym"),
+        "ltz100_preinh": _case(LTZ / "EXP_span100ms_packA_preinh", train_t=640, span_ms=100, kind="asym"),
+        # --- C2 PhaseA / TN ---
+        "pa00_baseline": _case(PA / "EXP00_baseline", train_t=160, span_ms=25, kind="asym"),
+        "pa01_ltz_sweep": _case(PA / "EXP01_ltz_threshold_sweep", train_t=160, span_ms=25, kind="asym"),
+        "pa02_ltzone_avg": _case(PA / "EXP02_ltzone_average_mode", train_t=160, span_ms=25, kind="asym"),
+        "pa06_ltzone_int": _case(PA / "EXP06_ltzone_integration", train_t=160, span_ms=25, kind="asym"),
+        "tn_classic": _case(ROOT / "TimeNeuronTimeLearner", train_t=160, span_ms=25, kind="asym"),
+        # --- C2 PSI (sample of 9) ---
+        "psi01_050": _case(PSI / "EXP01_preinh_050", train_t=160, span_ms=25, kind="asym"),
+        "psi14_260": _case(PSI / "EXP14_preinh_260", train_t=160, span_ms=25, kind="asym"),
+        "psi15_270": _case(PSI / "EXP15_preinh_270", train_t=160, span_ms=25, kind="asym"),
+        "psi21_100": _case(PSI / "EXP21_span100ms_preinh250", train_t=640, span_ms=100, kind="asym"),
+        "psi31_200": _case(PSI / "EXP31_span200ms_preinh250", train_t=640, span_ms=200, kind="asym"),
+        "psi32_300": _case(PSI / "EXP32_span300ms_baseline", train_t=640, span_ms=300, kind="asym"),
+        "psi33_300": _case(PSI / "EXP33_span300ms_preinh250", train_t=640, span_ms=300, kind="asym"),
+        "psi34_400": _case(PSI / "EXP34_span400ms_baseline", train_t=900, span_ms=400, kind="asym"),
+        "psi35_400": _case(PSI / "EXP35_span400ms_preinh250", train_t=900, span_ms=400, kind="asym"),
+    }
+)
 
 
 @dataclass

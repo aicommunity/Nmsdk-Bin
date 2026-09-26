@@ -18,13 +18,17 @@
 
 ## Текущие ограничения автоматизации
 
-posttune_verify.py (после remediation R06): `prepare_clean_case` копирует allowlist в чистый workdir; `accept_run` блокирует Need≠0 / incomplete / `diff_after_revert` / empty fires / nonfinite TipR·mid; `wait_need0` удаляет live до Train и не делает salvage без `--allow-salvage`; phase9 не читает stale Test flag. Режимы: cold (default), `--allow-salvage`, inherited/smoke отдельно.
+posttune_verify.py (после remediation R06): `prepare_clean_case` копирует allowlist (`Model_00.xml`, `Parameters_00.xml`, `Project.ini`, `Interface.xml`, optional `Matrix*`/`Pack*`) в чистый workdir; `accept_run` блокирует Need≠0 / incomplete / `diff_after_revert` / empty fires / nonfinite TipR·mid; `wait_need0` удаляет live до Train и не делает salvage без `--allow-salvage`; phase9 не читает stale Test flag. Режимы: cold (default), `--allow-salvage`, inherited/smoke отдельно.
 
 CLI:
 
 ```text
 python3 scripts/posttune_verify.py --case br25_on
 python3 scripts/posttune_verify.py --case asym50
+# SoftCold wave C (расширенные CASES): br50_gen, br*_preinh, … — см. CASES в скрипте
+# WAVE=C1 bash scripts/softcold_c_batch.sh
+# GoldTest NOT_RETESTED:
+# python3 scripts/gold_retest_batch.py --manifest _repro/NOT_RETESTED_manifest_YYYYMMDD.txt
 # debug only:
 python3 scripts/posttune_verify.py --case br25_on --use-archive-inplace
 python3 scripts/posttune_verify.py --case br25_on --allow-salvage
