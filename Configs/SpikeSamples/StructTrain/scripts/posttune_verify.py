@@ -620,7 +620,18 @@ def accept_run(
             # -15/-9 = SIGTERM/SIGKILL after Need=0 stop — allowed if Need cleared
             if need != "0" and "done" not in status:
                 reasons.append(f"child_rc={child_rc}")
-        if status in ("exited", "incomplete", "abort", "incomplete_flag_need1") or "FAIL" in status:
+        # TL-04: do not treat done*_gate_FAIL as train_incomplete (gate is separate).
+        incomplete = status in (
+            "exited",
+            "incomplete",
+            "abort",
+            "incomplete_flag_need1",
+        ) or (
+            "FAIL" in status
+            and "done" not in status
+            and "flag_flush" not in status
+        )
+        if incomplete:
             reasons.append(f"train_incomplete:{status}")
         if need not in ("0", "") and not skip_train and "skip" not in status:
             if "done" not in status and status != "skip_train":
@@ -670,6 +681,44 @@ def accept_run(
         if mid_src != "cpp":
             reasons.append(f"mid_source={mid_src}")
     return (len(reasons) == 0, reasons)
+
+
+def classify_failure_class(
+    reasons: list[str],
+    row: dict[str, Any] | None = None,
+) -> str:
+    """Machine-readable failure bucket (TL-04). Prefer train_incomplete over gate."""
+    if not reasons:
+        return "ok"
+    row = row or {}
+    if any(
+        r.startswith("train_incomplete:")
+        or r.startswith("Need=")
+        or r.startswith("child_rc=")
+        for r in reasons
+    ):
+        return "train_incomplete"
+    if any(r.startswith("tipr_class=") or r.startswith("tipr_") or "keep_tipr" in r for r in reasons):
+        # tipr mismatch alone
+        if all(
+            r.startswith("tipr_")
+            or r.startswith("tipr_class=")
+            or "keep_tipr" in r
+            or r.startswith("search_tipr")
+            for r in reasons
+        ):
+            return "tipr_mismatch"
+    if any(
+        r == "gate_fail"
+        or r.startswith("fires=")
+        or r == "fires_missing"
+        or "gate_rc=" in r
+        for r in reasons
+    ) or not row.get("gate_ok", True):
+        return "gate_fail"
+    if any("NonSeparable" in r or "quality" in r.lower() for r in reasons):
+        return "quality_fail"
+    return "quality_fail"
 
 
 def classify_slog_gib(gib: float) -> Literal["ok", "prune", "abort"]:
@@ -1249,9 +1298,24 @@ def run_case(
         config_sha_before=config_sha_before,
         params_source=params_source,
     )
+    source_paths = [NMSDK_ROOT / rel for rel in PROVENANCE_SOURCE_REL]
+    source_sha_after = sha256_paths(source_paths)
+    config_sha_after = {
+        "Train/Parameters_00.xml": sha256_file(train / "Parameters_00.xml"),
+        "Train/Model_00.xml": sha256_file(train / "Model_00.xml"),
+        "Test/Parameters_00.xml": sha256_file(root / "Test" / "Parameters_00.xml"),
+        "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
+    }
+    source_before = provenance.get("source_sha256") or {}
+    inputs_mutated = source_before != source_sha_after or (
+        config_sha_before or {}
+    ) != config_sha_after
     provenance.update(
         {
             "config_sha256": config_sha256,
+            "config_sha256_after": config_sha_after,
+            "source_sha256_after": source_sha_after,
+            "inputs_mutated_during_run": bool(inputs_mutated),
             "params_source": params_source,
             "weights_identity": tipr_weights_identity(train, params_source=params_source),
 
@@ -1289,11 +1353,14 @@ def run_case(
             ],
         }
     )
+    # Placeholder; overwritten after accept_run with failure_class.
+    provenance["failure_class"] = "pending"
     (run_dir / "provenance.json").write_text(
         json.dumps(provenance, indent=2) + "\n", encoding="utf-8"
     )
     if (root / "inputs_manifest.json").exists():
         _copy_if_exists(root / "inputs_manifest.json", run_dir / "inputs_manifest.json")
+    _copy_if_exists(train / "cold_reset_contract.json", run_dir / "Train" / "cold_reset_contract.json")
 
     for side in (train, root / "Test"):
         for dname in ("StatisticLog", "EventsLog"):
@@ -1338,8 +1405,20 @@ def run_case(
     )
     if not gate.ok and gate.fail_reason not in fail_notes:
         fail_notes.append(gate.fail_reason)
+    failure_class = classify_failure_class(fail_notes, row)
     row["row_fail"] = not ok
     row["fail_notes"] = fail_notes
+    row["failure_class"] = failure_class
+    # Refresh provenance with final failure_class (file already written earlier).
+    try:
+        prov_path = run_dir / "provenance.json"
+        if prov_path.exists():
+            prov = json.loads(prov_path.read_text(encoding="utf-8"))
+            prov["failure_class"] = failure_class
+            prov["fail_notes"] = fail_notes
+            prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
+    except OSError:
+        pass
     return row
 
 

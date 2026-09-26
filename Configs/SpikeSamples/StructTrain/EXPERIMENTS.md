@@ -1,6 +1,6 @@
 # Реестр экспериментов StructTrain (полный)
 
-**Срез HEAD 2026-09-25:** Console SHA-256 `4917a2bcbac318d160ca8b596452d3986ccc9978172d35a1b554d65b5a27c843` · PulseLib `8d429e7` · Bin `1a664a2`.
+**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin *(this commit: harness failure_class/provenance + asym25 P2 note)* · GoldTest wave G historically used Console `4917a2bc…`.
 
 Ось таблиц — **исследуемый алгоритм + параметры** (learner, span, рычаг, pack, TipR-режим рецепта).
 Повторный cold/PostTune на текущем HEAD — **не отдельный эксперимент**, а строка(и) того же алгоритма с другим протоколом и вердиктом HEAD.
@@ -249,7 +249,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | EXP_br480_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_tiprmin` rc=1; bundle=`_repro/runs/br480_tiprmin_20260925T172303Z` | `posttune_verify --case br480_tiprmin` |
 | EXP_br480_nextseginh_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_nextseg` rc=1; bundle=`_repro/runs/br480_nextseg_20260925T182925Z` | `posttune_verify --case br480_nextseg` |
 | EXP_br480_preinh250_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_preinh` rc=1; bundle=`_repro/runs/br480_preinh_20260925T195700Z` | `posttune_verify --case br480_preinh` |
-| EXP_span25ms_packA_preinh | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` rc=1; bundle=`_repro/runs/asym25_preinh_20260925T211629Z` | `posttune_verify --case asym25_preinh` |
+| EXP_span25ms_packA_preinh | — | SoftCold wave C / P2 A/B | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` Console=`ec86430e` Need=0 tipr=canon mid=1 (silent) fires_missing gate_rc=1 failure_class=gate_fail; eps-fix: Train completes vs stall risk; quality still NonSeparable; bundles=`_repro/runs/asym25_preinh_20260926T110401Z` (patched) · `_repro/runs/asym25_preinh_20260925T211629Z` (unpatched) | `posttune_verify --case asym25_preinh` |
 | EXP_span50ms_packA_preinh | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym50_preinh` rc=1; bundle=`_repro/runs/asym50_preinh_20260925T212603Z` | `posttune_verify --case asym50_preinh` |
 | EXP_span100ms_packA_gen | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_gen` rc=1; bundle=`_repro/runs/asym100_gen_20260926T002121Z` | `posttune_verify --case asym100_gen` |
 | EXP_span100ms_packA_preinh | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_preinh` rc=1; bundle=`_repro/runs/asym100_preinh_20260926T034443Z` | `posttune_verify --case asym100_preinh` |

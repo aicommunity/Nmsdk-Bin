@@ -321,5 +321,69 @@ class TestTiprExpect(unittest.TestCase):
         self.assertFalse(pv.tipr_matches_expect(got, "canon"))
 
 
+class TestFailureClass(unittest.TestCase):
+    def test_done_gate_fail_is_gate_not_incomplete(self):
+        row = {
+            "train_status": "done_flag_flush_gate_FAIL_gate_rc=1",
+            "gate_ok": False,
+            "fires": "00000000",
+            "tipr_class": "canon",
+            "after": {"TipSynapseResistance": "2e7 2e7 2e7 8.6e7", "FixedLTZThreshold": "0.07"},
+            "mid_source": "cpp",
+            "fail_notes": "gate_rc=1",
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="canon", mode="cold", need="0"
+        )
+        self.assertFalse(ok)
+        self.assertFalse(any(r.startswith("train_incomplete:") for r in reasons))
+        self.assertEqual(pv.classify_failure_class(reasons, row), "gate_fail")
+
+    def test_exited_is_train_incomplete(self):
+        row = {
+            "train_status": "exited",
+            "gate_ok": True,
+            "fires": "10000000",
+            "tipr_class": "canon",
+            "after": {"TipSynapseResistance": "2e7 2e7 2e7 8.6e7", "FixedLTZThreshold": "0.07"},
+            "mid_source": "cpp",
+        }
+        ok, reasons = pv.accept_run(
+            row, expect_fires="10000000", expect_tipr="canon", mode="cold", need="1"
+        )
+        self.assertFalse(ok)
+        self.assertEqual(pv.classify_failure_class(reasons, row), "train_incomplete")
+
+
+class TestClassicAmpNormEpsHeader(unittest.TestCase):
+    """TL-01: classic kAmpNormEps must stay a floating literal (not int→0)."""
+
+    def test_header_declares_double_eps(self):
+        hdr = (
+            Path(__file__).resolve().parents[5]
+            / "Libraries"
+            / "Nmsdk-PulseLib"
+            / "Core"
+            / "NNeuronTimeLearner.h"
+        )
+        # parents: tests→scripts→StructTrain→SpikeSamples→Configs→Bin→Nmsdk = 6?
+        # Path(__file__)=.../StructTrain/scripts/tests/test_...
+        # parents[0]=tests, [1]=scripts, [2]=StructTrain, [3]=SpikeSamples, [4]=Configs, [5]=Bin
+        # Need Nmsdk root = parents[6]
+        hdr = Path(__file__).resolve().parents[6] / "Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.h"
+        text = hdr.read_text(encoding="utf-8", errors="replace")
+        self.assertRegex(
+            text,
+            r"static\s+constexpr\s+double\s+kAmpNormEps\s*=\s*1e-5\s*;",
+        )
+        self.assertNotRegex(
+            text,
+            r"static\s+constexpr\s+int\s+kAmpNormEps\s*=",
+        )
+        # Narrowing would make int(1e-5)==0; double must remain positive 1e-5.
+        self.assertIn("static_assert(kAmpNormEps > 0.0", text)
+        self.assertIn("static_assert(kAmpNormEps == 1e-5", text)
+
+
 if __name__ == "__main__":
     unittest.main()

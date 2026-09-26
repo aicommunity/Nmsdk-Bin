@@ -1,9 +1,9 @@
 # Реестр успешных экспериментов StructTrain
 
-**Срез HEAD 2026-09-25:** Console SHA-256 `4917a2bcbac318d160ca8b596452d3986ccc9978172d35a1b554d65b5a27c843` · PulseLib `8d429e7` · Bin `fbfdcf7`.
+**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin *(this commit: harness failure_class/provenance + asym25 P2 note)* · GoldTest wave G historically used Console `4917a2bc…`.
 
 Только строки со статусом HEAD **PASS** в таблицах. Ось и нумерация разделов — как в [`EXPERIMENTS.md`](EXPERIMENTS.md).  
-В каждом разделе ниже таблицы PASS — блок **Провалы / вне PASS** (FAIL, SoftCold wave C, DEFER, OUT) с причинами; полный текст FAIL-строк — только в EXPERIMENTS.
+В каждом разделе ниже таблицы PASS — блок **Провалы / вне PASS** (краткие причины FAIL/DEFER); полные FAIL-строки протоколов — в [`EXPERIMENTS.md`](EXPERIMENTS.md).
 
 Контракт cold: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md). Narrative: [`EXPERIMENTS_AFTER_FIXES.ru.md`](../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md).
 
@@ -181,7 +181,7 @@ SoftCold wave C (те же каноны, отдельный протокол):
 
 | Имя | Причина |
 |-----|---------|
-| EXP_span25ms_packA_preinh | SoftCold case=`asym25_preinh` FAIL: train=`done_flag_flush_gate_FAIL_gate_rc=1`; tipr=canon; gate_rc=1; bundle=`_repro/runs/asym25_preinh_20260925T211629Z` |
+| EXP_span25ms_packA_preinh | SoftCold case=`asym25_preinh` FAIL: patched Console=`ec86430e` Need=0 tipr=canon mid=1 fires_missing gate_rc=1 failure_class=gate_fail; bundle=`_repro/runs/asym25_preinh_20260926T110401Z` (unpatched ref `…211629Z`) |
 | EXP_span50ms_packA_preinh | SoftCold case=`asym50_preinh` FAIL: train=`exited`; tipr=canon; gate_rc=0; bundle=`_repro/runs/asym50_preinh_20260925T212603Z` |
 | EXP_span100ms_packA_gen | SoftCold case=`asym100_gen` FAIL: train=`exited_gate_FAIL_gate_rc=1`; tipr=flat; gate_rc=1; bundle=`_repro/runs/asym100_gen_20260926T002121Z` |
 | EXP_span100ms_packA_preinh | SoftCold case=`asym100_preinh` FAIL: train incomplete / Need≠0 / gate_rc=1 (см. last POSTTUNE_VERIFY_RESULT.md); bundle=`_repro/runs/asym100_preinh_20260926T034443Z` |
@@ -291,7 +291,7 @@ GoldTest Phase A / TN / PSI в таблице — PASS (часто partial_FA). 
 | EXP_br480_tiprmin | br480_tiprmin | train=`exited_gate_FAIL_gate_rc=1`; tipr=other; gate_rc=1 | [`_repro/runs/br480_tiprmin_20260925T172303Z`](_repro/runs/br480_tiprmin_20260925T172303Z) |
 | EXP_br480_nextseginh_tiprmin | br480_nextseg | train=`exited_gate_FAIL_gate_rc=1`; tipr=other; gate_rc=1 | [`_repro/runs/br480_nextseg_20260925T182925Z`](_repro/runs/br480_nextseg_20260925T182925Z) |
 | EXP_br480_preinh250_tiprmin | br480_preinh | train=`exited_gate_FAIL_gate_rc=1`; tipr=other; gate_rc=1 | [`_repro/runs/br480_preinh_20260925T195700Z`](_repro/runs/br480_preinh_20260925T195700Z) |
-| EXP_span25ms_packA_preinh | asym25_preinh | train=`done_flag_flush_gate_FAIL_gate_rc=1`; tipr=canon; gate_rc=1 | [`_repro/runs/asym25_preinh_20260925T211629Z`](_repro/runs/asym25_preinh_20260925T211629Z) |
+| EXP_span25ms_packA_preinh | asym25_preinh | patched Need=0 tipr=canon mid=1 fires_missing gate_rc=1 | [`_repro/runs/asym25_preinh_20260926T110401Z`](_repro/runs/asym25_preinh_20260926T110401Z) |
 | EXP_span50ms_packA_preinh | asym50_preinh | train=`exited`; tipr=canon; gate_rc=0 | [`_repro/runs/asym50_preinh_20260925T212603Z`](_repro/runs/asym50_preinh_20260925T212603Z) |
 | EXP_span100ms_packA_gen | asym100_gen | train=`exited_gate_FAIL_gate_rc=1`; tipr=flat; gate_rc=1 | [`_repro/runs/asym100_gen_20260926T002121Z`](_repro/runs/asym100_gen_20260926T002121Z) |
 | EXP_span100ms_packA_preinh | asym100_preinh | train incomplete / Need≠0 / gate_rc=1 (нет provenance.json; см. POSTTUNE_VERIFY_RESULT.md) | [`_repro/runs/asym100_preinh_20260926T034443Z`](_repro/runs/asym100_preinh_20260926T034443Z) |

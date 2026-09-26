@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import re
 import shutil
 import subprocess
@@ -213,6 +214,11 @@ def read_need(params: Path | str) -> str:
 
 
 def assert_train_cold_flags(params: Path, *, mode: ColdMode) -> None:
+    """Pre-NM XML contract after soft/strip cold (not live C++ post-ResetToUntrained)."""
+    assert_train_cold_xml_before_nm(params, mode=mode)
+
+
+def assert_train_cold_xml_before_nm(params: Path, *, mode: ColdMode) -> None:
     t = params.read_text(encoding="utf-8")
     need = get_tag(t, "IsNeedToTrain")
     autocal = get_tag(t, "AutoCalibrateFixedLTZThreshold")
@@ -229,6 +235,53 @@ def assert_train_cold_flags(params: Path, *, mode: ColdMode) -> None:
         errs.append(f"TipR={tipr}")
     if errs:
         raise SystemExit(f"cold flags fail ({mode}): {', '.join(errs)}")
+
+
+def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
+    """Record XML-before-NM and expected runtime after C++ ResetToUntrained (TL-02).
+
+    Branch sets last DendriteLength to 0 as reference anchor; classic keeps all L=1.
+    """
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8") if params.exists() else ""
+    neuron = (get_tag(pt, "NeuronClassName") or "").strip()
+    is_branch = "Branch" in neuron or "TimeLearnerBranch" in neuron
+    L_xml = " ".join((get_tag(pt, "DendriteLength") or "").replace(",", " ").split())
+    tipr_xml = " ".join((get_tag(pt, "TipSynapseResistance") or "").replace(",", " ").split())
+    n = len(L_xml.split()) if L_xml else 4
+    if is_branch and n >= 1:
+        L_runtime = " ".join(["1"] * (n - 1) + ["0"])
+        note = "Branch ResetToUntrained sets last dendrite length to 0 (reference)"
+    else:
+        L_runtime = L_COLD if n == 4 else " ".join(["1"] * max(n, 1))
+        note = "classic ResetToUntrained keeps L=1 on all dendrites"
+    payload = {
+        "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+        "mode": mode,
+        "neuron_class": neuron,
+        "is_branch": is_branch,
+        "xml_before_nm": {
+            "DendriteLength": L_xml,
+            "TipSynapseResistance": tipr_xml,
+            "IsNeedToTrain": (get_tag(pt, "IsNeedToTrain") or "").strip(),
+            "AutoCalibrateFixedLTZThreshold": (
+                get_tag(pt, "AutoCalibrateFixedLTZThreshold") or ""
+            ).strip(),
+            "ResetToUntrainedState": (get_tag(pt, "ResetToUntrainedState") or "").strip(),
+            "FixedLTZThreshold": (get_tag(pt, "FixedLTZThreshold") or "").strip(),
+        },
+        "expected_runtime_after_reset": {
+            "DendriteLength": L_runtime,
+            "reference_dendrite_index": (n - 1) if is_branch and n >= 1 else None,
+            "IsNeedToTrain": "1",
+            "note": note,
+        },
+        "model_exists": model.exists(),
+    }
+    out = train / "cold_reset_contract.json"
+    out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return out
 
 
 def _ensure_tag(text: str, tag: str, value: str, *, after_tag: str | None = None) -> str:
@@ -296,7 +349,8 @@ def soft_cold_reset_train(train: Path) -> None:
     mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
     mt = rewrite_links_to_tip1(mt)
     model.write_text(mt, encoding="utf-8")
-    assert_train_cold_flags(params, mode="soft")
+    assert_train_cold_xml_before_nm(params, mode="soft")
+    write_cold_reset_contract(train, mode="soft")
     tips = tip_indices(mt)
     if tips and max(tips) <= 1:
         print("WARN soft-cold: Model already tip-1 only (no fat cable)")

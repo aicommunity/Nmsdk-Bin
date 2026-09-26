@@ -6,9 +6,9 @@
 
 ## Требования к новому run
 
-1. Новый исполняемый каталог с явно заданными Model/Parameters/Matrix/ini. Старые flags/live/CSV не являются входами. soft_cold поверх fat Model отдельно обозначается и не приравнивается к полной новой инициализации.
-2. Связанный build manifest: root/gitlinks/dirty diff, compiler/options, библиотеки, Console SHA. Зафиксировать входы, overrides и scripts до запуска.
-3. Train до доказанного завершения с raw rc/termination reason, Need, Phase, Complete, Result и конечными weights. Salvage и контролируемый stop отмечаются отдельно; exited/incomplete сами по себе не успех.
+1. Новый исполняемый каталог с явно заданными Model/Parameters/Matrix/ini. Старые flags/live/CSV не являются входами. soft_cold поверх fat Model отдельно обозначается и не приравнивается к полной новой инициализации. Preflight XML (`DendriteLength=1 1 1 1`) — состояние **до** NM; после C++ `ResetToUntrained` у Branch последняя длина reference = 0 (см. `Train/cold_reset_contract.json`). Не смешивать эти два контракта.
+2. Связанный build manifest: root/gitlinks/dirty diff, compiler/options, библиотеки, Console SHA. Зафиксировать входы, overrides и scripts до запуска. В `provenance.json`: `source_sha256`/`config_sha256_before` и `*_after`; при diff — `inputs_mutated_during_run`.
+3. Train до доказанного завершения с raw rc/termination reason, Need, Phase, Complete, Result и конечными weights. Salvage и контролируемый stop отмечаются отдельно; exited/incomplete сами по себе не успех. `failure_class` ∈ {ok, train_incomplete, process_error, quality_fail, gate_fail, tipr_mismatch}: `Need=1` / incomplete ≠ завершённое обучение даже при `gate_rc=0`.
 4. Test-калибровка должна быть свежей для этих weights/Matrix. Cpp mid требует current-run inference flag, конечных полных метрик и пригодного landscape. Один inference=1 в старом файле недостаточен.
 5. Gate проверяет полную Matrix и observation window, один target-spike после последнего стимула и отсутствие foil-spikes; invalid/censored измерения не считаются тишиной.
 6. Search сравнивается с собственным snapshot: applied_best либо подтверждённый same_reverted. Keep проверяет собственные веса. Отличие от другого Keep-клона не является свидетельством работы Search.
