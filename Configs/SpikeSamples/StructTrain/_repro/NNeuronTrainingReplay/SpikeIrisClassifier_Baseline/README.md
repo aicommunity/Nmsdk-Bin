@@ -1,7 +1,5 @@
 ## SpikeIrisClassifier — классификация цветков ириса на основе сегментной спайковой модели нейрона
 
-> **Актуальная реализация:** классификатор содержит три `NNeuronTrainer`; это не пример `NNeuronLearner`. В сохранённых параметрах используется `CalculateMode=4`, который в текущем исходнике проходит в активный режим 6. Для воспроизводимого прогона используйте отдельную копию и сохраняйте результаты вне исходной конфигурации. Подробности и запуск: [аудит структурного обучения](../../../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/NNeuronStructuralTrainingAudit.md) и [папка replay](../../StructTrain/_repro/NNeuronTrainingReplay/README.md).
-
 **Путь:** `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier`
 **Статус валидации:** VALID (см. `Reports/SpikeSamples-Validation-Report.md`)
 

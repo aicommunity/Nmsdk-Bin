@@ -1,5 +1,7 @@
 ## SpikeAnsTrainer — структурное обучение с ответами
 
+> **Замечание по актуальному сохранённому состоянию:** `Parameters_00.xml` содержит смешанные значения `IsNeedToTrain` у компонентов и несколько `CalculateMode=4`. Последний в текущем `NNeuronTrainer` проходит в рабочий режим 6; конфиг целиком не является однозначным эталонным запуском. Проверяйте и меняйте флаги в отдельной копии. Сводка аудита: [NNeuronStructuralTrainingAudit.md](../../../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/NNeuronStructuralTrainingAudit.md).
+
 **Путь:** `Bin/Configs/SpikeSamples/StructTrain/SpikeAnsTrainer`
 **Статус валидации:** VALID (см. `Reports/SpikeSamples-Validation-Report.md`)
 

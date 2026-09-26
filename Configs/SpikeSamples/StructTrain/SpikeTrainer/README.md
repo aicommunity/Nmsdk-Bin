@@ -1,5 +1,7 @@
 ## SpikeTrainer — базовое структурное обучение
 
+> **Актуальная проверка параметров:** сохранённый `Parameters_00.xml` содержит `IsNeedToTrain=0`, поэтому проект при обычной загрузке не начинает обучение. У `CalculateMode=4` в текущем `NNeuronTrainer` нет отдельного активного алгоритма: выполнение доходит до режима 6. Для воспроизводимого запуска включайте обучение только в копии проекта. Проверенные команды и результаты см. в [аудите структурного обучения](../../../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/NNeuronStructuralTrainingAudit.md) и [папке replay](../_repro/NNeuronTrainingReplay/README.md).
+
 **Путь:** `Bin/Configs/SpikeSamples/StructTrain/SpikeTrainer`
 **Статус валидации:** VALID (см. `Reports/SpikeSamples-Validation-Report.md`)
 
