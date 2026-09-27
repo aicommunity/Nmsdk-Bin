@@ -41,7 +41,7 @@
 
 Основные особенности, позволяющие производить структурное реконфигурирование:
 - **Динамическое изменение структуры:** размер сомы, длина дендритов, количество синапсов могут изменяться
-- **Автоматический подбор параметров:** алгоритм автоматически выбирает оптимальную структуру для каждого паттерна
+- **Структурная адаптация:** алгоритм меняет длины дендритов и число синапсов; физические параметры мембраны и синапсов не оптимизируются
 - **Сохранение функциональности:** изменения структуры не нарушают способность распознавать ранее обученные паттерны
 
 #### Временное кодирование
@@ -68,7 +68,7 @@
    - Анализ временного кодирования
    - Определение требуемой структуры нейрона
 
-2. **Автоматический подбор параметров:**
+2. **Изменение структуры:**
    - **Размер сомы:** количество соматических участков мембраны
    - **Длина дендритов:** количество сегментов в каждом дендрите
    - **Количество синапсов:** число синапсов на каждом дендрите
@@ -99,8 +99,13 @@ flowchart TD
 **Архитектура сети:**
 - Каждый нейрон обучается распознавать один класс
 - Входной паттерн подаётся на все нейроны одновременно
-- Нейрон, генерирующий спайк, определяет класс образца
+- Фронт LTZone класса устанавливает соответствующий бит выхода на время окна образца
+- Один установленный бит означает единственный ответ; несколько битов означают неоднозначный ответ
 - При обучении используется структурная адаптация для каждого нейрона
+
+Число выходных спайков за ответное окно не ограничивается самим классификатором. Структурные Trainer/Learner нормализуют амплитуду и не проверяют критерий «ровно один LTZone-фронт». Контроль на сохранённой `NSPNeuron` показал, что в этой структуре 12 активных синапсов на ветвь давали один фронт, 16 — два, 24 — три. Это частный результат, а не универсальный лимит. Подробности и расхождение измеренных длин ветвей см. в [аудите структурного обучения](../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/NNeuronStructuralTrainingAudit.md).
+
+Парный синтетический прогон трёх чистых прототипов с `DataFromFile=true` дал `110`, `111`, `111` и многобитный допустимый ответ `110` на midpoint. Торможение уменьшило часть лишних LTZone-фронтов, но не изменило ответы-биты и не сделало чистые пробы однозначными. Таблица импульсов и исправленные копии On/Off приведены в [аудите динамики классификаторов](../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/StructuralClassifiersAudit.md).
 
 ### Результаты экспериментов
 
@@ -114,9 +119,9 @@ flowchart TD
 - 4 признака: длина и ширина чашелистика, длина и ширина лепестка
 
 **Результаты:**
-- Сопоставимость результатов с классическими методами машинного обучения
-- Успешное применение сегментной спайковой модели со структурной адаптацией
-- Возможность инкрементального обучения на новых классах
+- В исторических материалах описано применение модели к Iris; публикационные цифры требуют повторения на той же выборке и с тем же правилом ответа
+- Текущий десятиобразцовый replay дал неоднозначные многобитные выходы и не подтверждает высокую эксклюзивную точность классификатора
+- Отчёт и скрипт строгой проверки находятся в [`NNeuronTrainingReplay`](../../Configs/SpikeSamples/StructTrain/_repro/NNeuronTrainingReplay/README.md)
 
 ##### MNIST (handwritten digit database)
 
@@ -406,7 +411,7 @@ The segmental spiking neuron model is a model where:
 
 Main features enabling structural reconfiguration:
 - **Dynamic structure change:** soma size, dendrite length, and number of synapses can change
-- **Automatic parameter selection:** the algorithm automatically selects the optimal structure for each pattern
+- **Structural adaptation:** the algorithm changes dendrite lengths and synapse counts; it does not optimize physical membrane or synapse parameters
 - **Preservation of functionality:** structural changes do not impair the ability to recognize previously learned patterns
 
 #### Temporal coding
@@ -433,7 +438,7 @@ The method of structural adaptation of the model to an input spike pattern inclu
    - Analyzing temporal coding
    - Determining the required neuron structure
 
-2. **Automatic parameter selection:**
+2. **Structural change:**
    - **Soma size:** number of somatic membrane segments
    - **Dendrite length:** number of segments in each dendrite
    - **Number of synapses:** number of synapses on each dendrite
@@ -464,8 +469,13 @@ flowchart TD
 **Network architecture:**
 - Each neuron is trained to recognize one class
 - The input pattern is fed to all neurons simultaneously
-- The neuron generating a spike determines the sample class
+- An LTZone edge sets that class's output bit for the response window
+- One set bit is a unique answer; multiple bits mean an ambiguous response
 - Structural adaptation is used for each neuron during training
+
+The classifier does not constrain the number of output spikes in a response window. Structural trainers normalize amplitude and do not test an “exactly one LTZone edge” criterion. In one saved `NSPNeuron` structure, 12 active synapses per branch yielded one edge, 16 yielded two, and 24 yielded three. This is specific to that experiment, not a universal limit. See the [structural-training audit](../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/NNeuronStructuralTrainingAudit.md) for details and the unresolved dendrite-length consistency issue.
+
+A paired synthetic run of three pure prototypes with `DataFromFile=true` produced `110`, `111`, `111`, plus the allowed multi-bit `110` response for the midpoint. Lateral inhibition reduced some extra LTZone edges but did not change the output bit vectors or make the pure probes exclusive. The spike-count table and corrected On/Off clones are in the [classifier-dynamics audit](../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/StructuralClassifiersAudit.md).
 
 ### Experimental results
 
@@ -479,9 +489,9 @@ flowchart TD
 - 4 features: sepal length and width, petal length and width
 
 **Results:**
-- Results comparable to classical machine learning methods
-- Successful application of the segmental spiking model with structural adaptation
-- Capability for incremental learning on new classes
+- Historical materials report Iris experiments; publication scores need replay with the same data and response rule
+- The current 10-example replay produced ambiguous multi-bit outputs and does not confirm high exclusive accuracy
+- Replay reports and the strict-output script are in [`NNeuronTrainingReplay`](../../Configs/SpikeSamples/StructTrain/_repro/NNeuronTrainingReplay/README.md)
 
 ##### MNIST (handwritten digit database)
 
@@ -567,7 +577,7 @@ classDiagram
 #### Interaction of neurons in the network
 
 - **Parallel processing:** all neurons receive the input pattern simultaneously
-- **Competition:** the neuron generating a spike first or with the greatest amplitude determines the class
+- **Competition:** trained class LTZone outputs connect to lateral inhibitory synapses; C++ does not compare amplitudes or select a winner
 - **Independent learning:** each neuron is trained independently on its own class
 - **Structural adaptation:** each neuron adapts its structure to its class
 
@@ -583,8 +593,8 @@ classDiagram
    - Spike generation time depends on the degree of pattern match
 
 3. **Class determination:**
-   - The class is determined by the neuron that generates a spike
-   - When multiple neurons generate spikes, the neuron with the greatest amplitude or earliest generation time is selected
+   - Each class bit is set if that class LTZone crosses the output threshold during the input window
+   - The C++ response path does not resolve multiple active bits using amplitude, timing, or `argmax`; multiple bits remain an ambiguous response
 
 ### Description of experiments and results
 
@@ -616,14 +626,12 @@ classDiagram
 - **F-measure (F1-score):** harmonic mean of precision and recall
 
 **Results on Iris:**
-- Comparable to classical methods (k-NN, SVM, neural networks)
-- High classification accuracy for all three classes
-- Successful application of incremental learning
+- Historical benchmark numbers are not reproduced by the current replay under the strict single-active-class rule
+- In the current 10-example replay the expected class was active in every row, but all rows were multi-bit and therefore ambiguous
+- See the [classifier audit](../../../Libraries/Nmsdk-PulseLib/Docs/Analysis/StructuralClassifiersAudit.md) for the observed outputs and limitations
 
 **Results on MNIST:**
-- Comparable to classical methods for small data subsets
-- Demonstration of image processing capability
-- Potential for scaling to the full dataset
+- Historical/project use case; no current end-to-end replay is cited here, so it is not presented as a verified benchmark
 
 #### Comparison with other methods
 
