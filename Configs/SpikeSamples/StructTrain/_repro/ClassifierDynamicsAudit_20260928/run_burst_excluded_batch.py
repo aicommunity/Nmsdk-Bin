@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[5]
 PROJECT_ROOT = HERE.parent / "BurstReplayVerified_Rerun"
 CONSOLE = REPO / "Bin" / "Platform" / "Win" / "NeuroModelerConsole.exe"
+POST_SAVE_ACCESS_VIOLATION = 0xC0000005
 
 
 def period_seconds(project_dir: Path) -> float:
@@ -210,7 +211,7 @@ def main() -> int:
             all_results[name] = return_code
             if return_code is None:
                 overall = 2
-            elif return_code not in (0, 1, -1073741819):
+            elif return_code not in (0, 1, -1073741819, POST_SAVE_ACCESS_VIOLATION):
                 overall = 1
     print("RESULTS " + ", ".join(f"{name}={code}" for name, code in all_results.items()), flush=True)
     return overall

@@ -17,10 +17,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 CLASSIFIER_AUDIT = HERE.parent / "ClassifierAudit"
 NPCA_AUDIT = HERE
-SYNAPSE_AUDIT = HERE / "NSpikeSynapseCountAudit_20260928"
-COMPETITION_AUDIT = HERE
 OUTPUT_ROOT = HERE.parent / "BurstReplayVerified_Rerun"
-RECORDER_SEED = HERE / "NSpikeClassifier_Synthetic_OutputsOn_Threshold00085_20260928"
+VERIFIED_POOL = HERE.parent / "BurstReplayVerified_20260928"
+RECORDER_SEED = VERIFIED_POOL / "NSpikeSynapseCount_Syn12_On_Threshold00085_20260928"
 
 IRIS_SOURCE = CLASSIFIER_AUDIT / "NSpikeClassifier_TrainerPointerFix_Iris10_20260927"
 IRIS_REPLAY_SOURCE = CLASSIFIER_AUDIT / "NSpikeClassifier_TrainerPointerFix_IrisReplay_20260927"
@@ -295,15 +294,51 @@ def prepare_clone(
 
 
 def prepare_iris(output_root: Path) -> list[Path]:
-    return [prepare_clone(
-        IRIS_SOURCE,
-        "NSpikeClassifier_Iris10_Threshold00085_20260928",
-        0.0085,
-        IRIS_SECONDS,
-        "Iris10",
-        output_root,
-        add_nspike_signals,
-    )]
+    return prepare_iris_threshold_pool(output_root, 0.0085)
+
+
+def prepare_iris_threshold_pool(output_root: Path, threshold: float) -> list[Path]:
+    label = f"{int(round(threshold * 10000)):05d}"
+    iris10 = prepare_clone(
+            IRIS_SOURCE,
+            f"NSpikeClassifier_Iris10_Threshold{label}_20260928",
+            threshold,
+            IRIS_SECONDS,
+            "Iris10",
+            output_root,
+            add_nspike_signals,
+        )
+    iris3 = prepare_clone(
+            IRIS_REPLAY_SOURCE,
+            f"NSpikeClassifier_Iris3Prototypes_Threshold{label}_20260928",
+            threshold,
+            7.0,
+            "Iris3Prototypes",
+            output_root,
+            add_nspike_signals,
+        )
+    write_expected_classes(iris10, [1, 1, 1, 2, 2, 2, 2, 3, 3, 3],
+                           [f"Iris_ID_{value}" for value in (22, 37, 45, 60, 64, 84, 90, 111, 129, 134)])
+    write_expected_classes(iris3, [1, 2, 3], ["saved_prototype_class_1", "saved_prototype_class_2", "saved_prototype_class_3"])
+    return [iris10, iris3]
+
+
+def write_expected_classes(project: Path, labels: list[int], sources: list[str]) -> None:
+    if len(labels) != len(sources):
+        raise ValueError("Expected class labels and source names must have the same length")
+    lines = ["probe_index,expected_class,source"]
+    lines.extend(f"{index},{label},{source}" for index, (label, source) in enumerate(zip(labels, sources)))
+    (project / "expected_classes.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def prepare_synthetic_classifier(output_root: Path, threshold: float) -> list[Path]:
+    label = f"{int(round(threshold * 10000)):05d}"
+    clones = []
+    for mode in ("On", "Off"):
+        source = VERIFIED_POOL / f"NSpikeClassifier_SyntheticOutputs_{mode}_Threshold00085_20260928"
+        name = f"NSpikeClassifier_SyntheticOutputs_{mode}_Threshold{label}_20260928"
+        clones.append(clone_existing(source, output_root / name, threshold, FIXED_REPLAY_SECONDS))
+    return clones
 
 
 def prepare_iris_smoke(output_root: Path) -> list[Path]:
@@ -410,30 +445,33 @@ def clone_existing(source: Path, destination: Path, threshold: float, seconds: f
     return destination
 
 
-def prepare_synapse_and_inhibition(output_root: Path) -> list[Path]:
+def prepare_synapse_and_inhibition(output_root: Path, threshold: float) -> list[Path]:
     clones: list[Path] = []
-    for synapse_dir in sorted(SYNAPSE_AUDIT.glob("NSpikeClassifier_Class2_D17_Syn*_20260928")):
-        match = re.search(r"Syn(\d+)_(On|Off)_", synapse_dir.name)
-        if not match:
-            continue
-        count, mode = match.groups()
-        dest = output_root / f"NSpikeSynapseCount_Syn{count}_{mode}_Threshold00085_20260928"
-        clones.append(clone_existing(synapse_dir, dest, 0.0085, FIXED_REPLAY_SECONDS))
+    threshold_label = f"{int(round(threshold * 10000)):05d}"
+    for count in (6, 12, 24, 37):
+        for mode in ("On", "Off"):
+            source = VERIFIED_POOL / f"NSpikeSynapseCount_Syn{count}_{mode}_Threshold00085_20260928"
+            dest = output_root / f"NSpikeSynapseCount_Syn{count}_{mode}_Threshold{threshold_label}_20260928"
+            clones.append(clone_existing(source, dest, threshold, FIXED_REPLAY_SECONDS))
 
     for mode in ("On", "Off"):
-        source = COMPETITION_AUDIT / f"NSpikeClassifier_AllProbesCompetition_Dynamics{mode}_Threshold0006_20260928"
-        dest = output_root / f"NSpikeClassifier_AllProbes_{mode}_Threshold00085_20260928"
-        clones.append(clone_existing(source, dest, 0.0085, FIXED_REPLAY_SECONDS))
+        source = VERIFIED_POOL / f"NSpikeClassifier_AllProbes_{mode}_Threshold00085_20260928"
+        dest = output_root / f"NSpikeClassifier_AllProbes_{mode}_Threshold{threshold_label}_20260928"
+        clones.append(clone_existing(source, dest, threshold, FIXED_REPLAY_SECONDS))
     return clones
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-root", type=Path, default=OUTPUT_ROOT)
-    parser.add_argument("--only", choices=("iris", "iris-smoke", "iris-control", "nclassifier", "npca", "fixed", "all"), default="all")
+    parser.add_argument("--only", choices=("iris", "iris-smoke", "iris-control", "iris-threshold", "nspike-synthetic", "nclassifier", "npca", "fixed", "all"), default="all")
+    parser.add_argument("--threshold", type=float, default=0.0085,
+                        help="LTZone threshold for --only iris-threshold or --only nspike-synthetic")
     parser.add_argument("--nclassifier-thresholds", nargs="+", type=float,
                         default=(0.0035, 0.006, 0.0085, 0.0117))
     parser.add_argument("--npca-thresholds", nargs="+", type=float, default=(0.0085,))
+    parser.add_argument("--fixed-threshold", type=float, default=0.0085,
+                        help="LTZone threshold for the fixed synapse-count/inhibition replay pool")
     args = parser.parse_args()
     args.output_root.mkdir(parents=True, exist_ok=True)
     created: list[Path] = []
@@ -443,12 +481,16 @@ def main() -> None:
         created += prepare_iris_smoke(args.output_root)
     if args.only == "iris-control":
         created += prepare_iris_no_recorder_control(args.output_root)
+    if args.only == "iris-threshold":
+        created += prepare_iris_threshold_pool(args.output_root, args.threshold)
+    if args.only == "nspike-synthetic":
+        created += prepare_synthetic_classifier(args.output_root, args.threshold)
     if args.only in ("nclassifier", "all"):
         created += prepare_nclassifier_sweep(args.output_root, tuple(args.nclassifier_thresholds))
     if args.only in ("npca", "all"):
         created += prepare_npca(args.output_root, tuple(args.npca_thresholds))
     if args.only in ("fixed", "all"):
-        created += prepare_synapse_and_inhibition(args.output_root)
+        created += prepare_synapse_and_inhibition(args.output_root, args.fixed_threshold)
     print("\n".join(str(path) for path in created))
 
 
