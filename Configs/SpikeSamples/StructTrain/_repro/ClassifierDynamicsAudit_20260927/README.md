@@ -31,7 +31,6 @@
 
 ## Классификаторы и латеральное торможение
 
-- [`NSpikeClassifier_Class1SingleSignalProbe_20260927`](NSpikeClassifier_Class1SingleSignalProbe_20260927/README.md) — прежняя широкая трасса с неподтверждённым порядком каналов; кроме того, сохранённый `DataFromFile=0` повторял один паттерн. Не использовать её для подсчёта трёх синтетических проб; точные per-class измерения находятся в исправленной паре `NSpikeClassifier_Synthetic_OutputsOn/Off_20260927` ниже.
 - В `DetailedSignals_20260927` лежат парные `NClassifier_Single_Class{1,2}{On,Off}` и отдельные прямые probes потенциала сомы и тормозного канала.
 - [`NClassifier_Direct_TargetInhInputCopy_20260927`](DetailedSignals_20260927/NClassifier_Direct_TargetInhInputCopy_20260927/README.md) и [`Off`](DetailedSignals_20260927/NClassifier_Direct_TargetInhInputCopyOff_20260927/README.md) записывают `InhSynapse1.OutInCopy`, прямую копию входа синапса. Включённая схема даёт фронты на 0.173, 0.2105 и 0.3065 с амплитудой 1; Off-контроль остаётся нулевым.
 - [`NClassifier_Direct_TargetInhSynapseOutput_20260927`](DetailedSignals_20260927/NClassifier_Direct_TargetInhSynapseOutput_20260927/README.md) и [`Off`](DetailedSignals_20260927/NClassifier_Direct_TargetInhSynapseOutputOff_20260927/README.md) записывают сам выход синапса. On-пики около `8.72e-9` совпадают по времени с импульсами входа, Off равен нулю.

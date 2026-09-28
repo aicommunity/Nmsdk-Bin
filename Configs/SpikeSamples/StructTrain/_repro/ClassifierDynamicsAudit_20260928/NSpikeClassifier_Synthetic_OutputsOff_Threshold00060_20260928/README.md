@@ -1,0 +1,5 @@
+# NSpikeClassifier synthetic replay: lateral inhibition Off, threshold 0.006
+
+Clone of [NSpikeClassifier_Synthetic_OutputsOff_20260927](../ClassifierDynamicsAudit_20260927/NSpikeClassifier_Synthetic_OutputsOff_20260927/README.md). The four synthetic input rows and the three trained neuron structures are copied unchanged. All three `NSPNeuron` + `NPulseLTZoneThreshold` units receive the same fixed threshold through both the classifier wrapper and nested Trainer properties; training is disabled. The clone explicitly sets `DataFromFile=1`: a completed source run persists it as 0 after EOF, so copying the saved model without re-arming it would silently repeat the stored `InputPattern` instead of replaying `input_data.txt`. Only LTZone thresholds, this replay flag, run name, and recorder filename differ. Lateral inhibition setting and classifier wiring remain as in the source pair.
+
+Run: `NeuroModelerConsole.exe -c Project.ini -s -t 8.01 -x -S`. Compare `output_data.txt` to `expected_classes.csv`, and count every rising edge in the three LTZone columns in `ClassifierDynamics/`.
