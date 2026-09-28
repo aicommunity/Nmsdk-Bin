@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 import argparse
 import re
+import shutil
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
