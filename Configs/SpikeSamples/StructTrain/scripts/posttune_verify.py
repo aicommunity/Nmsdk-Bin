@@ -1121,6 +1121,7 @@ def run_case(
     no_prune: bool = False,
     snap_every: int = 0,
     slog_abort_gib: float | None = None,
+    keep_slog: bool = False,
 ) -> dict:
     case = dict(CASES[name])
     if train_t is not None:
@@ -1421,6 +1422,9 @@ def run_case(
         for dname in ("StatisticLog", "EventsLog"):
             d = side / dname
             if d.is_dir():
+                if keep_slog and dname == "StatisticLog" and side == train:
+                    print(f"  KEEP_SLOG {d} (--keep-slog)")
+                    continue
                 shutil.rmtree(d, ignore_errors=True)
 
     expect_fires = case.get("expect_fires", "10000000")
@@ -1588,6 +1592,11 @@ def main() -> None:
         default=None,
         help="StatisticLog abort threshold GiB (default 3; with --no-prune default 8)",
     )
+    ap.add_argument(
+        "--keep-slog",
+        action="store_true",
+        help="Do not rmtree Train/StatisticLog after case (AmpNorm diagnostics)",
+    )
     args = ap.parse_args()
     names = list(CASES) if args.case == "all" else [args.case]
     rows = [
@@ -1601,6 +1610,7 @@ def main() -> None:
             no_prune=args.no_prune,
             snap_every=args.snap_every,
             slog_abort_gib=args.slog_abort_gib,
+            keep_slog=args.keep_slog,
         )
         for n in names
     ]
