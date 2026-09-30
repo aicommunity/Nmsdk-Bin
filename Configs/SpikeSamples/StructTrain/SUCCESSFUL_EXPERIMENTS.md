@@ -181,10 +181,10 @@ SoftCold wave C (те же каноны, отдельный протокол):
 
 | Имя | Причина |
 |-----|---------|
-| EXP_span25ms_packA_preinh | SoftCold case=`asym25_preinh` FAIL: patched Console=`ec86430e` Need=0 tipr=canon mid=1 fires_missing gate_rc=1 failure_class=gate_fail; bundle=`_repro/runs/asym25_preinh_20260926T110401Z` (unpatched ref `…211629Z`) |
-| EXP_span50ms_packA_preinh | SoftCold case=`asym50_preinh` FAIL: train=`exited`; tipr=canon; gate_rc=0; bundle=`_repro/runs/asym50_preinh_20260925T212603Z` |
-| EXP_span100ms_packA_gen | SoftCold case=`asym100_gen` FAIL: train=`exited_gate_FAIL_gate_rc=1`; tipr=flat; gate_rc=1; bundle=`_repro/runs/asym100_gen_20260926T002121Z` |
-| EXP_span100ms_packA_preinh | SoftCold case=`asym100_preinh` FAIL: train incomplete / Need≠0 / gate_rc=1 (см. last POSTTUNE_VERIFY_RESULT.md); bundle=`_repro/runs/asym100_preinh_20260926T034443Z` |
+| EXP_span25ms_packA_preinh | SoftCold case=`asym25_preinh` after softcold_fix: Done+canon, gate_fail NonSeparable (A); bundle=`_repro/runs/asym25_preinh_20260927T172618Z` |
+| EXP_span50ms_packA_preinh | SoftCold softcold_fix: **desync lifted** (live TipR→canon L≈29); Need≠0 B_partial; bundle=`_repro/runs/asym50_preinh_20260927T071438Z` |
+| EXP_span100ms_packA_gen | SoftCold P2 patched Console=`ec86430e` Need=1 tipr=flat failure_class=train_incomplete; bundle=`_repro/runs/asym100_gen_20260926T204506Z` |
+| EXP_span100ms_packA_preinh | SoftCold P2 patched Console=`ec86430e` Need=1 tipr=flat failure_class=train_incomplete; bundle=`_repro/runs/asym100_preinh_20260926T172148Z` |
 
 ---
 

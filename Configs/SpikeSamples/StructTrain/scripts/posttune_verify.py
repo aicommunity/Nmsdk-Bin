@@ -1094,8 +1094,12 @@ def run_case(
     run_dir: Path | None = None,
     allow_salvage: bool = False,
     use_archive_inplace: bool = False,
+    train_t: float | None = None,
+    max_polls: int | None = None,
 ) -> dict:
     case = dict(CASES[name])
+    if train_t is not None:
+        case["train_t"] = float(train_t)
     archive_root: Path = case["root"]
     gold: Path = case["gold"]
     if use_archive_inplace:
@@ -1107,6 +1111,11 @@ def run_case(
         case["root"] = work
     train = root / "Train"
     print(f"\n=== CASE {name} archive={archive_root.name} work={root} ===")
+    if train_t is not None or max_polls is not None:
+        print(
+            f"  override train_t={case['train_t']} max_polls="
+            f"{max_polls if max_polls is not None else 'default'}"
+        )
     if name == "br100_search" and skip_train:
         raise SystemExit(
             "br100_search: --skip-train forbidden — SearchSynthetic requires Train mode=4"
@@ -1129,6 +1138,7 @@ def run_case(
         "br100_search": "search",
         "br100_keep": "keep",
     }.get(name, "cold")
+    polls_used: int | None = None
     if not skip_train:
         soft_cold_reset_train(train)
         from repro_cold_lib import ensure_tag_after
@@ -1182,7 +1192,12 @@ def run_case(
             "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
         }
         config_sha256 = config_sha_before["Train/Parameters_00.xml"]
-        polls = 800 if name == "br100_search" else 401
+        polls = (
+            int(max_polls)
+            if max_polls is not None
+            else (800 if name == "br100_search" else 401)
+        )
+        polls_used = polls
         status, child_rc = wait_need0(
             train,
             case["train_t"],
@@ -1321,6 +1336,13 @@ def run_case(
 
             "train_status": status,
             "child_rc": child_rc,
+            "train_t_effective": float(case["train_t"]),
+            "max_polls": polls_used,
+            "retest_class": (
+                "extended_time"
+                if (train_t is not None or max_polls is not None)
+                else "standard"
+            ),
             "search_reverted_train": int(search_reverted),
             "tipr_vs_snapshot": tipr_vs,
             "tipr_class": got_tipr_class,
@@ -1504,6 +1526,18 @@ def main() -> None:
         action="store_true",
         help="Debug only: mutate EXP_* archive instead of clean workdir",
     )
+    ap.add_argument(
+        "--train-t",
+        type=float,
+        default=None,
+        help="Override CASES[].train_t for SoftCold Train -t (extended-time)",
+    )
+    ap.add_argument(
+        "--max-polls",
+        type=int,
+        default=None,
+        help="Override wait_need0 max_polls (raise with --train-t)",
+    )
     args = ap.parse_args()
     names = list(CASES) if args.case == "all" else [args.case]
     rows = [
@@ -1512,6 +1546,8 @@ def main() -> None:
             skip_train=args.skip_train,
             allow_salvage=args.allow_salvage,
             use_archive_inplace=args.use_archive_inplace,
+            train_t=args.train_t,
+            max_polls=args.max_polls,
         )
         for n in names
     ]

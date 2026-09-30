@@ -72,6 +72,7 @@ INVEST_JOBS: dict[str, tuple[str, ColdMode, str]] = {
 
 
 def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
+    """Replace tag body. count=0 → all occurrences (re.sub semantics)."""
     return re.sub(
         rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)",
         lambda m: m.group(1) + value + m.group(2),
@@ -81,8 +82,37 @@ def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
 
 
 def get_tag(text: str, tag: str) -> str | None:
+    """First occurrence (XML may contain duplicates — prefer get_all_tags / last)."""
     m = re.search(rf"<{tag}\b[^>]*>([^<]*)</{tag}>", text)
     return m.group(1).strip() if m else None
+
+
+def get_all_tags(text: str, tag: str) -> list[str]:
+    return [
+        m.group(1).strip()
+        for m in re.finditer(rf"<{tag}\b[^>]*>([^<]*)</{tag}>", text)
+    ]
+
+
+def set_tag_all(text: str, tag: str, value: str) -> str:
+    """Force every occurrence of tag to value (SoftCold SBM fix)."""
+    if not re.search(rf"<{tag}\b", text):
+        return text
+    return set_tag(text, tag, value, 0)
+
+
+def force_structure_build_mode(text: str, value: str = "2") -> str:
+    """Set all StructureBuildMode tags to value; inject one if missing."""
+    if re.search(r"<StructureBuildMode\b", text):
+        return set_tag_all(text, "StructureBuildMode", value)
+    return _ensure_tag(text, "StructureBuildMode", value, after_tag="IsNeedToTrain")
+
+
+def sync_membrane_parts_scalar(text: str, value: str = "1") -> str:
+    """Align scalar NumDendriteMembraneParts with cold L=1 (remove fat leftover)."""
+    if re.search(r"<NumDendriteMembraneParts\b", text):
+        return set_tag_all(text, "NumDendriteMembraneParts", value)
+    return text
 
 
 def ensure_tag_after(text: str, after_tag: str, new_tag: str, value: str, attrs: str = ' Type="b" PType="257" IoType="17"') -> str:
@@ -224,6 +254,7 @@ def assert_train_cold_xml_before_nm(params: Path, *, mode: ColdMode) -> None:
     autocal = get_tag(t, "AutoCalibrateFixedLTZThreshold")
     L = " ".join((get_tag(t, "DendriteLength") or "").replace(",", " ").split())
     tipr = " ".join((get_tag(t, "TipSynapseResistance") or "").replace(",", " ").split())
+    sbm_all = get_all_tags(t, "StructureBuildMode")
     errs: list[str] = []
     if need != "1":
         errs.append(f"Need={need}")
@@ -233,6 +264,10 @@ def assert_train_cold_xml_before_nm(params: Path, *, mode: ColdMode) -> None:
         errs.append(f"L={L}")
     if tipr != TIPR_COLD:
         errs.append(f"TipR={tipr}")
+    if not sbm_all:
+        errs.append("StructureBuildMode missing")
+    elif any(s != "2" for s in sbm_all):
+        errs.append(f"StructureBuildMode={sbm_all} (want all 2)")
     if errs:
         raise SystemExit(f"cold flags fail ({mode}): {', '.join(errs)}")
 
@@ -241,15 +276,21 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     """Record XML-before-NM and expected runtime after C++ ResetToUntrained (TL-02).
 
     Branch sets last DendriteLength to 0 as reference anchor; classic keeps all L=1.
+    SoftCold fix (2026-09-27): SBM=2 everywhere; Model tip-1 only (no fat cable).
     """
     params = train / "Parameters_00.xml"
     model = train / "Model_00.xml"
     pt = params.read_text(encoding="utf-8") if params.exists() else ""
+    mt = model.read_text(encoding="utf-8") if model.exists() else ""
     neuron = (get_tag(pt, "NeuronClassName") or "").strip()
     is_branch = "Branch" in neuron or "TimeLearnerBranch" in neuron
     L_xml = " ".join((get_tag(pt, "DendriteLength") or "").replace(",", " ").split())
     tipr_xml = " ".join((get_tag(pt, "TipSynapseResistance") or "").replace(",", " ").split())
     n = len(L_xml.split()) if L_xml else 4
+    tips = tip_indices(mt) if mt else []
+    max_seg = max(tips) if tips else 0
+    sbm_params = get_all_tags(pt, "StructureBuildMode")
+    sbm_model = get_all_tags(mt, "StructureBuildMode") if mt else []
     if is_branch and n >= 1:
         L_runtime = " ".join(["1"] * (n - 1) + ["0"])
         note = "Branch ResetToUntrained sets last dendrite length to 0 (reference)"
@@ -259,6 +300,7 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     payload = {
         "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
         "mode": mode,
+        "softcold_fix": "2026-09-27_sbm2_strip_tip1",
         "neuron_class": neuron,
         "is_branch": is_branch,
         "xml_before_nm": {
@@ -270,11 +312,25 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
             ).strip(),
             "ResetToUntrainedState": (get_tag(pt, "ResetToUntrainedState") or "").strip(),
             "FixedLTZThreshold": (get_tag(pt, "FixedLTZThreshold") or "").strip(),
+            "StructureBuildMode_all": sbm_params,
+            "NumDendriteMembraneParts": (get_tag(pt, "NumDendriteMembraneParts") or "").strip(),
+            "NumDendriteMembranePartsVec": (
+                get_tag(pt, "NumDendriteMembranePartsVec") or ""
+            ).strip(),
+        },
+        "model_topology": {
+            "max_seg": max_seg,
+            "tip_indices": tips,
+            "StructureBuildMode_all": sbm_model,
+            "expect_max_seg_le": 1,
+            "DelayLenOf_at_L1": 0.0,
+            "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1",
         },
         "expected_runtime_after_reset": {
             "DendriteLength": L_runtime,
             "reference_dendrite_index": (n - 1) if is_branch and n >= 1 else None,
             "IsNeedToTrain": "1",
+            "StructureBuildMode": "2",
             "note": note,
         },
         "model_exists": model.exists(),
@@ -299,12 +355,13 @@ def _ensure_tag(text: str, tag: str, value: str, *, after_tag: str | None = None
 
 def _cold_params_common(t: str, neuron: str) -> str:
     t = set_tag(t, "IsNeedToTrain", "1", 1)
-    t = set_tag(t, "StructureBuildMode", "1", 1)
+    t = force_structure_build_mode(t, "2")
     t = set_tag(t, "NeuronClassName", neuron, 0)
     t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
     t = set_tag(t, "ResistanceMin", RMIN, 1)
     t = set_tag(t, "DendriteLength", L_COLD, 1)
     t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
+    t = sync_membrane_parts_scalar(t, "1")
     t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
     # Gold Done/tiprmin XML often leaves a recognition mid; force silent for cold train.
     t = set_tag(t, "FixedLTZThreshold", "1", 1) if re.search(r"<FixedLTZThreshold\b", t) else _ensure_tag(t, "FixedLTZThreshold", "1", after_tag="IsNeedToTrain")
@@ -322,11 +379,12 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     mt = set_tag(mt, "NeuronClassName", neuron, 0)
     mt = set_tag(mt, "DendriteLength", L_COLD, 0)
     mt = set_tag(mt, "NumDendriteMembranePartsVec", L_COLD, 0)
+    mt = sync_membrane_parts_scalar(mt, "1")
     mt = set_tag(mt, "TipSynapseResistance", TIPR_COLD, 1)
     mt = set_tag(mt, "ResistanceMin", RMIN, 1)
     mt = set_tag(mt, "InitialSomaPotential", "0 0 0 0", 1)
     mt = set_tag(mt, "IsNeedToTrain", "1", 1)
-    mt = set_tag(mt, "StructureBuildMode", "1", 1)
+    mt = force_structure_build_mode(mt, "2")
     if re.search(r"<FixedLTZThreshold\b", mt):
         mt = set_tag(mt, "FixedLTZThreshold", "1", 1)
     if re.search(r"<LTZThreshold\b", mt):
@@ -340,24 +398,30 @@ def _cold_model_common(mt: str, neuron: str) -> str:
 
 
 def soft_cold_reset_train(train: Path) -> None:
-    """Historical soft-cold: param L/TipR + links→tip-1; keep fat Model cable."""
+    """SoftCold cold-start: L=1 tags + tip-1 Model (strip fat), SBM=2 all, TipR flat.
+
+    Pre-2026-09-27 kept fat Model cable while L-tag=1 → DelayLenOf=0 desync and
+    leftover StructureBuildMode=0 blocked rebuild (TIMING_SPAN_MISMATCH).
+    """
     params = train / "Parameters_00.xml"
     model = train / "Model_00.xml"
     pt = params.read_text(encoding="utf-8")
     neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
     params.write_text(_cold_params_common(pt, neuron), encoding="utf-8")
     mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
+    mt = strip_dendrite_segments_above_one(mt)
     mt = rewrite_links_to_tip1(mt)
     model.write_text(mt, encoding="utf-8")
     assert_train_cold_xml_before_nm(params, mode="soft")
+    left = dendrite_tips_above_one(mt)
+    if left:
+        raise SystemExit(f"soft-cold Model still has tips>1: {left[:12]}")
     write_cold_reset_contract(train, mode="soft")
-    tips = tip_indices(mt)
-    if tips and max(tips) <= 1:
-        print("WARN soft-cold: Model already tip-1 only (no fat cable)")
+    print("soft-cold ok: SBM=2 all, L=1 1 1 1, Model tip-1 only, TipR cold")
 
 
 def strip_cold_reset_train(train: Path) -> None:
-    """Strip Model to tip-1 segments + links (prior harness); AutoCal=0."""
+    """Strip Model to tip-1 segments + links; SBM=2; AutoCal=0 (same topology as soft)."""
     params = train / "Parameters_00.xml"
     model = train / "Model_00.xml"
     pt = params.read_text(encoding="utf-8")
@@ -371,7 +435,7 @@ def strip_cold_reset_train(train: Path) -> None:
     left = dendrite_tips_above_one(mt)
     if left:
         raise SystemExit(f"strip Model still has tips>1: {left[:12]}")
-
+    write_cold_reset_contract(train, mode="strip")
 
 def cold_reset_train(train: Path, *, mode: ColdMode = "soft") -> None:
     if mode == "soft":

@@ -249,27 +249,29 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | EXP_br480_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_tiprmin` rc=1; bundle=`_repro/runs/br480_tiprmin_20260925T172303Z` | `posttune_verify --case br480_tiprmin` |
 | EXP_br480_nextseginh_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_nextseg` rc=1; bundle=`_repro/runs/br480_nextseg_20260925T182925Z` | `posttune_verify --case br480_nextseg` |
 | EXP_br480_preinh250_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_preinh` rc=1; bundle=`_repro/runs/br480_preinh_20260925T195700Z` | `posttune_verify --case br480_preinh` |
-| EXP_span25ms_packA_preinh | — | SoftCold wave C / P2 A/B | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` Console=`ec86430e` Need=0 tipr=canon mid=1 (silent) fires_missing gate_rc=1 failure_class=gate_fail; eps-fix: Train completes vs stall risk; quality still NonSeparable; bundles=`_repro/runs/asym25_preinh_20260926T110401Z` (patched) · `_repro/runs/asym25_preinh_20260925T211629Z` (unpatched) | `posttune_verify --case asym25_preinh` |
-| EXP_span50ms_packA_preinh | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym50_preinh` rc=1; bundle=`_repro/runs/asym50_preinh_20260925T212603Z` | `posttune_verify --case asym50_preinh` |
-| EXP_span100ms_packA_gen | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_gen` rc=1; bundle=`_repro/runs/asym100_gen_20260926T002121Z` | `posttune_verify --case asym100_gen` |
-| EXP_span100ms_packA_preinh | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_preinh` rc=1; bundle=`_repro/runs/asym100_preinh_20260926T034443Z` | `posttune_verify --case asym100_preinh` |
+| EXP_span25ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` softcold_fix: Train Done tipr=canon gate_fail NonSeparable mid (A); no SoftCold regression; bundle=`_repro/runs/asym25_preinh_20260927T172618Z` | `posttune_verify --case asym25_preinh` |
+| EXP_span50ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym50_preinh` Console=`ec86430e` softcold_fix=`2026-09-27_sbm2_strip_tip1`: **desync lifted** (live TipR→canon L≈`29 22 15 1`) but Need=1 XML flat (no Save) failure_class=train_incomplete poll401; was: tipr flat stuck; bundle=`_repro/runs/asym50_preinh_20260927T071438Z` · [S3](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/S3_asym50_AFTER_FIX.md) | `posttune_verify --case asym50_preinh` |
+| EXP_span100ms_packA_gen | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_gen` Console=`ec86430e` softcold_fix: **desync lifted** (live TipR→canon L≈`52 43 30 1`) Need=1 XML flat train_incomplete; bundle=`_repro/runs/asym100_gen_20260927T140235Z` | `posttune_verify --case asym100_gen` |
+| EXP_span100ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_preinh` Console=`ec86430e` softcold_fix: **desync lifted** (live TipR→canon L≈`52 43 30 1`) Need=1 XML flat train_incomplete; bundle=`_repro/runs/asym100_preinh_20260927T103846Z` · [S3](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/S3_asym100_preinh_AFTER_FIX.md) | `posttune_verify --case asym100_preinh` |
 
 ## SoftCold wave C DEFER (остаток C1 + C2)
 
-Wall-clock stop 2026-09-26: C1 **14 FAIL** в `_repro/SOFTCOLD_C_rcs.txt`; остаток C1 + C2 — явный DEFER.
+После softcold_fix: phase6_*/fs25_gen / asym* уже перегнаны в S3.a+b ([S3_QUEUE_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/S3_QUEUE_RESULT.md)).  
+Остаток C1+C2 — очередь `run_S3cd_tails.sh` (S3.c) + extended P0 (S3.d).  
+Анализ: [SOFTCOLD_PLAN_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_PLAN_RESULT.md).
 
-### Остаток C1
+### C1 (статус после softcold_fix)
 
 | Имя | case id | Примечание |
 |-----|---------|------------|
-| Phase6/EXP_480_gen_thr_only | phase6_thr_only | SoftCold DEFER (batch stopped) |
-| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | SoftCold DEFER (batch stopped) |
-| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | SoftCold DEFER (batch stopped) |
-| EXP_span25ms_fast_C1e9 | fs25_gen | SoftCold DEFER (batch stopped) |
-| EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | SoftCold DEFER (batch stopped) |
-| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | SoftCold DEFER (batch stopped) |
-| EXP_span100ms_fast_C1e9 | fs100_gen | SoftCold DEFER (batch stopped) |
-| EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | SoftCold DEFER (batch stopped) |
+| Phase6/EXP_480_gen_thr_only | phase6_thr_only | S3.b rc=1 runaway L=`97…` EstDelay; bundle=`…/phase6_thr_only_20260927T183618Z` |
+| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | S3.b rc=1 runaway; bundle=`…/phase6_preinh250_20260927T204043Z` |
+| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | S3.b rc=1 runaway; bundle=`…/phase6_ltzcal_twin_20260927T222127Z` |
+| EXP_span25ms_fast_C1e9 | fs25_gen | S3.b train_incomplete B_partial L=`6 5 4 1`; extended P0; bundle=`…/fs25_gen_20260927T174820Z` |
+| EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | SoftCold S3.c queue |
+| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | SoftCold S3.c queue |
+| EXP_span100ms_fast_C1e9 | fs100_gen | SoftCold S3.c queue |
+| EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | SoftCold S3.c queue |
 
 ### C2
 
