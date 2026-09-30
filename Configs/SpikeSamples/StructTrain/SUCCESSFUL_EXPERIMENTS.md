@@ -298,47 +298,16 @@ GoldTest Phase A / TN / PSI в таблице — PASS (часто partial_FA). 
 
 ---
 
-## SoftCold wave C DEFER (остаток C1 + C2)
+## SoftCold after softcold_fix (S3) — **0 PASS**
 
-Wall-clock stop 2026-09-26: C1 дал 14 FAIL; остаток C1 + весь C2 **не гонялись** (причина: остановка batch, не вердикт алгоритма).
+Кампания `softcold_fix=2026-09-27_sbm2_strip_tip1` + S3.c/d: desync снят, **Cold PASS нет**.  
+RC: [`_repro/SOFTCOLD_DEFER_rcs_after_softcold_fix.txt`](_repro/SOFTCOLD_DEFER_rcs_after_softcold_fix.txt) (37× rc=1).  
+Таблица кейсов: [`EXPERIMENTS.md`](EXPERIMENTS.md) § SoftCold DEFER → закрыто.  
+Корзины: [SOFTCOLD_PLAN_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_PLAN_RESULT.md), [AMPNORM_EOL_STUCK.ru.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/AMPNORM_EOL_STUCK.ru.md).
 
-### Остаток C1
+### Исторический DEFER stop 2026-09-26 (superseded)
 
-| Имя | case id | Примечание |
-|-----|---------|------------|
-| Phase6/EXP_480_gen_thr_only | phase6_thr_only | SoftCold DEFER (batch stopped) |
-| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | SoftCold DEFER (batch stopped) |
-| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | SoftCold DEFER (batch stopped) |
-| EXP_span25ms_fast_C1e9 | fs25_gen | SoftCold DEFER (batch stopped) |
-| EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | SoftCold DEFER (batch stopped) |
-| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | SoftCold DEFER (batch stopped) |
-| EXP_span100ms_fast_C1e9 | fs100_gen | SoftCold DEFER (batch stopped) |
-| EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | SoftCold DEFER (batch stopped) |
-
-### C2
-
-| Имя | case id | Примечание |
-|-----|---------|------------|
-| LtzCal/EXP_span25ms_packA_gen | ltz25_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span25ms_packA_preinh | ltz25_preinh | SoftCold DEFER after C1 |
-| LtzCal/EXP_span50ms_packA_gen | ltz50_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span50ms_packA_preinh | ltz50_preinh | SoftCold DEFER after C1 |
-| LtzCal/EXP_span100ms_packA_gen | ltz100_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span100ms_packA_preinh | ltz100_preinh | SoftCold DEFER after C1 |
-| EXP00_baseline | pa00_baseline | SoftCold DEFER after C1 |
-| EXP01_ltz_threshold_sweep | pa01_ltz_sweep | SoftCold DEFER after C1 |
-| EXP02_ltzone_average_mode | pa02_ltzone_avg | SoftCold DEFER after C1 |
-| EXP06_ltzone_integration | pa06_ltzone_int | SoftCold DEFER after C1 |
-| TimeNeuronTimeLearner | tn_classic | SoftCold DEFER after C1 |
-| EXP01_preinh_050 | psi01_050 | SoftCold DEFER after C1 |
-| EXP14_preinh_260 | psi14_260 | SoftCold DEFER after C1 |
-| EXP15_preinh_270 | psi15_270 | SoftCold DEFER after C1 |
-| EXP21_span100ms_preinh250 | psi21_100 | SoftCold DEFER after C1 |
-| EXP31_span200ms_preinh250 | psi31_200 | SoftCold DEFER after C1 |
-| EXP32_span300ms_baseline | psi32_300 | SoftCold DEFER after C1 |
-| EXP33_span300ms_preinh250 | psi33_300 | SoftCold DEFER after C1 |
-| EXP34_span400ms_baseline | psi34_400 | SoftCold DEFER after C1 |
-| EXP35_span400ms_preinh250 | psi35_400 | SoftCold DEFER after C1 |
+Ранее C2 числился «batch stopped»; после softcold_fix все C1+C2 прогнаны (все FAIL). Детали — EXPERIMENTS.
 
 ---
 

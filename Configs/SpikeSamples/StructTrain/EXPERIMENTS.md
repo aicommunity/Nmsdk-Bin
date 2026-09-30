@@ -254,49 +254,59 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | EXP_span100ms_packA_gen | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_gen` Console=`ec86430e` softcold_fix: **desync lifted** (live TipR→canon L≈`52 43 30 1`) Need=1 XML flat train_incomplete; bundle=`_repro/runs/asym100_gen_20260927T140235Z` | `posttune_verify --case asym100_gen` |
 | EXP_span100ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_preinh` Console=`ec86430e` softcold_fix: **desync lifted** (live TipR→canon L≈`52 43 30 1`) Need=1 XML flat train_incomplete; bundle=`_repro/runs/asym100_preinh_20260927T103846Z` · [S3](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/S3_asym100_preinh_AFTER_FIX.md) | `posttune_verify --case asym100_preinh` |
 
-## SoftCold wave C DEFER (остаток C1 + C2)
+## SoftCold wave C DEFER → **закрыто** (S3.c/d DONE_TAILS)
 
-После softcold_fix: phase6_*/fs25_gen / asym* уже перегнаны в S3.a+b ([S3_QUEUE_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/S3_QUEUE_RESULT.md)).  
-Остаток C1+C2 — очередь `run_S3cd_tails.sh` (S3.c) + extended P0 (S3.d).  
-Анализ: [SOFTCOLD_PLAN_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_PLAN_RESULT.md).
+Очередь завершена 2026-09-30T10:05:51Z. RC: [`_repro/SOFTCOLD_DEFER_rcs_after_softcold_fix.txt`](_repro/SOFTCOLD_DEFER_rcs_after_softcold_fix.txt) — **37** строк, **0 PASS** (`rc=0`).  
+Анализ SoftCold: [SOFTCOLD_PLAN_RESULT.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_PLAN_RESULT.md).  
+AmpNorm: [AMPNORM_EOL_STUCK.ru.md](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/AMPNORM_EOL_STUCK.ru.md).  
+Console SoftCold: `ec86430e…` · `softcold_fix=2026-09-27_sbm2_strip_tip1`.
 
-### C1 (статус после softcold_fix)
+### C1
 
-| Имя | case id | Примечание |
-|-----|---------|------------|
-| Phase6/EXP_480_gen_thr_only | phase6_thr_only | S3.b rc=1 runaway L=`97…` EstDelay; bundle=`…/phase6_thr_only_20260927T183618Z` |
-| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | S3.b rc=1 runaway; bundle=`…/phase6_preinh250_20260927T204043Z` |
-| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | S3.b rc=1 runaway; bundle=`…/phase6_ltzcal_twin_20260927T222127Z` |
-| EXP_span25ms_fast_C1e9 | fs25_gen | S3.b train_incomplete B_partial L=`6 5 4 1`; extended P0; bundle=`…/fs25_gen_20260927T174820Z` |
-| EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | SoftCold S3.c queue |
-| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | SoftCold S3.c queue |
-| EXP_span100ms_fast_C1e9 | fs100_gen | SoftCold S3.c queue |
-| EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | SoftCold S3.c queue |
+| Имя | case id | RC / класс | Bundle (последний) |
+|-----|---------|------------|-------------------|
+| Phase6/EXP_480_gen_thr_only | phase6_thr_only | rc=1 B_runaway L≈97 | `phase6_thr_only_20260927T183618Z` |
+| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | rc=1 B_runaway | `phase6_preinh250_20260927T204043Z` |
+| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | rc=1 B_runaway | `phase6_ltzcal_twin_20260927T222127Z` |
+| EXP_span25ms_fast_C1e9 | fs25_gen | rc=1 AmpNorm(a) mid-band; ext `…_20260928T065707Z`; diag `…_20260930T101032Z` | `fs25_gen_20260927T174820Z` |
+| EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | rc=1 S3.c | `fs25_preinh_20260929T051117Z` |
+| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | rc=1 S3.c | `fs50_preinh_20260929T061018Z` |
+| EXP_span100ms_fast_C1e9 | fs100_gen | rc=1 S3.c | `fs100_gen_20260929T075107Z` |
+| EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | rc=1 S3.c | `fs100_preinh_20260929T111612Z` |
 
-### C2
+### Extended P0 (S3.d)
 
-| Имя | case id | Примечание |
-|-----|---------|------------|
-| LtzCal/EXP_span25ms_packA_gen | ltz25_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span25ms_packA_preinh | ltz25_preinh | SoftCold DEFER after C1 |
-| LtzCal/EXP_span50ms_packA_gen | ltz50_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span50ms_packA_preinh | ltz50_preinh | SoftCold DEFER after C1 |
-| LtzCal/EXP_span100ms_packA_gen | ltz100_gen | SoftCold DEFER after C1 |
-| LtzCal/EXP_span100ms_packA_preinh | ltz100_preinh | SoftCold DEFER after C1 |
-| EXP00_baseline | pa00_baseline | SoftCold DEFER after C1 |
-| EXP01_ltz_threshold_sweep | pa01_ltz_sweep | SoftCold DEFER after C1 |
-| EXP02_ltzone_average_mode | pa02_ltzone_avg | SoftCold DEFER after C1 |
-| EXP06_ltzone_integration | pa06_ltzone_int | SoftCold DEFER after C1 |
-| TimeNeuronTimeLearner | tn_classic | SoftCold DEFER after C1 |
-| EXP01_preinh_050 | psi01_050 | SoftCold DEFER after C1 |
-| EXP14_preinh_260 | psi14_260 | SoftCold DEFER after C1 |
-| EXP15_preinh_270 | psi15_270 | SoftCold DEFER after C1 |
-| EXP21_span100ms_preinh250 | psi21_100 | SoftCold DEFER after C1 |
-| EXP31_span200ms_preinh250 | psi31_200 | SoftCold DEFER after C1 |
-| EXP32_span300ms_baseline | psi32_300 | SoftCold DEFER after C1 |
-| EXP33_span300ms_preinh250 | psi33_300 | SoftCold DEFER after C1 |
-| EXP34_span400ms_baseline | psi34_400 | SoftCold DEFER after C1 |
-| EXP35_span400ms_preinh250 | psi35_400 | SoftCold DEFER after C1 |
+| case | train_t | RC | Note |
+|------|---------|-----|------|
+| fs25_gen_ext640 | 640 | 1 | TipR dend2≈3.4e7 mid-band; L gold |
+| asym50_preinh_ext1280 | 1280 | 1 | TipR@Rmin live; Need=1; XML flat |
+| asym100_preinh_ext1280 | 1280 | 1 | TipR@Rmin; Need=1 |
+| asym100_gen_ext1280 | 1280 | 1 | TipR@Rmin; Need=1 |
+
+### C2 (все rc=1, S3.c)
+
+| case id | UTC end (RC) |
+|---------|----------------|
+| ltz25_gen | 2026-09-29T14:49:04Z |
+| ltz25_preinh | 2026-09-29T15:09:48Z |
+| ltz50_gen | 2026-09-29T18:33:28Z |
+| ltz50_preinh | 2026-09-29T20:10:38Z |
+| ltz100_gen | 2026-09-29T23:35:38Z |
+| ltz100_preinh | 2026-09-30T01:45:34Z |
+| pa00_baseline | 2026-09-30T02:02:53Z |
+| pa01_ltz_sweep | 2026-09-30T02:20:16Z |
+| pa02_ltzone_avg | 2026-09-30T02:37:40Z |
+| pa06_ltzone_int | 2026-09-30T02:55:13Z |
+| tn_classic | 2026-09-30T03:12:02Z |
+| psi01_050 | 2026-09-30T03:29:36Z |
+| psi14_260 | 2026-09-30T03:47:44Z |
+| psi15_270 | 2026-09-30T04:05:48Z |
+| psi21_100 | 2026-09-30T04:41:13Z |
+| psi31_200 | 2026-09-30T05:26:28Z |
+| psi32_300 | 2026-09-30T06:20:24Z |
+| psi33_300 | 2026-09-30T07:14:55Z |
+| psi34_400 | 2026-09-30T08:40:38Z |
+| psi35_400 | 2026-09-30T10:05:51Z |
 
 ---
 
@@ -350,7 +360,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 
 | Риск | Когда | Примеры |
 |------|-------|---------|
-| **high** | SoftCold Train+PostTune | FAIL на HEAD (br25…asym100 C1); DEFER остаток |
+| **high** | SoftCold Train+PostTune | FAIL на HEAD (37/37 after softcold_fix; DEFER очередь закрыта) |
 | **med** | GoldTest на старых весах | Phase6 twin FAIL Acc 2/8 |
 | **low** | MatrixClone GoldTest PASS | pack B/C |
 
