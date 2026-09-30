@@ -721,11 +721,13 @@ def classify_failure_class(
     return "quality_fail"
 
 
-def classify_slog_gib(gib: float) -> Literal["ok", "prune", "abort"]:
-    """Abort threshold before prune; doc says abort ~3G."""
-    if gib > 3.0:
+def classify_slog_gib(
+    gib: float, *, abort_gib: float = 3.0, prune_gib: float = 2.0
+) -> Literal["ok", "prune", "abort"]:
+    """Abort threshold before prune; doc says abort ~3G (overridable for diagnostics)."""
+    if gib > abort_gib:
         return "abort"
-    if gib > 2.0:
+    if gib > prune_gib:
         return "prune"
     return "ok"
 
@@ -806,6 +808,21 @@ def flush_posttune_artifacts(train: Path) -> str:
     return salvage.source
 
 
+def _snap_tipr_live(train: Path, live: Path) -> None:
+    """Best-effort TipR/L snapshot from StatisticLog traces (AMPNORM diagnostics)."""
+    stat_dir = _latest_stat_dir(train)
+    tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
+    lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
+    parts: list[str] = []
+    if tipr:
+        parts.append("tipr=" + " ".join(tipr[:4]))
+    if lens:
+        parts.append("L=" + " ".join(str(int(float(x))) for x in lens[:4]))
+    if parts:
+        live.write_text("\n".join(parts) + "\n", encoding="utf-8")
+        print(f"  SNAP {live.name}: {parts[0][:60]}")
+
+
 def wait_need0(
     train: Path,
     tlim: float,
@@ -813,6 +830,9 @@ def wait_need0(
     *,
     max_polls: int = 401,
     allow_salvage: bool = False,
+    no_prune: bool = False,
+    snap_every: int = 0,
+    slog_abort_gib: float = 3.0,
 ) -> tuple[str, int | None]:
     ini = train / "Project.ini"
     assert_disk_for_train()
@@ -826,7 +846,11 @@ def wait_need0(
     if live.exists():
         live.unlink()
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
-    print(f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G polls={max_polls}")
+    print(
+        f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G "
+        f"polls={max_polls} no_prune={int(no_prune)} snap_every={snap_every} "
+        f"slog_abort={slog_abort_gib:g}G"
+    )
     proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
     need0 = False
     for i in range(1, max_polls + 1):
@@ -848,7 +872,9 @@ def wait_need0(
             f"  poll#{i} Need={need} flag={int(flag_hit)} "
             f"slog={slog_gib:.2f}G et~{i * 30}s"
         )
-        action = classify_slog_gib(slog_gib)
+        if snap_every > 0 and i % snap_every == 0:
+            _snap_tipr_live(train, live)
+        action = classify_slog_gib(slog_gib, abort_gib=slog_abort_gib)
         if action == "abort":
             print(f"  ABORT StatisticLog>{slog_gib:.1f}G — terminate NM")
             proc.terminate()
@@ -858,20 +884,16 @@ def wait_need0(
                 proc.kill()
             break
         if action == "prune":
-            stat_dir = _latest_stat_dir(train)
-            tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
-            lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
-            parts = []
-            if tipr:
-                parts.append("tipr=" + " ".join(tipr[:4]))
-            if lens:
-                parts.append("L=" + " ".join(str(int(float(x))) for x in lens[:4]))
-            if parts:
-                live.write_text("\n".join(parts) + "\n", encoding="utf-8")
-                print(f"  SNAP {live.name}: {parts[0][:60]}")
-            print(f"  PRUNE StatisticLog {slog_gib:.2f}G — keep Train running")
-            shutil.rmtree(slog, ignore_errors=True)
-            continue
+            if no_prune:
+                print(
+                    f"  SKIP_PRUNE StatisticLog {slog_gib:.2f}G "
+                    f"(--no-prune; abort still at >{slog_abort_gib:g}G)"
+                )
+            else:
+                _snap_tipr_live(train, live)
+                print(f"  PRUNE StatisticLog {slog_gib:.2f}G — keep Train running")
+                shutil.rmtree(slog, ignore_errors=True)
+                continue
         if need == "0" or flag_hit:
             need0 = True
             # Console SaveProject runs only when IsCalcFinished (-t exhausted) with
@@ -1096,6 +1118,9 @@ def run_case(
     use_archive_inplace: bool = False,
     train_t: float | None = None,
     max_polls: int | None = None,
+    no_prune: bool = False,
+    snap_every: int = 0,
+    slog_abort_gib: float | None = None,
 ) -> dict:
     case = dict(CASES[name])
     if train_t is not None:
@@ -1198,12 +1223,20 @@ def run_case(
             else (800 if name == "br100_search" else 401)
         )
         polls_used = polls
+        abort_gib = (
+            float(slog_abort_gib)
+            if slog_abort_gib is not None
+            else (8.0 if no_prune else 3.0)
+        )
         status, child_rc = wait_need0(
             train,
             case["train_t"],
             train / "run_posttune_verify.log",
             max_polls=polls,
             allow_salvage=allow_salvage,
+            no_prune=no_prune,
+            snap_every=snap_every,
+            slog_abort_gib=abort_gib,
         )
         if allow_salvage:
             params_source = flush_posttune_artifacts(train)
@@ -1538,6 +1571,23 @@ def main() -> None:
         default=None,
         help="Override wait_need0 max_polls (raise with --train-t)",
     )
+    ap.add_argument(
+        "--no-prune",
+        action="store_true",
+        help="Keep StatisticLog when >2G (abort still >3G); for AmpDt diagnostics",
+    )
+    ap.add_argument(
+        "--snap-every",
+        type=int,
+        default=0,
+        help="Every N polls SNAP tipr/L from traces into posttune_tipr_live.txt",
+    )
+    ap.add_argument(
+        "--slog-abort-gib",
+        type=float,
+        default=None,
+        help="StatisticLog abort threshold GiB (default 3; with --no-prune default 8)",
+    )
     args = ap.parse_args()
     names = list(CASES) if args.case == "all" else [args.case]
     rows = [
@@ -1548,6 +1598,9 @@ def main() -> None:
             use_archive_inplace=args.use_archive_inplace,
             train_t=args.train_t,
             max_polls=args.max_polls,
+            no_prune=args.no_prune,
+            snap_every=args.snap_every,
+            slog_abort_gib=args.slog_abort_gib,
         )
         for n in names
     ]
