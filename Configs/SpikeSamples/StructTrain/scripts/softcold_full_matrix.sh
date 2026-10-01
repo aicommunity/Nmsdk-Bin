@@ -34,7 +34,9 @@ TICK_NOTE="${AGENT_LOOP_TICK:-600}"  # seconds between AGENT_LOOP_TICK lines
     set -e
     echo "==== CASE $case END rc=$rc $(date -u -Iseconds) ===="
     echo "$case $rc $(date -u -Iseconds)" >>"$RCS"
+    python3 scripts/apply_softcold_rcs_to_registry.py --rcs <(echo "$case $rc") || true
   done
   echo "SoftCold full matrix done $(date -u -Iseconds)"
+  python3 scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" || true
 } 2>&1 | tee -a "$LOG"
 echo "LOG=$LOG RCS=$RCS"

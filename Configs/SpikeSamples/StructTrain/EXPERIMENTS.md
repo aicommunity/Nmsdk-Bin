@@ -1,6 +1,6 @@
 # Реестр экспериментов StructTrain (полный)
 
-**Срез SoftCold remediations 2026-10-01:** Console SHA-256 `b66711b5c8d545a66c129b045cdcf479` · PulseLib `bb438c4` (AmpNorm a/b) · Bin `2353083` (реестр) · root audit `211b0ec+`.  
+**Срез SoftCold remediations 2026-10-01:** Console SHA-256 `e018c02430d905be` · PulseLib `b29b595` (AmpNorm a/b) · Bin `7d958ab` (реестр) · root audit `211b0ec+`.  
 **Исторический срез SoftCold S3 2026-09-26/27:** Console `ec86430e871e9314…` · PulseLib `f3763f3` · Bin `24a1905` · GoldTest wave G Console `4917a2bc…`.
 
 Ось таблиц — **исследуемый алгоритм + параметры** (learner, span, рычаг, pack, TipR-режим рецепта).
