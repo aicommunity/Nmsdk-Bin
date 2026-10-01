@@ -97,9 +97,10 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
     conf = cols[-1] if len(cols) > 10 else ""
     lc = cols[4]
     params = cols[2]
-    if f"--case {case}" in conf or f"case={case}" in conf:
+    if f"--case {case}" in conf or f"case={case}" in conf or f"case={case}" in lc:
         return True
-    if "SoftCold" in lc:
+    # SoftColdOff / off clone
+    if case.endswith("_off") and ("posttune_off" in conf or "EnablePostTrainTuning=0" in params):
         return True
     if cols[1].strip() == "—" and (case in conf or f"--case {case}" in conf):
         return True
