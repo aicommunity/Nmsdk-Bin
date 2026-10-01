@@ -287,7 +287,7 @@ Console SoftCold: `ec86430e…` · `softcold_fix=2026-09-27_sbm2_strip_tip1`.
 | Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | rc=1 EstDelay→L=`49 41 25 1`; Need=1 TipR other; W3 `…T132330Z` | `phase6_ltzcal_twin_20261001T132330Z` |
 | EXP_span25ms_fast_C1e9 | fs25_gen | rc=1 AmpNorm(a) mid improved→2.9e7; SoftCold after TipRfix `…T191508Z` Need=1; ext/diag older | `fs25_gen_20260927T174820Z` |
 | EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | rc=1 mid~4e7 after TipRfix `…T200959Z` | `fs25_preinh_20260929T051117Z` |
-| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | rc=1 **TipR@Rmin** after TipRfix `…T210012Z`; Need=1 AmpNorm(b) | `fs50_preinh_20260929T061018Z` |
+| EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | SoftCold FAIL 2026-10-01 autosave: TipR@Rmin L=`11 10 7 1` Need=1 AmpNorm(b) rc=1 · was TipRfix `…T061018Z` | `fs50_preinh_20261001T192233Z_work` |
 | EXP_span100ms_fast_C1e9 | fs100_gen | rc=1 TipR live high after TipRfix `…T223639Z`; XML flat | `fs100_gen_20260929T075107Z` |
 | EXP_span100ms_fast_preinh_C1e9 | fs100_preinh | rc=1 TipR live high `…T020037Z`; XML flat | `fs100_preinh_20260929T111612Z` |
 
