@@ -13,7 +13,7 @@
 1. PostTune-клон — work-каталог, не отдельный алгоритм; **Имя** = канонический EXP.
 2. PASS на одном протоколе (например GoldTest / SkipTrainGold) **не** означает SoftCold PASS — см. **Working** vs **LastCheck** и блок провалов / [`EXPERIMENTS.md`](EXPERIMENTS.md).
 3. PHASE12 / T1 не дают места в таблице PASS без HEAD PASS.
-4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold`: `EXP_span50ms_packA_preinh`, `EXP_span25ms_packA_preinh` (2026-10-01 autosave wave); остальные пока GoldTest/MatrixClone.
+4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold`: `EXP_span50ms_packA_preinh`, `EXP_span25ms_packA_preinh`, `EXP_span50ms_packA_gen` (2026-10-01 autosave wave); остальные пока GoldTest/MatrixClone.
 
 ## Колонки
 
@@ -148,7 +148,7 @@ SoftCold wave C (те же каноны, отдельный протокол):
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipR@Rmin thr=0.011759 L=`25 23 15 1` | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | ARTIFACT_KEEP | GoldTest 20260925T123946Z Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipR@Rmin thr=0.011759 L=`25 23 15 1` | SoftCold | SoftCold PASS (case=asym50) | 8/8 | да | selective | PASS | ARTIFACT_KEEP | SoftCold PASS 2026-10-01 autosave TipR@Rmin Need=0; was GoldTest Console=4917a2bcbac318d1 | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
 
 ### 3.3. Остальные AsymRm (GoldTest / MatrixClone)
 
@@ -177,7 +177,7 @@ SoftCold wave C (те же каноны, отдельный протокол):
 | Имя | Протокол | Причина |
 |-----|----------|---------|
 | EXP_span25ms_packA_gen | SoftCold+PostTune | NonSeparable; mid=1 |
-| EXP_span50ms_packA_gen | SoftCold+PostTune | Need=1 (FAIL приёмки); Test fires `10000000` |
+| EXP_span50ms_packA_gen | SoftCold+PostTune | SoftCold PASS 2026-10-01 (case=asym50); historical Need=1 note superseded |
 
 SoftCold wave C (те же каноны, отдельный протокол):
 

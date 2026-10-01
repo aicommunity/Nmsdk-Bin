@@ -159,8 +159,8 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipR@Rmin thr=0.011759 L=`25 23 15 1` | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | ARTIFACT_KEEP | GoldTest 20260925T123946Z Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipRMode=CanonRmin; Train~640 с | GoldTest | SoftCold FAIL (B_need1) | 8/8 | да | selective | **FAIL** | — | Need=1 (FAIL приёмки); Test fires `10000000` | [posttune-клон](SelectivityAsymRm/EXP_span50ms_packA_gen_posttune) · [`bundle`](_repro/runs/asym50_20260924T214908Z) |
+| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipR@Rmin thr=0.011759 L=`25 23 15 1` | SoftCold | SoftCold PASS (case=asym50) | 8/8 | да | selective | **PASS** | ARTIFACT_KEEP | GoldTest 20260925T123946Z Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityAsymRm/EXP_span50ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span50ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span50ms_packA_gen/Test/SelectivityLog/results.csv) |
+| EXP_span50ms_packA_gen | NNeuronTimeLearner | TipRMode=CanonRmin; Train~640 с | SoftCold | SoftCold PASS (case=asym50) | 8/8 | да | selective | PASS | — | SoftCold PASS 2026-10-01 autosave TipR@Rmin Need=0 L=`27 22 15 1` fires=`10000000`; bundle=`_repro/runs/asym50_20261001T204502Z_work` | [posttune-клон](SelectivityAsymRm/EXP_span50ms_packA_gen_posttune) · [`bundle`](_repro/runs/asym50_20260924T214908Z) |
 
 ### 3.3. Остальные AsymRm (GoldTest / MatrixClone, на HEAD не перепрогонялись)
 
