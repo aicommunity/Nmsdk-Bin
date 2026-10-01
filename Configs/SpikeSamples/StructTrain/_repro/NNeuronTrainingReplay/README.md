@@ -23,7 +23,8 @@
 | `SpikeIrisClassifier_Fresh1000` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Клон на исходном пределе проекта 1000 модельных секунд; остановлен до финального сохранения при сужении работ до Learner. |
 | `TestTrain_LearnerOnly_AutoPreset_PostFix_Eval_20260927` | `Bin/Configs/Bakhshiev/TestTrain` | Чистый post-fix клон Learner с `UseAutoPreset=1`; достиг 120 модельных секунд и остался в обучении. |
 | `SpikeIrisClassifier_PostFix_20260927` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Чистый повтор трёх исходных `NNeuronTrainer` на 240 модельных секундах, с интервальными сохранениями; итог ниже и в README клона. |
-| `TestTrain_LearnerOnly_AutoPreset_InterfaceCheck_20261001` | Seed `TestTrain_LearnerOnly_PostInitFix_AutoPreset_Seed_20260927` | Проверка интеграции нового API `Auto_Preset`: Release-консоль, 12 модельных секунд; результат и ограничение кода завершения описаны в README клона. |
+| `TestTrain_LearnerOnly_AutoPreset_InterfaceCheck_20261001` | Seed `TestTrain_LearnerOnly_PostInitFix_AutoPreset_Seed_20260927` | Первый post-API smoke-run; первоначальный код завершения оказался следствием ошибочного Debug `glog.dll` в Release-каталоге. Исправленный прогон — в `TestTrain_LearnerOnly_AutoPreset_ExitFix_20261001`. |
+| `TestTrain_LearnerOnly_AutoPreset_ExitFix_20261001` | Seed `TestTrain_LearnerOnly_PostInitFix_AutoPreset_Seed_20260927` | Чистый Release-повтор после исправления DLL-развёртывания: прямой лог AutoPreset, успешный код завершения и сохранённые модель/параметры. |
 
 В клонах включены необходимые флаги обучения; режимы и численные параметры нейронов оставлены такими, как в источниках. Для длительных прогонов в `Project.ini` отключён подробный журнал (`DebugModeFlag=0`): он многократно пишет события создания компонентов и заметно замедляет расчёт. В `Project.ini` сохранён `TimeStep=2000`, а `CalculationMode=3` использует быстрый цикл с теми же временными шагами модели. Пример запуска `TestTrain` из каталога клона:
 
@@ -42,7 +43,7 @@
 
 ## Критерии разбора
 
-- Расчёт должен дойти до заданного модельного времени и сохранить копию проекта. После сохранения консоль в этой сборке иногда завершается с известной ошибкой закрытия `UEngineControl::PauseChannel`; она не мешает анализировать сохранённую копию.
+- Расчёт должен дойти до заданного модельного времени и сохранить копию проекта. Исправленная Release-сборка завершается с кодом 0; детали прежнего падения и исправления зафиксированы в конце файла.
 - В `NNeuronLearner` обучение считается завершённым, когда статусы изменения длин и числа синапсов обнулены; в режиме 0 при этом сбрасывается `IsNeedToTrain`.
 - Для `NNeuronTrainer` основная ветка — режим 6; критерии — завершённые статусы роста и нормализации. Значения 4/5 также попадают в эту ветку по текущему fall-through.
 - После обучения сравнивайте `DendriteLength`, `NumSynapse`, `TrainingDendIndexes` и `TrainingSynapsisNum`. Параметры мембран/каналов и существующих синапсов должны сохраниться. Новые синапсы получают начальное сопротивление `SynapseResistanceStep`; пока обучение активно, `LTZThreshold` может быть равен `TrainingLTZThreshold`.
@@ -183,4 +184,21 @@ python ..\evaluate_iris_classifier_output.py --project-dir .
 
 Скрипт отдельно сообщает попадание ожидаемого нейрона и точность единственного ответа; он возвращает код 2, если есть нулевые, многобитные или неверные ответы. Для текущего replay ожидаемый нейрон активен `10/10`, единственный правильный ответ — `0/10`, многобитные ответы — `10`. Это строгая оценка записанных битов, а не восстановленный `argmax`.
 
-Все четыре свежих Learner/архивных клона прошли валидацию как `VALID` без ошибок разбора конфигурации. Валидатор в этой сборке иногда завершает процесс с кодом `-1073741819` уже после результата и сообщения о невозможности создать logfile; это известный сбой закрытия/логирования, а не отказ валидации. Release-сборка пересобрана после фикса обоих классов, без изменения `TimeStep=2000` и параметров нейрона.
+Все свежие Learner/архивные клоны проходят валидацию как `VALID` без ошибок разбора конфигурации. Ранее консоль падала уже после выхода из Qt event loop из-за загрузки Debug `glog.dll` в Release-процессе; теперь `--check-config` также завершается с кодом 0. Подробности повторного AutoPreset-прогона — ниже.
+
+## Исправление завершения Release-консоли и повтор AutoPreset (01.10.2026)
+
+Первоначальный запуск после обновления API сохранял `Model_00.xml` и `Parameters_00.xml`, но процесс завершался исключением `0xC0000005`. Отладчик показал access violation при разрушении `std::string` внутри `glog.dll`. Причина была в `cmake/DeployVcpkgDlls.cmake`: после Release DLL скрипт безусловно копировал DLL из `vcpkg_installed/.../debug/bin` в тот же `Bin/Platform/Win`. У vcpkg Debug и Release `glog` имеют одинаковое имя `glog.dll`, поэтому Release-консоль загружала Debug-библиотеку и Debug CRT; это же сопровождалось сообщениями `Could not create logging file`.
+
+Развёртывание Debug DLL теперь запускается только для конфигурации `Debug`. Release `glog.dll` зависит от Release CRT (`MSVCP140.dll`/`VCRUNTIME140.dll`), а Debug-вариант не подменяет её. Дополнительно исправлен штатный self-wait: `UEngineControlThread::AfterCalculate()` вызывал `PauseChannel()` из расчётного потока до сигнала завершения того же расчёта. Поток теперь непосредственно останавливает свой флаг; предупреждение `Calculation complete waiting timed out` исчезло.
+
+В свежем клоне с включённым только подробным журналированием AutoPreset Release-прогон `-s -t 12 -x -S` завершился с кодом 0. В `EventsLog` записано `Auto_Preset initial DendriteLength=[4,3,2,1] (NumSynapse unchanged).`; fallback-ошибок и ошибок создания glog-файла нет. Сохранённые `Model_00.xml` и `Parameters_00.xml` совпадают по структурным значениям: `DendriteLength=[4,3,2,1]`, `NumSynapse=[9,7,4,1]`, `InitialSomaPotential≈[0.0157814]*4`, `IsNeedToTrain=0`, `UseAutoPreset=1`. Seed до запуска имел длины и синапсы `[1,1,1,1]`. Подробный лог включался только в клоне, численные параметры модели не менялись.
+
+Команда повтора из каталога клона:
+
+```powershell
+& 'E:\Science-Repo\nmsdk-git\Bin\Platform\Win\NeuroModelerConsole.exe' `
+  -c '.\project.ini' -s -t 12 -x -S
+```
+
+`--check-config` на сохранённом клоне завершился с кодом 0 и статусом `VALID`. `SaveProject()` в консольном режиме закономерно пропускает `Interface.xml`, когда Qt-интерфейсы не созданы; модель и параметры при этом сохранены.
