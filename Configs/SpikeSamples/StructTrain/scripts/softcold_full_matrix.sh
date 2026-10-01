@@ -26,7 +26,7 @@ TICK_NOTE="${AGENT_LOOP_TICK:-600}"  # seconds between AGENT_LOOP_TICK lines
     echo "==== CASE $case ($i/${#cases[@]}) START $(date -u -Iseconds) ===="
     echo "AGENT_LOOP_TICK case=$case i=$i/${#cases[@]} at $(date -u -Iseconds) (tick=${TICK_NOTE}s)"
     set +e
-    python3 scripts/posttune_verify.py \
+    PYTHONUNBUFFERED=1 python3 -u scripts/posttune_verify.py \
       --case "$case" \
       --autosave-model-s "$AUTOSAVE_S" \
       --snap-every "$SNAP_EVERY"
@@ -34,9 +34,11 @@ TICK_NOTE="${AGENT_LOOP_TICK:-600}"  # seconds between AGENT_LOOP_TICK lines
     set -e
     echo "==== CASE $case END rc=$rc $(date -u -Iseconds) ===="
     echo "$case $rc $(date -u -Iseconds)" >>"$RCS"
-    python3 scripts/apply_softcold_rcs_to_registry.py --rcs <(echo "$case $rc") || true
+    # avoid process-substitution for portability
+    printf '%s %s\n' "$case" "$rc" >"$ROOT/_repro/.last_softcold_rc.txt"
+    PYTHONUNBUFFERED=1 python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$ROOT/_repro/.last_softcold_rc.txt" || true
   done
   echo "SoftCold full matrix done $(date -u -Iseconds)"
-  python3 scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" || true
+  PYTHONUNBUFFERED=1 python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" || true
 } 2>&1 | tee -a "$LOG"
 echo "LOG=$LOG RCS=$RCS"
