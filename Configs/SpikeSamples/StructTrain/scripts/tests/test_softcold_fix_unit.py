@@ -79,11 +79,15 @@ class TestSoftColdAsym50(unittest.TestCase):
             tips = tip_indices(mt)
             self.assertTrue(tips and max(tips) <= 1, tips)
 
+            ini = (train / "Project.ini").read_text(encoding="utf-8")
+            self.assertIn("<ProjectAutoSaveModelTimeInterval>10</ProjectAutoSaveModelTimeInterval>", ini)
+
             contract = json.loads(
                 (train / "cold_reset_contract.json").read_text(encoding="utf-8")
             )
             self.assertEqual(contract["softcold_fix"], "2026-09-27_sbm2_strip_tip1")
             self.assertEqual(contract["mode"], "soft")
+            self.assertEqual(contract["project_autosave_model_time_interval"], "10")
             self.assertLessEqual(contract["model_topology"]["max_seg"], 1)
             self.assertTrue(
                 all(s == "2" for s in contract["xml_before_nm"]["StructureBuildMode_all"])

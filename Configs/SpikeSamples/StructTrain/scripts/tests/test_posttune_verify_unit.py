@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -353,6 +354,42 @@ class TestFailureClass(unittest.TestCase):
         )
         self.assertFalse(ok)
         self.assertEqual(pv.classify_failure_class(reasons, row), "train_incomplete")
+
+
+class TestAutosavePoll(unittest.TestCase):
+    def test_poll_params_detects_mtime_bump(self):
+        with tempfile.TemporaryDirectory() as td:
+            params = Path(td) / "Parameters_00.xml"
+            params.write_text(
+                "<Root><IsNeedToTrain>1</IsNeedToTrain>"
+                "<TipSynapseResistance>1 1 1 1</TipSynapseResistance>"
+                "<DendriteLength>1 1 1 1</DendriteLength></Root>\n",
+                encoding="utf-8",
+            )
+            m0 = params.stat().st_mtime
+            snap0 = pv.poll_params_snapshot(params, prev_mtime=m0)
+            self.assertFalse(snap0["autosave_seen"])
+            self.assertEqual(snap0["need"], "1")
+            time.sleep(0.02)
+            params.write_text(
+                "<Root><IsNeedToTrain>0</IsNeedToTrain>"
+                "<TipSynapseResistance>2e7 2e7 2e7 8.6e7</TipSynapseResistance>"
+                "<DendriteLength>10 10 10 10</DendriteLength></Root>\n",
+                encoding="utf-8",
+            )
+            snap1 = pv.poll_params_snapshot(params, prev_mtime=m0)
+            self.assertTrue(snap1["autosave_seen"])
+            self.assertEqual(snap1["need"], "0")
+            self.assertTrue(snap1["tipr_settled"])
+            self.assertTrue(pv.softcold_early_done(snap1, flag_hit=False))
+
+    def test_early_done_requires_settled_without_flag(self):
+        snap = {
+            "need": "0",
+            "tipr_settled": False,
+        }
+        self.assertFalse(pv.softcold_early_done(snap, flag_hit=False))
+        self.assertTrue(pv.softcold_early_done(snap, flag_hit=True))
 
 
 class TestClassicAmpNormEpsHeader(unittest.TestCase):

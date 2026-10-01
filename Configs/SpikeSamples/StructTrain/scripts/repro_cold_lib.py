@@ -101,6 +101,40 @@ def set_tag_all(text: str, tag: str, value: str) -> str:
     return set_tag(text, tag, value, 0)
 
 
+# SoftCold default: periodic Console SaveProject every N model-seconds (0 = off).
+DEFAULT_AUTOSAVE_MODEL_S = 10
+
+
+def set_project_autosave_model_interval(ini: Path, seconds: int) -> None:
+    """Set <ProjectAutoSaveModelTimeInterval> in Project.ini General (workdir only)."""
+    if not ini.exists():
+        return
+    seconds = max(0, int(seconds))
+    t = ini.read_text(encoding="utf-8")
+    if re.search(r"<ProjectAutoSaveModelTimeInterval\b", t):
+        t = re.sub(
+            r"(<ProjectAutoSaveModelTimeInterval\b[^>]*>)[^<]*(</ProjectAutoSaveModelTimeInterval>)",
+            rf"\g<1>{seconds}\g<2>",
+            t,
+            count=1,
+        )
+    elif re.search(r"</ProjectAutoSaveFlag>", t):
+        t = re.sub(
+            r"(</ProjectAutoSaveFlag>)",
+            rf"\1\n\t\t<ProjectAutoSaveModelTimeInterval>{seconds}</ProjectAutoSaveModelTimeInterval>",
+            t,
+            count=1,
+        )
+    else:
+        t = re.sub(
+            r"(<General>)",
+            rf"\1\n\t\t<ProjectAutoSaveModelTimeInterval>{seconds}</ProjectAutoSaveModelTimeInterval>",
+            t,
+            count=1,
+        )
+    ini.write_text(t, encoding="utf-8")
+
+
 def force_structure_build_mode(text: str, value: str = "2") -> str:
     """Set all StructureBuildMode tags to value; inject one if missing."""
     if re.search(r"<StructureBuildMode\b", text):
@@ -334,6 +368,15 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
             "note": note,
         },
         "model_exists": model.exists(),
+        "project_autosave_model_time_interval": (
+            get_tag(
+                (train / "Project.ini").read_text(encoding="utf-8")
+                if (train / "Project.ini").exists()
+                else "",
+                "ProjectAutoSaveModelTimeInterval",
+            )
+            or "0"
+        ),
     }
     out = train / "cold_reset_contract.json"
     out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -397,7 +440,9 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     return mt
 
 
-def soft_cold_reset_train(train: Path) -> None:
+def soft_cold_reset_train(
+    train: Path, *, autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S
+) -> None:
     """SoftCold cold-start: L=1 tags + tip-1 Model (strip fat), SBM=2 all, TipR flat.
 
     Pre-2026-09-27 kept fat Model cable while L-tag=1 → DelayLenOf=0 desync and
@@ -416,8 +461,12 @@ def soft_cold_reset_train(train: Path) -> None:
     left = dendrite_tips_above_one(mt)
     if left:
         raise SystemExit(f"soft-cold Model still has tips>1: {left[:12]}")
+    set_project_autosave_model_interval(train / "Project.ini", autosave_model_s)
     write_cold_reset_contract(train, mode="soft")
-    print("soft-cold ok: SBM=2 all, L=1 1 1 1, Model tip-1 only, TipR cold")
+    print(
+        "soft-cold ok: SBM=2 all, L=1 1 1 1, Model tip-1 only, TipR cold "
+        f"autosave_model_s={autosave_model_s}"
+    )
 
 
 def strip_cold_reset_train(train: Path) -> None:

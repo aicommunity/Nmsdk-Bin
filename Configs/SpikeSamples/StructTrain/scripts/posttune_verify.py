@@ -57,6 +57,7 @@ ALLOWLIST_OPTIONAL_GLOBS = (
 )
 sys.path.insert(0, str(ROOT / "scripts"))
 from repro_cold_lib import (  # noqa: E402
+    DEFAULT_AUTOSAVE_MODEL_S,
     NM,
     assert_disk_for_train,
     free_gib,
@@ -823,6 +824,42 @@ def _snap_tipr_live(train: Path, live: Path) -> None:
         print(f"  SNAP {live.name}: {parts[0][:60]}")
 
 
+def poll_params_snapshot(
+    params: Path, *, prev_mtime: float | None = None
+) -> dict[str, Any]:
+    """Read Need/TipR/L (+ mtime) from Parameters; detect autosave via mtime bump."""
+    text = params.read_text(encoding="utf-8") if params.exists() else ""
+    try:
+        mtime = params.stat().st_mtime if params.exists() else 0.0
+    except OSError:
+        mtime = 0.0
+    tipr = " ".join((get_tag(text, "TipSynapseResistance") or "").split())
+    length = " ".join((get_tag(text, "DendriteLength") or "").split())
+    need = (get_tag(text, "IsNeedToTrain") or "").strip()
+    autosave_seen = prev_mtime is not None and mtime > prev_mtime + 1e-6
+    return {
+        "need": need,
+        "tipr": tipr,
+        "L": length,
+        "mtime": mtime,
+        "autosave_seen": autosave_seen,
+        "tipr_settled": tipr_looks_posttuned(tipr),
+    }
+
+
+def softcold_early_done(
+    snap: dict[str, Any], *, flag_hit: bool, require_settled: bool = True
+) -> bool:
+    """True when autosaved XML shows Need=0 and TipR settled (or flag present)."""
+    if snap.get("need") != "0":
+        return False
+    if flag_hit:
+        return True
+    if require_settled:
+        return bool(snap.get("tipr_settled"))
+    return True
+
+
 def wait_need0(
     train: Path,
     tlim: float,
@@ -833,6 +870,7 @@ def wait_need0(
     no_prune: bool = False,
     snap_every: int = 0,
     slog_abort_gib: float = 3.0,
+    early_stop_autosave: bool = True,
 ) -> tuple[str, int | None]:
     ini = train / "Project.ini"
     assert_disk_for_train()
@@ -845,11 +883,13 @@ def wait_need0(
     live = train / "posttune_tipr_live.txt"
     if live.exists():
         live.unlink()
+    params = train / "Parameters_00.xml"
+    prev_mtime = params.stat().st_mtime if params.exists() else 0.0
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
     print(
         f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G "
         f"polls={max_polls} no_prune={int(no_prune)} snap_every={snap_every} "
-        f"slog_abort={slog_abort_gib:g}G"
+        f"slog_abort={slog_abort_gib:g}G early_stop_autosave={int(early_stop_autosave)}"
     )
     proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
     need0 = False
@@ -857,7 +897,14 @@ def wait_need0(
         time.sleep(30)
         if proc.poll() is not None:
             break
-        need = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "IsNeedToTrain")
+        snap = poll_params_snapshot(params, prev_mtime=prev_mtime)
+        if snap["autosave_seen"]:
+            print(
+                f"  AUTOSAVE_SEEN mtime={snap['mtime']:.3f} "
+                f"Need={snap['need']} TipR={snap['tipr'][:48]} L={snap['L']}"
+            )
+            prev_mtime = snap["mtime"]
+        need = snap["need"]
         flag_hit = flag.exists()
         slog_bytes = 0
         if slog.is_dir():
@@ -870,6 +917,7 @@ def wait_need0(
         slog_gib = slog_bytes / (1 << 30)
         print(
             f"  poll#{i} Need={need} flag={int(flag_hit)} "
+            f"tipr_settled={int(snap['tipr_settled'])} "
             f"slog={slog_gib:.2f}G et~{i * 30}s"
         )
         if snap_every > 0 and i % snap_every == 0:
@@ -894,24 +942,29 @@ def wait_need0(
                 print(f"  PRUNE StatisticLog {slog_gib:.2f}G — keep Train running")
                 shutil.rmtree(slog, ignore_errors=True)
                 continue
-        if need == "0" or flag_hit:
+        done = need == "0" or flag_hit
+        if early_stop_autosave and softcold_early_done(snap, flag_hit=flag_hit):
+            done = True
+        if done:
             need0 = True
             # Console SaveProject runs only when IsCalcFinished (-t exhausted) with
             # -S/-x latch (A15). Early SIGTERM skips Save → Parameters TipR/Need
             # lag behind posttune_complete.flag (T3 H2 / audit A16-adjacent).
             # Prefer natural exit so -S can flush; terminate only after grace.
+            # With model-time autosave, Need/TipR may already be flushed on disk.
             grace_s = 90.0
             t_end = time.time() + grace_s
             print(
                 f"  post-flag: wait up to {grace_s:.0f}s for NM -S exit "
-                f"(Need={need} flag={int(flag_hit)})"
+                f"(Need={need} flag={int(flag_hit)} tipr_settled={int(snap['tipr_settled'])})"
             )
             while proc.poll() is None and time.time() < t_end:
                 time.sleep(5)
-                need = get_tag(
-                    (train / "Parameters_00.xml").read_text(encoding="utf-8"),
-                    "IsNeedToTrain",
-                )
+                snap = poll_params_snapshot(params, prev_mtime=prev_mtime)
+                if snap["autosave_seen"]:
+                    print(f"  AUTOSAVE_SEEN mtime={snap['mtime']:.3f} (grace)")
+                    prev_mtime = snap["mtime"]
+                need = snap["need"]
                 if need == "0" and flag.exists():
                     # Likely saved; give I/O a beat then wait for quit.
                     time.sleep(3)
@@ -1122,6 +1175,7 @@ def run_case(
     snap_every: int = 0,
     slog_abort_gib: float | None = None,
     keep_slog: bool = False,
+    autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S,
 ) -> dict:
     case = dict(CASES[name])
     if train_t is not None:
@@ -1166,7 +1220,7 @@ def run_case(
     }.get(name, "cold")
     polls_used: int | None = None
     if not skip_train:
-        soft_cold_reset_train(train)
+        soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
         from repro_cold_lib import ensure_tag_after
 
         enable = "0" if name == "br25_off" else "1"
@@ -1238,6 +1292,7 @@ def run_case(
             no_prune=no_prune,
             snap_every=snap_every,
             slog_abort_gib=abort_gib,
+            early_stop_autosave=autosave_model_s > 0,
         )
         if allow_salvage:
             params_source = flush_posttune_artifacts(train)
@@ -1597,6 +1652,15 @@ def main() -> None:
         action="store_true",
         help="Do not rmtree Train/StatisticLog after case (AmpNorm diagnostics)",
     )
+    ap.add_argument(
+        "--autosave-model-s",
+        type=int,
+        default=DEFAULT_AUTOSAVE_MODEL_S,
+        help=(
+            "ProjectAutoSaveModelTimeInterval for SoftCold Train Project.ini "
+            f"(model-seconds; default {DEFAULT_AUTOSAVE_MODEL_S}; 0=off)"
+        ),
+    )
     args = ap.parse_args()
     names = list(CASES) if args.case == "all" else [args.case]
     rows = [
@@ -1611,6 +1675,7 @@ def main() -> None:
             snap_every=args.snap_every,
             slog_abort_gib=args.slog_abort_gib,
             keep_slog=args.keep_slog,
+            autosave_model_s=args.autosave_model_s,
         )
         for n in names
     ]

@@ -25,6 +25,8 @@ CLI:
 ```text
 python3 scripts/posttune_verify.py --case br25_on
 python3 scripts/posttune_verify.py --case asym50
+# SoftCold: model-time Project autosave (Need/TipR XML freshness during poll):
+python3 scripts/posttune_verify.py --case asym50_preinh --autosave-model-s 10 --snap-every 20
 # SoftCold wave C (расширенные CASES): br50_gen, br*_preinh, … — см. CASES в скрипте
 # WAVE=C1 bash scripts/softcold_c_batch.sh
 # GoldTest NOT_RETESTED:
@@ -34,6 +36,7 @@ python3 scripts/posttune_verify.py --case br25_on --use-archive-inplace
 python3 scripts/posttune_verify.py --case br25_on --allow-salvage
 ```
 
+`--autosave-model-s N` (default SoftCold **10** model-seconds, `0`=off) пишет `<ProjectAutoSaveModelTimeInterval>` в workdir `Train/Project.ini` при soft-cold. `wait_need0` логирует `AUTOSAVE_SEEN` при росте mtime Parameters и может early-stop при Need=0 + TipR settled.
 Контрольные опыты P1.5: [_repro/CONTROL_RUNS_P15.md](_repro/CONTROL_RUNS_P15.md). Морфогенез P2 только после FAIL: [_repro/MORPHOGENESIS_P2.md](_repro/MORPHOGENESIS_P2.md).
 
 Актуальная сводка постановок и результатов cold-прогонов после исправлений (без исторических ярлыков V1–V6): [EXPERIMENTS_AFTER_FIXES.ru.md](../../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md). Табличный HEAD-срез: [EXPERIMENTS.md](EXPERIMENTS.md) · [SUCCESSFUL_EXPERIMENTS.md](SUCCESSFUL_EXPERIMENTS.md).
