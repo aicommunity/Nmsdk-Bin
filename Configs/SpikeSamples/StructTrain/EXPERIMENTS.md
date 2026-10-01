@@ -79,7 +79,7 @@ T1–T5 → [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md); **вердикт �
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_br_span50_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`13 11 6 1` TipR@Rmin thr≈0.0644 | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`13 11 6 1` TipR@Rmin thr≈0.0644 | SoftCold | SoftCold PASS (case=br50_gen) | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`25 21 11 1` Done TipR thr≈0.00718 | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 
 ### 1.3. packA gen span 100 — TipR Keep / Search (тот же канон, PostTune-режимы)
@@ -256,7 +256,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_br_span50_packA_gen_C1e9 | — | SoftCold wave C | GoldTest | SoftCold FAIL | — | — | — | **FAIL** | — | SoftCold case=`br50_gen` rc=1; bundle=`_repro/runs/br50_gen_20260925T144420Z` | `posttune_verify --case br50_gen` |
+| EXP_br_span50_packA_gen_C1e9 | — | SoftCold wave C | SoftCold | SoftCold PASS (case=br50_gen) | 8/8 | да | selective | PASS | — | SoftCold PASS 2026-10-01 TipR@Rmin Need=0 fires=`10000000` mid≈0.0549; bundle=`_repro/runs/br50_gen_20261001T222951Z_work` | `posttune_verify --case br50_gen` |
 | EXP_br_span25_packA_preinh_C1e9 | — | SoftCold wave C | GoldTest | SoftCold FAIL (B_need1) | — | — | — | **FAIL** | — | SoftCold case=`br25_preinh` W4 AmpNorm HEAD: Need=1 gate_rc=0 still verify rc=1 TipR mid; bundle=`_repro/runs/br25_preinh_20261001T144206Z` · [A](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/A_NONSEPARABLE_MID.ru.md) | `posttune_verify --case br25_preinh` |
 | EXP_br_span50_packA_preinh_C1e9 | — | SoftCold wave C | GoldTest | SoftCold FAIL | — | — | — | **FAIL** | — | SoftCold case=`br50_preinh` rc=1; bundle=`_repro/runs/br50_preinh_20260925T152911Z` | `posttune_verify --case br50_preinh` |
 | EXP_br_span100_packA_preinh_C1e9 | — | SoftCold wave C | GoldTest | SoftCold FAIL | — | — | — | **FAIL** | — | SoftCold case=`br100_preinh` rc=1; bundle=`_repro/runs/br100_preinh_20260925T153639Z` | `posttune_verify --case br100_preinh` |

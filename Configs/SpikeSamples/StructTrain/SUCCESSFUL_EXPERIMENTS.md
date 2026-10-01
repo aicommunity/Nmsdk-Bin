@@ -13,7 +13,7 @@
 1. PostTune-клон — work-каталог, не отдельный алгоритм; **Имя** = канонический EXP.
 2. PASS на одном протоколе (например GoldTest / SkipTrainGold) **не** означает SoftCold PASS — см. **Working** vs **LastCheck** и блок провалов / [`EXPERIMENTS.md`](EXPERIMENTS.md).
 3. PHASE12 / T1 не дают места в таблице PASS без HEAD PASS.
-4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold`: `EXP_span50ms_packA_preinh`, `EXP_span25ms_packA_preinh`, `EXP_span50ms_packA_gen` (2026-10-01 autosave wave); остальные пока GoldTest/MatrixClone.
+4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold`: asym50/25 preinh+gen, `EXP_br_span50_packA_gen_C1e9` (2026-10-01 autosave wave); остальные пока GoldTest/MatrixClone.
 
 ## Колонки
 
@@ -38,7 +38,7 @@
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_br_span50_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`13 11 6 1` TipR@Rmin thr≈0.0644 | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
+| EXP_br_span50_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`13 11 6 1` TipR@Rmin thr≈0.0644 | SoftCold | SoftCold PASS (case=br50_gen) | 8/8 | да | selective | PASS | VALIDATED | SoftCold PASS 2026-10-01; was GoldTest Console=4917a2bcbac318d1 | [Train](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span50_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 | EXP_br_span100_packA_gen_C1e9 | NNeuronTimeLearnerBranch | L=`25 21 11 1` Done TipR thr≈0.00718 | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Train) · [Test](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test) · [CSV](SelectivityBranch/EXP_br_span100_packA_gen_C1e9/Test/SelectivityLog/results.csv) |
 
 ### 1.3. packA gen span 100 — TipR Keep / Search (тот же канон, PostTune-режимы)
@@ -101,7 +101,7 @@ SoftCold wave C (те же каноны, отдельный протокол):
 
 | Имя | Причина |
 |-----|---------|
-| EXP_br_span50_packA_gen_C1e9 | SoftCold case=`br50_gen` FAIL: train=`done_flag_flush_gate_FAIL_gate_rc=1`; tipr=canon; gate_rc=1; bundle=`_repro/runs/br50_gen_20260925T144420Z` |
+| EXP_br_span50_packA_gen_C1e9 | SoftCold case=`br50_gen` PASS 2026-10-01 (historical FAIL note superseded) |
 | EXP_br_span25_packA_preinh_C1e9 | SoftCold case=`br25_preinh` FAIL: train=`exited`; tipr=other; gate_rc=0; bundle=`_repro/runs/br25_preinh_20260925T145223Z` |
 | EXP_br_span50_packA_preinh_C1e9 | SoftCold case=`br50_preinh` FAIL: train=`done_flag_flush_gate_FAIL_gate_rc=1`; tipr=canon; gate_rc=1; bundle=`_repro/runs/br50_preinh_20260925T152911Z` |
 | EXP_br_span100_packA_preinh_C1e9 | SoftCold case=`br100_preinh` FAIL: train=`done_flag_flush_gate_FAIL_gate_rc=1`; tipr=canon; gate_rc=1; bundle=`_repro/runs/br100_preinh_20260925T153639Z` |
