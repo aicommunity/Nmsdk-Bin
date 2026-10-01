@@ -13,7 +13,7 @@
 1. PostTune-клон — work-каталог, не отдельный алгоритм; **Имя** = канонический EXP.
 2. PASS на одном протоколе (например GoldTest / SkipTrainGold) **не** означает SoftCold PASS — см. **Working** vs **LastCheck** и блок провалов / [`EXPERIMENTS.md`](EXPERIMENTS.md).
 3. PHASE12 / T1 не дают места в таблице PASS без HEAD PASS.
-4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold` появился на `EXP_span50ms_packA_preinh` (case=`asym50_preinh`, 2026-10-01); остальные пока GoldTest/MatrixClone.
+4. Лестница: `SoftCold` > `SoftColdOff` > `SkipTrainGold` > `GoldTest` ≈ `MatrixClone`. Working=`SoftCold`: `EXP_span50ms_packA_preinh`, `EXP_span25ms_packA_preinh` (2026-10-01 autosave wave); остальные пока GoldTest/MatrixClone.
 
 ## Колонки
 
