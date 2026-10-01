@@ -23,6 +23,7 @@
 | `SpikeIrisClassifier_Fresh1000` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Клон на исходном пределе проекта 1000 модельных секунд; остановлен до финального сохранения при сужении работ до Learner. |
 | `TestTrain_LearnerOnly_AutoPreset_PostFix_Eval_20260927` | `Bin/Configs/Bakhshiev/TestTrain` | Чистый post-fix клон Learner с `UseAutoPreset=1`; достиг 120 модельных секунд и остался в обучении. |
 | `SpikeIrisClassifier_PostFix_20260927` | `Bin/Configs/SpikeSamples/Classifier/SpikeIrisClassifier` | Чистый повтор трёх исходных `NNeuronTrainer` на 240 модельных секундах, с интервальными сохранениями; итог ниже и в README клона. |
+| `TestTrain_LearnerOnly_AutoPreset_InterfaceCheck_20261001` | Seed `TestTrain_LearnerOnly_PostInitFix_AutoPreset_Seed_20260927` | Проверка интеграции нового API `Auto_Preset`: Release-консоль, 12 модельных секунд; результат и ограничение кода завершения описаны в README клона. |
 
 В клонах включены необходимые флаги обучения; режимы и численные параметры нейронов оставлены такими, как в источниках. Для длительных прогонов в `Project.ini` отключён подробный журнал (`DebugModeFlag=0`): он многократно пишет события создания компонентов и заметно замедляет расчёт. В `Project.ini` сохранён `TimeStep=2000`, а `CalculationMode=3` использует быстрый цикл с теми же временными шагами модели. Пример запуска `TestTrain` из каталога клона:
 
