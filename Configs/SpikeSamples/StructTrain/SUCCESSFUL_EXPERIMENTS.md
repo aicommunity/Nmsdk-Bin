@@ -1,9 +1,10 @@
 # Реестр успешных экспериментов StructTrain
 
-**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin `24a1905` · GoldTest wave G historically used Console `4917a2bc…`.
+**Срез SoftCold remediations 2026-10-01:** Console SHA-256 `b66711b5c8d545a66c129b045cdcf479` · PulseLib `bb438c4` · Bin `2353083` · root audit `211b0ec+`.  
+**Исторический срез 2026-09-26:** Console `ec86430e…` · PulseLib `f3763f3` · Bin `24a1905` · GoldTest Console `4917a2bc…`.
 
 Только строки со статусом HEAD **PASS** в таблицах. Ось и нумерация разделов — как в [`EXPERIMENTS.md`](EXPERIMENTS.md).  
-В каждом разделе ниже таблицы PASS — блок **Провалы / вне PASS** (краткие причины FAIL/DEFER); полные FAIL-строки протоколов — в [`EXPERIMENTS.md`](EXPERIMENTS.md).
+В каждом разделе ниже таблицы PASS — блок **Провалы / вне PASS** (краткие причины FAIL/DEFER); полные FAIL-строки протоколов — в [`EXPERIMENTS.md`](EXPERIMENTS.md) (**не** дублировать FAIL как PASS-строки сюда).
 
 Контракт cold: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md). Narrative: [`EXPERIMENTS_AFTER_FIXES.ru.md`](../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md).
 

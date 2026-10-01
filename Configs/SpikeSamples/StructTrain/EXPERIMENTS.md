@@ -1,10 +1,11 @@
 # Реестр экспериментов StructTrain (полный)
 
-**Срез HEAD 2026-09-26:** Console SHA-256 `ec86430e871e9314d61b948565581705bf72116516f32bb79c5091994c4a1a47` (PulseLib eps TL-01 fix) · PulseLib `f3763f3` · Bin `24a1905` · GoldTest wave G historically used Console `4917a2bc…`.
+**Срез SoftCold remediations 2026-10-01:** Console SHA-256 `b66711b5c8d545a66c129b045cdcf479` · PulseLib `bb438c4` (AmpNorm a/b) · Bin `2353083` (реестр) · root audit `211b0ec+`.  
+**Исторический срез SoftCold S3 2026-09-26/27:** Console `ec86430e871e9314…` · PulseLib `f3763f3` · Bin `24a1905` · GoldTest wave G Console `4917a2bc…`.
 
 Ось таблиц — **исследуемый алгоритм + параметры** (learner, span, рычаг, pack, TipR-режим рецепта).
 Повторный cold/PostTune на текущем HEAD — **не отдельный эксперимент**, а строка(и) того же алгоритма с другим протоколом и вердиктом HEAD.
-Только PASS → [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md).
+Только PASS → [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) (FAIL-строки протоколов — **только** в этом файле; в SUCCESSFUL — краткий блок «Провалы / вне PASS»).
 Контракт cold: [`POST_TRAIN_VERIFY.ru.md`](POST_TRAIN_VERIFY.ru.md). Narrative доработок измерения: [`EXPERIMENTS_AFTER_FIXES.ru.md`](../../../Docs/Audit/TimeLearner-2026-09-24-review/EXPERIMENTS_AFTER_FIXES.ru.md) (не ось реестра).
 T1–T5 → [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md); **вердикт только колонка HEAD**.
 
@@ -240,7 +241,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | Имя | Алгоритм | Параметры | Протокол | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|----------|-----|------|-------|------|----------|------------|---------|
 | EXP_br_span50_packA_gen_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br50_gen` rc=1; bundle=`_repro/runs/br50_gen_20260925T144420Z` | `posttune_verify --case br50_gen` |
-| EXP_br_span25_packA_preinh_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br25_preinh` rc=1; bundle=`_repro/runs/br25_preinh_20260925T145223Z` | `posttune_verify --case br25_preinh` |
+| EXP_br_span25_packA_preinh_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br25_preinh` W4 AmpNorm HEAD: Need=1 gate_rc=0 still verify rc=1 TipR mid; bundle=`_repro/runs/br25_preinh_20261001T144206Z` · [A](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/A_NONSEPARABLE_MID.ru.md) | `posttune_verify --case br25_preinh` |
 | EXP_br_span50_packA_preinh_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br50_preinh` rc=1; bundle=`_repro/runs/br50_preinh_20260925T152911Z` | `posttune_verify --case br50_preinh` |
 | EXP_br_span100_packA_preinh_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br100_preinh` rc=1; bundle=`_repro/runs/br100_preinh_20260925T153639Z` | `posttune_verify --case br100_preinh` |
 | EXP_br_span25_packA_nextseginh_C1e9 | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br25_nextseg` rc=1; bundle=`_repro/runs/br25_nextseg_20260925T154453Z` | `posttune_verify --case br25_nextseg` |
@@ -249,7 +250,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | EXP_br480_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_tiprmin` rc=1; bundle=`_repro/runs/br480_tiprmin_20260925T172303Z` | `posttune_verify --case br480_tiprmin` |
 | EXP_br480_nextseginh_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_nextseg` rc=1; bundle=`_repro/runs/br480_nextseg_20260925T182925Z` | `posttune_verify --case br480_nextseg` |
 | EXP_br480_preinh250_tiprmin | — | SoftCold wave C | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`br480_preinh` rc=1; bundle=`_repro/runs/br480_preinh_20260925T195700Z` | `posttune_verify --case br480_preinh` |
-| EXP_span25ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` softcold_fix: Train Done tipr=canon gate_fail NonSeparable mid (A); no SoftCold regression; bundle=`_repro/runs/asym25_preinh_20260927T172618Z` | `posttune_verify --case asym25_preinh` |
+| EXP_span25ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym25_preinh` W4: flag_flush Need=1 gate_rc=1 (не чистый A NonSeparable); bundle=`_repro/runs/asym25_preinh_20261001T143127Z` · [A](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/A_NONSEPARABLE_MID.ru.md); was S3 Done+canon+NonSeparable `…T172618Z` | `posttune_verify --case asym25_preinh` |
 | EXP_span50ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym50_preinh` AmpNorm(b) `bb438c4` Console=`b66711b5`: TipR@Rmin L=`27 22 15 1` Need=1 flag_flush gate_rc=1; bundle=`_repro/runs/asym50_preinh_20261001T095822Z` · [W2](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_W2_ASYM.ru.md); was softcold_fix desync+Need=1 `…T071438Z` | `posttune_verify --case asym50_preinh` |
 | EXP_span100ms_packA_gen | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_gen` AmpNorm(b): TipR@Rmin L=`54 43 27 1` gate_rc=1 fires_missing; bundle=`_repro/runs/asym100_gen_20261001T103720Z` · [W2](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_W2_ASYM.ru.md) | `posttune_verify --case asym100_gen` |
 | EXP_span100ms_packA_preinh | — | SoftCold after softcold_fix | SoftCold+PostTune | — | — | — | **FAIL** | — | SoftCold case=`asym100_preinh` AmpNorm(b): TipR@Rmin L=`49 41 31 1` Need=1 gate_rc=1; bundle=`_repro/runs/asym100_preinh_20261001T101311Z` · [W2](../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/SOFTCOLD_W2_ASYM.ru.md) | `posttune_verify --case asym100_preinh` |
