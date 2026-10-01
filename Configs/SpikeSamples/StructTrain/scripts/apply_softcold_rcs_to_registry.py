@@ -113,6 +113,17 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
             return True
         if case.startswith("br") and "EXP_br" in conf and "posttune" in conf:
             return "posttune" in conf and case.replace("_", "") in conf.replace("_", "")
+    # PhaseA / PSI / TimeNeuron: unique Имя → primary Selectivity* / TimeNeuron row
+    if case.startswith(("pa", "psi")) or case == "tn_classic":
+        if any(
+            p in conf
+            for p in (
+                "SelectivityPhaseA/",
+                "SelectivityPresynapticInhib/",
+                "TimeNeuronTimeLearner/",
+            )
+        ):
+            return True
     return False
 
 
@@ -143,7 +154,7 @@ def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool, case: str)
             cols[8] = "PASS" if len(cols) > 8 else cols[8]
         else:
             # SoftCold FAIL does not demote Gold Working; HEAD on this SoftCold row = FAIL
-            if "SoftCold" in lastcheck or "SoftCold" in lc:
+            if "SoftCold" in lastcheck:
                 cols[8] = "FAIL" if len(cols) > 8 else cols[8]
         out.append("| " + " | ".join(cols) + " |")
     if not name_rows:
