@@ -54,10 +54,12 @@ Console/gates используют Linux-путь Bin/Platform/Linux/NeuroModele
 
 ## Разные типы приёмки
 
-- Gold/inherited weights — контроль уже существующего состояния.
-- Cold calibration-quality — новое обучение и свежий same-Matrix mid/gate при полной provenance.
+- Gold/inherited weights — контроль уже существующего состояния (**не** доказывает SoftCold).
+- Cold calibration-quality (SoftCold) — новое обучение и свежий same-Matrix mid/gate при полной provenance.
 - Search reverted PASS — работоспособность fallback; улучшение поиска требует положительного сравнения с собственным snapshot.
 - Phase6 CASES ожидает 10000010: это regression-pass с одним foil FP. Строгая избирательность 10000000 оценивается отдельно.
+
+В реестре: колонки **Working** / **LastCheck** ([PROTOCOL_WORKING_VS_LASTCHECK.ru.md](../../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/PROTOCOL_WORKING_VS_LASTCHECK.ru.md)). SoftCold workdir может задавать `ProjectAutoSaveModelTimeInterval` (модельные секунды) для периодического Save во время Train — см. [MODEL_TIME_AUTOSAVE.ru.md](../../../../Docs/Audit/TimeLearner-2026-09-26-review/evidence/MODEL_TIME_AUTOSAVE.ru.md).
 
 Gold thresholds и допуск ±5% — сравнительный исторический ориентир при сопоставимом протоколе, а не универсальный признак правильности новых весов. Branch25 ≈.0718 и Branch100 ≈.00718 не следует смешивать.
 
