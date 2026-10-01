@@ -153,7 +153,7 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
 | EXP_span25ms_packA_gen | NNeuronTimeLearner | C1e9 TipR base thr≈0.00962 | GoldTest | GoldTest PASS | 8/8 | да | selective | **PASS** | VALIDATED | GoldTest  Console=4917a2bcbac318d1 fires=10000000; was: last-known GoldTest | [Train](SelectivityAsymRm/EXP_span25ms_packA_gen/Train) · [Test](SelectivityAsymRm/EXP_span25ms_packA_gen/Test) · [CSV](SelectivityAsymRm/EXP_span25ms_packA_gen/Test/SelectivityLog/results.csv) |
-| EXP_span25ms_packA_gen | NNeuronTimeLearner | TipRMode=FlatLastR `8.6e7×4` | GoldTest | SoftCold FAIL (A_nonseparable) | — | — | — | **FAIL** | — | NonSeparable; mid=1 | [posttune-клон](SelectivityAsymRm/EXP_span25ms_packA_gen_posttune) · [`bundle`](_repro/runs/asym25_20260924T214120Z) |
+| EXP_span25ms_packA_gen | NNeuronTimeLearner | TipRMode=FlatLastR `8.6e7×4` | GoldTest | SoftCold FAIL (case=asym25, rc=1) | — | — | — | **FAIL** | — | SoftCold 2026-10-01: TipR flat gate_rc=1 (A); bundle=`_repro/runs/asym25_20261001T212611Z_work` | [posttune-клон](SelectivityAsymRm/EXP_span25ms_packA_gen_posttune) · [`bundle`](_repro/runs/asym25_20261001T212611Z_work) |
 
 ### 3.2. span 50 мс packA gen
 
