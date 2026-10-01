@@ -90,7 +90,32 @@ def parse_rcs(path: Path) -> list[tuple[str, int]]:
     return out
 
 
-def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool) -> str:
+def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> bool:
+    """Do not rewrite every row with the same Имя — only SoftCold-related rows."""
+    if len(cols) < 5:
+        return False
+    conf = cols[-1] if len(cols) > 10 else ""
+    lc = cols[4]
+    params = cols[2]
+    if f"--case {case}" in conf or f"case={case}" in conf:
+        return True
+    if "SoftCold" in lc:
+        return True
+    if cols[1].strip() == "—" and (case in conf or f"--case {case}" in conf):
+        return True
+    if case == "br25_on" and "CanonRmin" in params and "soft-cold" in params:
+        return True
+    if case == "br25_off" and ("posttune_off" in conf or "PostTuneTuning=0" in params):
+        return True
+    if pass_ and "posttune" not in conf.lower() and "packA" in params:
+        if case.startswith(("asym", "ltz", "fs")) and "/Train)" in conf:
+            return True
+        if case.startswith("br") and "EXP_br" in conf and "posttune" in conf:
+            return "posttune" in conf and case.replace("_", "") in conf.replace("_", "")
+    return False
+
+
+def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool, case: str) -> str:
     lines = text.splitlines()
     out = []
     name_rows: list[int] = []
@@ -105,6 +130,9 @@ def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool) -> str:
         if len(cols) < 5 or cols[3] not in RANK:
             out.append(line)
             continue
+        if not row_matches_softcold_case(cols, case, pass_=pass_):
+            out.append(line)
+            continue
         name_rows.append(i)
         working = cols[3]
         if pass_ and RANK.get("SoftCold", 0) > RANK.get(working, 0):
@@ -114,7 +142,7 @@ def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool) -> str:
             cols[8] = "PASS" if len(cols) > 8 else cols[8]
         else:
             # SoftCold FAIL does not demote Gold Working; HEAD on this SoftCold row = FAIL
-            if "SoftCold" in lastcheck:
+            if "SoftCold" in lastcheck or "SoftCold" in lc:
                 cols[8] = "FAIL" if len(cols) > 8 else cols[8]
         out.append("| " + " | ".join(cols) + " |")
     if not name_rows:
@@ -140,9 +168,9 @@ def main() -> None:
             lc = f"SoftCold FAIL (case={case}, rc={rc})"
             pass_ = False
         print(f"{case} -> {name}: {lc}")
-        exp = patch_table(exp, name, lc, pass_=pass_)
+        exp = patch_table(exp, name, lc, pass_=pass_, case=case)
         if pass_ and suc:
-            suc = patch_table(suc, name, lc, pass_=True)
+            suc = patch_table(suc, name, lc, pass_=True, case=case)
     if args.dry_run:
         return
     EXP.write_text(exp, encoding="utf-8")
