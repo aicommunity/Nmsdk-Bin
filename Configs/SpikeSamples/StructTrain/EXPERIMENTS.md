@@ -265,9 +265,9 @@ Console SoftCold: `ec86430e…` · `softcold_fix=2026-09-27_sbm2_strip_tip1`.
 
 | Имя | case id | RC / класс | Bundle (последний) |
 |-----|---------|------------|-------------------|
-| Phase6/EXP_480_gen_thr_only | phase6_thr_only | rc=1 B_runaway L≈97 | `phase6_thr_only_20260927T183618Z` |
-| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | rc=1 B_runaway | `phase6_preinh250_20260927T204043Z` |
-| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | rc=1 B_runaway | `phase6_ltzcal_twin_20260927T222127Z` |
+| Phase6/EXP_480_gen_thr_only | phase6_thr_only | rc=1 EstDelay→L=`49 41 25 1` (was B_runaway≈97); Need=1 TipR ceiling; SoftCold W3 `…T110339Z` | `phase6_thr_only_20261001T110339Z` |
+| Phase6/EXP_480_preinh250_tiprmin | phase6_preinh250 | rc=1 EstDelay→L=`53 45 28 1`; Need=1 TipR ceiling; W3 `…T121029Z` | `phase6_preinh250_20261001T121029Z` |
+| Phase6/EXP_480_ltzcal_twin_gen | phase6_ltzcal_twin | rc=1 EstDelay→L=`49 41 25 1`; Need=1 TipR other; W3 `…T132330Z` | `phase6_ltzcal_twin_20261001T132330Z` |
 | EXP_span25ms_fast_C1e9 | fs25_gen | rc=1 AmpNorm(a) mid improved→2.9e7; SoftCold after TipRfix `…T191508Z` Need=1; ext/diag older | `fs25_gen_20260927T174820Z` |
 | EXP_span25ms_fast_preinh_C1e9 | fs25_preinh | rc=1 mid~4e7 after TipRfix `…T200959Z` | `fs25_preinh_20260929T051117Z` |
 | EXP_span50ms_fast_preinh_C1e9 | fs50_preinh | rc=1 **TipR@Rmin** after TipRfix `…T210012Z`; Need=1 AmpNorm(b) | `fs50_preinh_20260929T061018Z` |
