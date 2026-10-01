@@ -387,9 +387,27 @@ class TestAutosavePoll(unittest.TestCase):
         snap = {
             "need": "0",
             "tipr_settled": False,
+            "tipr": "2e7 2e7 2e7 8.6e7",
         }
         self.assertFalse(pv.softcold_early_done(snap, flag_hit=False))
         self.assertTrue(pv.softcold_early_done(snap, flag_hit=True))
+
+    def test_early_done_rejects_cold_flat_tipr(self):
+        snap = {
+            "need": "0",
+            "tipr_settled": True,
+            "tipr": "86000000 86000000 86000000 86000000",
+        }
+        self.assertFalse(pv.softcold_early_done(snap, flag_hit=False))
+        self.assertTrue(pv.softcold_early_done(snap, flag_hit=True))
+
+    def test_early_done_accepts_canon_tipr(self):
+        snap = {
+            "need": "0",
+            "tipr_settled": True,
+            "tipr": "2e7 2e7 2e7 8.6e7",
+        }
+        self.assertTrue(pv.softcold_early_done(snap, flag_hit=False))
 
 
 class TestClassicAmpNormEpsHeader(unittest.TestCase):

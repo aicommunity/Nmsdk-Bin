@@ -59,6 +59,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from repro_cold_lib import (  # noqa: E402
     DEFAULT_AUTOSAVE_MODEL_S,
     NM,
+    TIPR_COLD,
     assert_disk_for_train,
     free_gib,
     get_tag,
@@ -850,13 +851,32 @@ def poll_params_snapshot(
 def softcold_early_done(
     snap: dict[str, Any], *, flag_hit: bool, require_settled: bool = True
 ) -> bool:
-    """True when autosaved XML shows Need=0 and TipR settled (or flag present)."""
+    """True when autosaved XML shows Need=0 and TipR settled (or flag present).
+
+    Cold TipR is FlatLastR (`TIPR_COLD`); do not treat cold-flat alone as settled
+    for early stop — require flag, or TipR that left cold (e.g. CanonRmin).
+    """
     if snap.get("need") != "0":
         return False
     if flag_hit:
         return True
-    if require_settled:
-        return bool(snap.get("tipr_settled"))
+    if not require_settled:
+        return True
+    if not snap.get("tipr_settled"):
+        return False
+    tipr = snap.get("tipr") or ""
+    cold = " ".join(TIPR_COLD.split())
+    cur = " ".join(tipr.split())
+    try:
+        cv = [float(x) for x in cold.split()]
+        tv = [float(x) for x in cur.split()[:4]]
+        still_cold = len(tv) >= 4 and all(
+            abs(a - b) <= max(1.0, 0.01 * abs(b)) for a, b in zip(tv, cv)
+        )
+    except ValueError:
+        still_cold = cur == cold
+    if still_cold:
+        return False
     return True
 
 
