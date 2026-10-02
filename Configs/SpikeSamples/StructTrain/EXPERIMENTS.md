@@ -88,7 +88,7 @@ T1–T5 → [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md); **вердикт �
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| EXP_br_span100_packA_gen_C1e9 | NNeuronTimeLearnerBranch | TipRMode=KeepDone | GoldTest | SoftCold FAIL (A_nonseparable) | — | — | — | **FAIL** | — | NonSeparable; tipr≈snapshot | [клон keep](SelectivityBranch/EXP_br_span100_packA_gen_C1e9_posttune_keep) · [`bundle`](_repro/runs/br100_keep_20260924T234016Z) |
+| EXP_br_span100_packA_gen_C1e9 | NNeuronTimeLearnerBranch | TipRMode=KeepDone | GoldTest | SoftCold FAIL (case=br100_keep, rc=1) | — | — | — | FAIL | — | NonSeparable; tipr≈snapshot | [клон keep](SelectivityBranch/EXP_br_span100_packA_gen_C1e9_posttune_keep) · [`bundle`](_repro/runs/br100_keep_20260924T234016Z) |
 | EXP_br_span100_packA_gen_C1e9 | NNeuronTimeLearnerBranch | TipRMode=SearchSynthetic | GoldTest | SoftCold FAIL | 0/8 | нет | — | **FAIL** | — | fires `00000000`; same_reverted | [клон search](SelectivityBranch/EXP_br_span100_packA_gen_C1e9_posttune_search) · [`bundle`](_repro/runs/br100_search_20260925T015547Z) |
 
 ### 1.4. packA preinh

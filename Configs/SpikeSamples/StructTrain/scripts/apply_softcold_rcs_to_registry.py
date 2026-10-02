@@ -108,6 +108,10 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
         return True
     if case == "br25_off" and ("posttune_off" in conf or "PostTuneTuning=0" in params):
         return True
+    if case == "br100_keep" and ("KeepDone" in params or "posttune_keep" in conf):
+        return True
+    if case == "br100_search" and ("SearchSynthetic" in params or "posttune_search" in conf):
+        return True
     if pass_ and "posttune" not in conf.lower() and "packA" in params:
         if case.startswith(("asym", "ltz", "fs")) and "/Train)" in conf:
             return True
