@@ -117,7 +117,7 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
             return True
         if case.startswith("br") and "EXP_br" in conf and "posttune" in conf:
             return "posttune" in conf and case.replace("_", "") in conf.replace("_", "")
-    # PhaseA / PSI / TimeNeuron: unique Имя → primary Selectivity* / TimeNeuron row
+    # PhaseA / PSI / TimeNeuron / FastSpan: unique Имя → primary Selectivity* row
     if case.startswith(("pa", "psi")) or case == "tn_classic":
         if any(
             p in conf
@@ -128,6 +128,8 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
             )
         ):
             return True
+    if case.startswith("fs") and "SelectivityFastSpan/" in conf:
+        return True
     return False
 
 
