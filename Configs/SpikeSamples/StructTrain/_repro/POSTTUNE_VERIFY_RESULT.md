@@ -1,20 +1,8 @@
 # PostTune verify result
 
-Generated: 2026-10-02T14:00:49Z
+Generated: 2026-10-02T14:19:47Z
 Console: `/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole`
 
 | case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | mid_source | tipr_vs_snapshot | search_reverted | metrics |
 |------|-------|------|------------|------|----------|----------|-------|------------|------------------|-----------------|---------|
-| br100_nextseg | exited_gate_FAIL_gate_rc=1 | 1 | flat | `86000000 86000000 86000000 86000000` | 1 | 0.014432775 | `` | missing | — | 0 | gate_rc=1 |
-
-**FAIL**: `br100_nextseg` — train_incomplete:exited_gate_FAIL_gate_rc=1.
-
-**FAIL**: `br100_nextseg` — Need=1.
-
-**FAIL**: `br100_nextseg` — fires_missing.
-
-**FAIL**: `br100_nextseg` — gate_fail.
-
-**FAIL**: `br100_nextseg` — tipr_class=flat expect=canon.
-
-**FAIL**: `br100_nextseg` — gate_rc=1.
+| br100_preinh | done | 0 | canon | `20000000 20000000 20000000 86000000` | 0.020306 | 0.0203054 | `10000000` | cpp | — | 0 | ok=1 n=8 acc=8 target_hit=1 fire_all=0 mode=selective fires=10000000 matches=111 |
