@@ -206,8 +206,8 @@ Acc — GoldTest на диске. Soft-cold в PHASE12 не воспроизвё
 
 | Имя | Алгоритм | Параметры | Working | LastCheck | Acc | Цель | Режим | HEAD | PHASE12 | Примечание | Конфиги |
 |-----|----------|-----------|---------|-----------|-----|------|-------|------|----------|------------|---------|
-| Phase6/EXP_480_gen_tiprmin | NNeuronTimeLearner | TipR@Rmin thr=0.016894 | GoldTest | GoldTest PASS | 7/8 | да | selective | **PASS** | ARTIFACT_KEEP | GoldTest 20260925T140316Z Console=4917a2bcbac318d1 fires=10000010; was: last-known GoldTest; 1 FA на фольге | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test/SelectivityLog/results.csv) |
-| Phase6/EXP_480_gen_tiprmin | NNeuronTimeLearner | TipRMode=CanonRmin | GoldTest | SoftCold FAIL (A_nonseparable) | — | — | — | **FAIL** | — | Need=1; Test NonSeparable mid=1 | [posttune-клон](SelectivityPhaseA/Phase6/EXP_480_gen_posttune) · [`bundle`](_repro/runs/phase6_480_20260924T234719Z) |
+| Phase6/EXP_480_gen_tiprmin | NNeuronTimeLearner | TipR@Rmin thr=0.016894 | GoldTest | SoftCold FAIL (case=phase6_480, rc=1) | 7/8 | да | selective | FAIL | ARTIFACT_KEEP | GoldTest 20260925T140316Z Console=4917a2bcbac318d1 fires=10000010; was: last-known GoldTest; 1 FA на фольге | [Train](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train) · [Test](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test) · [CSV](SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Test/SelectivityLog/results.csv) |
+| Phase6/EXP_480_gen_tiprmin | NNeuronTimeLearner | TipRMode=CanonRmin | GoldTest | SoftCold FAIL (case=phase6_480, rc=1) | — | — | — | FAIL | — | Need=1; Test NonSeparable mid=1 | [posttune-клон](SelectivityPhaseA/Phase6/EXP_480_gen_posttune) · [`bundle`](_repro/runs/phase6_480_20260924T234719Z) |
 
 ### 5.2. Прочие Phase6 tiprmin (на HEAD не перепрогонялись)
 
