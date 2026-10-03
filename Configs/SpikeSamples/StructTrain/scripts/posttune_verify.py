@@ -811,19 +811,32 @@ def flush_posttune_artifacts(train: Path) -> str:
 
 
 def _snap_tipr_live(train: Path, live: Path) -> None:
-    """Best-effort TipR/L snapshot from StatisticLog traces (AMPNORM diagnostics)."""
+    """Best-effort TipR/L + AmpNorm traces from StatisticLog (AMPNORM W0)."""
     stat_dir = _latest_stat_dir(train)
     tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
     lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
+    amp_dt = _last_trace_vector(stat_dir, "AmpDtTrace") if stat_dir else None
+    res_st = _last_trace_vector(stat_dir, "ResistanceStatusTrace") if stat_dir else None
+    no_imp = _last_trace_vector(stat_dir, "NoImproveResistanceTrace") if stat_dir else None
+    last_dt = _last_trace_vector(stat_dir, "LastAbsDtTrace") if stat_dir else None
     parts: list[str] = []
     if tipr:
         parts.append("tipr=" + " ".join(tipr[:4]))
     if lens:
         parts.append("L=" + " ".join(str(int(float(x))) for x in lens[:4]))
+    if amp_dt:
+        parts.append("amp_dt=" + " ".join(amp_dt[:4]))
+    if res_st:
+        parts.append("res_st=" + " ".join(res_st[:4]))
+    if no_imp:
+        parts.append("no_imp=" + " ".join(no_imp[:4]))
+    if last_dt:
+        parts.append("last_abs_dt=" + " ".join(last_dt[:4]))
     if parts:
         live.write_text("\n".join(parts) + "\n", encoding="utf-8")
         print(f"  SNAP {live.name}: {parts[0][:60]}")
-
+        for extra in parts[1:]:
+            print(f"        {extra[:100]}")
 
 def poll_params_snapshot(
     params: Path, *, prev_mtime: float | None = None
