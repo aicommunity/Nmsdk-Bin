@@ -42,12 +42,12 @@ CASE_TO_NAME = {
     "fs50_preinh": "EXP_span50ms_fast_preinh_C1e9",
     "fs100_gen": "EXP_span100ms_fast_C1e9",
     "fs100_preinh": "EXP_span100ms_fast_preinh_C1e9",
-    "ltz25_gen": "EXP_span25ms_packA_gen",
-    "ltz25_preinh": "EXP_span25ms_packA_preinh",
-    "ltz50_gen": "EXP_span50ms_packA_gen",
-    "ltz50_preinh": "EXP_span50ms_packA_preinh",
-    "ltz100_gen": "EXP_span100ms_packA_gen",
-    "ltz100_preinh": "EXP_span100ms_packA_preinh",
+    "ltz25_gen": "LtzCal/EXP_span25ms_packA_gen",
+    "ltz25_preinh": "LtzCal/EXP_span25ms_packA_preinh",
+    "ltz50_gen": "LtzCal/EXP_span50ms_packA_gen",
+    "ltz50_preinh": "LtzCal/EXP_span50ms_packA_preinh",
+    "ltz100_gen": "LtzCal/EXP_span100ms_packA_gen",
+    "ltz100_preinh": "LtzCal/EXP_span100ms_packA_preinh",
     "pa00_baseline": "EXP00_baseline",
     "pa01_ltz_sweep": "EXP01_ltz_threshold_sweep",
     "pa02_ltzone_avg": "EXP02_ltzone_average_mode",
@@ -129,6 +129,8 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
         ):
             return True
     if case.startswith("fs") and "SelectivityFastSpan/" in conf:
+        return True
+    if case.startswith("ltz") and "SelectivityLtzCalibrate/" in conf:
         return True
     return False
 
