@@ -132,6 +132,8 @@ def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> boo
         return True
     if case.startswith("ltz") and "SelectivityLtzCalibrate/" in conf:
         return True
+    if case.startswith("phase6") and "SelectivityPhaseA/Phase6/" in conf:
+        return True
     return False
 
 
