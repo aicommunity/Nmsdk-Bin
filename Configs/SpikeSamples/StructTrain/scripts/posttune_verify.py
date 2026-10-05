@@ -11,11 +11,13 @@ import csv
 import hashlib
 import json
 import math
+import os
 import re
 import shutil
 import subprocess
 import sys
 import time
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -91,6 +93,7 @@ CASES = {
         "span_ms": 25,
         "kind": "branch",
         "expect_tipr": "legacy",
+        "expect_fires": "10110000",
         "skip_tipr_mid": False,
     },
     "asym25": {
@@ -427,10 +430,15 @@ def tipr_vs_keep(tipr: str, keep_tipr: str, search_reverted: bool) -> str:
     return tipr_vs_snapshot(tipr, keep_tipr, search_reverted=search_reverted)
 
 
+def _run_uniq() -> str:
+    """PID+uuid suffix so parallel SoftCold workers never collide on same UTC second."""
+    return f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
+
+
 def make_run_dir(case: str, root: Path | None = None) -> Path:
     base = root if root is not None else RUNS_ROOT
     utc = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    d = base / f"{case}_{utc}"
+    d = base / f"{case}_{utc}_{_run_uniq()}"
     (d / "Train").mkdir(parents=True, exist_ok=True)
     (d / "Test").mkdir(parents=True, exist_ok=True)
     return d
@@ -475,7 +483,7 @@ def sha256_paths(paths: Sequence[Path | str]) -> dict[str, str | None]:
 def prepare_clean_case(case_name: str, archive_root: Path) -> Path:
     """Copy allowlisted inputs into a fresh workdir; archive flags/CSV stay out."""
     utc = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    work = RUNS_ROOT / f"{case_name}_{utc}_work"
+    work = RUNS_ROOT / f"{case_name}_{utc}_{_run_uniq()}_work"
     manifest: dict[str, Any] = {
         "case": case_name,
         "archive_root": str(archive_root),
@@ -1694,6 +1702,11 @@ def main() -> None:
             f"(model-seconds; default {DEFAULT_AUTOSAVE_MODEL_S}; 0=off)"
         ),
     )
+    ap.add_argument(
+        "--no-result-md",
+        action="store_true",
+        help="Skip writing POSTTUNE_VERIFY_RESULT.md (parallel SoftCold workers)",
+    )
     args = ap.parse_args()
     names = list(CASES) if args.case == "all" else [args.case]
     rows = [
@@ -1712,7 +1725,8 @@ def main() -> None:
         )
         for n in names
     ]
-    append_result(rows)
+    if not args.no_result_md:
+        append_result(rows)
     sys.exit(verdict_rows(rows))
 
 

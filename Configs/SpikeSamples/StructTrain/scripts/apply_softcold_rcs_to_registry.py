@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import re
 import sys
 from pathlib import Path
@@ -10,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "EXPERIMENTS.md"
 SUC = ROOT / "SUCCESSFUL_EXPERIMENTS.md"
+LOCK = ROOT / "_repro" / "registry_apply.lock"
 
 # case -> registry Имя (canonical EXP folder / alias)
 CASE_TO_NAME = {
@@ -178,27 +180,33 @@ def main() -> None:
     ap.add_argument("--rcs", type=Path, required=True)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
-    rows = parse_rcs(args.rcs)
-    exp = EXP.read_text(encoding="utf-8")
-    suc = SUC.read_text(encoding="utf-8") if SUC.exists() else ""
-    for case, rc in rows:
-        name = CASE_TO_NAME.get(case, case)
-        if rc == 0:
-            lc = f"SoftCold PASS (case={case})"
-            pass_ = True
-        else:
-            lc = f"SoftCold FAIL (case={case}, rc={rc})"
-            pass_ = False
-        print(f"{case} -> {name}: {lc}")
-        exp = patch_table(exp, name, lc, pass_=pass_, case=case)
-        if pass_ and suc:
-            suc = patch_table(suc, name, lc, pass_=True, case=case)
-    if args.dry_run:
-        return
-    EXP.write_text(exp, encoding="utf-8")
-    if suc:
-        SUC.write_text(suc, encoding="utf-8")
-    print("updated", EXP, SUC if suc else "")
+    LOCK.parent.mkdir(parents=True, exist_ok=True)
+    with LOCK.open("a+", encoding="utf-8") as lf:
+        fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+        try:
+            rows = parse_rcs(args.rcs)
+            exp = EXP.read_text(encoding="utf-8")
+            suc = SUC.read_text(encoding="utf-8") if SUC.exists() else ""
+            for case, rc in rows:
+                name = CASE_TO_NAME.get(case, case)
+                if rc == 0:
+                    lc = f"SoftCold PASS (case={case})"
+                    pass_ = True
+                else:
+                    lc = f"SoftCold FAIL (case={case}, rc={rc})"
+                    pass_ = False
+                print(f"{case} -> {name}: {lc}")
+                exp = patch_table(exp, name, lc, pass_=pass_, case=case)
+                if pass_ and suc:
+                    suc = patch_table(suc, name, lc, pass_=True, case=case)
+            if args.dry_run:
+                return
+            EXP.write_text(exp, encoding="utf-8")
+            if suc:
+                SUC.write_text(suc, encoding="utf-8")
+            print("updated", EXP, SUC if suc else "")
+        finally:
+            fcntl.flock(lf.fileno(), fcntl.LOCK_UN)
 
 
 if __name__ == "__main__":
