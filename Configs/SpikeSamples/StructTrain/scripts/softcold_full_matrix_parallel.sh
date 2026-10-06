@@ -88,6 +88,11 @@ fi
 
 # apply_softcold_rcs_to_registry.py already fcntl-locks $LOCK — do not wrap with
 # flock(1) on the same path (nested LOCK_EX on a second fd deadlocks for hours).
-python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" | tee -a "$LOG" || true
+# Selective / dry runs: SKIP_REGISTRY_APPLY=1 (no EXPERIMENTS.md mutate).
+if [[ "${SKIP_REGISTRY_APPLY:-0}" == "1" ]]; then
+  echo "SKIP_REGISTRY_APPLY=1 — RCS merge only, no EXPERIMENTS.md apply" | tee -a "$LOG"
+else
+  python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" | tee -a "$LOG" || true
+fi
 echo "SoftCold full matrix PARALLEL done $(date -u -Iseconds)" | tee -a "$LOG"
 echo "LOG=$LOG RCS=$RCS PARALLEL=$PARALLEL"
