@@ -86,6 +86,8 @@ if [[ "$missing" -ne 0 || "$nlines" -ne "$queue_n" ]]; then
   exit 2
 fi
 
-flock "$LOCK" python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" | tee -a "$LOG" || true
+# apply_softcold_rcs_to_registry.py already fcntl-locks $LOCK — do not wrap with
+# flock(1) on the same path (nested LOCK_EX on a second fd deadlocks for hours).
+python3 -u scripts/apply_softcold_rcs_to_registry.py --rcs "$RCS" | tee -a "$LOG" || true
 echo "SoftCold full matrix PARALLEL done $(date -u -Iseconds)" | tee -a "$LOG"
 echo "LOG=$LOG RCS=$RCS PARALLEL=$PARALLEL"
