@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "nmsdk_motor_hub_esp32_v1",
+  "title": "Nmsdk Motor Hub (ESP32)",
+  "tier": "C",
+  "transport": "custom",
+  "available": true,
+  "runtimeBaud": 115200,
+  "boards": ["esp32_devkit", "esp32_uno_formfactor"],
+  "compatibleShields": ["motor_shield_r3"],
+  "capabilities": ["dc_motor", "pwm"],
+  "hex": {},
+  "hostPlugin": "nmsdk_motor_hub_v1",
+  "protocolId": "nmsdk_motor_hub_v1",
+  "defaultPins": {
+    "dir": "12",
+    "pwm": "25",
+    "brake": "26",
+    "sense": "34",
+    "dir_b": "13",
+    "pwm_b": "27",
+    "brake_b": "14",
+    "sense_b": "35"
+  },
+  "flashNotes": "P0: flash via Arduino ESP32 / esptool; IDE esptool upload in NeuroModeler is P1",
+  "legacyManifestId": "nmsdk_motor_hub_esp32_v1"
+}

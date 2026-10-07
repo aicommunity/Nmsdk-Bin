@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "mpu_6050",
+  "title": "MPU-6050",
+  "category": "Датчики",
+  "chip": "InvenSense MPU-6050",
+  "platform": "both",
+  "interface": "I2C",
+  "supply": "3.3–5 V",
+  "descriptionRu": "6-осевой IMU: акселерометр + гироскоп.",
+  "aliases": [
+    "GY-521",
+    "MPU6050 module"
+  ],
+  "urls": {
+    "buy": "https://amperka.ru/product/troyka-accelerometer",
+    "datasheet": "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf",
+    "docs": "https://learn.adafruit.com/mpu6050-6-dof-accelerometer-and-gyro",
+    "image": "https://cdn-shop.adafruit.com/970x728/3886-05.jpg",
+    "wiring": "https://learn.adafruit.com/mpu6050-6-dof-accelerometer-and-gyro/arduino"
+  },
+  "notes": "Адрес 0x68/0x69. | P2: nmsdk_i2c_hub frame 0x31 (ax..gz).",
+  "runtime": "hub",
+  "signalType": "i2c",
+  "portKind": "i2c",
+  "roles": [
+    "sensor"
+  ],
+  "wires": [
+    "G",
+    "V",
+    "S"
+  ],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
+  "requiresMcuTiming": false,
+  "requiredCapabilities": [],
+  "asset": "",
+  "tierHint": "C"
+}
