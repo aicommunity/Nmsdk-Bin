@@ -820,7 +820,7 @@ def flush_posttune_artifacts(train: Path) -> str:
 
 
 def _snap_tipr_live(train: Path, live: Path) -> None:
-    """Best-effort TipR/L + AmpNorm traces from StatisticLog (AMPNORM W0)."""
+    """Best-effort TipR/L + AmpNorm traces from StatisticLog and/or Parameters (W0)."""
     stat_dir = _latest_stat_dir(train)
     tipr = _last_trace_vector(stat_dir, "TipSynapseResistanceTrace") if stat_dir else None
     lens = _last_trace_vector(stat_dir, "DendriteLengthTrace") if stat_dir else None
@@ -828,6 +828,21 @@ def _snap_tipr_live(train: Path, live: Path) -> None:
     res_st = _last_trace_vector(stat_dir, "ResistanceStatusTrace") if stat_dir else None
     no_imp = _last_trace_vector(stat_dir, "NoImproveResistanceTrace") if stat_dir else None
     last_dt = _last_trace_vector(stat_dir, "LastAbsDtTrace") if stat_dir else None
+    # Fallback / supplement from Parameters tags (UpdateNormTraces → XML)
+    params = train / "Parameters_00.xml"
+    snap = poll_params_snapshot(params) if params.exists() else {}
+    if not tipr and snap.get("tipr"):
+        tipr = snap["tipr"].replace(",", ".").split()
+    if not lens and snap.get("L"):
+        lens = snap["L"].replace(",", ".").split()
+    if not amp_dt and snap.get("amp_dt"):
+        amp_dt = snap["amp_dt"].replace(",", ".").split()
+    if not res_st and snap.get("res_st"):
+        res_st = snap["res_st"].replace(",", ".").split()
+    if not no_imp and snap.get("no_imp"):
+        no_imp = snap["no_imp"].replace(",", ".").split()
+    if not last_dt and snap.get("last_abs_dt"):
+        last_dt = snap["last_abs_dt"].replace(",", ".").split()
     parts: list[str] = []
     if tipr:
         parts.append("tipr=" + " ".join(tipr[:4]))
@@ -841,6 +856,10 @@ def _snap_tipr_live(train: Path, live: Path) -> None:
         parts.append("no_imp=" + " ".join(no_imp[:4]))
     if last_dt:
         parts.append("last_abs_dt=" + " ".join(last_dt[:4]))
+    if snap.get("need"):
+        parts.append(f"need={snap['need']}")
+    if snap.get("phase"):
+        parts.append(f"phase={snap['phase']}")
     if parts:
         live.write_text("\n".join(parts) + "\n", encoding="utf-8")
         print(f"  SNAP {live.name}: {parts[0][:60]}")
@@ -850,7 +869,7 @@ def _snap_tipr_live(train: Path, live: Path) -> None:
 def poll_params_snapshot(
     params: Path, *, prev_mtime: float | None = None
 ) -> dict[str, Any]:
-    """Read Need/TipR/L (+ mtime) from Parameters; detect autosave via mtime bump."""
+    """Read Need/TipR/L (+ AmpNorm traces / phase) from Parameters; autosave via mtime."""
     text = params.read_text(encoding="utf-8") if params.exists() else ""
     try:
         mtime = params.stat().st_mtime if params.exists() else 0.0
@@ -859,6 +878,11 @@ def poll_params_snapshot(
     tipr = " ".join((get_tag(text, "TipSynapseResistance") or "").split())
     length = " ".join((get_tag(text, "DendriteLength") or "").split())
     need = (get_tag(text, "IsNeedToTrain") or "").strip()
+    phase = (get_tag(text, "TrainingPhase") or "").strip()
+    amp_dt = " ".join((get_tag(text, "AmpDtTrace") or "").split())
+    res_st = " ".join((get_tag(text, "ResistanceStatusTrace") or "").split())
+    no_imp = " ".join((get_tag(text, "NoImproveResistanceTrace") or "").split())
+    last_dt = " ".join((get_tag(text, "LastAbsDtTrace") or "").split())
     autosave_seen = prev_mtime is not None and mtime > prev_mtime + 1e-6
     return {
         "need": need,
@@ -867,6 +891,11 @@ def poll_params_snapshot(
         "mtime": mtime,
         "autosave_seen": autosave_seen,
         "tipr_settled": tipr_looks_posttuned(tipr),
+        "phase": phase,
+        "amp_dt": amp_dt,
+        "res_st": res_st,
+        "no_imp": no_imp,
+        "last_abs_dt": last_dt,
     }
 
 

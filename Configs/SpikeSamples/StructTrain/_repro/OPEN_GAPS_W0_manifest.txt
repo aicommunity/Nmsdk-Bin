@@ -1,0 +1,24 @@
+# Open Gaps W0 diagnostic — SoftCold without D_algo_open fix
+# Baseline: Console SHA16=dde07ac687a12665 PulseLib=3cefd64
+# SKIP_REGISTRY_APPLY=1 PARALLEL<=4 --keep-slog --snap-every 20
+# D_algo_open DEFERRED: pa00_baseline phase6_thr_only phase6_480 tn_classic
+#
+# E — TipR@Rmin Need=1
+asym100_gen
+asym100_preinh
+ltz100_gen
+ltz25_gen
+fs50_preinh
+# B base — mid-band Need=1
+fs25_gen
+fs25_preinh
+# B Branch
+br25_preinh
+br480_tiprmin
+# Keep control (expect SoftCold PASS)
+asym50
+ltz50_gen
+# D_objective smoke (no C++ fix)
+psi01_050
+# N control — Train Done vs LandscapeOk
+br25_on
