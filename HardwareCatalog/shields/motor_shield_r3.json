@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "motor_shield_r3",
+  "title": "Arduino Motor Shield Rev3",
+  "compatibleBoards": [
+    "uno",
+    "mega2560"
+  ],
+  "formFactor": "shield",
+  "driverChip": "L298P",
+  "motors": "2× DC или 1× bipolar stepper; current sense",
+  "power": "до 2 A/канал (макс. 4 A суммарно); моторы 5–12 V",
+  "controlModel": "step_dir",
+  "defaultFirmware": "standard_firmata",
+  "layoutAsset": "assets/shields/motor_shield_r3_layout.svg",
+  "compatibleModules": [
+    "dc_motor_channel"
+  ],
+  "channels": {
+    "A": {
+      "dir": "D12",
+      "pwm": "D3",
+      "brake": "D9",
+      "sense": "A0"
+    },
+    "B": {
+      "dir": "D13",
+      "pwm": "D11",
+      "brake": "D8",
+      "sense": "A1"
+    }
+  },
+  "occupiesPins": [
+    "D3",
+    "D8",
+    "D9",
+    "D11",
+    "D12",
+    "D13",
+    "A0",
+    "A1"
+  ],
+  "ports": {},
+  "notes": "Официальный shield Arduino; 8 GPIO (DIR/PWM/BRAKE + sense). Datasheet: официальный PDF st.com/resource/.../l298.pdf с бокса недоступен (таймаут) — использовано зеркало ST CD00000240.pdf.",
+  "urls": {
+    "buy": "store.arduino.cc",
+    "datasheet": "L298 datasheet (ST, зеркало diptrace)",
+    "docs": "docs.arduino.cc"
+  }
+}
