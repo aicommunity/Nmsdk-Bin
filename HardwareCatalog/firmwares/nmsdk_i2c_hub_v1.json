@@ -1,18 +1,25 @@
 {
   "schemaVersion": 1,
   "id": "nmsdk_i2c_hub_v1",
-  "title": "Nmsdk I2C Hub (BME280)",
+  "title": "Nmsdk I2C Hub (BME280/VL53/MPU/INA/PCA)",
   "tier": "C",
   "transport": "custom",
   "available": true,
   "runtimeBaud": 57600,
   "boards": ["uno", "mega2560"],
-  "compatibleShields": [],
-  "capabilities": ["bme280", "i2c"],
+  "compatibleShields": ["pca9685_16_ch_pwm"],
+  "capabilities": [
+    "bme280",
+    "vl53l0x",
+    "mpu_6050",
+    "ina219",
+    "pca9685",
+    "i2c"
+  ],
   "hex": {},
   "hostPlugin": "nmsdk_i2c_hub_v1",
   "protocolId": "nmsdk_hub_i2c_v1",
   "defaultPins": { "sda": "A4", "scl": "A5" },
   "legacyManifestId": "nmsdk_i2c_hub_v1",
-  "notes": "P2 first I2C slice. Requires Adafruit BME280 libs at compile time."
+  "notes": "P2 I2C priority slice. Compile-time flags NMSDK_I2C_HUB_*; Adafruit libs required for enabled sensors."
 }

@@ -18,8 +18,8 @@
     "image": "https://cdn-shop.adafruit.com/970x728/815-05.jpg",
     "wiring": "https://learn.adafruit.com/16-channel-pwm-servo-driver/hooking-it-up"
   },
-  "notes": "Адрес 0x40+; каскад до 62 плат. | P2+: awaiting dedicated host (see Docs/Tier-CD-Modules.md)",
-  "runtime": "planned",
+  "notes": "Адрес 0x40+; каскад до 62 плат. | P2: SET PWM via nmsdk_i2c_hub; echo frame 0x33.",
+  "runtime": "hub",
   "signalType": "i2c",
   "portKind": "i2c",
   "roles": [
@@ -30,7 +30,9 @@
     "V",
     "S"
   ],
-  "preferredFirmware": [],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
   "requiresMcuTiming": false,
   "requiredCapabilities": [],
   "asset": "",
