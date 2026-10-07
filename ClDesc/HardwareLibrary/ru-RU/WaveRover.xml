@@ -1,0 +1,248 @@
+<ClassDescription>
+	<ClassName>WaveRover</ClassName>
+	<Header>WaveRover / Waveshare UGV JSON</Header>
+	<Description>UWaveRover: T:11 PWM JSON UART. Компонент `UWaveRover`: порт, профиль платы (Uno/Mega), подключение, health-check и прошивка.</Description>
+	<Properties>
+		<Connect>
+			<Header>Connect</Header>
+			<Description>Edge: открыть serial-порт (`EnsureConnected`).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Connect>
+
+		<Disconnect>
+			<Header>Disconnect</Header>
+			<Description>Edge: закрыть порт; `PortName` не очищается.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Disconnect>
+
+		<Reconnect>
+			<Header>Reconnect</Header>
+			<Description>Edge: close + open.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Reconnect>
+
+		<UploadFirmware>
+			<Header>Upload firmware</Header>
+			<Description>Edge: прошивка HEX (avrdude).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</UploadFirmware>
+
+		<ClearLastError>
+			<Header>Clear last error</Header>
+			<Description>Edge: очистить `LastError`.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ClearLastError>
+
+		<IsConnected>
+			<Header>Is connected</Header>
+			<Description>State: `ConnectionState==Connected`.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsConnected>
+
+		<IsOpening>
+			<Header>Is opening</Header>
+			<Description>State: открытие порта.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsOpening>
+
+		<HasError>
+			<Header>Has error</Header>
+			<Description>State: ошибка подключения/upload.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</HasError>
+
+		<IsDisconnected>
+			<Header>Is disconnected</Header>
+			<Description>State: порт закрыт.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsDisconnected>
+
+		<IsUploading>
+			<Header>Is uploading</Header>
+			<Description>State: прошивка в процессе.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsUploading>
+
+		<UploadComplete>
+			<Header>Upload complete</Header>
+			<Description>State: `UploadLastResult==ok`.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</UploadComplete>
+
+		<PortName>
+			<Header>Port name</Header>
+			<Description>Путь к serial (`/dev/ttyACM0`, `COM3`).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PortName>
+
+		<BaudRate>
+			<Header>Baud rate</Header>
+			<Description>Скорость serial (по умолчанию 57600).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BaudRate>
+
+		<BoardProfile>
+			<Header>Board profile</Header>
+			<Description>0=Uno, 1=Mega 2560.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BoardProfile>
+
+		<ConnectOnBuild>
+			<Header>Connect on build</Header>
+			<Description>Автоподключение при `ABuild`, если `PortName` задан.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ConnectOnBuild>
+
+		<BundledFirmwareId>
+			<Header>Bundled firmware</Header>
+			<Description>ID из manifest (`sensor_lab_v1`, `standard_firmata`).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BundledFirmwareId>
+
+		<LastError>
+			<Header>Last error</Header>
+			<Description>State: текст последней ошибки порта/upload.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastError>
+	</Properties>
+			<Favorites>
+		<PortName>
+			<Path>{CompName}:PortName</Path>
+		</PortName>
+		<BaudRate>
+			<Path>{CompName}:BaudRate</Path>
+		</BaudRate>
+		<BoardProfile>
+			<Path>{CompName}:BoardProfile</Path>
+		</BoardProfile>
+		<ConnectOnBuild>
+			<Path>{CompName}:ConnectOnBuild</Path>
+		</ConnectOnBuild>
+		<BundledFirmwareId>
+			<Path>{CompName}:BundledFirmwareId</Path>
+		</BundledFirmwareId>
+		<Connect>
+			<Path>{CompName}:Connect</Path>
+		</Connect>
+		<Disconnect>
+			<Path>{CompName}:Disconnect</Path>
+		</Disconnect>
+		<Reconnect>
+			<Path>{CompName}:Reconnect</Path>
+		</Reconnect>
+		<UploadFirmware>
+			<Path>{CompName}:UploadFirmware</Path>
+		</UploadFirmware>
+		<IsConnected>
+			<Path>{CompName}:IsConnected</Path>
+		</IsConnected>
+		<HasError>
+			<Path>{CompName}:HasError</Path>
+		</HasError>
+		<LastError>
+			<Path>{CompName}:LastError</Path>
+		</LastError>
+	</Favorites>
+</ClassDescription>

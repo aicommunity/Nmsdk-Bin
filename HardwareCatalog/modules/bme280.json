@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "bme280",
+  "title": "BME280",
+  "category": "Датчики",
+  "chip": "Bosch BME280",
+  "platform": "both",
+  "interface": "I2C / SPI",
+  "supply": "3.3 V (модули 3.3–5 V)",
+  "descriptionRu": "Температура, влажность и давление; стандарт для метеостанций.",
+  "aliases": [
+    "GY-BME280",
+    "CJMCU-280"
+  ],
+  "urls": {
+    "buy": "https://amperka.ru/collection/sensors",
+    "datasheet": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf",
+    "docs": "https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout",
+    "image": "https://cdn-shop.adafruit.com/970x728/2652-04.jpg",
+    "wiring": "https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test"
+  },
+  "notes": "I2C 0x76/0x77. Не путать с BMP280. | P2: nmsdk_i2c_hub frame 0x01.",
+  "runtime": "hub",
+  "signalType": "i2c",
+  "portKind": "i2c",
+  "roles": [
+    "sensor"
+  ],
+  "wires": [
+    "G",
+    "V",
+    "S"
+  ],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
+  "requiresMcuTiming": false,
+  "requiredCapabilities": [],
+  "asset": "",
+  "tierHint": "C"
+}

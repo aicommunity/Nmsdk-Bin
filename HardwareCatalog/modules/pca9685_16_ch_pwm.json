@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "pca9685_16_ch_pwm",
+  "title": "PCA9685 16-ch PWM",
+  "category": "Шилды / расширения",
+  "chip": "NXP PCA9685",
+  "platform": "both",
+  "interface": "I2C",
+  "supply": "3.3–5 V; V+ серво до 6 V",
+  "descriptionRu": "16-канальный ШИМ для серво и LED.",
+  "aliases": [
+    "Adafruit 16-Channel Servo Driver"
+  ],
+  "urls": {
+    "buy": "https://amperka.ru/product/arduino-multiservo-shield",
+    "datasheet": "https://cdn-learn.adafruit.com/downloads/pdf/16-channel-pwm-servo-driver.pdf",
+    "docs": "https://learn.adafruit.com/16-channel-pwm-servo-driver",
+    "image": "https://cdn-shop.adafruit.com/970x728/815-05.jpg",
+    "wiring": "https://learn.adafruit.com/16-channel-pwm-servo-driver/hooking-it-up"
+  },
+  "notes": "Адрес 0x40+; каскад до 62 плат. | P2: SET PWM via nmsdk_i2c_hub; echo frame 0x33.",
+  "runtime": "hub",
+  "signalType": "i2c",
+  "portKind": "i2c",
+  "roles": [
+    "shield"
+  ],
+  "wires": [
+    "G",
+    "V",
+    "S"
+  ],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
+  "requiresMcuTiming": false,
+  "requiredCapabilities": [],
+  "asset": "",
+  "formFactor": "shield",
+  "tierHint": "C"
+}
