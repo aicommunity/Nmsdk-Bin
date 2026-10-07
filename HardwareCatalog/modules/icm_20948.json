@@ -18,8 +18,8 @@
     "image": "https://cdn-shop.adafruit.com/970x728/4554-09.jpg",
     "wiring": "https://learn.adafruit.com/adafruit-tdk-invensense-icm-20948-9-dof-imu/arduino"
   },
-  "notes": "Datasheet: Adafruit learn (TDK PDF часто блокируется). | P2+: awaiting dedicated host (see Docs/Tier-CD-Modules.md) | P2: still planned; use mpu_6050 on nmsdk_i2c_hub for priority IMU.",
-  "runtime": "planned",
+  "notes": "Datasheet: Adafruit learn (TDK PDF часто блокируется). | P2: still planned; use mpu_6050 on nmsdk_i2c_hub for priority IMU. | P2+: nmsdk_i2c_hub frames 0x34/0x35/0x36.",
+  "runtime": "hub",
   "signalType": "i2c",
   "portKind": "i2c",
   "roles": [
@@ -30,7 +30,9 @@
     "V",
     "S"
   ],
-  "preferredFirmware": [],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
   "requiresMcuTiming": false,
   "requiredCapabilities": [],
   "asset": "",
