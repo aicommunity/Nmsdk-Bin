@@ -1,0 +1,74 @@
+# SoftCold W3d — full matrix plan (DO NOT RUN until P1+P2 green)
+# Generated 2026-10-06 after W3d C++ (Rmax-overshoot escape without length_settled).
+# Launch later via softcold_full_matrix_parallel.sh + this manifest; SKIP_REGISTRY until green.
+#
+# Legend (tag after #):
+#   must_pass   — ворота registry / волна W3d
+#   expect_fail — control; LandscapeOk/протоколы не ослаблять
+#   protocol    — Keep/Search/nextseg; не CanonRmin cold path
+#   d_anchor    — корзина D (audit §4.1); цель W3d
+
+# --- D-core anchors (P1; must_pass after W3d) ---
+pa00_baseline          # must_pass d_anchor
+phase6_thr_only        # must_pass d_anchor
+phase6_480             # must_pass d_anchor
+tn_classic             # must_pass d_anchor
+psi01_050              # must_pass d_anchor
+
+# --- Keep / rematrix green (P2; must_pass) ---
+asym50                 # must_pass
+ltz50_gen              # must_pass
+br50_gen               # must_pass
+fs25_gen               # must_pass
+br25_off               # must_pass SoftColdOff
+asym50_preinh          # must_pass
+asym25_preinh          # must_pass
+br50_preinh            # must_pass branch twin (P3)
+fs25_preinh            # must_pass rematrix
+
+# --- Neighboring D from audit §4.1 (include; must_pass if P1 green) ---
+pa01_ltz_sweep         # must_pass d_anchor
+pa02_ltzone_avg        # must_pass d_anchor
+pa06_ltzone_int        # must_pass d_anchor
+psi14_260              # must_pass d_anchor
+psi15_270              # must_pass d_anchor
+psi21_100              # must_pass d_anchor
+psi31_200              # must_pass d_anchor
+psi32_300              # must_pass d_anchor
+psi33_300              # must_pass d_anchor
+psi34_400              # must_pass d_anchor
+psi35_400              # must_pass d_anchor
+phase6_ltzcal_twin     # must_pass d_anchor
+phase6_preinh250       # must_pass d_anchor
+br480_preinh           # must_pass d_anchor
+ltz100_preinh          # must_pass d_anchor
+ltz50_preinh           # must_pass d_anchor
+ltz25_preinh           # must_pass d_anchor
+
+# --- Other SoftCold queue (include; classify after run) ---
+br25_preinh            # mid-band B — include
+br100_preinh           # include
+br25_nextseg           # include
+br480_nextseg          # include
+br480_tiprmin          # include
+fs100_gen              # include
+fs100_preinh           # include
+asym100_gen            # include E_gate candidate
+asym100_preinh         # include
+ltz100_gen             # include E_gate candidate
+ltz25_gen              # include
+
+# --- expect_fail / protocol (in matrix as control; NOT must-green) ---
+br25_on                # expect_fail NonSeparable mid (N)
+fs50_preinh            # expect_fail C/E overlap — Landscape/metrics
+asym25                 # expect_fail flat TipR (A)
+br50_nextseg           # protocol flat nextseg (A)
+br100_nextseg          # protocol flat nextseg (A)
+br100_keep             # protocol Keep (G)
+br100_search           # protocol Search (G)
+
+# Deferred launch checklist:
+# 1) P1 ≥4/5 D PASS and P2 keep 7/7 PASS
+# 2) RCS backup of registry HEAD
+# 3) PARALLEL=6 STALL_AUTOSAVE_N=8 SKIP_REGISTRY_APPLY=0 only once green selective
+# 4) audit rebucket + gitlinks on request

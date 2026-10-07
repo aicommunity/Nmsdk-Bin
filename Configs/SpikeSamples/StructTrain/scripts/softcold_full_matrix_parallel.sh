@@ -13,6 +13,7 @@ RCS_DIR="${RCS_DIR:-$ROOT/_repro/rcs.d}"
 LOCK="${LOCK:-$ROOT/_repro/registry_apply.lock}"
 AUTOSAVE_S="${AUTOSAVE_MODEL_S:-10}"
 SNAP_EVERY="${SNAP_EVERY:-20}"
+STALL_N="${STALL_AUTOSAVE_N:-8}"
 PARALLEL="${PARALLEL:-6}"
 NM="${NM:-/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole}"
 
@@ -35,7 +36,7 @@ fi
 {
   echo "SoftCold full matrix PARALLEL start $(date -u -Iseconds)"
   echo "SHA=$(sha256sum "$NM")"
-  echo "autosave_model_s=$AUTOSAVE_S snap_every=$SNAP_EVERY PARALLEL=$PARALLEL queue_n=$queue_n avail_gib=${avail_gib:-?}"
+  echo "autosave_model_s=$AUTOSAVE_S snap_every=$SNAP_EVERY stall_autosave_n=$STALL_N PARALLEL=$PARALLEL queue_n=$queue_n avail_gib=${avail_gib:-?}"
 } | tee -a "$LOG"
 
 run_one() {
@@ -47,6 +48,7 @@ run_one() {
     --case "$case" \
     --autosave-model-s "$AUTOSAVE_S" \
     --snap-every "$SNAP_EVERY" \
+    --stall-autosave-n "$STALL_N" \
     --no-result-md >>"$LOG" 2>&1
   rc=$?
   set -e
@@ -62,7 +64,7 @@ run_one() {
   fi
 }
 export -f run_one
-export ROOT LOG RCS_DIR AUTOSAVE_S SNAP_EVERY
+export ROOT LOG RCS_DIR AUTOSAVE_S SNAP_EVERY STALL_N
 export PATH
 
 # GNU parallel via xargs -P (one case per worker)

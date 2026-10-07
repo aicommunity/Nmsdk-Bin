@@ -17,8 +17,8 @@ ESTDELAY_BLOCK = (
 )
 
 TARGETS = [
-    ROOT
-    / "SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train",
+    ROOT / "SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin/Train",
+    ROOT / "SelectivityPhaseA/Phase6/EXP_480_gen_posttune/Train",
     ROOT / "TimeNeuronTimeLearner/Train",
 ]
 

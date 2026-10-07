@@ -101,6 +101,66 @@ def set_tag_all(text: str, tag: str, value: str) -> str:
     return set_tag(text, tag, value, 0)
 
 
+def insert_or_set_estdelay(text: str, value: str) -> str:
+    """Set EstDelayPerSeg everywhere, or insert after DendriteLength/ResistanceMax."""
+    block = (
+        f'<EstDelayPerSeg Type="d" PType="257" IoType="17">{value}</EstDelayPerSeg>'
+    )
+    if re.search(r"<EstDelayPerSeg\b", text):
+        return set_tag_all(text, "EstDelayPerSeg", value)
+    if re.search(r"</DendriteLength>", text):
+        return re.sub(r"(</DendriteLength>)", rf"\1\n\t\t\t\t\t{block}", text, count=1)
+    if re.search(r"</ResistanceMax>", text):
+        return re.sub(r"(</ResistanceMax>)", rf"\1\n\t\t\t\t\t{block}", text, count=1)
+    raise ValueError("no insertion anchor for EstDelayPerSeg")
+
+
+def sync_estdelay_from_gold(work_train: Path, gold_train: Path | None) -> str | None:
+    """Copy EstDelayPerSeg from gold Train into work when work lacks a usable tag.
+
+    SoftCold-source archives without the tag load C++ default 0.005 and NM -S
+    persists that. Gold (e.g. tiprmin) may already have the cable-correct value.
+    Does not overwrite a positive EstDelay already present in work.
+    """
+    if gold_train is None:
+        return None
+    gold_params = gold_train / "Parameters_00.xml"
+    if not gold_params.is_file():
+        return None
+    gold_val = get_tag(gold_params.read_text(encoding="utf-8"), "EstDelayPerSeg")
+    if not gold_val:
+        return None
+    try:
+        gv = float(gold_val.replace(",", "."))
+    except ValueError:
+        return None
+    if gv <= 0.0:
+        return None
+
+    applied: list[str] = []
+    for rel in ("Parameters_00.xml", "Model_00.xml"):
+        path = work_train / rel
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        cur = get_tag(text, "EstDelayPerSeg")
+        if cur:
+            try:
+                cv = float(cur.replace(",", "."))
+            except ValueError:
+                cv = 0.0
+            if cv > 0.0:
+                continue  # keep existing positive EstDelay
+        new = insert_or_set_estdelay(text, gold_val)
+        if new != text:
+            path.write_text(new, encoding="utf-8")
+            applied.append(rel)
+    if applied:
+        print(f"  EstDelay sync from gold={gold_val} → {', '.join(applied)}")
+        return gold_val
+    return None
+
+
 # SoftCold default: periodic Console SaveProject every N model-seconds (0 = off).
 DEFAULT_AUTOSAVE_MODEL_S = 10
 

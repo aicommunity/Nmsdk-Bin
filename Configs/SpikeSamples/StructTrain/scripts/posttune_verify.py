@@ -217,13 +217,13 @@ CASES.update(
         "ltz100_gen": _case(LTZ / "EXP_span100ms_packA_gen", train_t=640, span_ms=100, kind="asym"),
         "ltz100_preinh": _case(LTZ / "EXP_span100ms_packA_preinh", train_t=640, span_ms=100, kind="asym"),
         # --- C2 PhaseA / TN ---
-        "pa00_baseline": _case(PA / "EXP00_baseline", train_t=160, span_ms=25, kind="asym"),
+        "pa00_baseline": _case(PA / "EXP00_baseline", train_t=640, span_ms=25, kind="asym"),
         "pa01_ltz_sweep": _case(PA / "EXP01_ltz_threshold_sweep", train_t=160, span_ms=25, kind="asym"),
         "pa02_ltzone_avg": _case(PA / "EXP02_ltzone_average_mode", train_t=160, span_ms=25, kind="asym"),
         "pa06_ltzone_int": _case(PA / "EXP06_ltzone_integration", train_t=160, span_ms=25, kind="asym"),
-        "tn_classic": _case(ROOT / "TimeNeuronTimeLearner", train_t=160, span_ms=25, kind="asym"),
+        "tn_classic": _case(ROOT / "TimeNeuronTimeLearner", train_t=640, span_ms=25, kind="asym"),
         # --- C2 PSI (sample of 9) ---
-        "psi01_050": _case(PSI / "EXP01_preinh_050", train_t=160, span_ms=25, kind="asym"),
+        "psi01_050": _case(PSI / "EXP01_preinh_050", train_t=640, span_ms=25, kind="asym"),
         "psi14_260": _case(PSI / "EXP14_preinh_260", train_t=160, span_ms=25, kind="asym"),
         "psi15_270": _case(PSI / "EXP15_preinh_270", train_t=160, span_ms=25, kind="asym"),
         "psi21_100": _case(PSI / "EXP21_span100ms_preinh250", train_t=640, span_ms=100, kind="asym"),
@@ -635,6 +635,7 @@ def accept_run(
             "exited",
             "incomplete",
             "abort",
+            "abort_tipr_rmax_stall",
             "incomplete_flag_need1",
         ) or (
             "FAIL" in status
@@ -869,6 +870,67 @@ def poll_params_snapshot(
     }
 
 
+DEFAULT_STALL_AUTOSAVE_N = 8
+
+
+def parse_float_vec(s: str) -> list[float] | None:
+    """Parse space-separated floats; commas as decimal sep."""
+    parts = (s or "").replace(",", ".").split()
+    if not parts:
+        return None
+    try:
+        return [float(x) for x in parts]
+    except ValueError:
+        return None
+
+
+def tipr_any_at_rmax(tipr: str, rmax: float, *, frac: float = 0.99) -> bool:
+    """True if any TipR component is at/above frac*ResistanceMax."""
+    if rmax <= 0.0:
+        return False
+    vec = parse_float_vec(tipr)
+    if not vec:
+        return False
+    thr = frac * rmax
+    return any(v >= thr for v in vec)
+
+
+def length_vecs_equal(a: str, b: str) -> bool:
+    """True when DendriteLength vectors match (int-tolerant)."""
+    va = parse_float_vec(a)
+    vb = parse_float_vec(b)
+    if va is None or vb is None or len(va) != len(vb):
+        return False
+    return all(abs(x - y) < 0.5 for x, y in zip(va, vb))
+
+
+def rmax_stall_tick(
+    *,
+    tipr: str,
+    length: str,
+    need: str,
+    rmax: float,
+    prev_L: str | None,
+    prev_tipr: str | None,
+    streak: int,
+) -> tuple[int, str | None, str | None]:
+    """Update TipR@Rmax stall streak; return (streak, new_prev_L, new_prev_tipr).
+
+    Require TipR@Rmax, Need!=0, and *both* L and TipR vectors unchanged vs the
+    previous autosave. If TipR starts leaving Rmax (escape in progress), reset.
+    """
+    if need == "0" or not tipr_any_at_rmax(tipr, rmax):
+        return 0, length, tipr
+    if (
+        prev_L is not None
+        and prev_tipr is not None
+        and length_vecs_equal(length, prev_L)
+        and " ".join(tipr.split()) == " ".join(prev_tipr.split())
+    ):
+        return streak + 1, length, tipr
+    return 1, length, tipr
+
+
 def softcold_early_done(
     snap: dict[str, Any], *, flag_hit: bool, require_settled: bool = True
 ) -> bool:
@@ -912,6 +974,7 @@ def wait_need0(
     snap_every: int = 0,
     slog_abort_gib: float = 3.0,
     early_stop_autosave: bool = True,
+    stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
 ) -> tuple[str, int | None]:
     ini = train / "Project.ini"
     assert_disk_for_train()
@@ -926,14 +989,28 @@ def wait_need0(
         live.unlink()
     params = train / "Parameters_00.xml"
     prev_mtime = params.stat().st_mtime if params.exists() else 0.0
+    rmax = 0.0
+    if params.exists():
+        try:
+            rmax = float(
+                (get_tag(params.read_text(encoding="utf-8"), "ResistanceMax") or "0")
+                .replace(",", ".")
+            )
+        except ValueError:
+            rmax = 0.0
     cmd = [str(NM), "-c", str(ini), "-s", "-t", str(tlim), "-x", "-S"]
     print(
         f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G "
         f"polls={max_polls} no_prune={int(no_prune)} snap_every={snap_every} "
-        f"slog_abort={slog_abort_gib:g}G early_stop_autosave={int(early_stop_autosave)}"
+        f"slog_abort={slog_abort_gib:g}G early_stop_autosave={int(early_stop_autosave)} "
+        f"stall_autosave_n={stall_autosave_n} rmax={rmax:g}"
     )
     proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
     need0 = False
+    stall_status: str | None = None
+    stall_streak = 0
+    stall_prev_L: str | None = None
+    stall_prev_tipr: str | None = None
     for i in range(1, max_polls + 1):
         time.sleep(30)
         if proc.poll() is not None:
@@ -945,6 +1022,29 @@ def wait_need0(
                 f"Need={snap['need']} TipR={snap['tipr'][:48]} L={snap['L']}"
             )
             prev_mtime = snap["mtime"]
+            if stall_autosave_n > 0 and rmax > 0.0:
+                stall_streak, stall_prev_L, stall_prev_tipr = rmax_stall_tick(
+                    tipr=snap["tipr"],
+                    length=snap["L"],
+                    need=snap["need"] or "",
+                    rmax=rmax,
+                    prev_L=stall_prev_L,
+                    prev_tipr=stall_prev_tipr,
+                    streak=stall_streak,
+                )
+                if stall_streak >= stall_autosave_n:
+                    print(
+                        f"  ABORT TipR@Rmax stall: {stall_streak} autosaves "
+                        f"TipR+L unchanged Need={snap['need']} TipR={snap['tipr'][:48]} "
+                        f"L={snap['L']} — terminate NM"
+                    )
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=60)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                    stall_status = "abort_tipr_rmax_stall"
+                    break
         need = snap["need"]
         flag_hit = flag.exists()
         slog_bytes = 0
@@ -960,6 +1060,7 @@ def wait_need0(
             f"  poll#{i} Need={need} flag={int(flag_hit)} "
             f"tipr_settled={int(snap['tipr_settled'])} "
             f"slog={slog_gib:.2f}G et~{i * 30}s"
+            + (f" rmax_stall={stall_streak}" if stall_streak else "")
         )
         if snap_every > 0 and i % snap_every == 0:
             _snap_tipr_live(train, live)
@@ -1042,7 +1143,9 @@ def wait_need0(
         elif flag.exists() or need_now == "0":
             params_source = "nm_save"
     need = get_tag((train / "Parameters_00.xml").read_text(encoding="utf-8"), "IsNeedToTrain")
-    if need == "0" and params_source == "flag_flush":
+    if stall_status:
+        status = stall_status
+    elif need == "0" and params_source == "flag_flush":
         status = "done_flag_flush"
     elif need == "0":
         status = "done"
@@ -1217,6 +1320,7 @@ def run_case(
     slog_abort_gib: float | None = None,
     keep_slog: bool = False,
     autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S,
+    stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
 ) -> dict:
     case = dict(CASES[name])
     if train_t is not None:
@@ -1262,7 +1366,11 @@ def run_case(
     polls_used: int | None = None
     if not skip_train:
         soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
-        from repro_cold_lib import ensure_tag_after
+        from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
+
+        gold_train = case.get("gold")
+        if gold_train is not None:
+            sync_estdelay_from_gold(train, Path(gold_train) / "Train")
 
         enable = "0" if name == "br25_off" else "1"
         for rel in ("Parameters_00.xml", "Model_00.xml"):
@@ -1334,6 +1442,7 @@ def run_case(
             snap_every=snap_every,
             slog_abort_gib=abort_gib,
             early_stop_autosave=autosave_model_s > 0,
+            stall_autosave_n=stall_autosave_n,
         )
         if allow_salvage:
             params_source = flush_posttune_artifacts(train)
@@ -1703,6 +1812,15 @@ def main() -> None:
         ),
     )
     ap.add_argument(
+        "--stall-autosave-n",
+        type=int,
+        default=DEFAULT_STALL_AUTOSAVE_N,
+        help=(
+            "Abort Train after N consecutive autosaves with TipR@ResistanceMax "
+            f"and unchanged L while Need!=0 (default {DEFAULT_STALL_AUTOSAVE_N}; 0=off)"
+        ),
+    )
+    ap.add_argument(
         "--no-result-md",
         action="store_true",
         help="Skip writing POSTTUNE_VERIFY_RESULT.md (parallel SoftCold workers)",
@@ -1722,6 +1840,7 @@ def main() -> None:
             slog_abort_gib=args.slog_abort_gib,
             keep_slog=args.keep_slog,
             autosave_model_s=args.autosave_model_s,
+            stall_autosave_n=args.stall_autosave_n,
         )
         for n in names
     ]

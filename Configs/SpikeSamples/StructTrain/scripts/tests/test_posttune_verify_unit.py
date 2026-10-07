@@ -356,6 +356,96 @@ class TestFailureClass(unittest.TestCase):
         self.assertEqual(pv.classify_failure_class(reasons, row), "train_incomplete")
 
 
+class TestRmaxStallTick(unittest.TestCase):
+    def test_streak_grows_when_tipr_at_rmax_and_L_frozen(self):
+        rmax = 1e11
+        tipr = "100000000000 100000000000 5e7 8.6e7"
+        L = "49 41 25 1"
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr, length=L, need="1", rmax=rmax,
+            prev_L=None, prev_tipr=None, streak=0,
+        )
+        self.assertEqual(streak, 1)
+        self.assertEqual(prev_L, L)
+        for expect in range(2, 9):
+            streak, prev_L, prev_t = pv.rmax_stall_tick(
+                tipr=tipr, length=L, need="1", rmax=rmax,
+                prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+            )
+            self.assertEqual(streak, expect)
+
+    def test_streak_resets_when_L_grows(self):
+        rmax = 1e11
+        tipr = "1e11 1e11 5e7 8.6e7"
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr, length="49 41 25 1", need="1", rmax=rmax,
+            prev_L=None, prev_tipr=None, streak=0,
+        )
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr, length="49 41 25 1", need="1", rmax=rmax,
+            prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+        )
+        self.assertEqual(streak, 2)
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr, length="50 41 25 1", need="1", rmax=rmax,
+            prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+        )
+        self.assertEqual(streak, 1)
+        self.assertEqual(prev_L, "50 41 25 1")
+
+    def test_streak_resets_when_tipr_moves_off_rmax(self):
+        """Escape in progress: TipR leaves Rmax on one dend — do not abort."""
+        rmax = 1e11
+        L = "97 51 25 1"
+        tipr_hi = "100000000000 100000000000 5e7 8.6e7"
+        tipr_esc = "2740486816 100000000000 5e7 8.6e7"
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr_hi, length=L, need="1", rmax=rmax,
+            prev_L=None, prev_tipr=None, streak=0,
+        )
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr_hi, length=L, need="1", rmax=rmax,
+            prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+        )
+        self.assertEqual(streak, 2)
+        streak, _, _ = pv.rmax_stall_tick(
+            tipr=tipr_esc, length=L, need="1", rmax=rmax,
+            prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+        )
+        self.assertEqual(streak, 1)
+
+    def test_streak_resets_when_need0_or_tipr_leaves_rmax(self):
+        rmax = 1e11
+        tipr_hi = "1e11 1e11 5e7 8.6e7"
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr_hi, length="49 41 25 1", need="1", rmax=rmax,
+            prev_L=None, prev_tipr=None, streak=0,
+        )
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr_hi, length="49 41 25 1", need="0", rmax=rmax,
+            prev_L=prev_L, prev_tipr=prev_t, streak=streak,
+        )
+        self.assertEqual(streak, 0)
+        streak, prev_L, prev_t = pv.rmax_stall_tick(
+            tipr=tipr_hi, length="49 41 25 1", need="1", rmax=rmax,
+            prev_L=None, prev_tipr=None, streak=0,
+        )
+        streak, _, _ = pv.rmax_stall_tick(
+            tipr="2e7 2e7 2e7 8.6e7",
+            length="49 41 25 1",
+            need="1",
+            rmax=rmax,
+            prev_L=prev_L,
+            prev_tipr=prev_t,
+            streak=streak,
+        )
+        self.assertEqual(streak, 0)
+
+    def test_tipr_any_at_rmax(self):
+        self.assertTrue(pv.tipr_any_at_rmax("1e11 1 1 1", 1e11))
+        self.assertFalse(pv.tipr_any_at_rmax("2e7 2e7 2e7 8.6e7", 1e11))
+
+
 class TestAutosavePoll(unittest.TestCase):
     def test_poll_params_detects_mtime_bump(self):
         with tempfile.TemporaryDirectory() as td:
