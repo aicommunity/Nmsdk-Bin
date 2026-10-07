@@ -19,8 +19,8 @@
     "image": "https://cdn-shop.adafruit.com/970x728/2652-04.jpg",
     "wiring": "https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/arduino-test"
   },
-  "notes": "I2C 0x76/0x77. Не путать с BMP280. | P2+: awaiting dedicated host (see Docs/Tier-CD-Modules.md)",
-  "runtime": "planned",
+  "notes": "I2C 0x76/0x77. Не путать с BMP280. | P2: nmsdk_i2c_hub_v1 (BME280).",
+  "runtime": "hub",
   "signalType": "i2c",
   "portKind": "i2c",
   "roles": [
@@ -31,7 +31,9 @@
     "V",
     "S"
   ],
-  "preferredFirmware": [],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
   "requiresMcuTiming": false,
   "requiredCapabilities": [],
   "asset": "",

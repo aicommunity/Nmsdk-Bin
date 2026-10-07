@@ -16,7 +16,8 @@
 | [10-WaveRover](10-WaveRover/) | `WaveRover` | stock Waveshare JSON | ESP32 |
 | [11-Esp32WheeledRobot](11-Esp32WheeledRobot/) | `Esp32WheeledRobot` | nmsdk_motor_hub_esp32_v1 | ESP32 |
 | [12-Esp32Board](12-Esp32Board/) | `Esp32Board` | — (Connect-only) | ESP32 |
-| [13-DeviceIO-Joystick](13-DeviceIO-Joystick/) | `ArduinoDeviceIO` | firmata/hub | Uno (0) |
+| [13-DeviceIO-Joystick](13-DeviceIO-Joystick/) | `ArduinoDeviceIO` | firmata | Uno (0) |
+| [14-SensorHub](14-SensorHub/) | `ArduinoCustomFirmware` | nmsdk_sensor_hub_v1 | Uno (0) |
 
 **BoardProfile:** 0 = Uno, 1 = Mega 2560. Перед Upload на Mega выберите профиль 1 или авто-детект в GUI.
 
@@ -24,3 +25,4 @@
 
 Генерация: `Scripts/generate_arduino_hardware_configs.py`  
 Миграция legacy DC: `Scripts/migrate_arduino_board_hierarchy.py`
+| [15-I2cHub-BME280](15-I2cHub-BME280/) | `ArduinoCustomFirmware` | nmsdk_i2c_hub_v1 | Uno (0) |

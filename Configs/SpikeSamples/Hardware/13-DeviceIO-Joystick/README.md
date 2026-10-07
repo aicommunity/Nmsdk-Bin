@@ -1,7 +1,8 @@
 # 13-DeviceIO-Joystick
 
-Firmata + `ArduinoDeviceIO` with `ModuleId=analog_joystick` (Tier A, runtime=firmata).
+Tier A Firmata + `ArduinoDeviceIO` (`ModuleId=analog_joystick`, defaultPort A0).
 
-1. Flash `standard_firmata`.
-2. Link DeviceIO to Firmata component.
-3. Module picker is grouped by catalog Category.
+1. Flash `standard_firmata`, Connect Firmata.
+2. DeviceIO → LinkedFirmataName=`Firmata`, ModuleId=`analog_joystick`.
+3. ApplyConfig then Continuous/ReadInput for Value.
+4. Module picker grouped by catalog Category with runtime badges.
