@@ -18,7 +18,7 @@
 | [12-Esp32Board](12-Esp32Board/) | `Esp32Board` | — (Connect-only) | ESP32 |
 | [13-DeviceIO-Joystick](13-DeviceIO-Joystick/) | `ArduinoDeviceIO` | firmata | Uno (0) |
 | [14-SensorHub](14-SensorHub/) | `ArduinoCustomFirmware` | nmsdk_sensor_hub_v1 | Uno (0) |
-| [15-I2cHub-BME280](15-I2cHub-BME280/) | `ArduinoCustomFirmware` | nmsdk_i2c_hub_v1 | Uno (0) |
+| [15-I2cHub](15-I2cHub/) | `ArduinoCustomFirmware` | nmsdk_i2c_hub_v1 | Uno (0) |
 | [16-DisplayHub](16-DisplayHub/) | `ArduinoCustomFirmware` | nmsdk_display_hub_v1 | Uno (0) |
 | [17-PixelHub](17-PixelHub/) | `ArduinoCustomFirmware` | nmsdk_pixel_hub_v1 | Uno (0) |
 | [18-RadioHub](18-RadioHub/) | `ArduinoCustomFirmware` | nmsdk_radio_hub_v1 | Uno / ESP32 |
