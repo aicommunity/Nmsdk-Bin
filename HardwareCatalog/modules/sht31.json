@@ -19,8 +19,8 @@
     "image": "https://cdn-shop.adafruit.com/970x728/2857-03.jpg",
     "wiring": "https://learn.adafruit.com/adafruit-sht31-d-temperature-and-humidity-sensor-breakout/wiring-and-test"
   },
-  "notes": "Адрес 0x44/0x45.",
-  "runtime": "planned",
+  "notes": "Адрес 0x44/0x45. | P2+: nmsdk_i2c_hub frames 0x37–0x3A.",
+  "runtime": "hub",
   "signalType": "i2c",
   "portKind": "i2c",
   "roles": [
@@ -31,7 +31,9 @@
     "V",
     "S"
   ],
-  "preferredFirmware": [],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
   "requiresMcuTiming": false,
   "requiredCapabilities": [],
   "asset": ""
