@@ -732,6 +732,62 @@ def classify_failure_class(
     return "quality_fail"
 
 
+def classify_training_convergence(
+    need: str,
+    train_meta: dict[str, str] | None = None,
+    *,
+    skipped: bool = False,
+) -> str:
+    """Report trainer completion independently from post-train quality.
+
+    The C++ FinalizePostTuneMid path sets TrainingPhase=Done and clears Need
+    before writing posttune_complete.flag, including result=NonSeparable. The
+    flag therefore proves that the training phase reached its terminal path;
+    it does not prove that the learned response is selective.
+    """
+    if skipped:
+        return "not_run"
+    meta = train_meta or {}
+    if meta.get("result") not in (None, "", "0"):
+        return "converged_posttune_finalized"
+    if str(need).strip() == "0":
+        return "converged_need0"
+    if str(need).strip() == "1":
+        return "not_converged_at_stop"
+    return "insufficient_data"
+
+
+def classify_posttune_quality(train_meta: dict[str, str] | None = None) -> str:
+    """Map C++ PostTuneResult to a quality outcome, not a convergence verdict."""
+    result = str((train_meta or {}).get("result", "")).strip()
+    return {
+        "1": "separable",
+        "2": "nonseparable",
+        "3": "posttune_setup_failure",
+        "4": "posttune_timeout",
+        "5": "invalid_posttune_metrics",
+    }.get(result, "not_reached_or_unknown")
+
+
+def classify_detection_quality(
+    *,
+    gate_ok: bool,
+    gate_fail: str,
+    training_convergence: str,
+) -> str:
+    """Summarize the independent test-time target-detection gate."""
+    if training_convergence in ("not_converged_at_stop", "insufficient_data"):
+        return "not_evaluated_training_incomplete"
+    if gate_ok:
+        return "pass"
+    fail = str(gate_fail or "").lower()
+    if "fires_missing" in fail or "target_not_detected" in fail:
+        return "target_not_detected"
+    if fail:
+        return "quality_gate_failed"
+    return "insufficient_data"
+
+
 def classify_slog_gib(
     gib: float, *, abort_gib: float = 3.0, prune_gib: float = 2.0
 ) -> Literal["ok", "prune", "abort"]:
@@ -1335,6 +1391,33 @@ def _copy_if_exists(src: Path, dst: Path) -> None:
         shutil.copy2(src, dst)
 
 
+def copy_training_audit(train: Path, run_dir: Path, provenance: dict[str, Any], run_id: str) -> int:
+    """Copy the C++ trainer trace into its immutable run bundle and hash it."""
+    audit_src = train / "TimeLearnerTrainingAudit.log"
+    if not audit_src.is_file():
+        return 0
+    audit_dst = run_dir / "Train" / audit_src.name
+    _copy_if_exists(audit_src, audit_dst)
+    with audit_src.open("r", encoding="utf-8", errors="replace") as audit_file:
+        audit_records = sum(1 for line in audit_file if line.strip())
+    relative_path = f"Train/{audit_dst.name}"
+    provenance["training_audit"] = {
+        "path": relative_path,
+        "schema": 1,
+        "records": audit_records,
+        "sha256": sha256_file(audit_dst),
+    }
+    provenance.setdefault("artifacts", []).append(
+        {
+            "path": relative_path,
+            "sha256": sha256_file(audit_dst),
+            "run_id": run_id,
+            "phase": "train-diagnostics",
+        }
+    )
+    return audit_records
+
+
 def run_case(
     name: str,
     *,
@@ -1515,6 +1598,17 @@ def run_case(
 
     mid_meta = dict(phase.test) if phase.test else dict(phase.train)
     mid_src = mid_source_of(mid_meta, after.get("FixedLTZThreshold", ""))
+    training_convergence = classify_training_convergence(
+        after.get("IsNeedToTrain", ""),
+        phase.train,
+        skipped=(status == "skip_train"),
+    )
+    posttune_quality = classify_posttune_quality(phase.train)
+    detection_quality = classify_detection_quality(
+        gate_ok=gate.ok,
+        gate_fail=gate.fail_reason,
+        training_convergence=training_convergence,
+    )
     search_reverted = phase.search_reverted
     mode4_n = count_events_mode4(train) + count_events_mode4(root / "Test")
 
@@ -1603,6 +1697,10 @@ def run_case(
             "weights_identity": tipr_weights_identity(train, params_source=params_source),
 
             "train_status": status,
+            "training_convergence": training_convergence,
+            "posttune_quality": posttune_quality,
+            "detection_quality": detection_quality,
+            "posttune_result": phase.train.get("result", ""),
             "child_rc": child_rc,
             "train_t_effective": float(case["train_t"]),
             "max_polls": polls_used,
@@ -1643,6 +1741,7 @@ def run_case(
             ],
         }
     )
+    copy_training_audit(train, run_dir, provenance, run_id)
     # Placeholder; overwritten after accept_run with failure_class.
     provenance["failure_class"] = "pending"
     (run_dir / "provenance.json").write_text(
@@ -1666,6 +1765,9 @@ def run_case(
     row = {
         "case": name,
         "train_status": status,
+        "training_convergence": training_convergence,
+        "posttune_quality": posttune_quality,
+        "detection_quality": detection_quality,
         "after": after,
         "gold_thr": gold_test.get("FixedLTZThreshold", ""),
         "gold_tipr": gold_test.get("TipSynapseResistance", ""),
@@ -1752,24 +1854,23 @@ def append_result(rows: list[dict]) -> None:
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         f"Console: `{NM}`",
         "",
-        "| case | train | Need | TipR class | TipR | FixedLTZ | gold thr | fires | mid_source | tipr_vs_snapshot | search_reverted | metrics |",
-        "|------|-------|------|------------|------|----------|----------|-------|------------|------------------|-----------------|---------|",
+        "| case | training convergence | PostTune separability | test target detection | Need | TipR class | mid_source | tipr_vs_snapshot | search_reverted | fires | metrics |",
+        "|------|-----------------------|------------------------|-----------------------|------|------------|------------|------------------|-----------------|-------|---------|",
     ]
     for r in rows:
         a = r["after"]
         lines.append(
-            "| {case} | {st} | {need} | {tc} | `{tipr}` | {thr} | {gthr} | `{fires}` | {ms} | {tv} | {sr} | {met} |".format(
+            "| {case} | {conv} | {post} | {detect} | {need} | {tc} | {ms} | {tv} | {sr} | `{fires}` | {met} |".format(
                 case=r["case"],
-                st=r["train_status"],
+                conv=r.get("training_convergence", "insufficient_data"),
+                post=r.get("posttune_quality", "not_reached_or_unknown"),
+                detect=r.get("detection_quality", "insufficient_data"),
                 need=a.get("IsNeedToTrain", ""),
                 tc=r["tipr_class"],
-                tipr=(a.get("TipSynapseResistance") or "")[:48],
-                thr=a.get("FixedLTZThreshold", ""),
-                gthr=r["gold_thr"],
-                fires=r["fires"],
                 ms=r.get("mid_source", ""),
                 tv=r.get("tipr_vs_snapshot", "") or "—",
                 sr=r.get("search_reverted", ""),
+                fires=r["fires"],
                 met=(r["metrics"] or "")[:80].replace("|", "/"),
             )
         )

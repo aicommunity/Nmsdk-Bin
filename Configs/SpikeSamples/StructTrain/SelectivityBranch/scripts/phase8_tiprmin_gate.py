@@ -13,14 +13,20 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
 import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-NM = Path("/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
-ROOT = Path("/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain")
+NMSDK_ROOT = Path(__file__).resolve().parents[6]
+ROOT = NMSDK_ROOT / "Bin" / "Configs" / "SpikeSamples" / "StructTrain"
+NM = Path(
+    os.environ.get(
+        "NMSDK_CONSOLE", NMSDK_ROOT / "Bin/Platform/Linux/NeuroModelerConsole"
+    )
+)
 SCRIPTS = ROOT / "SelectivityLtzCalibrate" / "scripts"
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 ASYM = ROOT / "SelectivityAsymRm"
@@ -427,6 +433,7 @@ def main() -> None:
         help="Ignore --skip-tipr-mid (debug: always Python tiprmin+silent mid)",
     )
     args = ap.parse_args()
+    print(f"CONSOLE={NM}")
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     tips = read_lengths(train / "Parameters_00.xml")

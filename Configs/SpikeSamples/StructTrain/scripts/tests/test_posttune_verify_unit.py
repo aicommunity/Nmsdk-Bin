@@ -6,12 +6,95 @@ import sys
 import tempfile
 import time
 import unittest
+import importlib.util
+import os
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPTS))
 
 import posttune_verify as pv  # noqa: E402
+import repro_cold_lib as cold  # noqa: E402
+
+
+class TestConsoleResolution(unittest.TestCase):
+    def test_console_defaults_to_the_current_checkout(self):
+        root = Path("/isolated/nmsdk")
+        self.assertEqual(
+            cold.resolve_console(root, {}),
+            root / "Bin/Platform/Linux/NeuroModelerConsole",
+        )
+
+    def test_console_can_be_overridden_for_a_host(self):
+        self.assertEqual(
+            cold.resolve_console(Path("/isolated/nmsdk"), {"NMSDK_CONSOLE": "/tmp/console"}),
+            Path("/tmp/console"),
+        )
+
+    def test_phase_gate_scripts_follow_the_active_checkout_and_console(self):
+        repo_root = cold.NMSDK_ROOT
+        scripts = (
+            repo_root
+            / "Bin/Configs/SpikeSamples/StructTrain/SelectivityBranch/scripts/phase8_tiprmin_gate.py",
+            repo_root
+            / "Bin/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/phase9_preinh_bc_gate.py",
+        )
+        with patch.dict(os.environ, {"NMSDK_CONSOLE": "/tmp/audit-console"}):
+            for index, script in enumerate(scripts):
+                spec = importlib.util.spec_from_file_location(f"phase_gate_{index}", script)
+                self.assertIsNotNone(spec)
+                self.assertIsNotNone(spec.loader)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                with self.subTest(script=script.name):
+                    self.assertNotIn("/home/user/Nmsdk", script.read_text(encoding="utf-8"))
+                    self.assertEqual(module.ROOT, repo_root / "Bin/Configs/SpikeSamples/StructTrain")
+                    self.assertEqual(module.NM, Path("/tmp/audit-console"))
+
+
+class TestColdResetContract(unittest.TestCase):
+    def _write_contract(self, train: Path, trainer: str) -> dict:
+        train.mkdir(parents=True)
+        (train / "Parameters_00.xml").write_text(
+            "<Root>"
+            "<NeuronClassName>NSPNeuronGenAsymRmD001C1e9</NeuronClassName>"
+            "<DendriteLength>1 1 1 1</DendriteLength>"
+            "<TipSynapseResistance>86000000 86000000 86000000 86000000</TipSynapseResistance>"
+            "<IsNeedToTrain>1</IsNeedToTrain>"
+            "<ResetToUntrainedState>1</ResetToUntrainedState>"
+            "<FixedLTZThreshold>1</FixedLTZThreshold>"
+            "<StructureBuildMode>2</StructureBuildMode>"
+            f"<{trainer} Class=\"N{trainer}\"></{trainer}>"
+            "</Root>",
+            encoding="utf-8",
+        )
+        (train / "Model_00.xml").write_text("<Model/>", encoding="utf-8")
+        contract_path = cold.write_cold_reset_contract(train)
+        import json
+
+        return json.loads(contract_path.read_text(encoding="utf-8"))
+
+    def test_branch_detection_uses_trainer_and_records_post_build_runtime(self):
+        with tempfile.TemporaryDirectory() as td:
+            contract = self._write_contract(
+                Path(td) / "Train", "NeuronTimeLearnerBranch"
+            )
+        self.assertTrue(contract["is_branch"])
+        runtime = contract["expected_runtime_after_reset"]
+        self.assertEqual(runtime["DendriteLength"], "1 1 1 1")
+        self.assertEqual(runtime["reference_dendrite_index"], 3)
+        self.assertIn("clamps runtime length to 1", runtime["note"])
+
+    def test_classic_trainer_has_no_branch_reference_anchor(self):
+        with tempfile.TemporaryDirectory() as td:
+            contract = self._write_contract(
+                Path(td) / "Train", "NeuronTimeLearner"
+            )
+        self.assertFalse(contract["is_branch"])
+        runtime = contract["expected_runtime_after_reset"]
+        self.assertEqual(runtime["DendriteLength"], "1 1 1 1")
+        self.assertIsNone(runtime["reference_dendrite_index"])
 
 
 class TestTiprNumeric(unittest.TestCase):
@@ -302,6 +385,28 @@ class TestProvenanceHash(unittest.TestCase):
             self.assertEqual(len(d), 1)
             self.assertTrue(all(v and len(v) == 64 for v in d.values()))
 
+    def test_training_audit_events_are_preserved_in_bundle(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            train = root / "work" / "Train"
+            run_dir = root / "runs" / "case" / "run-1"
+            train.mkdir(parents=True)
+            run_dir.mkdir(parents=True)
+            source = train / "TimeLearnerTrainingAudit.log"
+            source.write_text(
+                "schema=1;kind=reset;trainer=branch;length_before=[1,1,1,0];length_after=[1,1,1,1]\n"
+                "schema=1;kind=iteration;trainer=branch;iter=1;eol_sync=0;eol_amp=0\n",
+                encoding="utf-8",
+            )
+            provenance = {"artifacts": []}
+            records = pv.copy_training_audit(train, run_dir, provenance, "run-1")
+            copied = run_dir / "Train" / source.name
+            self.assertEqual(records, 2)
+            self.assertEqual(copied.read_text(encoding="utf-8"), source.read_text(encoding="utf-8"))
+            self.assertEqual(provenance["training_audit"]["records"], 2)
+            self.assertEqual(provenance["training_audit"]["sha256"], pv.sha256_file(copied))
+            self.assertEqual(provenance["artifacts"][0]["path"], "Train/TimeLearnerTrainingAudit.log")
+
 
 class TestTiprExpect(unittest.TestCase):
     def test_tipr_matches_expect_canon_flat(self):
@@ -354,6 +459,82 @@ class TestFailureClass(unittest.TestCase):
         )
         self.assertFalse(ok)
         self.assertEqual(pv.classify_failure_class(reasons, row), "train_incomplete")
+
+
+class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
+    def test_posttune_nonseparable_is_still_completed_training(self):
+        self.assertEqual(
+            pv.classify_training_convergence("1", {"result": "2"}),
+            "converged_posttune_finalized",
+        )
+        self.assertEqual(pv.classify_posttune_quality({"result": "2"}), "nonseparable")
+
+    def test_need_one_without_posttune_flag_is_not_converged(self):
+        self.assertEqual(
+            pv.classify_training_convergence("1", {}), "not_converged_at_stop"
+        )
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_ok=False,
+                gate_fail="fires_missing",
+                training_convergence="not_converged_at_stop",
+            ),
+            "not_evaluated_training_incomplete",
+        )
+
+    def test_detection_gate_is_reported_independently(self):
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_ok=True,
+                gate_fail="",
+                training_convergence="converged_posttune_finalized",
+            ),
+            "pass",
+        )
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_ok=False,
+                gate_fail="fires_missing",
+                training_convergence="converged_posttune_finalized",
+            ),
+            "target_not_detected",
+        )
+
+    def test_skipped_and_unknown_states_are_explicit(self):
+        self.assertEqual(
+            pv.classify_training_convergence("", {}, skipped=True), "not_run"
+        )
+        self.assertEqual(
+            pv.classify_training_convergence("", {}), "insufficient_data"
+        )
+        self.assertEqual(
+            pv.classify_posttune_quality({"result": "99"}), "not_reached_or_unknown"
+        )
+
+    def test_markdown_report_has_independent_outcome_columns(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "result.md"
+            row = {
+                "case": "fixture",
+                "train_status": "done_gate_FAIL_gate_rc=1",
+                "training_convergence": "converged_posttune_finalized",
+                "posttune_quality": "nonseparable",
+                "detection_quality": "target_not_detected",
+                "after": {"IsNeedToTrain": "0"},
+                "tipr_class": "canon",
+                "fires": "",
+                "metrics": "fires_missing",
+                "mid_source": "missing",
+                "tipr_vs_snapshot": "",
+                "search_reverted": 0,
+                "gold_thr": "",
+                "fail_notes": [],
+            }
+            with patch.object(pv, "OUT", out):
+                pv.append_result([row])
+            report = out.read_text(encoding="utf-8")
+            self.assertIn("| training convergence | PostTune separability | test target detection |", report)
+            self.assertIn("| converged_posttune_finalized | nonseparable | target_not_detected |", report)
 
 
 class TestRmaxStallTick(unittest.TestCase):

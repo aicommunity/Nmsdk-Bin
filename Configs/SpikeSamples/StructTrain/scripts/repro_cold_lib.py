@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,7 +14,17 @@ from pathlib import Path
 from typing import Literal
 
 ROOT = Path(__file__).resolve().parents[1]
-NM = Path("/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
+NMSDK_ROOT = Path(__file__).resolve().parents[5]
+
+
+def resolve_console(root: Path, env: dict[str, str] | None = None) -> Path:
+    """Resolve the runner from this checkout; allow explicit per-host override."""
+    env = os.environ if env is None else env
+    override = env.get("NMSDK_CONSOLE")
+    return Path(override) if override else root / "Bin/Platform/Linux/NeuroModelerConsole"
+
+
+NM = resolve_console(NMSDK_ROOT)
 TIPR_COLD = "86000000 86000000 86000000 86000000"
 TIPR_RMIN = "20000000 20000000 20000000 86000000"
 RMIN = "20000000"
@@ -369,7 +380,8 @@ def assert_train_cold_xml_before_nm(params: Path, *, mode: ColdMode) -> None:
 def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     """Record XML-before-NM and expected runtime after C++ ResetToUntrained (TL-02).
 
-    Branch sets last DendriteLength to 0 as reference anchor; classic keeps all L=1.
+    Branch uses the last dendrite as its reference anchor. Reset temporarily sets
+    its length to 0, then BuildStructure clamps runtime lengths to the minimum 1.
     SoftCold fix (2026-09-27): SBM=2 everywhere; Model tip-1 only (no fat cable).
     """
     params = train / "Parameters_00.xml"
@@ -377,7 +389,14 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     pt = params.read_text(encoding="utf-8") if params.exists() else ""
     mt = model.read_text(encoding="utf-8") if model.exists() else ""
     neuron = (get_tag(pt, "NeuronClassName") or "").strip()
-    is_branch = "Branch" in neuron or "TimeLearnerBranch" in neuron
+    # The neuron class and the trainer class are separate parameters. Branch
+    # experiments commonly use an ordinary NSPNeuron class with
+    # NeuronTimeLearnerBranch configured in Parameters_00.xml.
+    is_branch = (
+        "Branch" in neuron
+        or "TimeLearnerBranch" in neuron
+        or re.search(r"<\s*NeuronTimeLearnerBranch(?:\s|>)", pt) is not None
+    )
     L_xml = " ".join((get_tag(pt, "DendriteLength") or "").replace(",", " ").split())
     tipr_xml = " ".join((get_tag(pt, "TipSynapseResistance") or "").replace(",", " ").split())
     n = len(L_xml.split()) if L_xml else 4
@@ -386,8 +405,14 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     sbm_params = get_all_tags(pt, "StructureBuildMode")
     sbm_model = get_all_tags(mt, "StructureBuildMode") if mt else []
     if is_branch and n >= 1:
-        L_runtime = " ".join(["1"] * (n - 1) + ["0"])
-        note = "Branch ResetToUntrained sets last dendrite length to 0 (reference)"
+        # ResetToUntrained sets the reference length to 0 before rebuilding;
+        # Branch::BuildStructure clamps every length below 1, including the
+        # reference, so this contract records the runtime state after reset.
+        L_runtime = " ".join(["1"] * n)
+        note = (
+            "last dendrite is the Branch reference anchor; ResetToUntrained "
+            "sets it to 0 before BuildStructure clamps runtime length to 1"
+        )
     else:
         L_runtime = L_COLD if n == 4 else " ".join(["1"] * max(n, 1))
         note = "classic ResetToUntrained keeps L=1 on all dendrites"

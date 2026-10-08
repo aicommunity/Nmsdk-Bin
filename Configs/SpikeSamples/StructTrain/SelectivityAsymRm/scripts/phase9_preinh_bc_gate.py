@@ -4,14 +4,20 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
 import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-NM = Path("/home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole")
-ROOT = Path("/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain")
+NMSDK_ROOT = Path(__file__).resolve().parents[6]
+ROOT = NMSDK_ROOT / "Bin" / "Configs" / "SpikeSamples" / "StructTrain"
+NM = Path(
+    os.environ.get(
+        "NMSDK_CONSOLE", NMSDK_ROOT / "Bin/Platform/Linux/NeuroModelerConsole"
+    )
+)
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 SILENT_THR = "1.0"
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -214,6 +220,7 @@ def main() -> None:
         help="Pattern span for NM hard-deadline (25|50|100|480)",
     )
     args = ap.parse_args()
+    print(f"CONSOLE={NM}")
     root = args.exp_root.resolve()
     train, test = root / "Train", root / "Test"
     csv_path = test / "SelectivityLog" / "results.csv"
