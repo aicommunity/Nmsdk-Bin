@@ -1,6 +1,7 @@
 # Реестр успешных экспериментов StructTrain
 
-**Срез SoftCold remediations 2026-10-01:** Console SHA-256 `b66711b5c8d545a66c129b045cdcf479` · PulseLib `bb438c4` · Bin `2353083` · root audit `211b0ec+`.  
+**Срез SoftCold full49 HEAD 2026-10-07/08:** Console SHA-256 `18f0ef414b1f9c06` · PulseLib `dc2866a` · Bin `5bea3b3` · root audit `76acde3+` · PARALLEL=6 · RCS `_repro/SOFTCOLD_HEAD_rcs.txt` · LOG `evidence/metrics/SOFTCOLD_full_matrix_20261007.log`.
+
 **Исторический срез 2026-09-26:** Console `ec86430e…` · PulseLib `f3763f3` · Bin `24a1905` · GoldTest Console `4917a2bc…`.
 
 Только строки со статусом HEAD **PASS** в таблицах. Ось и нумерация разделов — как в [`EXPERIMENTS.md`](EXPERIMENTS.md).  
