@@ -955,6 +955,26 @@ def poll_params_snapshot(
     }
 
 
+def runtime_resistance_max_from_audit(train: Path) -> float | None:
+    """Read the derived cap from the C++ cold-reset record, if available."""
+    audit = train / "TimeLearnerTrainingAudit.log"
+    if not audit.is_file():
+        return None
+    try:
+        with audit.open("r", encoding="utf-8", errors="replace") as stream:
+            for line in stream:
+                fields = dict(
+                    item.split("=", 1) for item in line.strip().split(";") if "=" in item
+                )
+                if fields.get("kind") != "reset":
+                    continue
+                value = float(fields.get("rmax", "0"))
+                return value if math.isfinite(value) and value > 0.0 else None
+    except (OSError, ValueError):
+        return None
+    return None
+
+
 DEFAULT_STALL_AUTOSAVE_N = 8
 
 
@@ -1088,7 +1108,7 @@ def wait_need0(
         f"TRAIN {train.parent.name} -t {tlim} Avail={free_gib():.0f}G "
         f"polls={max_polls} no_prune={int(no_prune)} snap_every={snap_every} "
         f"slog_abort={slog_abort_gib:g}G early_stop_autosave={int(early_stop_autosave)} "
-        f"stall_autosave_n={stall_autosave_n} rmax={rmax:g}"
+        f"stall_autosave_n={stall_autosave_n} rmax_xml={rmax:g}"
     )
     proc = subprocess.Popen(cmd, cwd=str(train), stdout=log.open("w"), stderr=subprocess.STDOUT)
     need0 = False
@@ -1096,10 +1116,17 @@ def wait_need0(
     stall_streak = 0
     stall_prev_L: str | None = None
     stall_prev_tipr: str | None = None
+    runtime_rmax_seen = False
     for i in range(1, max_polls + 1):
         time.sleep(30)
         if proc.poll() is not None:
             break
+        if not runtime_rmax_seen:
+            runtime_rmax = runtime_resistance_max_from_audit(train)
+            if runtime_rmax is not None:
+                rmax = runtime_rmax
+                runtime_rmax_seen = True
+                print(f"  RMAX_RUNTIME={rmax:g} from C++ cold-reset audit")
         snap = poll_params_snapshot(params, prev_mtime=prev_mtime)
         if snap["autosave_seen"]:
             print(
