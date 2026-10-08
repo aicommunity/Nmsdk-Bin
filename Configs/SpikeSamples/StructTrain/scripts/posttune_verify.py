@@ -974,6 +974,30 @@ def runtime_resistance_max_from_audit(train: Path) -> float | None:
     return None
 
 
+def runtime_training_failure_from_audit(train: Path) -> tuple[int, int] | None:
+    """Read the latest C++ terminal failure from its append-only audit."""
+    audit = train / "TimeLearnerTrainingAudit.log"
+    if not audit.is_file():
+        return None
+    try:
+        size = audit.stat().st_size
+        with audit.open("r", encoding="utf-8", errors="replace") as stream:
+            stream.seek(max(0, size - 65536))
+            lines = stream.readlines()
+        for line in reversed(lines):
+            if "kind=iteration" not in line:
+                continue
+            fields = dict(
+                item.split("=", 1) for item in line.strip().split(";") if "=" in item
+            )
+            reason = int(fields.get("failure_reason", "0"))
+            phase = int(fields.get("phase", "0"))
+            return (phase, reason) if reason > 0 else None
+    except (OSError, ValueError):
+        return None
+    return None
+
+
 DEFAULT_STALL_AUTOSAVE_N = 8
 
 
@@ -1119,6 +1143,22 @@ def wait_need0(
     for i in range(1, max_polls + 1):
         time.sleep(30)
         if proc.poll() is not None:
+            break
+        cpp_failure = runtime_training_failure_from_audit(train)
+        if cpp_failure is not None:
+            phase, reason = cpp_failure
+            _snap_tipr_live(train, live)
+            print(
+                f"  C++_TRAINING_FAILURE phase={phase} reason={reason} "
+                "from TimeLearnerTrainingAudit — terminate NM"
+            )
+            proc.terminate()
+            try:
+                proc.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait(timeout=30)
+            stall_status = f"cpp_training_failure_{reason}"
             break
         if not runtime_rmax_seen:
             runtime_rmax = runtime_resistance_max_from_audit(train)
