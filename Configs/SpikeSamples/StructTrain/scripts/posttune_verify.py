@@ -1462,13 +1462,11 @@ def run_case(
     stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
     initial_rs_rm: float | None = None,
     max_rs_rm: float | None = None,
-    resistance_min: float | None = None,
 ) -> dict:
     case = dict(CASES[name])
     for label, value in (
         ("initial_rs_rm", initial_rs_rm),
         ("max_rs_rm", max_rs_rm),
-        ("resistance_min", resistance_min),
     ):
         if value is not None and (not math.isfinite(value) or value <= 0.0):
             raise ValueError(f"{label} must be a finite positive number")
@@ -1527,19 +1525,12 @@ def run_case(
             if not p.exists():
                 continue
             t = p.read_text(encoding="utf-8")
-            if initial_rs_rm is not None or max_rs_rm is not None or resistance_min is not None:
+            if initial_rs_rm is not None or max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
                     raise ValueError(
                         f"Rs/Rm diagnostic overrides require parametric NormalizationMode=1: {rel}"
                     )
-                if resistance_min is not None:
-                    min_text = format(resistance_min, ".17g")
-                    t = ensure_tag_after(
-                        t, "NormalizationMode", "ResistanceMin", min_text,
-                        attrs=' Type="d" PType="257" IoType="17"',
-                    )
-                    t = set_tag(t, "ResistanceMin", min_text, 1)
             if max_rs_rm is not None:
                 ratio_text = format(max_rs_rm, ".17g")
                 t = ensure_tag_after(
@@ -1586,10 +1577,10 @@ def run_case(
                     )
                     t = set_tag(t, "PostTrainTipSearchIters", "12", 1)
             p.write_text(t, encoding="utf-8")
-            if initial_rs_rm is not None or max_rs_rm is not None or resistance_min is not None:
+            if initial_rs_rm is not None or max_rs_rm is not None:
                 print(
                     f"  Rs/Rm overrides {rel}: initial={initial_rs_rm or 'default'} "
-                    f"max={max_rs_rm or 'default'} Rmin={resistance_min or 'default'}"
+                    f"max={max_rs_rm or 'default'}"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
@@ -2037,12 +2028,6 @@ def main() -> None:
         help="Diagnostic override for MaxSynapseToMembraneResistanceRatio",
     )
     ap.add_argument(
-        "--resistance-min",
-        type=float,
-        default=None,
-        help="Diagnostic override for ResistanceMin (parametric cases only)",
-    )
-    ap.add_argument(
         "--no-result-md",
         action="store_true",
         help="Skip writing POSTTUNE_VERIFY_RESULT.md (parallel SoftCold workers)",
@@ -2065,7 +2050,6 @@ def main() -> None:
             stall_autosave_n=args.stall_autosave_n,
             initial_rs_rm=args.initial_rs_rm,
             max_rs_rm=args.max_rs_rm,
-            resistance_min=args.resistance_min,
         )
         for n in names
     ]
