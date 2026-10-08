@@ -511,18 +511,18 @@
 		</SynapseResistanceBase>
 		<ResistanceMin>
 			<Header>Мин. сопротивление tip</Header>
-			<Description>Нижняя граница clamp для TipSynapseResistance при parametric R-tune.</Description>
-			<Type>| ptPubParameter |</Type>
+			<Description>Вычисляемое состояние parametric-режима: Rs минимум = максимальное Rm целевых мембран / MaxSynapseToMembraneResistanceRatio; в structural-режиме равно 0.</Description>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
 				<elem Type="std::string"></elem>
 			</ValueList>
-			<PropertyType>257</PropertyType>
+			<PropertyType>513</PropertyType>
 		</ResistanceMin>
 		<ResistanceMax>
 			<Header>Макс. сопротивление tip</Header>
-			<Description>Наблюдаемое состояние parametric-режима: Rs максимум = минимальное Rm целевых мембран × MaxSynapseToMembraneResistanceRatio.</Description>
+			<Description>Вычисляемое состояние parametric-режима: Rs максимум = минимальное Rm целевых мембран × MaxSynapseToMembraneResistanceRatio; нижняя граница использует обратное отношение, в structural-режиме обе границы равны 0.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -544,7 +544,7 @@
 		</EnableRmaxLengthEscape>
 		<MaxSynapseToMembraneResistanceRatio>
 			<Header>Максимальное отношение Rs/Rm</Header>
-			<Description>Верхний предел Rs/Rm для ResistanceMax; Rm — минимальный RestingResistance у целевых входных мембран (при недоступном значении используется Resistance). По умолчанию 1000.</Description>
+			<Description>Предел отношения Rs/Rm: верхняя граница задаётся этим значением, нижняя — его обратной величиной. ResistanceMax использует минимальный, а ResistanceMin — максимальный RestingResistance целевых входных мембран (при недоступном значении используется Resistance). Значение должно быть не меньше 1; по умолчанию 1000.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
