@@ -15,10 +15,12 @@
   "capabilities": [
     "nextion",
     "bluetooth",
-    "gsm",
     "uart_device"
   ],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_uart_device_hub/uno.hex",
+    "mega2560": "nmsdk_uart_device_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_uart_device_hub_v1",
   "protocolId": "nmsdk_hub_uart_device_v1",
   "defaultPins": {
@@ -26,5 +28,5 @@
     "tx": "D11"
   },
   "legacyManifestId": "nmsdk_uart_device_hub_v1",
-  "notes": "P2+ Wave 5. Prefer Mega/ESP32 Serial1."
+  "notes": "Bundled AVR HEX enables Nextion and HC-05. GSM and A9G support require a custom build; Mega/ESP32 hardware serial is preferred."
 }

@@ -12,17 +12,19 @@
   ],
   "compatibleShields": [],
   "capabilities": [
-    "ws2812",
     "max7219",
-    "tft",
+    "ws2812",
     "pixel"
   ],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_pixel_hub/uno.hex",
+    "mega2560": "nmsdk_pixel_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_pixel_hub_v1",
   "protocolId": "nmsdk_hub_pixel_v1",
   "defaultPins": {
     "led": "D6"
   },
   "legacyManifestId": "nmsdk_pixel_hub_v1",
-  "notes": "P2+ Wave 3. E-paper remains planned until EPD MVP verified."
+  "notes": "Bundled HEX enables WS2812 and MAX7219. TFT and e-paper remain custom-build or planned features."
 }

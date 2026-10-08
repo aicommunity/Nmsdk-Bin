@@ -4,24 +4,25 @@
   "title": "L298N dual H-bridge module",
   "compatibleBoards": [
     "uno",
-    "mega2560",
-    "esp32_devkit",
-    "esp32_uno_formfactor"
+    "mega2560"
   ],
   "formFactor": "module",
   "driverChip": "L298N",
   "motors": "2× DC или 1× bipolar stepper",
   "power": "типично ~5–35 V; до ~2 A/канал (см. листинг)",
-  "controlModel": "step_dir",
+  "controlModel": "dir2_pwm",
   "defaultFirmware": "nmsdk_motor_hub_v1",
   "layoutAsset": "",
   "compatibleModules": [
     "dc_motor_channel"
   ],
-  "channels": {},
-  "occupiesPins": [],
+  "channels": {
+    "A": { "dir": "D2", "dir2": "D4", "pwm": "D5" },
+    "B": { "dir": "D7", "dir2": "D8", "pwm": "D6" }
+  },
+  "occupiesPins": ["D2", "D4", "D5", "D6", "D7", "D8"],
   "ports": {},
-  "notes": "Не shield. Также Robot-Kit 380 ₽ (robot-kit.ru/3169/). Массово на Ali/Ozon/WB.",
+  "notes": "Не shield. Default pin map is for Arduino Uno/Mega: IN1/IN2 and ENA/ENB. Remove ENA/ENB jumpers before using PWM. Motor hub can map two direction pins per channel.",
   "urls": {
     "buy": "youbot.ru",
     "datasheet": "L298 datasheet (ST, зеркало)",
