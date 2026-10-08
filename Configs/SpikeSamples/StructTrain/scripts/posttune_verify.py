@@ -852,7 +852,6 @@ def apply_posttune_salvage(
         t = p.read_text(encoding="utf-8")
         if salvage.tipr_s:
             t = set_tag(t, "TipSynapseResistance", salvage.tipr_s, 1)
-            t = set_tag(t, "ResistanceMin", "20000000", 1)
         if salvage.lens_s:
             t = set_tag(t, "DendriteLength", salvage.lens_s, 1)
         if salvage.mid:

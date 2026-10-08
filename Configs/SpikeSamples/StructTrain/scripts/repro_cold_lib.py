@@ -27,7 +27,6 @@ def resolve_console(root: Path, env: dict[str, str] | None = None) -> Path:
 NM = resolve_console(NMSDK_ROOT)
 TIPR_COLD = "86000000 86000000 86000000 86000000"
 TIPR_RMIN = "20000000 20000000 20000000 86000000"
-RMIN = "20000000"
 L_COLD = "1 1 1 1"
 ColdMode = Literal["soft", "strip"]
 
@@ -486,7 +485,6 @@ def _cold_params_common(t: str, neuron: str) -> str:
     t = force_structure_build_mode(t, "2")
     t = set_tag(t, "NeuronClassName", neuron, 0)
     t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
-    t = set_tag(t, "ResistanceMin", RMIN, 1)
     t = set_tag(t, "DendriteLength", L_COLD, 1)
     t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
     t = sync_membrane_parts_scalar(t, "1")
@@ -509,7 +507,6 @@ def _cold_model_common(mt: str, neuron: str) -> str:
     mt = set_tag(mt, "NumDendriteMembranePartsVec", L_COLD, 0)
     mt = sync_membrane_parts_scalar(mt, "1")
     mt = set_tag(mt, "TipSynapseResistance", TIPR_COLD, 1)
-    mt = set_tag(mt, "ResistanceMin", RMIN, 1)
     mt = set_tag(mt, "InitialSomaPotential", "0 0 0 0", 1)
     mt = set_tag(mt, "IsNeedToTrain", "1", 1)
     mt = force_structure_build_mode(mt, "2")
@@ -584,7 +581,6 @@ def apply_tiprmin(paths: list[Path]) -> None:
             continue
         t = p.read_text(encoding="utf-8").replace(",", ".")
         t = set_tag(t, "TipSynapseResistance", TIPR_RMIN, 1)
-        t = set_tag(t, "ResistanceMin", RMIN, 1)
         p.write_text(t, encoding="utf-8")
 
 
