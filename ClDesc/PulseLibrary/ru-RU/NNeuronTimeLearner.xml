@@ -390,7 +390,7 @@
 		</SpikesFrequency>
 		<TrainingPhase>
 			<Header>Фаза обучения</Header>
-			<Description>0 — синхронизация дендритов, 1 — нормализация синапсов, 2 — обучение завершено.</Description>
+			<Description>0 — синхронизация, 1 — нормализация, 2 — завершено, 4 — отказ по пределу сопротивления.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -399,6 +399,17 @@
 			</ValueList>
 			<PropertyType>770</PropertyType>
 		</TrainingPhase>
+		<TrainingFailureReason>
+			<Header>Причина отказа обучения</Header>
+			<Description>0 — нет отказа, 1 — амплитудная ошибка не устранена при ResistanceMax.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>770</PropertyType>
+		</TrainingFailureReason>
 		<ResetToUntrainedState>
 			<Header>Сбросить в необученное состояние</Header>
 			<Description>Одноразово возвращает структуру и training metadata в исходное необученное состояние перед новым экспериментом.</Description>
@@ -489,7 +500,7 @@
 		</SynapseResistanceStep>
 		<SynapseResistanceBase>
 			<Header>Базовое сопротивление tip-синапса</Header>
-			<Description>Стартовое R tip при parametric-нормализации (холодный старт / ResetToUntrained).</Description>
+			<Description>Опорное значение для structural-режима и fallback. При холодном старте parametric-режима TipR инициализируется по InitialSynapseToMembraneResistanceRatio.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -511,7 +522,18 @@
 		</ResistanceMin>
 		<ResistanceMax>
 			<Header>Макс. сопротивление tip</Header>
-			<Description>Верхняя граница clamp для TipSynapseResistance при parametric R-tune.</Description>
+			<Description>Наблюдаемое состояние parametric-режима: Rs максимум = минимальное Rm целевых мембран × MaxSynapseToMembraneResistanceRatio.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>513</PropertyType>
+		</ResistanceMax>
+		<EnableRmaxLengthEscape>
+			<Header>W3: компенсация ростом длины</Header>
+			<Description>Только для parametric-режима: разрешает использовать рост дендрита как дополнительную амплитудную степень свободы на потолке Rs. По умолчанию выключено.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -519,7 +541,29 @@
 				<elem Type="std::string"></elem>
 			</ValueList>
 			<PropertyType>257</PropertyType>
-		</ResistanceMax>
+		</EnableRmaxLengthEscape>
+		<MaxSynapseToMembraneResistanceRatio>
+			<Header>Максимальное отношение Rs/Rm</Header>
+			<Description>Верхний предел Rs/Rm для ResistanceMax; Rm — минимальный RestingResistance у целевых входных мембран (при недоступном значении используется Resistance). По умолчанию 1000.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MaxSynapseToMembraneResistanceRatio>
+		<InitialSynapseToMembraneResistanceRatio>
+			<Header>Начальное отношение Rs/Rm</Header>
+			<Description>Только в parametric-режиме при холодном старте задаёт Rs как это отношение к RestingResistance мембраны у каждого входного синапса (с clamp по ResistanceMin/ResistanceMax). По умолчанию 1; structural-режим и обученное состояние при обычной загрузке не меняются.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InitialSynapseToMembraneResistanceRatio>
 		<AttenuationGamma>
 			<Header>Гамма затухания кабеля</Header>
 			<Description>Коэффициент затухания amp по длине дендрита. &lt;0 — автооценка по amp/Initial.</Description>
@@ -657,6 +701,9 @@
 		<TrainingPhase>
 			<Path>{CompName}:TrainingPhase</Path>
 		</TrainingPhase>
+		<TrainingFailureReason>
+			<Path>{CompName}:TrainingFailureReason</Path>
+		</TrainingFailureReason>
 		<SpikesFrequency>
 			<Path>{CompName}:SpikesFrequency</Path>
 		</SpikesFrequency>
@@ -684,6 +731,15 @@
 		<ResistanceMax>
 			<Path>{CompName}:ResistanceMax</Path>
 		</ResistanceMax>
+		<EnableRmaxLengthEscape>
+			<Path>{CompName}:EnableRmaxLengthEscape</Path>
+		</EnableRmaxLengthEscape>
+		<MaxSynapseToMembraneResistanceRatio>
+			<Path>{CompName}:MaxSynapseToMembraneResistanceRatio</Path>
+		</MaxSynapseToMembraneResistanceRatio>
+		<InitialSynapseToMembraneResistanceRatio>
+			<Path>{CompName}:InitialSynapseToMembraneResistanceRatio</Path>
+		</InitialSynapseToMembraneResistanceRatio>
 		<AttenuationGamma>
 			<Path>{CompName}:AttenuationGamma</Path>
 		</AttenuationGamma>
