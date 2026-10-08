@@ -1811,6 +1811,9 @@ def run_case(
             prov = json.loads(prov_path.read_text(encoding="utf-8"))
             prov["failure_class"] = failure_class
             prov["fail_notes"] = fail_notes
+            # Parallel workers skip the shared markdown summary; keep their
+            # complete convergence/quality row beside the immutable run data.
+            prov["result"] = row
             prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
     except OSError:
         pass
