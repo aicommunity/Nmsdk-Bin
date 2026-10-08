@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Apply SoftCold RCS lines into EXPERIMENTS/SUCCESSFUL LastCheck (+ Working if PASS)."""
+"""Apply SoftCold RCS into EXPERIMENTS/SUCCESSFUL SoftCold columns (+ Working if PASS).
+
+Schema (post migrate_experiments_softcold_columns.py):
+  Имя | Алгоритм | Параметры | Working | Acc | Цель | SoftCold | SoftColdDetail | HEAD | …
+"""
 from __future__ import annotations
 
 import argparse
+import csv
 import fcntl
-import re
+import json
 import sys
 from pathlib import Path
 
@@ -12,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "EXPERIMENTS.md"
 SUC = ROOT / "SUCCESSFUL_EXPERIMENTS.md"
 LOCK = ROOT / "_repro" / "registry_apply.lock"
+RUNS = ROOT / "_repro" / "runs"
 
 # case -> registry Имя (canonical EXP folder / alias)
 CASE_TO_NAME = {
@@ -75,6 +81,13 @@ RANK = {
     "none": 0,
 }
 
+BUCKET = {
+    "ok": "PASS",
+    "gate_fail": "N",
+    "train_incomplete": "D",
+    "tipr_mismatch": "A",
+}
+
 
 def parse_rcs(path: Path) -> list[tuple[str, int]]:
     out = []
@@ -92,86 +105,155 @@ def parse_rcs(path: Path) -> list[tuple[str, int]]:
     return out
 
 
-def row_matches_softcold_case(cols: list[str], case: str, *, pass_: bool) -> bool:
-    """Do not rewrite every row with the same Имя — only SoftCold-related rows."""
-    if len(cols) < 5:
-        return False
-    conf = cols[-1] if len(cols) > 10 else ""
-    lc = cols[4]
-    params = cols[2]
-    if f"--case {case}" in conf or f"case={case}" in conf or f"case={case}" in lc:
-        return True
-    # SoftColdOff / off clone
-    if case.endswith("_off") and ("posttune_off" in conf or "EnablePostTrainTuning=0" in params):
-        return True
-    if cols[1].strip() == "—" and (case in conf or f"--case {case}" in conf):
-        return True
-    if case == "br25_on" and "CanonRmin" in params and "soft-cold" in params:
-        return True
-    if case == "br25_off" and ("posttune_off" in conf or "PostTuneTuning=0" in params):
-        return True
-    if case == "br100_keep" and ("KeepDone" in params or "posttune_keep" in conf):
-        return True
-    if case == "br100_search" and ("SearchSynthetic" in params or "posttune_search" in conf):
-        return True
-    if pass_ and "posttune" not in conf.lower() and "packA" in params:
-        if case.startswith(("asym", "ltz", "fs")) and "/Train)" in conf:
-            return True
-        if case.startswith("br") and "EXP_br" in conf and "posttune" in conf:
-            return "posttune" in conf and case.replace("_", "") in conf.replace("_", "")
-    # PhaseA / PSI / TimeNeuron / FastSpan: unique Имя → primary Selectivity* row
-    if case.startswith(("pa", "psi")) or case == "tn_classic":
-        if any(
-            p in conf
-            for p in (
-                "SelectivityPhaseA/",
-                "SelectivityPresynapticInhib/",
-                "TimeNeuronTimeLearner/",
-            )
+def case_dirs(case: str) -> list[Path]:
+    return sorted(
+        [p for p in RUNS.glob(f"{case}_*") if p.is_dir()],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+
+
+def latest_prov(case: str) -> dict:
+    for p in case_dirs(case):
+        if p.name.endswith("_work"):
+            continue
+        pj = p / "provenance.json"
+        if pj.exists():
+            try:
+                return json.loads(pj.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                continue
+    return {}
+
+
+def find_results_csv(case: str) -> Path | None:
+    for p in case_dirs(case):
+        for rel in (
+            Path("Test/results.csv"),
+            Path("Test/SelectivityLog/results.csv"),
+            Path("results.csv"),
         ):
-            return True
-    if case.startswith("fs") and "SelectivityFastSpan/" in conf:
-        return True
-    if case.startswith("ltz") and "SelectivityLtzCalibrate/" in conf:
-        return True
-    if case.startswith("phase6") and "SelectivityPhaseA/Phase6/" in conf:
-        return True
-    return False
+            cand = p / rel
+            if cand.exists():
+                return cand
+        for cand in p.glob("**/results.csv"):
+            return cand
+    return None
 
 
-def patch_table(text: str, name: str, lastcheck: str, *, pass_: bool, case: str) -> str:
+def acc_fires_from_csv(path: Path | None) -> tuple[str, str]:
+    """Return (acc like '8/8', fires like '10000000') or ('?', '?')."""
+    if path is None or not path.exists():
+        return "?", "?"
+    try:
+        with path.open(encoding="utf-8", newline="") as f:
+            rows = list(csv.DictReader(f))
+    except OSError:
+        return "?", "?"
+    if not rows:
+        return "?", "?"
+    n = len(rows)
+    ok = 0
+    fires = []
+    for r in rows:
+        m = r.get("match", "")
+        try:
+            ok += int(float(m))
+        except (TypeError, ValueError):
+            pass
+        nf = r.get("neuron_fired", "0")
+        try:
+            fires.append("1" if int(float(nf)) else "0")
+        except (TypeError, ValueError):
+            fires.append("?")
+    return f"{ok}/{n}", "".join(fires)
+
+
+def detail_for(case: str, rc: int) -> str:
+    prov = latest_prov(case)
+    tipr = prov.get("tipr_class", "?")
+    fc = prov.get("failure_class", "?")
+    train = prov.get("train_status", "?")
+    gate_rc = prov.get("gate_rc", "?")
+    notes = prov.get("fail_notes") or []
+    notes_s = ",".join(str(x) for x in notes[:4]) if isinstance(notes, list) else str(notes)
+    need = prov.get("Need", prov.get("need", "?"))
+    acc, fires = acc_fires_from_csv(find_results_csv(case))
+    bucket = "PASS" if rc == 0 else BUCKET.get(str(fc), "?")
+    base = (
+        f"case={case}; tipr={tipr}; fc={fc}; train={train}; "
+        f"acc={acc}; fires={fires}; Need={need}; bucket={bucket}"
+    )
+    if rc == 0:
+        return base
+    return f"{base}; gate_rc={gate_rc}; notes={notes_s}"
+
+
+def is_data_row(cols: list[str]) -> bool:
+    return len(cols) >= 9 and cols[3] in RANK and cols[6] in ("PASS", "FAIL", "—")
+
+
+def patch_table_new(
+    text: str,
+    name: str,
+    *,
+    pass_: bool,
+    case: str,
+    detail: str,
+    softcold_pass_for_name: bool | None,
+) -> str:
+    """Update SoftCold/SoftColdDetail on every data row with this Имя.
+
+    softcold_pass_for_name: True if any Canon SoftCold (non-_off) case for this
+    name is PASS; False if primary SoftCold FAIL; None if unknown / only _off.
+    """
     lines = text.splitlines()
     out = []
-    name_rows: list[int] = []
-    for i, line in enumerate(lines):
+    n = 0
+    verdict = "PASS" if pass_ else "FAIL"
+    for line in lines:
         if not line.startswith("|"):
             out.append(line)
             continue
         cols = [c.strip() for c in line.strip("|").split("|")]
-        if not cols or cols[0] != name:
+        if not cols or cols[0] != name or not is_data_row(cols):
             out.append(line)
             continue
-        if len(cols) < 5 or cols[3] not in RANK:
-            out.append(line)
-            continue
-        if not row_matches_softcold_case(cols, case, pass_=pass_):
-            out.append(line)
-            continue
-        name_rows.append(i)
+        n += 1
         working = cols[3]
-        if pass_ and RANK.get("SoftCold", 0) > RANK.get(working, 0):
-            cols[3] = "SoftCold"
-        cols[4] = lastcheck
-        if pass_:
-            cols[8] = "PASS" if len(cols) > 8 else cols[8]
+
+        if case.endswith("_off"):
+            # SoftColdOff must not overwrite Canon SoftCold FAIL primary
+            if cols[6] != "FAIL":
+                cols[6] = verdict
+                cols[7] = detail
+            else:
+                tag = f"{case}:PASS" if pass_ else f"{case}:FAIL"
+                if tag not in cols[7]:
+                    cols[7] = cols[7] + f"; {tag}"
+            if pass_ and RANK.get("SoftColdOff", 0) > RANK.get(working, 0):
+                cols[3] = "SoftColdOff"
+            # Canon SoftCold FAIL but SoftColdOff PASS: demote false SoftCold Working
+            if softcold_pass_for_name is False and cols[3] == "SoftCold":
+                cols[3] = "SoftColdOff"
         else:
-            # SoftCold FAIL does not demote Gold Working; HEAD on this SoftCold row = FAIL
-            if "SoftCold" in lastcheck:
-                cols[8] = "FAIL" if len(cols) > 8 else cols[8]
+            cols[6] = verdict
+            cols[7] = detail
+            if pass_ and RANK.get("SoftCold", 0) > RANK.get(working, 0):
+                cols[3] = "SoftCold"
+            elif not pass_ and cols[3] == "SoftCold":
+                # Canon SoftCold FAIL: drop SoftCold Working (SoftColdOff may restore)
+                cols[3] = "GoldTest" if RANK.get(working, 0) <= 5 else working
+                # Prefer SoftColdOff if already noted, else GoldTest as safe floor
+                if "SoftColdOff" in line or "_off:PASS" in cols[7]:
+                    cols[3] = "SoftColdOff"
+                elif working == "SoftCold":
+                    # keep Acc as-is (may be SoftColdOff metrics); Working demoted
+                    cols[3] = "GoldTest"
+
         out.append("| " + " | ".join(cols) + " |")
-    if not name_rows:
-        # append note line under a softcold section is too risky; skip
-        print(f"WARN: name not found in table: {name}", file=sys.stderr)
+    if not n:
+        print(f"WARN: name not found in new-schema table: {name}", file=sys.stderr)
     return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 
 
@@ -187,18 +269,50 @@ def main() -> None:
             rows = parse_rcs(args.rcs)
             exp = EXP.read_text(encoding="utf-8")
             suc = SUC.read_text(encoding="utf-8") if SUC.exists() else ""
+            if "| SoftCold | SoftColdDetail |" not in exp:
+                print(
+                    "ERROR: EXPERIMENTS.md not migrated; run "
+                    "scripts/migrate_experiments_softcold_columns.py first",
+                    file=sys.stderr,
+                )
+                sys.exit(2)
+
+            # Per-name: does any non-_off SoftCold case PASS?
+            name_soft_pass: dict[str, bool] = {}
             for case, rc in rows:
+                if case.endswith("_off"):
+                    continue
                 name = CASE_TO_NAME.get(case, case)
                 if rc == 0:
-                    lc = f"SoftCold PASS (case={case})"
-                    pass_ = True
+                    name_soft_pass[name] = True
                 else:
-                    lc = f"SoftCold FAIL (case={case}, rc={rc})"
-                    pass_ = False
-                print(f"{case} -> {name}: {lc}")
-                exp = patch_table(exp, name, lc, pass_=pass_, case=case)
-                if pass_ and suc:
-                    suc = patch_table(suc, name, lc, pass_=True, case=case)
+                    name_soft_pass.setdefault(name, False)
+
+            # FAIL first, then PASS (primary FAIL not overwritten by SoftColdOff PASS)
+            ordered = sorted(rows, key=lambda t: (0 if t[1] != 0 else 1, t[0]))
+            for case, rc in ordered:
+                name = CASE_TO_NAME.get(case, case)
+                pass_ = rc == 0
+                detail = detail_for(case, rc)
+                print(f"{case} -> {name}: SoftCold={'PASS' if pass_ else 'FAIL'}")
+                flag = name_soft_pass.get(name)
+                exp = patch_table_new(
+                    exp,
+                    name,
+                    pass_=pass_,
+                    case=case,
+                    detail=detail,
+                    softcold_pass_for_name=flag,
+                )
+                if suc:
+                    suc = patch_table_new(
+                        suc,
+                        name,
+                        pass_=pass_,
+                        case=case,
+                        detail=detail,
+                        softcold_pass_for_name=flag,
+                    )
             if args.dry_run:
                 return
             EXP.write_text(exp, encoding="utf-8")
