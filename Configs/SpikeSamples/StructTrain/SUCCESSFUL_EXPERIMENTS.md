@@ -1,6 +1,6 @@
 # Реестр успешных экспериментов StructTrain
 
-**Срез SoftCold full49:** Console `39edc03c82665dba` · PulseLib `b5229e4` · Bin `566fbc08` · PARALLEL=8 · W3 off · Rs/Rm derived · **0 PASS / 49 FAIL** (SoftCold Working на этом срезе нет).
+**Срез SoftCold full49:** Console `39edc03c82665dba` · PulseLib `b5229e4` · Bin `6a7ef63a` · PARALLEL=8 · W3 off · Rs/Rm derived · **0 PASS / 49 FAIL** (SoftCold Working на этом срезе нет).
 
 Только строки со статусом HEAD **PASS**. Ось — как в [`EXPERIMENTS.md`](EXPERIMENTS.md). SoftCold-колонки — после текущего full49.
 

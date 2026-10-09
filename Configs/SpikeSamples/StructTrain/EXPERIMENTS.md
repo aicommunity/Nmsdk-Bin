@@ -1,6 +1,6 @@
 # Реестр экспериментов StructTrain (полный)
 
-**Срез SoftCold full49:** Console SHA-256 `39edc03c82665dba` · PulseLib `b5229e4` · Bin `566fbc08` · PARALLEL=8 · W3 off · Rs/Rm derived · RCS `_repro/SOFTCOLD_HEAD_rcs.txt` · LOG `SOFTCOLD_full_matrix_20261009T001408Z.log` · **0 PASS / 49 FAIL**.
+**Срез SoftCold full49:** Console SHA-256 `39edc03c82665dba` · PulseLib `b5229e4` · Bin `6a7ef63a` · PARALLEL=8 · W3 off · Rs/Rm derived · RCS `_repro/SOFTCOLD_HEAD_rcs.txt` · LOG `SOFTCOLD_full_matrix_20261009T001408Z.log` · **0 PASS / 49 FAIL**.
 
 Ось таблиц — **исследуемый алгоритм + параметры** (learner, span, рычаг, pack, TipR-режим рецепта).
 Повторный cold/PostTune на текущем HEAD — **не отдельный эксперимент**, а строка(и) того же алгоритма с другим протоколом и вердиктом HEAD.
