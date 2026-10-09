@@ -4,6 +4,15 @@
 
 Сводка разработчика сообщает 2/7 cold PASS: asym50 и br100_search. Пять FAIL: br25_on/off, asym25, br100_keep, phase6_480. [Результаты](_repro/POSTTUNE_VERIFY_RESULT.md) не сопровождаются доступным полным комплектом свежих run-артефактов. Повторный аудит не объявляет эти результаты ложными, но не принимает их как независимую проверку всего HEAD.
 
+
+## SoftCold bounds / W3 (2026-10-08)
+
+- Tip-R bounds **derived** из мембран: `ResistanceMin/Max` пишет только C++ (`UpdateResistanceBoundsFromMembranes`); harness **не** пишет absolute `ResistanceMin` и **не** передаёт `--resistance-min` / `--initial-rs-rm` / `--max-rs-rm` в SoftCold full49.
+- `EnableRmaxLengthEscape=false` (W3 off): при TipR@Rmax + overshoot → `failure_reason=1`, без length-escape.
+- Runtime Rmax для stall-монитора: из audit cold-reset (`RMAX_RUNTIME`), не из устаревшего XML floor.
+- Реестр: колонки **SoftCold** / **SoftColdDetail**; apply — `scripts/apply_softcold_rcs_to_registry.py`.
+
+
 ## Требования к новому run
 
 1. Новый исполняемый каталог с явно заданными Model/Parameters/Matrix/ini. Старые flags/live/CSV не являются входами. soft_cold поверх fat Model отдельно обозначается и не приравнивается к полной новой инициализации. Preflight XML (`DendriteLength=1 1 1 1`) — состояние **до** NM; после C++ `ResetToUntrained` у Branch последняя длина reference = 0 (см. `Train/cold_reset_contract.json`). Не смешивать эти два контракта.
