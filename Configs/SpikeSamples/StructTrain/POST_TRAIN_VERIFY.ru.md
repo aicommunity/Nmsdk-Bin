@@ -7,7 +7,7 @@
 
 ## SoftCold bounds / W3 (2026-10-08)
 
-- Tip-R bounds **derived** из мембран: `ResistanceMin/Max` пишет только C++ (`UpdateResistanceBoundsFromMembranes`); harness **не** пишет absolute `ResistanceMin` и **не** передаёт `--resistance-min` / `--initial-rs-rm` / `--max-rs-rm` в SoftCold full49.
+- Tip-R bounds **derived** из мембран: `ResistanceMin/Max` пишет только C++ (`UpdateResistanceBoundsFromMembranes`); harness **не** пишет absolute `ResistanceMin` и не переопределяет `MaxSynapseToMembraneResistanceRatio` в штатном SoftCold full49.
 - `EnableRmaxLengthEscape=false` (W3 off): при TipR@Rmax + overshoot → `failure_reason=1`, без length-escape.
 - Runtime Rmax для stall-монитора: из audit cold-reset (`RMAX_RUNTIME`), не из устаревшего XML floor.
 - Реестр: колонки **SoftCold** / **SoftColdDetail**; apply — `scripts/apply_softcold_rcs_to_registry.py`.

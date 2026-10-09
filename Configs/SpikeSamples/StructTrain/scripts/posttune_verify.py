@@ -1499,16 +1499,11 @@ def run_case(
     keep_slog: bool = False,
     autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S,
     stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
-    initial_rs_rm: float | None = None,
     max_rs_rm: float | None = None,
 ) -> dict:
     case = dict(CASES[name])
-    for label, value in (
-        ("initial_rs_rm", initial_rs_rm),
-        ("max_rs_rm", max_rs_rm),
-    ):
-        if value is not None and (not math.isfinite(value) or value <= 0.0):
-            raise ValueError(f"{label} must be a finite positive number")
+    if max_rs_rm is not None and (not math.isfinite(max_rs_rm) or max_rs_rm <= 0.0):
+        raise ValueError("max_rs_rm must be a finite positive number")
     if train_t is not None:
         case["train_t"] = float(train_t)
     archive_root: Path = case["root"]
@@ -1564,7 +1559,7 @@ def run_case(
             if not p.exists():
                 continue
             t = p.read_text(encoding="utf-8")
-            if initial_rs_rm is not None or max_rs_rm is not None:
+            if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
                     raise ValueError(
@@ -1577,15 +1572,6 @@ def run_case(
                     ratio_text, attrs=' Type="d" PType="257" IoType="17"',
                 )
                 t = set_tag(t, "MaxSynapseToMembraneResistanceRatio", ratio_text, 1)
-            if initial_rs_rm is not None:
-                ratio_text = format(initial_rs_rm, ".17g")
-                t = ensure_tag_after(
-                    t, "MaxSynapseToMembraneResistanceRatio"
-                    if max_rs_rm is not None else "NormalizationMode",
-                    "InitialSynapseToMembraneResistanceRatio", ratio_text,
-                    attrs=' Type="d" PType="257" IoType="17"',
-                )
-                t = set_tag(t, "InitialSynapseToMembraneResistanceRatio", ratio_text, 1)
             t = ensure_tag_after(t, "IsNeedToTrain", "EnablePostTrainTuning", enable)
             t = set_tag(t, "EnablePostTrainTuning", enable, 1)
             t = ensure_tag_after(
@@ -1616,10 +1602,9 @@ def run_case(
                     )
                     t = set_tag(t, "PostTrainTipSearchIters", "12", 1)
             p.write_text(t, encoding="utf-8")
-            if initial_rs_rm is not None or max_rs_rm is not None:
+            if max_rs_rm is not None:
                 print(
-                    f"  Rs/Rm overrides {rel}: initial={initial_rs_rm or 'default'} "
-                    f"max={max_rs_rm or 'default'}"
+                    f"  Rs/Rm max override {rel}: max={max_rs_rm}"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
@@ -2055,12 +2040,6 @@ def main() -> None:
         ),
     )
     ap.add_argument(
-        "--initial-rs-rm",
-        type=float,
-        default=None,
-        help="Diagnostic override for InitialSynapseToMembraneResistanceRatio",
-    )
-    ap.add_argument(
         "--max-rs-rm",
         type=float,
         default=None,
@@ -2087,7 +2066,6 @@ def main() -> None:
             keep_slog=args.keep_slog,
             autosave_model_s=args.autosave_model_s,
             stall_autosave_n=args.stall_autosave_n,
-            initial_rs_rm=args.initial_rs_rm,
             max_rs_rm=args.max_rs_rm,
         )
         for n in names

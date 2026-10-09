@@ -511,7 +511,7 @@
 		</SynapseResistanceStep>
 		<SynapseResistanceBase>
 			<Header>Базовое сопротивление tip-синапса</Header>
-			<Description>Опорное значение для structural-режима и fallback. При холодном старте parametric-режима TipR инициализируется по InitialSynapseToMembraneResistanceRatio.</Description>
+			<Description>Опорное значение для structural-режима и fallback. При холодном старте parametric-режима используется как начальное значение TipR.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -564,17 +564,6 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</MaxSynapseToMembraneResistanceRatio>
-		<InitialSynapseToMembraneResistanceRatio>
-			<Header>Начальное отношение Rs/Rm</Header>
-			<Description>Только в parametric-режиме при холодном старте задаёт Rs как это отношение к RestingResistance мембраны у каждого входного синапса (с clamp по ResistanceMin/ResistanceMax). По умолчанию 1; structural-режим и обученное состояние при обычной загрузке не меняются.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</InitialSynapseToMembraneResistanceRatio>
 		<AttenuationGamma>
 			<Header>Гамма затухания кабеля</Header>
 			<Description>Коэффициент затухания amp по длине дендрита. &lt;0 — автооценка по amp/Initial.</Description>
@@ -751,9 +740,6 @@
 		<MaxSynapseToMembraneResistanceRatio>
 			<Path>{CompName}:MaxSynapseToMembraneResistanceRatio</Path>
 		</MaxSynapseToMembraneResistanceRatio>
-		<InitialSynapseToMembraneResistanceRatio>
-			<Path>{CompName}:InitialSynapseToMembraneResistanceRatio</Path>
-		</InitialSynapseToMembraneResistanceRatio>
 		<AttenuationGamma>
 			<Path>{CompName}:AttenuationGamma</Path>
 		</AttenuationGamma>
