@@ -627,8 +627,14 @@ def accept_run(
     reasons: list[str] = []
     status = str(row.get("train_status", ""))
     if not skip_train:
-        if status.startswith("cpp_training_failure_"):
-            reasons.append(f"cpp_training_refusal:{status}")
+        if row.get("training_convergence") == "cpp_training_refusal" or status.startswith(
+            "cpp_training_failure_"
+        ):
+            refusal_detail = row.get("training_failure_reason")
+            reasons.append(
+                "cpp_training_refusal:"
+                + (str(refusal_detail) if refusal_detail is not None else status)
+            )
         if child_rc is not None and child_rc not in (0, -15, -9):
             # -15/-9 = SIGTERM/SIGKILL after Need=0 stop — allowed if Need cleared
             if need != "0" and "done" not in status:
@@ -1913,6 +1919,14 @@ def run_case(
         "case": name,
         "train_status": status,
         "training_convergence": training_convergence,
+        "training_failure_phase": (
+            training_failure[0]
+            if training_failure is not None and training_failure[0] >= 0
+            else None
+        ),
+        "training_failure_reason": (
+            training_failure[1] if training_failure is not None else None
+        ),
         "posttune_quality": posttune_quality,
         "detection_quality": detection_quality,
         "after": after,

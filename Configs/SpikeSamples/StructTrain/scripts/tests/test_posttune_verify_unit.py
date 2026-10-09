@@ -479,7 +479,9 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
 
     def test_cpp_refusal_failure_bucket_does_not_masquerade_as_gate_failure(self):
         row = {
-            "train_status": "cpp_training_failure_1",
+            "train_status": "search_same_as_snapshot_FAIL",
+            "training_convergence": "cpp_training_refusal",
+            "training_failure_reason": 1,
             "gate_evaluated": False,
             "gate_ok": None,
             "fires": "",
