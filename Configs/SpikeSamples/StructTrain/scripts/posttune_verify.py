@@ -249,11 +249,12 @@ class PostTuneSalvage:
 class GateResult:
     fires: str
     metrics_line: str
-    rc: int
+    rc: int | None
     csv_mtime: float | None
     gate_started: float
-    ok: bool
+    ok: bool | None
     fail_reason: str = ""
+    evaluated: bool = True
 
 
 @dataclass
@@ -626,6 +627,8 @@ def accept_run(
     reasons: list[str] = []
     status = str(row.get("train_status", ""))
     if not skip_train:
+        if status.startswith("cpp_training_failure_"):
+            reasons.append(f"cpp_training_refusal:{status}")
         if child_rc is not None and child_rc not in (0, -15, -9):
             # -15/-9 = SIGTERM/SIGKILL after Need=0 stop — allowed if Need cleared
             if need != "0" and "done" not in status:
@@ -665,7 +668,7 @@ def accept_run(
     if mid_s and not math.isfinite(mid_f):
         reasons.append("mid_nonfinite")
     fires = row.get("fires") or ""
-    if expect_fires:
+    if expect_fires and row.get("gate_evaluated", True):
         if not fires:
             reasons.append("fires_missing")
         elif fires != expect_fires:
@@ -682,7 +685,7 @@ def accept_run(
             own_vec = parse_tipr_vec(own)
             if own_vec is None or not tipr_close(tipr_vec, own_vec):
                 reasons.append("keep_tipr_mismatch")
-    if not row.get("gate_ok", True):
+    if row.get("gate_evaluated", True) and not row.get("gate_ok", True):
         reasons.append(str(row.get("fail_notes") or row.get("gate_fail") or "gate_fail"))
     got_class = row.get("tipr_class") or ""
     if expect_tipr and tipr and not tipr_matches_expect(got_class, expect_tipr):
@@ -702,6 +705,8 @@ def classify_failure_class(
     if not reasons:
         return "ok"
     row = row or {}
+    if any(r.startswith("cpp_training_refusal:") for r in reasons):
+        return "trainer_refused"
     if any(
         r.startswith("train_incomplete:")
         or r.startswith("Need=")
@@ -737,6 +742,7 @@ def classify_training_convergence(
     train_meta: dict[str, str] | None = None,
     *,
     skipped: bool = False,
+    cpp_failure: tuple[int, int] | None = None,
 ) -> str:
     """Report trainer completion independently from post-train quality.
 
@@ -747,6 +753,8 @@ def classify_training_convergence(
     """
     if skipped:
         return "not_run"
+    if cpp_failure is not None:
+        return "cpp_training_refusal"
     meta = train_meta or {}
     if meta.get("result") not in (None, "", "0"):
         return "converged_posttune_finalized"
@@ -771,12 +779,18 @@ def classify_posttune_quality(train_meta: dict[str, str] | None = None) -> str:
 
 def classify_detection_quality(
     *,
-    gate_ok: bool,
+    gate_ok: bool | None,
     gate_fail: str,
     training_convergence: str,
 ) -> str:
     """Summarize the independent test-time target-detection gate."""
-    if training_convergence in ("not_converged_at_stop", "insufficient_data"):
+    if training_convergence in (
+        "not_converged_at_stop",
+        "insufficient_data",
+        "cpp_training_refusal",
+    ):
+        return "not_evaluated_training_incomplete"
+    if gate_ok is None:
         return "not_evaluated_training_incomplete"
     if gate_ok:
         return "pass"
@@ -786,6 +800,15 @@ def classify_detection_quality(
     if fail:
         return "quality_gate_failed"
     return "insufficient_data"
+
+
+def should_run_quality_gate(training_convergence: str) -> bool:
+    """Do not test a partial model after training stopped before a terminal state."""
+    return training_convergence not in (
+        "not_converged_at_stop",
+        "insufficient_data",
+        "cpp_training_refusal",
+    )
 
 
 def classify_slog_gib(
@@ -1530,6 +1553,7 @@ def run_case(
         run_dir = make_run_dir(name)
     run_id = run_dir.name
     child_rc: int | None = None
+    training_failure: tuple[int, int] | None = None
     params_source = "nm_save"
     tip_mode = {
         "br25_on": "1",
@@ -1642,6 +1666,13 @@ def run_case(
             early_stop_autosave=autosave_model_s > 0,
             stall_autosave_n=stall_autosave_n,
         )
+        if status.startswith("cpp_training_failure_"):
+            training_failure = runtime_training_failure_from_audit(train)
+            if training_failure is None:
+                try:
+                    training_failure = (-1, int(status.rsplit("_", 1)[1]))
+                except ValueError:
+                    training_failure = (-1, -1)
         if allow_salvage:
             params_source = flush_posttune_artifacts(train)
             if params_source == "none":
@@ -1670,7 +1701,29 @@ def run_case(
         after["FixedLTZThreshold"] = phase.train["mid"].split()[0]
 
     gold_test = snap_params(gold / "Test" / "Parameters_00.xml")
-    gate = run_gate(case)
+    training_convergence = classify_training_convergence(
+        after.get("IsNeedToTrain", ""),
+        phase.train,
+        skipped=(status == "skip_train"),
+        cpp_failure=training_failure,
+    )
+    if should_run_quality_gate(training_convergence):
+        gate = run_gate(case)
+    else:
+        gate = GateResult(
+            fires="",
+            metrics_line="not_evaluated_training_incomplete",
+            rc=None,
+            csv_mtime=None,
+            gate_started=time.time(),
+            ok=None,
+            fail_reason="not_evaluated_training_incomplete",
+            evaluated=False,
+        )
+        print(
+            f"  SKIP_GATE training_convergence={training_convergence}; "
+            "model is not in a terminal training state"
+        )
     phase = load_phase_meta(train_flag, test_flag)
     if phase.test.get("mid"):
         after["FixedLTZThreshold"] = phase.test["mid"].split()[0]
@@ -1684,11 +1737,6 @@ def run_case(
 
     mid_meta = dict(phase.test) if phase.test else dict(phase.train)
     mid_src = mid_source_of(mid_meta, after.get("FixedLTZThreshold", ""))
-    training_convergence = classify_training_convergence(
-        after.get("IsNeedToTrain", ""),
-        phase.train,
-        skipped=(status == "skip_train"),
-    )
     posttune_quality = classify_posttune_quality(phase.train)
     detection_quality = classify_detection_quality(
         gate_ok=gate.ok,
@@ -1736,11 +1784,15 @@ def run_case(
         own_keep_snapshot = tipr_final
         tipr_vs = tipr_vs_snapshot(tipr_final, tipr_final, search_reverted=False)
 
-    if not gate.ok:
+    if gate.evaluated and not gate.ok:
         status = f"{status}_gate_FAIL_{gate.fail_reason}"
 
-    fires = gate.fires if gate.ok else ""
-    metrics_line = gate.metrics_line if gate.ok else gate.fail_reason
+    fires = gate.fires if gate.evaluated and gate.ok else ""
+    metrics_line = (
+        gate.metrics_line
+        if gate.evaluated and gate.ok
+        else gate.fail_reason or gate.metrics_line
+    )
 
     _copy_if_exists(train_flag, run_dir / "Train" / "posttune_complete.flag")
     _copy_if_exists(test_flag, run_dir / "Test" / "posttune_complete.flag")
@@ -1784,6 +1836,14 @@ def run_case(
 
             "train_status": status,
             "training_convergence": training_convergence,
+            "training_failure_phase": (
+                training_failure[0]
+                if training_failure is not None and training_failure[0] >= 0
+                else None
+            ),
+            "training_failure_reason": (
+                training_failure[1] if training_failure is not None else None
+            ),
             "posttune_quality": posttune_quality,
             "detection_quality": detection_quality,
             "posttune_result": phase.train.get("result", ""),
@@ -1802,6 +1862,7 @@ def run_case(
             "mid_source": mid_src,
             "gate_rc": gate.rc,
             "gate_ok": gate.ok,
+            "gate_evaluated": gate.evaluated,
             "quality_class": "salvaged" if allow_salvage else "calibration-quality",
             "work_root": str(root),
             "archive_root": str(archive_root),
@@ -1871,6 +1932,7 @@ def run_case(
         "run_dir": str(run_dir),
         "gate_rc": gate.rc,
         "gate_ok": gate.ok,
+        "gate_evaluated": gate.evaluated,
         "own_keep_snapshot": own_keep_snapshot,
         "require_cpp_mid": name in ("asym50", "phase6_480", "br100_search"),
         "child_rc": child_rc,
@@ -1884,7 +1946,7 @@ def run_case(
         child_rc=child_rc,
         skip_train=skip_train,
     )
-    if not gate.ok and gate.fail_reason not in fail_notes:
+    if gate.evaluated and not gate.ok and gate.fail_reason not in fail_notes:
         fail_notes.append(gate.fail_reason)
     failure_class = classify_failure_class(fail_notes, row)
     row["row_fail"] = not ok

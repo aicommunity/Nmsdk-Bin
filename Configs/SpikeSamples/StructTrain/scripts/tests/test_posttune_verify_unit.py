@@ -462,6 +462,42 @@ class TestFailureClass(unittest.TestCase):
 
 
 class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
+    def test_cpp_refusal_is_separate_and_skips_quality_gate(self):
+        convergence = pv.classify_training_convergence(
+            "1", {}, cpp_failure=(4, 1)
+        )
+        self.assertEqual(convergence, "cpp_training_refusal")
+        self.assertFalse(pv.should_run_quality_gate(convergence))
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_ok=None,
+                gate_fail="not_evaluated_training_incomplete",
+                training_convergence=convergence,
+            ),
+            "not_evaluated_training_incomplete",
+        )
+
+    def test_cpp_refusal_failure_bucket_does_not_masquerade_as_gate_failure(self):
+        row = {
+            "train_status": "cpp_training_failure_1",
+            "gate_evaluated": False,
+            "gate_ok": None,
+            "fires": "",
+            "tipr_class": "",
+            "after": {"IsNeedToTrain": "1"},
+        }
+        ok, reasons = pv.accept_run(
+            row,
+            expect_fires="10000000",
+            expect_tipr="",
+            mode="cold",
+            need="1",
+            child_rc=-15,
+        )
+        self.assertFalse(ok)
+        self.assertFalse(any(r == "fires_missing" for r in reasons))
+        self.assertEqual(pv.classify_failure_class(reasons, row), "trainer_refused")
+
     def test_posttune_nonseparable_is_still_completed_training(self):
         self.assertEqual(
             pv.classify_training_convergence("1", {"result": "2"}),
