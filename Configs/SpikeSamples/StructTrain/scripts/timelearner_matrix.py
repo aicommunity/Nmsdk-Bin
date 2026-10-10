@@ -328,12 +328,15 @@ def main() -> int:
     parser.add_argument("wave", nargs="?")
     parser.add_argument("--prepare", metavar="WAVE", help="prepare immutable input snapshots for a wave")
     parser.add_argument("--run", metavar="WAVE", help="run a prepared wave")
+    parser.add_argument("--case", nargs=2, metavar=("WAVE", "CASE"), help="run one prepared case")
     parser.add_argument("--jobs", type=int, default=8)
     parser.add_argument("--refresh", action="store_true", help="regenerate an existing input snapshot after an explicit design change")
     parser.add_argument("--worker", nargs=2, metavar=("WAVE", "CASE"), help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.worker:
         return worker(*args.worker)
+    if args.case:
+        return worker(*args.case)
     if args.prepare:
         prepare_wave(args.prepare, refresh=args.refresh)
         return 0
