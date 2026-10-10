@@ -92,7 +92,15 @@ dt = needed - delay_use
 - `AllSynapsesNormalized`: только дендриты `0..N-2` (опора исключена). amp в ε **и** `length_ok` **или** best-effort@`ResistanceMin` **или** oscillation band (`|dt| < 0.005`, 3 iter без улучшения) **или** dead tip — все пути требуют синхронизированную длину.
 - Переключение structural→parametric mid-train (большой `NumSynapse`) требует rebuild; **рекомендуется** `ResetToUntrainedState=1`.
 
-Параметры parametric: `SynapseResistanceBase` (8.6e7), `ResistanceMin` (1e6), `ResistanceMax` (1e11), `AttenuationGamma` (-1 = auto), `ResistanceAdjustGain` (0.4).
+Параметры parametric: `SynapseResistanceBase` (биологический default около 8.6e7 Ом), `AttenuationGamma` (-1 = auto), `ResistanceAdjustGain` (0.4), `MaxSynapseToMembraneResistanceRatio` (default 1000). `ResistanceMin` и `ResistanceMax` — наблюдаемые runtime State, вычисляемые из сопротивлений целевых сегментов мембраны, а не независимые константы конфига:
+
+```
+ResistanceMin = max(Rm[i]) / q
+ResistanceMax = min(Rm[i]) × q
+q = MaxSynapseToMembraneResistanceRatio
+```
+
+Так для каждого целевого сегмента общий диапазон `Rs` ограничен отношением `1/q ≤ Rs/Rm[i] ≤ q`. Если интервалы не пересекаются, вычисление границ завершается отказом. При `NormalizationMode=0` параметрическое изменение `Rs` и эти границы не применяются. Инициализация не вычисляет `Rs = Rm × InitialRatio`: используется прежнее сохранённое/рецептурное сопротивление синапса (`TipSynapseResistance` или `SynapseResistanceBase`), после чего действуют кламп и нормализация. W3-путь изменения длины при упоре в `Rmax` управляется `EnableRmaxLengthEscape` и по умолчанию выключен; при исчерпании диапазона остаётся штатный отказ обучения.
 
 - `AllDendritesSynced`: dead tip + `|needed−delay_len|≤tol` / best-effort — без требования `peakValid`.
 - На более длинных дендритах в structural обычно больше синапсов; полный cap может потребовать `-t 120+`. Parametric обычно сходится быстрее (<80 iter).

@@ -54,6 +54,8 @@ def main() -> int:
     parser.add_argument("--from-wave", help="start from this wave; prior results are preserved")
     parser.add_argument("--waves", nargs="*", help="optional explicit wave ids")
     args = parser.parse_args()
+    if args.jobs < 1 or args.jobs > 8:
+        raise SystemExit("--jobs must be between 1 and 8")
     registry = json.loads((MATRIX / "matrix.json").read_text(encoding="utf-8"))
     waves = args.waves or registry.get("queue_order", [])
     if args.from_wave:
@@ -80,7 +82,10 @@ def main() -> int:
             (RUNS / wave / case["id"] / "matrix_result.json").is_file()
             for case in registry["cases"] if case["wave"] == wave
         )
-        if run_result.returncode != 0 or not wave_status.get("run_complete") or not all_results:
+        if not all_results:
+            print(f"=== {wave} partial report and commits ===", flush=True)
+            run([sys.executable, str(UPDATER), wave], BASE)
+            git_add_commit(wave)
             overall["waves"][wave] = {
                 "status": "paused_infrastructure_or_incomplete_results",
                 "runner_exit": run_result.returncode,
@@ -94,14 +99,22 @@ def main() -> int:
         print(f"=== {wave} report and commits ===", flush=True)
         run([sys.executable, str(UPDATER), wave], BASE)
         git_add_commit(wave)
+        failed_cases = int(wave_status.get("case_data_failures", 0))
         overall["waves"][wave] = {
-            "status": "completed_and_committed",
+            "status": "completed_and_committed_data_failure" if failed_cases else "completed_and_committed",
             "runner_exit": run_result.returncode,
+            "case_data_failures": failed_cases,
             "updated_utc": datetime.now(timezone.utc).isoformat(),
             "bin_head": git_text(BIN_ROOT, "rev-parse", "HEAD"),
             "root_head": git_text(ROOT, "rev-parse", "HEAD"),
         }
         status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+        if run_result.returncode != 0 or failed_cases:
+            print(f"PAUSED after {wave}: case refusal or quality/detection failure; wave was reported and committed", flush=True)
+            overall["status"] = "paused_after_data_failure"
+            overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
+            status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+            return 1
         print(f"COMMITTED {wave}", flush=True)
     overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
     overall["status"] = "queue_completed"

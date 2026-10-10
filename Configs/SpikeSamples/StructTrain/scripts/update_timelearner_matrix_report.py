@@ -14,6 +14,8 @@ MATRIX = BASE / "TimeLearnerMatrix"
 EXPERIMENTS = BASE / "EXPERIMENTS.md"
 SUCCESSFUL = BASE / "SUCCESSFUL_EXPERIMENTS.md"
 ROOT_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "evidence" / "metrics" / "TIMELEARNER_MATRIX_WAVES_20261010.md"
+WAVE_PLAN = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "plans" / "TimeLearner-full-matrix-waves-20261010.ru.md"
+FULL_MATRIX_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "TIMELEARNER_FULL_MATRIX_AND_HISTORY_2026-10-10.ru.md"
 RUNS = BASE / "_repro" / "TimeLearnerMatrixRuns"
 BEGIN = "<!-- GENERATED_WAVE_RESULTS_BEGIN -->"
 END = "<!-- GENERATED_WAVE_RESULTS_END -->"
@@ -74,16 +76,131 @@ def collect_wave(wave: str) -> tuple[dict[str, Any], Path]:
     return snapshot, target
 
 
+def separation_quality(row: dict[str, Any]) -> str:
+    quality = row.get("separation_quality")
+    if quality is None:
+        metrics = str(row.get("metrics") or "")
+        if row.get("quality_gate_ok") is True or "ok_audit=1" in metrics or "ok_strict=1" in metrics:
+            quality = "pass"
+        elif row.get("quality_gate_ok") is False or "ok_audit=0" in metrics or "ok_strict=0" in metrics:
+            quality = "fail"
+        elif (legacy_ok := re.search(r"(?:^|\s)ok=(\d+)", metrics)):
+            quality = "legacy_gate_pass_strict_unavailable" if legacy_ok.group(1) == "1" else "legacy_gate_fail"
+        elif row.get("expect_fires") and row.get("fires"):
+            quality = "legacy_pattern_mismatch" if row["fires"] != row["expect_fires"] else "legacy_pattern_match_strict_unavailable"
+        else:
+            quality = "not_reached_or_unknown"
+    return str(quality)
+
+
+def target_detection(row: dict[str, Any]) -> str:
+    detection = row.get("detection_quality")
+    if detection in ("detected", "target_detected"):
+        return "detected"
+    if detection in ("target_not_detected", "not_detected"):
+        return "target_not_detected"
+    if detection in ("pass", "fail", "ok", "unknown", None):
+        metrics = str(row.get("metrics") or "")
+        hit = re.search(r"(?:target_hit_strict|target_hit)=(\d+)", metrics)
+        if row.get("target_detected") is True:
+            detection = "detected"
+        elif row.get("target_detected") is False:
+            detection = "target_not_detected"
+        elif hit:
+            detection = "detected" if hit.group(1) == "1" else "target_not_detected"
+        elif row.get("fires") and row.get("fires") != "—":
+            detection = "detected" if str(row["fires"]).startswith("1") else "target_not_detected"
+        else:
+            detection = "not_evaluated_training_incomplete"
+    return str(detection)
+
+
+def accuracy_summary(row: dict[str, Any]) -> str:
+    metrics = str(row.get("metrics") or "")
+    structured = row.get("quality_metrics") if isinstance(row.get("quality_metrics"), dict) else {}
+    accuracy = structured.get("acc_strict")
+    denominator = structured.get("n")
+    label = "strict"
+    if accuracy is None:
+        acc_match = re.search(r"(?:^|\s)acc=(\d+)(?:/(\d+))?", metrics)
+        n_match = re.search(r"(?:^|\s)n=(\d+)", metrics)
+        if acc_match:
+            accuracy = acc_match.group(1)
+            denominator = acc_match.group(2) or (n_match.group(1) if n_match else None)
+            label = "legacy"
+    if accuracy is None:
+        return "—"
+    result = f"{accuracy}/{denominator}" if denominator else str(accuracy)
+    fp = structured.get("late_fp_strict")
+    if fp is None:
+        fp_match = re.search(r"(?:^|\s)fa=(\d+)", metrics)
+        fp = fp_match.group(1) if fp_match else None
+    suffix = f"; FP={fp}" if fp is not None else ""
+    audit = "" if label == "strict" else "; strict audit not saved"
+    return f"{result} {label}{suffix}{audit}"
+
+
+def human_pattern_label(spec: dict[str, Any]) -> str:
+    family = str(spec.get("pattern_family") or "")
+    labels = {
+        "AsymRm pack A": "базовый набор Pack A с асимметричными сопротивлениями мембран",
+        "AsymRm Pack A": "набор Pack A с асимметричными сопротивлениями мембран",
+        "Branch pack A": "набор Pack A на разных сегментах одного дендрита",
+        "FastSpan": "сжатая по времени последовательность импульсов",
+        "LTZ-calibrated Pack A": "набор Pack A с калибровкой порога локальной временной зоны",
+        "PhaseA/Phase6": "полный паттерн 480 мс с исторической настройкой порога локальной временной интеграции",
+        "Phase6 canonical": "полный паттерн 480 мс из базовой конфигурации Phase6",
+        "PSI historical sweep": "исторические паттерны разной длительности для перебора силы пресинаптического торможения",
+        "D long-pattern diagnostic": "длинный паттерн 480 мс для проверки мембранной RC-постоянной, задержки на сегмент и предела длины",
+        "FastResponse D×C": "полный паттерн 480 мс и историческая комбинация постоянной диссоциации с ёмкостью мембраны",
+        "FastResponse D×C + manual TipR@Rmin": "полный паттерн 480 мс, историческая комбинация D×C и ручное снижение сопротивления концевых синапсов до Rmin",
+    }
+    if family in labels:
+        return labels[family]
+    if family == "Pack B":
+        return "исторический набор импульсов Pack B"
+    if family == "Pack C":
+        return "исторический набор импульсов Pack C"
+    if family.startswith("AsymRm Pack "):
+        pack = family.removeprefix("AsymRm Pack ")
+        return f"набор Pack {pack} с асимметричными сопротивлениями мембран"
+    if family.startswith("Branch"):
+        return "импульсы последовательности на разных сегментах одного дендрита"
+    return family or "исторический набор импульсов; см. сохранённые XML"
+
+
+def human_case_description(spec: dict[str, Any]) -> str:
+    existing = str(spec.get("description_ru") or "")
+    if existing and not existing.startswith("Точная повторная проверка исторического случая"):
+        return existing
+    if not existing:
+        detail = human_pattern_label(spec)
+        return f"Базовая проверка: {detail}; сопоставленные PSI off/on варианты отличаются только явно указанным режимом и торможением."
+    duration = spec.get("duration_ms")
+    mode = "структурный" if spec.get("normalization_mode") == 0 else "структурно-параметрический"
+    psi = "включено" if spec.get("presynaptic_inhibition") else "выключено"
+    coeff = spec.get("presynaptic_coefficient")
+    if spec.get("presynaptic_inhibition") and coeff is not None:
+        psi += f" (коэффициент {coeff:g})"
+    nextseg = "включено" if spec.get("branch_nextseg") else "выключено"
+    post = "включена" if spec.get("posttrain_tuning") else "выключена"
+    tip_modes = {0: "off", 1: "CanonRmin", 2: "FlatLastR", 3: "KeepDone", 4: "SearchSynthetic"}
+    tip = tip_modes.get(spec.get("tipr_mode"), "как в исходном XML")
+    return (
+        f"Повтор сохранённой Train/Test-конфигурации: {human_pattern_label(spec)}, {duration} мс; "
+        f"режим обучения — {mode}; пресинаптическое торможение {psi}; Branch NextSeg {nextseg}; "
+        f"PostTrain {post}, режим TipR {tip}."
+    )
+
+
 def category(row: dict[str, Any]) -> str:
     if not row:
         return "результат не сохранён"
     conv = str(row.get("training_convergence") or "не определена")
-    quality = str(row.get("posttune_quality") or "не оценено")
-    detection = str(row.get("detection_quality") or "не оценено")
+    quality = separation_quality(row)
+    detection = target_detection(row)
     if conv.startswith("converged") or conv == "training_converged":
-        if row.get("row_fail"):
-            return "обучение сошлось; quality/detection FAIL"
-        return "обучение сошлось; quality/detection PASS"
+        return f"обучение сошлось; качество={quality}; цель={detection}"
     if conv in ("not_started", "not_run"):
         return "обучение не запускалось"
     if conv in ("not_converged_at_stop", "cpp_training_refusal"):
@@ -105,18 +222,24 @@ def replace_block(path: Path, content: str) -> None:
 
 
 def update_documents() -> None:
+    registry = load_json(MATRIX / "matrix.json") or {}
+    readiness = load_json(MATRIX / "readiness.json") or {}
+    history = load_json(MATRIX / "legacy_history_inventory.json") or {}
     rows = result_rows()
+    results_by_case = {item.get("case"): item.get("result") or {} for item in rows}
     grouped: dict[str, list[dict[str, Any]]] = {}
     for item in rows:
         grouped.setdefault(item["wave"], []).append(item)
-    sections = []
-    for wave in sorted(grouped):
+    result_sections = []
+    for wave in registry.get("queue_order", sorted(grouped)):
+        if wave not in grouped:
+            continue
         group = grouped[wave]
         table = [
             f"### {wave}",
             "",
-            "| Случай | Сходимость обучения | Качество PostTune | Детекция цели | Need | Fires | Категория |",
-            "|---|---|---|---|---:|---|---|",
+            "| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |",
+            "|---|---|---|---|---|---:|---|---|",
         ]
         for item in group:
             result = item.get("result") or {}
@@ -124,14 +247,126 @@ def update_documents() -> None:
             table.append("| " + " | ".join([
                 md(item["case"]),
                 md(result.get("training_convergence", item.get("infrastructure_status"))),
-                md(result.get("posttune_quality")),
-                md(result.get("detection_quality")),
+                md(separation_quality(result)),
+                md(target_detection(result)),
+                md(accuracy_summary(result)),
                 md(after.get("IsNeedToTrain")),
                 md(result.get("fires")),
                 md(category(result)),
             ]) + " |")
-        sections.extend(table + [""])
-    replace_block(EXPERIMENTS, "\n".join(sections) if sections else "_Выполненных волн пока нет._")
+        result_sections.extend(table + [""])
+
+    cases = registry.get("cases", [])
+    wave_cases: dict[str, list[dict[str, Any]]] = {}
+    for spec in cases:
+        wave_cases.setdefault(spec["wave"], []).append(spec)
+    matrix_lines = []
+    for wave in registry.get("queue_order", []):
+        specs = wave_cases.get(wave, [])
+        if not specs:
+            continue
+        title = (registry.get("wave_descriptions", {}).get(wave) or {}).get("title", "")
+        matrix_lines.extend([
+            f"### {wave}: {md(title)}",
+            "",
+            "| ID | Что именно проверяется | Тренер / длительность / режим | Пресинаптическое торможение / NextSeg | Train / Test |",
+            "|---|---|---|---|---|",
+        ])
+        for spec in specs:
+            trainer = spec.get("trainer")
+            trainer_name = "Classic (`NNeuronTimeLearner`)" if trainer == "NNeuronTimeLearner" else "Branch (`NNeuronTimeLearnerBranch`)"
+            mode = "структурный (NormalizationMode=0)" if spec.get("normalization_mode") == 0 else "структурно-параметрический (NormalizationMode=1)"
+            duration = f"{spec.get('duration_ms')} мс"
+            psi = "включено" if spec.get("presynaptic_inhibition") else "выключено"
+            coefficient = spec.get("presynaptic_coefficient")
+            if spec.get("presynaptic_inhibition") and coefficient is not None:
+                psi += f", k={coefficient:g}"
+            nextseg = "включено" if spec.get("branch_nextseg") else "выключено"
+            input_root = f"TimeLearnerMatrix/{wave}/inputs/{spec['id']}"
+            train = f"[{spec['id']} Train]({input_root}/Train/Project.ini)"
+            test = f"[{spec['id']} Test]({input_root}/Test/Project.ini)"
+            matrix_lines.append("| " + " | ".join([
+                md(spec["id"]),
+                md(human_case_description(spec)),
+                f"{md(trainer_name)}; {md(duration)}; {md(mode)}",
+                f"PSI {md(psi)}; Branch NextSeg {md(nextseg)}",
+                f"{train} / {test}",
+            ]) + " |")
+        matrix_lines.append("")
+
+    total_cases = len(cases)
+    wave_count = len(registry.get("queue_order", []))
+    max_wave = max((len(v) for v in wave_cases.values()), default=0)
+    convergence_counts: dict[str, int] = {}
+    for item in rows:
+        result = item.get("result") or {}
+        state = str(result.get("training_convergence") or "не определено")
+        convergence_counts[state] = convergence_counts.get(state, 0) + 1
+    successful_count = sum(
+        1 for item in rows
+        if (result := (item.get("result") or {}))
+        and str(result.get("training_convergence", "")).startswith("converged")
+        and separation_quality(result) == "pass"
+        and target_detection(result) == "detected"
+    )
+    history_counts: dict[str, int] = {}
+    for row in history.get("records", []):
+        key = row.get("mapping_quality", "unknown")
+        history_counts[key] = history_counts.get(key, 0) + 1
+    full49 = load_json(MATRIX / "historical_coverage.json") or {}
+
+    intro = [
+        "# StructTrain: матрица экспериментов TimeLearner",
+        "",
+        "## Что проверяется",
+        "",
+        f"Реестр содержит **{total_cases} отдельных обучающих опытов** в **{wave_count} волнах**; самая большая волна — {max_wave} опытов. Каждая строка — одно обучение одной конфигурации. Восемь проб внутри Test — измерения качества одной модели, а не восемь отдельных обучающих опытов. Очередь запускается только на сервере `.17`, максимум восемь процессов NeuroModelerConsole. Полные 312 запусков в рамках подготовки матрицы не выполнялись.",
+        "",
+        "Проверяются два C++-тренера: Classic (`NNeuronTimeLearner`) распределяет импульсы входного паттерна по нескольким дендритам; Branch (`NNeuronTimeLearnerBranch`) размещает импульсы на разных сегментах одного дендрита. Оба обучают длину дендритов. `NormalizationMode=0` меняет структуру синапсов для нормализации амплитуды; `NormalizationMode=1` использует параметрическую настройку сопротивления синапса. Пресинаптическое торможение и Branch NextSeg — отдельные механизмы и факторы.",
+        "",
+        "В документах `PSI` означает пресинаптическое торможение, `NextSeg` — отдельное торможение следующего сегмента Branch, а `TipR` — сопротивление концевого синапса. Pack A/B/C обозначают сохранённые семейства входных последовательностей; их точные интервалы находятся в XML. Исторические подписи «FastSpan» и «Phase A/6» оставлены рядом с человеческим описанием: это сжатые по времени последовательности и длинный паттерн с настройкой порога зоны локальной временной интеграции.",
+        "",
+        "Для каждого опыта отдельно фиксируются: завершение/сходимость C++-обучения; качество разделения и доступная точность; детекция целевой последовательности. `Need=0` не заменяет проверку метрик, а успешный выход оценщика не подтверждает качество. Скрипты только собирают исходные конфиги, запускают C++-тренер, сохраняют результаты и анализируют их.",
+        "",
+        "Каждый случай имеет отдельные ручные папки Train и Test с XML/INI, хэш-манифестом и `Interface.xml` для графиков. Статическая проверка готовности нашла Train/Test и непустые настройки графиков у всех случаев; оригинальные варианты заголовков графиков сохранены в своих конфигурациях.",
+        "",
+        "## Покрытие исторических запусков",
+        "",
+        f"Проверено **{history.get('legacy_train_test_config_pair_count', 0)}** исторических Train/Test-папок и **{history.get('unique_model_parameter_pattern_signatures', 0)}** уникальных сигнатур условий. Сопоставления: {history_counts.get('exact source replay', 0)} точных источников, {history_counts.get('exact effective condition (documented historical alias)', 0)} документированный дубль фактической физической настройки, {history_counts.get('close analogue', 0)} близких аналогов, {history_counts.get('no coverage', 0)} без строки матрицы. Все 49 уникальных конфигураций октябрьского full49 имеют отдельные строки; повторные кампании привязаны к тем же условиям.",
+        "",
+        "Августовская серия FastResponse была отдельным перебором `DissociationTC × MembraneCapacity`: она вынесена в W46, а два случая с ручным TipR@Rmin — в W47. Папка `EXPD005C25e11` фактически задавала C=5e-10 Ф из-за ошибки UploadClass и отражена как дубль соответствующей настройки, а не как мнимая C=2.5e-10 Ф.",
+        "",
+        "Сохранённые оценки по старым конфигам относятся к своим историческим Train/Test и исходным версиям. Последний commit конфигурации не выдаётся за точный commit запуска; для значительной части старых опытов точный root/PulseLib/Bin/Console run pin не сохранился. Подробная построчная таблица: [историческое покрытие](../../../../Docs/Audit/TimeLearner-2026-09-26-review/HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md); хронология результатов: [CAMPAIGN_REPORT_2026-08_09.md](CAMPAIGN_REPORT_2026-08_09.md).",
+        "",
+        "## Ранее сохранённые результаты базовых 32 случаев",
+        "",
+        f"В имеющихся снимках W01–W04 записано {len(rows)} случаев: {convergence_counts.get('not_converged_at_stop', 0)} не сошлись к моменту остановки, {sum(v for k, v in convergence_counts.items() if k.startswith('converged'))} завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — {successful_count}. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.",
+        "",
+        "Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.",
+        "",
+        "Результаты показывают исходную проблему базовых запусков; до перехода к следующей волне очередь должна останавливаться на любом отказе C++-обучения, провале метрик или недетекции цели. Причины разбираются отдельно, а старые outcomes не заменяют будущую проверку с известным бинарником и хэшами входов.",
+        "",
+        "## Факторы и волны в порядке запуска",
+        "",
+        "Сначала проверяется сбалансированная базовая матрица; затем отдельные исторические конфигурации и взаимодействия. Любая волна — максимум восемь опытов и имеет обязательную точку анализа до следующей. Полные case ID, факторы и Train/Test ссылки ниже являются реестром исполнения.",
+        "",
+        "| Волна | Описание | Опытов |",
+        "|---|---|---:|",
+    ]
+    for wave in registry.get("queue_order", []):
+        title = (registry.get("wave_descriptions", {}).get(wave) or {}).get("title", "")
+        intro.append(f"| {wave} | {md(title)} | {len(wave_cases.get(wave, []))} |")
+    intro.extend(["", "## Реестр опытов и ручные конфиги", "", *matrix_lines])
+    intro.extend(["## Результаты сохранённых запусков", "", *(result_sections or ["_Сохранённых результатов волн пока нет._"])])
+    intro.extend([
+        "## Протокол следующей волны",
+        "",
+        "Очередь запускается в tmux на сервере `.17`, не более чем восемью процессами. После каждого завершённого опыта отчёты обновляются; перед следующим wave проводится анализ. При C++ refusal/non-convergence, невыполнении quality gate, недетекции, ошибке оценщика, отсутствующем результате или инфраструктурной ошибке очередь ставится на паузу до разбора причины. Exit code процесса отдельно от метрик не считается PASS. Подробная процедура: [RUN_ON_SERVER.ru.md](TimeLearnerMatrix/RUN_ON_SERVER.ru.md); фактический порядок и stop policy: `TimeLearnerMatrix/matrix.json`.",
+        "",
+        "Исторические Train/Test исходники остаются для воспроизводимости и связаны в Git; пользовательский текущий набор запусков находится в `TimeLearnerMatrix/Wxx/inputs/<case>/{Train,Test}`. Скрипт не переносит обучение и обновление состояния из C++ в Python.",
+        "",
+    ])
+    EXPERIMENTS.write_text("\n".join(intro), encoding="utf-8")
 
     success = []
     for item in rows:
@@ -140,7 +375,8 @@ def update_documents() -> None:
             result
             and not result.get("row_fail")
             and str(result.get("training_convergence", "")).startswith("converged")
-            and result.get("detection_quality") == "pass"
+            and separation_quality(result) == "pass"
+            and target_detection(result) == "detected"
         ):
             factor = item.get("matrix_factors") or item.get("factors") or {}
             train = f"TimeLearnerMatrix/{item['wave']}/inputs/{item['case']}/Train/Project.ini"
@@ -151,26 +387,150 @@ def update_documents() -> None:
                 md(factor.get("duration_ms")),
                 md(factor.get("normalization_mode")),
                 md("включено" if factor.get("presynaptic_inhibition") else "выключено"),
-                md(result.get("detection_quality")),
+                md(target_detection(result)),
+                md(accuracy_summary(result)),
                 f"[Train]({train}) / [Test]({test})",
             ]) + " |")
-    successful_body = "\n".join([
-        "| Случай | Тренер | Длительность, мс | Режим | Пресинаптическое торможение | Детекция | Воспроизводимые конфиги |",
-        "|---|---|---:|---|---|---|---|",
-        *(success or ["| _Пока нет подтверждённых PASS новых матричных прогонов._ | — | — | — | — | — | — |"]),
-    ])
-    replace_block(SUCCESSFUL, successful_body)
+    success_lines = [
+        "# Подтверждённые успешные эксперименты TimeLearner",
+        "",
+        "## Правило включения",
+        "",
+        "Сюда попадают только опыты, где C++-тренер сошёлся, строгие метрики качества разделения прошли аудит (`ok_audit=1`/эквивалентный зафиксированный strict gate) и цель обнаружена. `Need=0`, успешный код выхода оценщика и исторический permissive `ok=1` сами по себе недостаточны.",
+        "",
+        "Исторические PASS по старым конфигам и бинарникам остаются в [CAMPAIGN_REPORT_2026-08_09.md](CAMPAIGN_REPORT_2026-08_09.md), [исторической инвентаризации](../../../../Docs/Audit/TimeLearner-2026-09-26-review/HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md) и истории Git. Их нельзя выдавать за PASS текущего кода.",
+        "",
+        "## Подтверждённые случаи текущей матрицы",
+        "",
+        "| Случай | Тренер | Длительность, мс | Режим | Пресинаптическое торможение | Детекция цели | Acc / FP | Воспроизводимые конфиги |",
+        "|---|---|---:|---|---|---|---|---|",
+        *(success or ["| _Пока нет подтверждённых строгих PASS матричных прогонов._ | — | — | — | — | — | — | — |"]),
+        "",
+        "В сохранённых базовых W01–W04 есть два сходившихся обучения, но строгого PASS нет: один результат имеет legacy `ok=1`, Acc 7/8 и один false acceptance при отсутствующем strict-аудите; другой сошёлся, но не обнаружил цель. Эти результаты остаются в [EXPERIMENTS.md](EXPERIMENTS.md) в таблице сходимости, качества и детекции.",
+        "",
+        "Ручные Train/Test-конфиги каждой строки лежат в `TimeLearnerMatrix/<wave>/inputs/<case>/`. Полная матрица содержит отдельный Run case на обучение; внутренние восемь Test-проб не считаются восьмью отдельными обучениями.",
+        "",
+    ]
+    SUCCESSFUL.write_text("\n".join(success_lines), encoding="utf-8")
+
+    wave_rows = []
+    for wave in registry.get("queue_order", []):
+        specs = wave_cases.get(wave, [])
+        if not specs:
+            continue
+        title = (registry.get("wave_descriptions", {}).get(wave) or {}).get("title", "")
+        ids = ", ".join(spec["id"] for spec in specs)
+        wave_rows.append(f"| {wave} | {md(title)} | {len(specs)} | `{ids}` |")
+    historical_line = (
+        f"Инвентаризировано {history.get('legacy_train_test_config_pair_count', 0)} старых Train/Test-пар и "
+        f"{history.get('unique_model_parameter_pattern_signatures', 0)} уникальных сигнатур условий: "
+        f"{history_counts.get('exact source replay', 0)} точных источников, "
+        f"{history_counts.get('exact effective condition (documented historical alias)', 0)} документированный alias, "
+        f"{history_counts.get('close analogue', 0)} близких аналогов, "
+        f"{history_counts.get('no coverage', 0)} непокрытых записей."
+    )
+    plan_lines = [
+        "# План волн матрицы TimeLearner",
+        "",
+        "## Объём и изменения после проверки истории",
+        "",
+        f"Подготовлена матрица из **{total_cases} опытов** и **{wave_count} волн**, максимум **{max_wave} опытов на волну**. Это подготовка будущего прогона; текущий документ не запускает обучение и не включает полный запуск 312 строк.",
+        "",
+        "Исходная конструкция из 294 опытов расширена на восемь взаимодействий Branch NextSeg×пресинаптическое торможение (W07/W08) и ещё на десять отсутствовавших исторических условий FastResponse: восемь фактических комбинаций постоянной диссоциации/ёмкости мембраны и два исторических ручных TipR@Rmin (W46/W47). Папка `EXPD005C25e11` в старом эксперименте реально устанавливала ту же ёмкость 5e-10 Ф, что `EXPD005C5e10`; это сохранённый повторный результат, не отдельное значение C.",
+        "",
+        "## Алгоритмы и смысл факторов",
+        "",
+        "Classic (`NNeuronTimeLearner`) распределяет импульсы по нескольким дендритам; Branch (`NNeuronTimeLearnerBranch`) учит размещение импульсов на разных сегментах одного дендрита. Оба меняют длины дендритов. В структурном режиме (`NormalizationMode=0`) амплитуда корректируется числом синапсов; в структурно-параметрическом (`NormalizationMode=1`) тренер настраивает сопротивление синапса. Пресинаптическое торможение и дополнительное торможение следующего сегмента Branch являются разными факторами.",
+        "",
+        "В действующем C++ коде максимум и минимум сопротивления синапса — наблюдаемые состояния, вычисляемые по мембранным сопротивлениям и параметру `MaxSynapseToMembraneResistanceRatio` (по умолчанию 1000). Стартовое сопротивление не пересчитывается как `Rm × InitialRatio`; оно берётся из исходной конфигурации/сохранённого состояния. W23–W26 специально исследуют влияние заданного стартового Rs. W3 (`EnableRmaxLengthEscape`) по умолчанию выключен; достижение предела Rs при нерешённой амплитуде должно завершаться отказом C++-обучения после проверки синхронизации. Состояния и проверки остаются в C++ тренеров.",
+        "",
+        "PSI — пресинаптическое торможение, NextSeg — торможение следующего сегмента, TipR — сопротивление концевого синапса. Pack A/B/C — точные семейства входных последовательностей, сохранённые в XML. Исторические подписи FastSpan и Phase A/6 относятся к сжатым по времени паттернам и настройке порога локальной временной интеграции; они не заменяют человеческое описание или XML.",
+        "",
+        "## Историческое покрытие",
+        "",
+        historical_line,
+        "",
+        "Все 49 уникальных конфигураций SoftCold full49 октябрьских запусков имеют отдельные строки точного повторения исходных Train/Test. Повторные кампании 3, 6 и 9 октября остаются несколькими историческими наблюдениями одной исходной конфигурации, а не новыми факторными клетками. Весь список 179 пар с историческим конфиг-коммитом, доступными CSV-метриками и различиями сопоставления: [HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md](../HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md).",
+        "",
+        "Старые August/September серии включают исходные baseline, пресинаптическое торможение, Branch/NextSeg, короткие паттерны, калибровку порога, асимметричные мембраны, FastResponse D×C и аудитные прогоны. Точные и близкие сопоставления указаны по каждой папке; Pack B/C 50-мс условия и некоторые сочетания торможения остаются близкими аналогами, явно с отличиями. Сохранённый Test CSV не доказывает C++ сходимость. Последний коммит изменения конфига не считается коммитом запуска, если run bundle не содержит версии бинарника.",
+        "",
+        "## Волны и порядок исполнения",
+        "",
+        "Порядок ниже совпадает с `TimeLearnerMatrix/matrix.json`. По завершении каждой волны результаты анализируются и документы/манифест обновляются до перехода к следующей. Ошибка сходимости, качество ниже gate, отсутствие детекции цели, evaluator failure, инфраструктурная ошибка или пропущенный результат немедленно блокируют следующую волну до выяснения причины.",
+        "",
+        "| Волна | Человеческое описание | Опытов | Case ID |",
+        "|---|---|---:|---|",
+        *wave_rows,
+        "",
+        "## Сервер, сохранение и границы",
+        "",
+        "Сборка и запуск выполняются только на удалённом `.17`; максимум восемь процессов `NeuroModelerConsole`; длительная очередь запускается внутри `tmux`, чтобы пережить потерю SSH и выключение рабочей станции. Перед каждой волной проверяется диск и уникальность рабочих каталогов. Входные пользовательские Train/Test снапшоты в `Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/Wxx/inputs/<case>/` не являются каталогами результатов; каждый содержит `Train/Project.ini`, `Test/Project.ini`, Interface для графиков и SHA-манифест.",
+        "",
+        "Скрипты только готовят входные конфиги, вызывают готовый C++ тренер, собирают логи/метрики и обновляют документы. Вся логика обучения и изменения состояния остаются в C++. Данные каждого запуска и компактный JSON-результат сохраняются отдельно. Обычный отказ — причина остановить очередь и провести анализ, а не условие пропустить к следующей волне.",
+        "",
+        "В этой подготовительной работе полный прогон не запускался. Имеющиеся W01–W04 — сохранённый серверный снимок из 32 базовых условий: 30 не сошлись к остановке, два завершились с `Need=0`; в одном legacy quality gate пропустил 7/8 с одним false acceptance, в другом целевая последовательность не детектировалась. Строгого PASS нет, а Console SHA для этих снимков не сохранён. До дальнейшего исполнения сначала требуется контрольный запуск с полным provenance.",
+        "",
+        "См. [EXPERIMENTS.md](../../../Bin/Configs/SpikeSamples/StructTrain/EXPERIMENTS.md) для каждой строки и ручных Train/Test ссылок, [SUCCESSFUL_EXPERIMENTS.md](../../../Bin/Configs/SpikeSamples/StructTrain/SUCCESSFUL_EXPERIMENTS.md) для строгого реестра успехов и [RUN_ON_SERVER.ru.md](../../../Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/RUN_ON_SERVER.ru.md) для команд серверного запуска.",
+        "",
+    ]
+    WAVE_PLAN.parent.mkdir(parents=True, exist_ok=True)
+    WAVE_PLAN.write_text("\n".join(plan_lines), encoding="utf-8")
+
+    full_report_lines = [
+        "# Полная матрица TimeLearner и исторические результаты",
+        "",
+        "**Срез:** 2026-10-10. **Статус:** подготовка завершена; полный запуск матрицы не выполнялся.",
+        "",
+        f"Текущий реестр содержит **{total_cases} обучающих опытов в {wave_count} волнах** (не более {max_wave} случаев на волну). Это исходные 294 предложенных условия плюс 8 отдельных NextSeg×PSI конфигураций и 10 FastResponse условий, которые не имели строки или близкой физической замены в исходном реестре. Подробные case ID, факторы, описания и пользовательские Train/Test конфиги приведены в [EXPERIMENTS.md](../../../Bin/Configs/SpikeSamples/StructTrain/EXPERIMENTS.md).",
+        "",
+        "## Что означают опыты",
+        "",
+        "Один случай — одно обучение одним C++-тренером с конкретным паттерном и параметрами. Восемь тестовых проб измеряют селективность одной полученной модели. Classic обучает согласование временных импульсов между несколькими дендритами; Branch — их положения на сегментах одного дендрита. Структурный режим корректирует число синапсов; структурно-параметрический изменяет сопротивление синапса. Пресинаптическое торможение, торможение следующего Branch-сегмента, PostTrain, TipR, физические параметры и порядок импульсов проверяются отдельными блоками.",
+        "",
+        "## Августовские и сентябрьские исторические конфигурации",
+        "",
+        historical_line,
+        "",
+        "История кампаний и их метрик, включая baseline, настройки пресинаптического торможения, Branch, короткие последовательности, калибровку локального порога, FastResponse и аудит 154 тестовых проб с 64 `ok_audit=1`, сведена в [CAMPAIGN_REPORT_2026-08_09.md](../../../Bin/Configs/SpikeSamples/StructTrain/CAMPAIGN_REPORT_2026-08_09.md). По каждой найденной Train/Test-паре приведены путь, последний коммит изменения конфига, сохранённые метрики и exact/analogue match в [HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md](HISTORICAL_CONFIG_COVERAGE_2026-10-10.ru.md). В большинстве старых папок run commit и Console SHA отсутствуют: конфиг-коммит не выдаётся за версию запуска.",
+        "",
+        "Один пропуск исходного 294-плана устранён отдельными W46/W47: исторический FastResponse менял DTC и ёмкость канала в фиксированном паттерне 480 мс; он не заменяется изменением мембранного R или C в W41/W42. В W46 включены восемь фактически разных D×C клеток, в W47 — два отдельных испытания ручной настройки трёх TipR до 20 МОм при одном оставленном 86 МОм. Старая `EXPD005C25e11` была подписана как 2.5e-10 Ф, но UploadClass задавал 5e-10 Ф; её Test CSV относится к дублю `EXPD005C5e10`, а не к реальному измерению 2.5e-10 Ф.",
+        "",
+        "Построчный реестр и результаты mapping доступны в `Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/legacy_history_inventory.json`. 49 конфигураций SoftCold full49 03/06/09 октября повторяются отдельными актуальными строками; прежние 8/41 и 13/36 PASS/FAIL — разные запуски и разные gate-срезы, а full49 от 9 октября записал 0 PASS, 48 FAIL и один неполный `br100_search` (`rc=137`). Эти числа не доказывают, что 49 задач математически неразрешимы.",
+        "",
+        "## Сохранённые результаты базовых 32",
+        "",
+        f"Имеются результаты W01–W04 для {len(rows)} случаев: {convergence_counts.get('not_converged_at_stop', 0)} не сошлись к моменту остановки, {sum(v for k, v in convergence_counts.items() if k.startswith('converged'))} завершились с `Need=0`. Один из двух сошедшихся получил legacy `ok=1`, Acc=7/8 и один false acceptance, но без strict-аудита; другой имел Acc=7/8, `fires=00000000` и не детектировал цель. Строгого подтверждённого PASS нет. Снимкам не сопоставлен Console SHA, поэтому они остаются предварительной базовой точкой, а не provenance-полным подтверждением текущего кода.",
+        "",
+        "## Операционные условия",
+        "",
+        "Полный прогон 312 строк не входит в эту работу. Если позже понадобится контрольный запуск, его выполняют только на `.17`, с tmux и максимум восемью Console-процессами. После каждой волны — остановка, разбор C++ сходимости отдельно от качества/детекции и фиксация отчёта. Скрипты не исполняют алгоритм обучения: изменения состояния остаются внутри соответствующего C++ тренера.",
+        "",
+        f"Статическая готовность Train/Test/GUI: {readiness.get('case_count', 0)} конфигураций; `all_cases_have_train_test_and_gui={readiness.get('all_cases_have_train_test_and_gui')}`. Матрица: `full_matrix_execution_performed={registry.get('full_matrix_execution_performed', False)}`.",
+        "",
+    ]
+    FULL_MATRIX_REPORT.write_text("\n".join(full_report_lines), encoding="utf-8")
 
     if ROOT_REPORT.exists():
-        lines = ["# Текущий статус матричных волн TimeLearner", "", f"Обновлено: {datetime.now(timezone.utc).isoformat()} UTC.", ""]
-        lines.extend(sections or ["Экспериментальных волн ещё нет."])
+        lines = [
+            "# Текущий статус матричных волн TimeLearner", "",
+            f"Обновлено: {datetime.now(timezone.utc).isoformat()} UTC.", "",
+            f"Реестр подготовлен: {total_cases} опыта, {wave_count} волн, максимум {max_wave} в волне. Полный прогон не выполнялся в рамках подготовки. Существуют только сохранённые результаты: {len(rows)} базовых опытов W01–W04; exact Console SHA в этих записях отсутствует.", "",
+        ]
+        lines.extend(result_sections or ["Экспериментальных волн ещё нет."])
         ROOT_REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("wave")
+    parser.add_argument("wave", nargs="?")
+    parser.add_argument("--refresh-docs", action="store_true", help="regenerate reports from already saved wave snapshots without reading run bundles")
     args = parser.parse_args()
+    if args.refresh_docs:
+        update_documents()
+        print(json.dumps({"documents_refreshed": True, "saved_wave_snapshots": len(result_rows())}, ensure_ascii=False))
+        return 0
+    if not args.wave:
+        parser.error("provide WAVE or --refresh-docs")
     snapshot, target = collect_wave(args.wave)
     update_documents()
     print(json.dumps({

@@ -255,6 +255,9 @@ class GateResult:
     ok: bool | None
     fail_reason: str = ""
     evaluated: bool = True
+    quality_ok: bool | None = None
+    target_detected: bool | None = None
+    quality_metrics: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -730,15 +733,16 @@ def classify_failure_class(
             for r in reasons
         ):
             return "tipr_mismatch"
-    if any(
-        r == "gate_fail"
-        or r.startswith("fires=")
-        or r == "fires_missing"
-        or "gate_rc=" in r
-        for r in reasons
-    ) or not row.get("gate_ok", True):
+    if any("gate_rc=" in r or "stale_csv" in r or "missing_csv" in r or "metrics_evaluation" in r for r in reasons) or (
+        row.get("gate_evaluated") and not row.get("gate_ok", True)
+    ):
         return "gate_fail"
-    if any("NonSeparable" in r or "quality" in r.lower() for r in reasons):
+    if any(
+        r.startswith("fires=") or r == "fires_missing" or
+        r == "separation_quality_fail" or r == "target_not_detected"
+        or "NonSeparable" in r or "quality" in r.lower()
+        for r in reasons
+    ):
         return "quality_fail"
     return "quality_fail"
 
@@ -785,26 +789,46 @@ def classify_posttune_quality(train_meta: dict[str, str] | None = None) -> str:
 
 def classify_detection_quality(
     *,
+    gate_evaluated: bool,
     gate_ok: bool | None,
-    gate_fail: str,
+    target_detected: bool | None,
     training_convergence: str,
 ) -> str:
-    """Summarize the independent test-time target-detection gate."""
+    """Summarize target detection independently of evaluator execution/quality."""
     if training_convergence in (
         "not_converged_at_stop",
         "insufficient_data",
         "cpp_training_refusal",
     ):
         return "not_evaluated_training_incomplete"
-    if gate_ok is None:
+    if not gate_evaluated:
         return "not_evaluated_training_incomplete"
-    if gate_ok:
-        return "pass"
-    fail = str(gate_fail or "").lower()
-    if "fires_missing" in fail or "target_not_detected" in fail:
+    if gate_ok is False:
+        return "evaluation_error"
+    if target_detected is True:
+        return "detected"
+    if target_detected is False:
         return "target_not_detected"
-    if fail:
-        return "quality_gate_failed"
+    return "insufficient_data"
+
+
+def classify_separation_quality(
+    *, gate_evaluated: bool, gate_ok: bool | None, quality_ok: bool | None,
+    training_convergence: str,
+) -> str:
+    """Metric outcome is separate from evaluator process success."""
+    if training_convergence in (
+        "not_converged_at_stop", "insufficient_data", "cpp_training_refusal"
+    ):
+        return "not_evaluated_training_incomplete"
+    if not gate_evaluated:
+        return "not_evaluated_training_incomplete"
+    if gate_ok is False:
+        return "evaluation_error"
+    if quality_ok is True:
+        return "pass"
+    if quality_ok is False:
+        return "fail"
     return "insufficient_data"
 
 
@@ -1432,15 +1456,33 @@ def run_gate(case: dict) -> GateResult:
     print("gate rc", rc)
     csv_mtime = csv_path.stat().st_mtime if csv_path.exists() else None
     fires, metrics_line = fires_from_csv(csv_path)
-    ok = True
+    ok = rc == 0
     fail_reason = ""
     if rc != 0:
-        ok = False
         fail_reason = f"gate_rc={rc}"
-    elif csv_mtime is not None and csv_mtime + 1.0 < gate_started:
+    elif csv_mtime is None:
+        ok = False
+        fail_reason = "missing_csv"
+    elif csv_mtime + 1.0 < gate_started:
         ok = False
         fail_reason = "stale_csv"
         fires, metrics_line = "", "stale_csv_ignored"
+    quality_metrics: dict[str, Any] = {}
+    if ok:
+        try:
+            from selectivity_metrics import evaluate_path
+            quality_metrics, metrics_rc = evaluate_path(csv_path)
+            if metrics_rc != 0:
+                ok = False
+                fail_reason = "metrics_evaluation_failed"
+                quality_metrics = {}
+        except Exception as exc:
+            ok = False
+            fail_reason = f"metrics_evaluation_error:{type(exc).__name__}"
+    quality_ok = bool(quality_metrics.get("ok_audit")) if quality_metrics else None
+    target_detected = (
+        bool(quality_metrics.get("target_hit_strict")) if quality_metrics else None
+    )
     return GateResult(
         fires=fires,
         metrics_line=metrics_line,
@@ -1449,6 +1491,9 @@ def run_gate(case: dict) -> GateResult:
         gate_started=gate_started,
         ok=ok,
         fail_reason=fail_reason,
+        quality_ok=quality_ok,
+        target_detected=target_detected,
+        quality_metrics=quality_metrics,
     )
 
 
@@ -1748,8 +1793,15 @@ def run_case(
     mid_src = mid_source_of(mid_meta, after.get("FixedLTZThreshold", ""))
     posttune_quality = classify_posttune_quality(phase.train)
     detection_quality = classify_detection_quality(
+        gate_evaluated=gate.evaluated,
         gate_ok=gate.ok,
-        gate_fail=gate.fail_reason,
+        target_detected=gate.target_detected,
+        training_convergence=training_convergence,
+    )
+    separation_quality = classify_separation_quality(
+        gate_evaluated=gate.evaluated,
+        gate_ok=gate.ok,
+        quality_ok=gate.quality_ok,
         training_convergence=training_convergence,
     )
     search_reverted = phase.search_reverted
@@ -1938,6 +1990,7 @@ def run_case(
             training_failure[1] if training_failure is not None else None
         ),
         "posttune_quality": posttune_quality,
+        "separation_quality": separation_quality,
         "detection_quality": detection_quality,
         "after": after,
         "gold_thr": gold_test.get("FixedLTZThreshold", ""),
@@ -1957,6 +2010,9 @@ def run_case(
         "gate_rc": gate.rc,
         "gate_ok": gate.ok,
         "gate_evaluated": gate.evaluated,
+        "quality_gate_ok": gate.quality_ok,
+        "target_detected": gate.target_detected,
+        "quality_metrics": gate.quality_metrics,
         "own_keep_snapshot": own_keep_snapshot,
         "require_cpp_mid": name in ("asym50", "phase6_480", "br100_search"),
         "child_rc": child_rc,
@@ -1972,6 +2028,10 @@ def run_case(
     )
     if gate.evaluated and not gate.ok and gate.fail_reason not in fail_notes:
         fail_notes.append(gate.fail_reason)
+    if gate.evaluated and gate.ok and gate.quality_ok is False:
+        fail_notes.append("separation_quality_fail")
+    if gate.evaluated and gate.ok and gate.target_detected is False:
+        fail_notes.append("target_not_detected")
     failure_class = classify_failure_class(fail_notes, row)
     row["row_fail"] = not ok
     row["fail_notes"] = fail_notes

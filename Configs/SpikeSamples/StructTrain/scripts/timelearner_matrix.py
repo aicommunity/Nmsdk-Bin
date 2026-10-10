@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import fnmatch
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -80,17 +81,133 @@ def set_all_tags(text: str, tag: str, value: str, *, required: bool = True) -> s
     return set_tag_values(text, tag, [value] * len(vals)) if vals else text
 
 
-def toggle_inhibition(base_text: str, template_text: str, enabled: bool, coeff: float, *, require_flags: bool = False) -> str:
+def apply_xml_factors(
+    text: str,
+    spec: dict[str, Any],
+    *,
+    side: str | None = None,
+    membrane_resistance: float | None = None,
+) -> str:
+    for tag, value in (spec.get("xml_overrides") or {}).items():
+        if tag_values(text, str(tag)):
+            text = set_all_tags(text, str(tag), str(value), required=True)
+    for tag, factor in (spec.get("relative_overrides") or {}).items():
+        values = tag_values(text, str(tag))
+        if not values:
+            continue
+        updated = []
+        for raw in values:
+            value = float(raw.replace(",", ".")) * float(factor)
+            updated.append(format(value, ".17g"))
+        text = set_tag_values(text, str(tag), updated)
+    if spec.get("initial_rs_to_rm") is not None and side == "Train":
+        if membrane_resistance is None or membrane_resistance <= 0:
+            raise ValueError("initial Rs experiment requires a positive membrane resistance")
+        if tag_values(text, "SynapseResistanceBase"):
+            rs = membrane_resistance * float(spec["initial_rs_to_rm"])
+            text = set_all_tags(text, "SynapseResistanceBase", format(rs, ".17g"))
+    if spec.get("reverse_pattern_order"):
+        matrix_re = re.compile(r'(<MatrixData\b[^>]*Rows="4"[^>]*>)(.*?)(</MatrixData\s*>)', re.S)
+        found = 0
+        def reverse_matrix(match):
+            nonlocal found
+            found += 1
+            values = match.group(2).split()
+            if len(values) != 4:
+                raise ValueError(f"expected four MatrixData values, got {len(values)}")
+            return match.group(1) + "\n".join(reversed(values)) + match.group(3)
+        text = matrix_re.sub(reverse_matrix, text)
+    return text
+
+
+def copy_historical_git_source(source_rel: str, destination: Path, commit: str) -> list[Path]:
+    """Copy only runnable Train/Test inputs from an immutable Bin git snapshot."""
+    bin_root = BASE.parents[2]
+    git_source_path = f"Configs/SpikeSamples/StructTrain/{source_rel.replace('\\', '/')}"
+    git_source = f"{commit}:{git_source_path}"
+    listing = subprocess.check_output(
+        ["git", "-C", str(bin_root), "ls-tree", "-r", "--name-only", git_source],
+        text=True,
+    ).splitlines()
+    selected: list[Path] = []
+    for git_path in listing:
+        relative = Path(git_path.replace("/", os.sep))
+        if not relative.parts or relative.parts[0] not in ("Train", "Test"):
+            continue
+        name = relative.name
+        if name not in ("Model_00.xml", "Parameters_00.xml", "Project.ini", "Interface.xml") and not any(
+            fnmatch.fnmatch(name, pattern) for pattern in ("Matrix*.xml", "Pack*.xml", "*.pack")
+        ):
+            continue
+        target = destination / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("wb") as out:
+            subprocess.run(
+                ["git", "-C", str(bin_root), "cat-file", "blob", f"{commit}:{git_source_path}/{git_path}"],
+                stdout=out,
+                check=True,
+            )
+        selected.append(relative)
+    for side in ("Train", "Test"):
+        if not (destination / side / "Project.ini").is_file():
+            raise FileNotFoundError(f"historical snapshot lacks {side}/Project.ini: {source_rel}@{commit}")
+    return selected
+
+
+def toggle_inhibition(
+    base_text: str,
+    topology_text: str,
+    enabled: bool,
+    coeff: float,
+    *,
+    class_template_text: str | None = None,
+    require_flags: bool = False,
+    force_presynaptic_classes: bool = False,
+) -> str:
     out = base_text
+    class_template_text = class_template_text or topology_text
     for tag in CLASS_TAGS:
         base_values = tag_values(base_text, tag)
-        template_values = tag_values(template_text, tag)
-        if len(base_values) != len(template_values):
-            raise ValueError(f"{tag} node count differs: {len(base_values)} vs {len(template_values)}")
+        topology_values = tag_values(topology_text, tag)
+        coefficient_values = tag_values(class_template_text, tag)
+        if len(base_values) != len(topology_values):
+            raise ValueError(f"{tag} topology node count differs: {len(base_values)} vs {len(topology_values)}")
+        coefficient_classes: dict[str, str] = {}
+        for value in coefficient_values:
+            value = value.strip()
+            match = re.fullmatch(r"(.*)Preinh[0-9]+_[0-9]+", value)
+            if match:
+                prefix = match.group(1)
+                previous = coefficient_classes.setdefault(prefix, value)
+                if previous != value:
+                    raise ValueError(f"multiple pre-inhibition classes for {prefix} in {tag}")
         mapped = []
-        for base_value, template_value in zip(base_values, template_values):
+        coeff_suffix = format(float(coeff), ".1f").replace(".", "_")
+        for base_value, topology_value in zip(base_values, topology_values):
+            base_value = base_value.strip()
+            topology_value = topology_value.strip()
             if enabled:
-                mapped.append(template_value if "Preinh" in template_value else base_value)
+                if force_presynaptic_classes and tag == "SynapseClassName":
+                    current = re.fullmatch(r"(.*)Preinh[0-9]+_[0-9]+", base_value)
+                    prefix = current.group(1) if current else base_value
+                    target = f"{prefix}Preinh{coeff_suffix}"
+                    if target not in coefficient_classes.values():
+                        raise ValueError(f"no coefficient-specific class {target} for forced {tag} mapping")
+                    mapped.append(target)
+                    continue
+                topology_preinh = re.fullmatch(r"(.*)Preinh[0-9]+_[0-9]+", topology_value)
+                base_preinh = re.fullmatch(r"(.*)Preinh[0-9]+_[0-9]+", base_value)
+                if topology_preinh or base_preinh:
+                    prefix = (topology_preinh or base_preinh).group(1)
+                    target = f"{prefix}Preinh{coeff_suffix}"
+                    if target not in coefficient_classes.values():
+                        if tag == "SynapseClassName":
+                            raise ValueError(f"no coefficient-specific class {target} for {tag}")
+                        mapped.append(topology_value)
+                        continue
+                    mapped.append(target)
+                else:
+                    mapped.append(base_value)
             else:
                 mapped.append(re.sub(r"Preinh[0-9]+_[0-9]+", "", base_value))
         out = set_tag_values(out, tag, mapped)
@@ -109,67 +226,120 @@ def toggle_inhibition(base_text: str, template_text: str, enabled: bool, coeff: 
 def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh: bool = False) -> dict[str, Any]:
     case_id = spec["id"]
     template = templates[spec["template"]]
-    source = BASE / template.get("paired_source", template["preinh_source"])
-    preinh_source = BASE / template["preinh_source"]
+    source_rel = spec.get("source_config") or template.get("paired_source", template["preinh_source"])
+    source = BASE / source_rel
+    preinh_rel = spec.get("preinh_topology_source") or template["preinh_source"]
+    preinh_source = BASE / preinh_rel
+    class_source_rel = spec.get("preinh_class_source") or preinh_rel
+    class_source = BASE / class_source_rel
     destination = BASE / "TimeLearnerMatrix" / spec["wave"] / "inputs" / case_id
     if destination.exists():
         saved = destination / "matrix_input_manifest.json"
         if saved.is_file() and not refresh:
             old = json.loads(saved.read_text(encoding="utf-8"))
             if old.get("factors") == {k: v for k, v in spec.items() if k not in ("id", "wave")}:
+                current_matrix_hash = sha256(MANIFEST)
+                if old.get("matrix_definition_sha256") != current_matrix_hash:
+                    old["matrix_definition_sha256"] = current_matrix_hash
+                    old["registry_refreshed_utc"] = datetime.now(timezone.utc).isoformat()
+                    saved.write_text(json.dumps(old, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
                 return old
             raise RuntimeError(f"config factors changed; use --refresh to regenerate {destination}")
         if not saved.is_file():
-            raise FileExistsError(f"refusing to overwrite incomplete config snapshot: {destination}")
-    if not source.is_dir() or not preinh_source.is_dir():
-        raise FileNotFoundError(f"missing source/template for {case_id}: {source} / {preinh_source}")
+            if not refresh:
+                raise FileExistsError(f"refusing to overwrite incomplete config snapshot: {destination}")
+            allowed_names = {"Model_00.xml", "Parameters_00.xml", "Project.ini", "Interface.xml"}
+            allowed_globs = ("Matrix*.xml", "Pack*.xml", "*.pack")
+            for existing in destination.rglob("*"):
+                if existing.is_dir():
+                    continue
+                rel = existing.relative_to(destination)
+                if not rel.parts or rel.parts[0] not in ("Train", "Test"):
+                    raise RuntimeError(f"refusing to refresh snapshot with non-input data: {existing}")
+                if existing.name not in allowed_names and not any(fnmatch.fnmatch(existing.name, pattern) for pattern in allowed_globs):
+                    raise RuntimeError(f"refusing to refresh snapshot with unrecognized input file: {existing}")
+    if not source.is_dir() or not preinh_source.is_dir() or not class_source.is_dir():
+        raise FileNotFoundError(f"missing source/template for {case_id}: {source} / {preinh_source} / {class_source}")
 
     copied = []
-    for side in ("Train", "Test"):
-        dst_side = destination / side
-        dst_side.mkdir(parents=True, exist_ok=True)
-        for rel in pv.ALLOWLIST_INPUTS:
-            src_file = source / side / rel
-            companion = preinh_source / side / rel
-            if not src_file.is_file():
-                raise FileNotFoundError(src_file)
-            shutil.copy2(src_file, dst_side / rel)
-            if rel.endswith(".xml"):
-                text = src_file.read_text(encoding="utf-8")
-                if rel in XML_INPUTS:
-                    if not companion.is_file():
-                        raise FileNotFoundError(companion)
-                    text = toggle_inhibition(
-                        text,
-                        companion.read_text(encoding="utf-8"),
-                        bool(spec["presynaptic_inhibition"]),
-                        float(spec.get("presynaptic_coefficient", 2.5)),
-                        require_flags=(side == "Train"),
-                    )
-                    text = set_all_tags(text, "NormalizationMode", str(spec["normalization_mode"]))
-                    if side == "Train":
-                        from repro_cold_lib import ensure_tag_after, set_tag
-                        enabled = "1" if spec.get("posttrain_tuning", False) else "0"
-                        text = ensure_tag_after(text, "IsNeedToTrain", "EnablePostTrainTuning", enabled)
-                        text = set_tag(text, "EnablePostTrainTuning", enabled, 1)
-                        text = ensure_tag_after(text, "IterationGap", "AutoScaleIterationGap", "1")
-                        text = set_tag(text, "AutoScaleIterationGap", "1", 1)
-                        if enabled == "1":
-                            tip_mode = str(spec.get("tipr_mode", 1))
-                            text = ensure_tag_after(text, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "1")
-                            text = set_tag(text, "EnablePostTrainMidThreshold", "1", 1)
-                            text = ensure_tag_after(text, "EnablePostTrainMidThreshold", "PostTrainTipResistanceMode", tip_mode, ' Type="i" PType="257" IoType="17"')
-                            text = set_tag(text, "PostTrainTipResistanceMode", tip_mode, 1)
-                            text = ensure_tag_after(text, "PostTrainTipResistanceMode", "PostTrainSilentThreshold", "1", ' Type="d" PType="257" IoType="17"')
-                            text = set_tag(text, "PostTrainSilentThreshold", "1", 1)
-                ET.fromstring(text)
-                (dst_side / rel).write_text(text, encoding="utf-8")
-            copied.append({"side": side, "file": rel, "sha256": sha256(dst_side / rel)})
-        for pattern in pv.ALLOWLIST_OPTIONAL_GLOBS:
-            for src_file in sorted((source / side).glob(pattern)):
-                if src_file.is_file():
-                    shutil.copy2(src_file, dst_side / src_file.name)
-                    copied.append({"side": side, "file": src_file.name, "sha256": sha256(dst_side / src_file.name)})
+    historical_exact = spec.get("source_mode") == "historical_exact"
+    historical_source_commit = spec.get("source_commit")
+    if historical_exact and historical_source_commit:
+        selected = copy_historical_git_source(
+            str(spec["source_config"]), destination, str(historical_source_commit)
+        )
+        copied = [{"side": rel.parts[0], "file": str(Path(*rel.parts[1:])), "sha256": sha256(destination / rel)} for rel in selected]
+    else:
+        membrane_resistance = None
+        if spec.get("initial_rs_to_rm") is not None:
+            for rel in XML_INPUTS:
+                source_xml = source / "Train" / rel
+                if not source_xml.is_file():
+                    continue
+                content = source_xml.read_text(encoding="utf-8")
+                values = tag_values(content, "ExcMembraneResistance") or tag_values(content, "RestingResistance")
+                if values:
+                    membrane_resistance = float(values[0].replace(",", "."))
+                    break
+            if membrane_resistance is None:
+                raise ValueError(f"cannot determine membrane resistance for initial Rs case {case_id}")
+        for side in ("Train", "Test"):
+            dst_side = destination / side
+            dst_side.mkdir(parents=True, exist_ok=True)
+            for rel in pv.ALLOWLIST_INPUTS:
+                src_file = source / side / rel
+                companion = preinh_source / side / rel
+                class_companion = class_source / side / rel
+                if not src_file.is_file():
+                    raise FileNotFoundError(src_file)
+                shutil.copy2(src_file, dst_side / rel)
+                if rel.endswith(".xml"):
+                    text = src_file.read_text(encoding="utf-8")
+                    if rel in XML_INPUTS:
+                        if not companion.is_file():
+                            raise FileNotFoundError(companion)
+                        if not class_companion.is_file():
+                            raise FileNotFoundError(class_companion)
+                        if not spec.get("preserve_classes"):
+                            sibling = "Parameters_00.xml" if rel == "Model_00.xml" else "Model_00.xml"
+                            class_template = class_companion.read_text(encoding="utf-8")
+                            sibling_file = class_source / side / sibling
+                            if sibling_file.is_file():
+                                class_template += "\n" + sibling_file.read_text(encoding="utf-8")
+                            text = toggle_inhibition(
+                                text,
+                                companion.read_text(encoding="utf-8"),
+                                bool(spec["presynaptic_inhibition"]),
+                                float(spec.get("presynaptic_coefficient", 2.5)),
+                                class_template_text=class_template,
+                                require_flags=(side == "Train"),
+                                force_presynaptic_classes=bool(spec.get("force_presynaptic_classes")),
+                            )
+                        text = set_all_tags(text, "NormalizationMode", str(spec["normalization_mode"]))
+                        if side == "Train":
+                            from repro_cold_lib import ensure_tag_after, set_tag
+                            enabled = "1" if spec.get("posttrain_tuning", False) else "0"
+                            text = ensure_tag_after(text, "IsNeedToTrain", "EnablePostTrainTuning", enabled)
+                            text = set_tag(text, "EnablePostTrainTuning", enabled, 1)
+                            text = ensure_tag_after(text, "IterationGap", "AutoScaleIterationGap", "1")
+                            text = set_tag(text, "AutoScaleIterationGap", "1", 1)
+                            if enabled == "1":
+                                tip_mode = str(spec.get("tipr_mode", 1))
+                                text = ensure_tag_after(text, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "1")
+                                text = set_tag(text, "EnablePostTrainMidThreshold", "1", 1)
+                                text = ensure_tag_after(text, "EnablePostTrainMidThreshold", "PostTrainTipResistanceMode", tip_mode, ' Type="i" PType="257" IoType="17"')
+                                text = set_tag(text, "PostTrainTipResistanceMode", tip_mode, 1)
+                                text = ensure_tag_after(text, "PostTrainTipResistanceMode", "PostTrainSilentThreshold", "1", ' Type="d" PType="257" IoType="17"')
+                                text = set_tag(text, "PostTrainSilentThreshold", "1", 1)
+                    text = apply_xml_factors(text, spec, side=side, membrane_resistance=membrane_resistance)
+                    ET.fromstring(text)
+                    (dst_side / rel).write_text(text, encoding="utf-8")
+                copied.append({"side": side, "file": rel, "sha256": sha256(dst_side / rel)})
+            for pattern in pv.ALLOWLIST_OPTIONAL_GLOBS:
+                for src_file in sorted((source / side).glob(pattern)):
+                    if src_file.is_file():
+                        shutil.copy2(src_file, dst_side / src_file.name)
+                        copied.append({"side": side, "file": src_file.name, "sha256": sha256(dst_side / src_file.name)})
 
     def git_head(path: Path) -> str | None:
         try:
@@ -177,14 +347,17 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
         except Exception:
             return None
 
-    pulse = BASE.parents[2] / "Libraries" / "Nmsdk-PulseLib"
+    pulse = BASE.parents[3] / "Libraries" / "Nmsdk-PulseLib"
     record = {
         "case": case_id,
         "wave": spec["wave"],
         "factors": {k: v for k, v in spec.items() if k not in ("id", "wave")},
         "source": str(source.relative_to(BASE)),
-        "legacy_noninhibited_template": template["source"],
-        "presynaptic_class_template": str(preinh_source.relative_to(BASE)),
+        "legacy_noninhibited_template": str(template.get("source", "")),
+        "presynaptic_topology_template": str(preinh_source.relative_to(BASE)),
+        "presynaptic_class_template": str(class_source.relative_to(BASE)),
+        "source_mode": spec.get("source_mode", "factor_variant"),
+        "source_commit": spec.get("source_commit"),
         "source_files": copied,
         "source_commits": {
             "root": git_head(BASE.parents[2].parent),
@@ -202,7 +375,7 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
 
 def load_manifest() -> dict[str, Any]:
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    if data.get("schema") != 1:
+    if data.get("schema") not in {1, 2}:
         raise ValueError("unsupported matrix manifest schema")
     return data
 
@@ -230,26 +403,40 @@ def worker(wave: str, case_id: str) -> int:
     if not input_root.is_dir():
         raise FileNotFoundError(f"input snapshot missing; run --prepare {wave}: {input_root}")
     template = data["templates"][spec["template"]]
-    gold = BASE / template.get("paired_source", template["preinh_source"])
-    pv.CASES[case_id] = {
+    gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
+        "source_config", template.get("paired_source", template["preinh_source"])
+    )
+    internal_id = spec.get("worker_case", case_id)
+    worker_config = {
         "root": input_root,
         "gold": gold,
         "train_t": float(spec.get("train_t", template["train_t"])),
         "span_ms": int(spec["duration_ms"]),
         "kind": template["kind"],
-        "expect_tipr": "canon",
-        "skip_tipr_mid": True,
+        "expect_tipr": spec.get("expect_tipr", "canon"),
+        "skip_tipr_mid": bool(spec.get("skip_tipr_mid", True)),
         "normalization_mode": int(spec["normalization_mode"]),
         "presynaptic_inhibition": bool(spec["presynaptic_inhibition"]),
         "presynaptic_coefficient": float(spec.get("presynaptic_coefficient", 2.5)),
-        "enable_posttrain_tuning": bool(spec.get("posttrain_tuning", True)),
+        "enable_posttrain_tuning": "1" if spec.get("posttrain_tuning", False) else "0",
         "posttrain_tip_resistance_mode": str(spec.get("tipr_mode", 1)),
     }
+    if internal_id in pv.CASES:
+        pv.CASES[internal_id] = {**pv.CASES[internal_id], **worker_config}
+    else:
+        pv.CASES[internal_id] = worker_config
     result_dir = RUNS / wave
     result_dir.mkdir(parents=True, exist_ok=True)
     run_dir = result_dir / case_id
     run_dir.mkdir(parents=True, exist_ok=True)
-    result = pv.run_case(case_id, run_dir=run_dir)
+    result = pv.run_case(
+        internal_id,
+        run_dir=run_dir,
+        train_t=float(spec.get("train_t", template["train_t"])),
+        max_rs_rm=spec.get("max_rs_rm"),
+    )
+    result["worker_case"] = internal_id
+    result["case"] = case_id
     result["matrix_factors"] = {k: v for k, v in spec.items() if k not in ("id",)}
     result["input_manifest"] = str(input_root / "matrix_input_manifest.json")
     result_path = run_dir / "matrix_result.json"
@@ -258,6 +445,8 @@ def worker(wave: str, case_id: str) -> int:
 
 
 def run_wave(wave: str, jobs: int) -> int:
+    if jobs < 1 or jobs > 8:
+        raise ValueError("--jobs must be between 1 and 8 for this campaign")
     data = load_manifest()
     specs = [case for case in data["cases"] if case["wave"] == wave]
     if not specs:
@@ -315,11 +504,27 @@ def run_wave(wave: str, jobs: int) -> int:
             if not has_result:
                 rc = 2
     status["finished_utc"] = datetime.now(timezone.utc).isoformat()
-    status["run_complete"] = rc == 0 and all(
+    all_results = all(
         (run_dir / spec["id"] / "matrix_result.json").is_file() for spec in specs
     )
+    data_failures = 0
+    if all_results:
+        for spec in specs:
+            try:
+                result = json.loads((run_dir / spec["id"] / "matrix_result.json").read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                rc = 2
+                all_results = False
+                break
+            if result.get("row_fail"):
+                data_failures += 1
+    status["case_data_failures"] = data_failures
+    status["run_complete"] = all_results
+    status["stop_before_next_wave"] = bool(rc == 2 or data_failures)
     status_path.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
-    return rc
+    if rc == 2 or not all_results:
+        return 2
+    return 1 if data_failures else 0
 
 
 def main() -> int:

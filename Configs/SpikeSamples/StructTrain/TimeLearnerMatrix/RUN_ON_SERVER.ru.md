@@ -1,65 +1,54 @@
-# Запуск TimeLearner Matrix на сервере
+# Запуск полной матрицы TimeLearner на сервере
 
 ## Что подготовлено
 
-В `TimeLearnerMatrix/W01`–`W04/inputs/<case>/` сохранены независимые входы каждого случая: папки `Train` и `Test`, XML/INI и `matrix_input_manifest.json` с SHA-256 конфигов. Эти исходные входы не изменяются при эксперименте. Текущая исполняемая очередь включает 32 случая (4 волны по 8); дальнейшие факторные проверки W05–W42 описаны в плане аудита, но пока не зарегистрированы в `matrix.json`.
+`matrix.json` — авторитетный реестр из 312 отдельных обучающих опытов в 47 волнах, не более восьми опытов в одной волне. Полный запуск в рамках подготовки не выполнялся. Перед запуском сначала изучите [EXPERIMENTS.md](../EXPERIMENTS.md), [план волн](../../../../../Docs/Audit/TimeLearner-2026-09-26-review/plans/TimeLearner-full-matrix-waves-20261010.ru.md) и историческое покрытие.
 
-Логика обучения остаётся в C++-тренерах, запускаемых `NeuroModelerConsole`. Python-скрипты только готовят рабочие копии, управляют процессами и собирают результаты.
+Для каждого опыта созданы отдельные пользовательские `Train` и `Test` конфиги с `Project.ini`, моделью, параметрами, паттернами, `Interface.xml` и SHA-манифестом. В `Interface.xml` сохранены настройки графиков из исторических конфигов: валидация проверяет оба графических блока и заголовки `Pattern and Trigger`, `Soma Amplitudes`, `Dendrite Amplitudes`, `Neuron Sums` (некоторые исторические конфиги содержат дополнительные графики). Эти каталоги предназначены для ручного открытия в GUI и не должны использоваться как рабочие директории запуска.
 
-## Перед запуском
+Восемь случаев W07/W08 — отдельные конфиги Branch с одновременной проверкой `EnableNextSegmentInhibition` и пресинаптического торможения PSI. Для PSI-on сохранена отдельная привязка каждого класса синапса к совместимому классу-прототипу; генератор проверяет эту карту и материализует конфиги, а не имитирует обучение.
 
-Подключитесь к машине с экспериментами и перейдите в каталог:
+Вся логика обучения и изменение состояния тренеров находятся в C++. Скрипты только готовят копии конфигов, запускают C++ Console, сохраняют результаты и обновляют отчётность.
+
+## Подготовка удалённого окружения
+
+Подключитесь к выделенному серверу `.17` и используйте основной каталог проекта:
 
 ```bash
 ssh user@10.245.1.17
 cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain
 ```
 
-Проверьте ветки и наличие Console. Для текущего закреплённого среза ожидаемый SHA-256 Console: `63c348252618ba0d05ed29bdf422c60f58cda5be5a83087f2d8c1367ff83e4ff`. Если код или бинарник обновлялись, сначала согласуйте их версии и пересоберите на сервере (на Ubuntu 24.04 может понадобиться `LD_LIBRARY_PATH` с `libglog.so.0` / boost 1.74 рядом с Console).
+Убедитесь, что корневой репозиторий, Bin и PulseLib обновлены до согласованного коммита и подмодульные gitlink указывают на ожидаемые коммиты. Соберите Linux Console на `.17` из этого среза и сохраните её SHA-256 в provenance запуска. Перед первой волной проверьте доступное место и убедитесь, что старых процессов Console нет:
 
 ```bash
-git -C /home/user/Nmsdk branch --show-current
-git -C /home/user/Nmsdk/Bin branch --show-current
-git -C /home/user/Nmsdk/Libraries/Nmsdk-PulseLib branch --show-current
+git -C /home/user/Nmsdk status --short --branch
+git -C /home/user/Nmsdk/Bin status --short --branch
+git -C /home/user/Nmsdk/Libraries/Nmsdk-PulseLib status --short --branch
 sha256sum /home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole
-```
-
-Проверьте, что прежняя очередь не запущена и на сервере есть место:
-
-```bash
 tmux ls
 pgrep -af '[N]euroModelerConsole' || true
 df -h /home/user/Nmsdk
 ```
 
-Не очищайте грязные рабочие каталоги через `git clean` или `git reset`: в них есть исторические исследовательские данные. Скрипт очереди добавляет в Git только пути матрицы и отчётные файлы.
+Не очищайте существующие исторические или грязные каталоги через `git clean` или `git reset`. Запуски используют отдельные `_repro/runs` и `_repro/TimeLearnerMatrixRuns` каталоги с идентификаторами. Проверьте, что дискового места хватит на размер первой волны и резерв для логов; после каждой волны просматривайте фактический расход и архивируйте подтверждённые артефакты до продолжения.
 
-## Гибридный запуск (local + 10.245.1.17)
+## Полная очередь в tmux
 
-Рекомендуемое распределение для текущего среза:
-
-- локально: `python3 scripts/run_timelearner_matrix_queue.py --jobs 8 --waves W01 W02` (отчёты и git-коммиты на этой машине);
-- на `user@10.245.1.17` (12 ядер): только compute, без git — `python3 -u scripts/timelearner_matrix.py --prepare/--run` для W03 затем W04 с `--jobs 12` и `PYTHONUNBUFFERED=1` / при необходимости `LD_LIBRARY_PATH=.../Bin/Platform/Linux/lib`;
-- после remote: `rsync` каталогов `_repro/TimeLearnerMatrixRuns/W03` и `W04`, затем локально `python3 scripts/update_timelearner_matrix_report.py W0x` и коммиты Bin/root в том же стиле, что у очереди.
-
-Не вызывайте `run_timelearner_matrix_queue.py` на remote — он делает автокоммиты.
-
-## Запуск всех подготовленных волн на одной машине
-
-Команда ниже создаёт отдельную tmux-сессию с уникальным именем. Очередь выполняет W01, затем W02–W04, используя до восьми параллельных экземпляров Console. Потеря SSH-соединения или выключение рабочей станции её не прерывает.
+Одна волна содержит максимум восемь независимых обучений. Очередь последовательно готовит волну, запускает до восьми экземпляров Console, собирает каждый результат, обновляет документы и фиксирует изменения отдельными коммитами в Bin и корневом репозитории. Полный запуск занимает много времени, поэтому выполняйте его в удалённой `tmux` сессии:
 
 ```bash
 mkdir -p _repro/TimeLearnerMatrixRuns
 export PYTHONUNBUFFERED=1
 SESSION="timelearner-matrix-$(date -u +%Y%m%dT%H%M%SZ)"
 tmux new-session -d -s "$SESSION" \
-  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && export PYTHONUNBUFFERED=1 && python3 -u scripts/run_timelearner_matrix_queue.py --jobs 8 > _repro/TimeLearnerMatrixRuns/queue.log 2>&1; rc=\$?; printf '%s\n' \"\$rc\" > _repro/TimeLearnerMatrixRuns/queue.exit"
+  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && export PYTHONUNBUFFERED=1 && python3 -u scripts/run_timelearner_matrix_queue.py --jobs 8 > _repro/TimeLearnerMatrixRuns/queue.log 2>&1; rc=\$?; printf '%s\\n' \"\$rc\" > _repro/TimeLearnerMatrixRuns/queue.exit"
 printf 'Session: %s\n' "$SESSION"
 ```
 
-После каждой волны скрипт формирует компактную сводку в `TimeLearnerMatrix/Wxx/results.json`, обновляет `EXPERIMENTS.md` и `SUCCESSFUL_EXPERIMENTS.md`, затем делает отдельные коммиты в Bin и корневом репозитории. Автоматического push нет. Обычный FAIL строки считается результатом эксперимента; очередь останавливается при инфраструктурной ошибке или отсутствии сохранённого результата.
+Скрипт автоматически останавливает очередь после первой волны, где есть незаписанный/инфраструктурно неполный результат, отказ или несходимость C++ обучения, провал метрик качества либо отсутствие детекции цели. Уже завершённая волна перед остановкой попадает в отчёт и отдельные коммиты. Не обходите остановку параметром продолжения, пока причина не классифицирована, решение не записано, а следующая волна не подтверждена.
 
-## Наблюдение и возврат после потери соединения
+## Наблюдение
 
 ```bash
 tmux ls
@@ -67,38 +56,37 @@ tail -F /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearner
 cat /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/queue_status.json
 ```
 
-Чтобы открыть сессию, используйте имя из `tmux ls`:
+Для подключения к сессии возьмите её имя из `tmux ls`:
 
 ```bash
-tmux attach -t "$(tmux ls -F '#S' | grep '^timelearner-matrix-' | tail -n 1)"
+tmux attach -t ИМЯ_СЕССИИ
 ```
 
-Отсоединиться и оставить работу выполняться: нажмите `Ctrl-B`, затем `D`. При повторном подключении достаточно снова выполнить `tmux ls` и посмотреть лог. Код завершения всей очереди записывается в `_repro/TimeLearnerMatrixRuns/queue.exit`; значение `0` означает, что все волны из текущего `matrix.json` завершены и результаты сохранены.
+Отсоединиться, оставив процесс работать: нажмите `Ctrl-B`, затем `D`. Потеря SSH или выключение рабочей станции не останавливает удалённую сессию.
 
-## Запуск одного случая и просмотр конфигов
+## Запуск одного случая после разбора предыдущей волны
 
-Список ID и факторов находится в `TimeLearnerMatrix/matrix.json`. Чтобы выполнить один подготовленный случай через тот же C++-путь проверки, укажите его волну и ID:
+После того как причина остановки расследована и зафиксирована, один случай можно подготовить и запустить отдельно:
 
 ```bash
-python3 scripts/timelearner_matrix.py --case W01 W01_CL25_N0_PSIoff
+python3 scripts/timelearner_matrix.py --prepare W07
+python3 scripts/timelearner_matrix.py --case W07 W07_BR25_N1_PSI25_NEXT
 ```
 
-Результат отдельного случая будет записан в `_repro/TimeLearnerMatrixRuns/W01/<case>/matrix_result.json`. Код возврата `1` может означать обычный FAIL качества/обучения; смотрите JSON. Отдельный worker сам не создаёт отчёт волны и коммиты — для последовательного запуска с обновлением документов используйте очередь выше.
+Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат будет в `_repro/TimeLearnerMatrixRuns/<wave>/<case>/matrix_result.json`; файлы рабочего клона лежат отдельно от эталонных `inputs/`.
 
-Входы можно открыть вручную, например:
+Пользовательские конфиги для ручного открытия в GUI находятся, например, здесь:
 
-- `TimeLearnerMatrix/W01/inputs/W01_CL25_N0_PSIoff/Train/Project.ini`
-- `TimeLearnerMatrix/W01/inputs/W01_CL25_N0_PSIoff/Test/Project.ini`
+- `TimeLearnerMatrix/W07/inputs/W07_BR25_N1_PSI25_NEXT/Train/Project.ini`
+- `TimeLearnerMatrix/W07/inputs/W07_BR25_N1_PSI25_NEXT/Test/Project.ini`
 
-Рабочие копии и выходные данные лежат отдельно в `_repro/runs/`. Не запускайте Console прямо на `inputs/Train` или `inputs/Test`, чтобы не менять сохранённый эталон.
+## Остановка и возобновление
 
-## Остановка
-
-Если нужно прервать очередь, отправьте Ctrl-C только её tmux-сессии и проверьте, что процессов Console не осталось:
+Если нужно остановить активный запуск, отправьте `Ctrl-C` только нужной сессии и проверьте список процессов:
 
 ```bash
-tmux send-keys -t "$(tmux ls -F '#S' | grep '^timelearner-matrix-' | tail -n 1)" C-c
+tmux send-keys -t ИМЯ_СЕССИИ C-c
 pgrep -af '[N]euroModelerConsole' || true
 ```
 
-Удаляйте только незавершённые рабочие каталоги конкретного остановленного запуска в `_repro/runs/` и его временную `_repro/TimeLearnerMatrixRuns/`. Не удаляйте `TimeLearnerMatrix/Wxx/inputs` и другие исторические каталоги `_repro/runs/`.
+Перед возобновлением сначала разберите остановивший очередь результат и зафиксируйте решение. После этого запустите очередь с первой ещё не выполненной волны через `--from-wave Wxx`, предварительно сверив `queue_status.json`, сохранённые case results и git-коммиты. Не удаляйте матрицу входов, исторические результаты или рабочие каталоги, пока не установлено, что они относятся к остановленному запуску и больше не нужны.
