@@ -1,0 +1,64 @@
+{
+  "case": "W02_CL100_N0_PSI25",
+  "wave": "W02",
+  "factors": {
+    "template": "classic100",
+    "trainer": "NNeuronTimeLearner",
+    "duration_ms": 100,
+    "pattern_family": "AsymRm pack A",
+    "normalization_mode": 0,
+    "presynaptic_inhibition": true,
+    "presynaptic_coefficient": 2.5,
+    "branch_nextseg": false,
+    "posttrain_tuning": false,
+    "tipr_mode": 1,
+    "train_t": 640
+  },
+  "source": "SelectivityAsymRm/EXP_span100ms_packA_preinh",
+  "legacy_noninhibited_template": "SelectivityAsymRm/EXP_span100ms_packA_gen",
+  "presynaptic_class_template": "SelectivityAsymRm/EXP_span100ms_packA_preinh",
+  "source_files": [
+    {
+      "side": "Train",
+      "file": "Model_00.xml",
+      "sha256": "5645d32a20abdaa3a1235919cb3d42da6674ca833a5fea090bc91e70676f5b9e"
+    },
+    {
+      "side": "Train",
+      "file": "Parameters_00.xml",
+      "sha256": "5f7f8a8d7efe30ecf6a071592829db5ccd31ba4ca98c70906683484f1b0dad4a"
+    },
+    {
+      "side": "Train",
+      "file": "Project.ini",
+      "sha256": "0735165ca1e3e9e28a3c77a411f182089f00fe573c5accf864d6d391a74a8a73"
+    },
+    {
+      "side": "Train",
+      "file": "Interface.xml",
+      "sha256": "d7a807014797929daaae5f59395ce9ea011357c6e82a9f4418e08795a8c7ec87"
+    },
+    {
+      "side": "Test",
+      "file": "Model_00.xml",
+      "sha256": "3cac5636aefdd5c0e45e2efb8756ab6c2d5be3775a61b63667db14e17e240214"
+    },
+    {
+      "side": "Test",
+      "file": "Parameters_00.xml",
+      "sha256": "9147863bb70f15dc87559d1e001f787822f1495891b36a0d1c5e5aedf34cce1e"
+    },
+    {
+      "side": "Test",
+      "file": "Project.ini",
+      "sha256": "97a86f143549b45e7f78a7b3d53f09a15eb5ac7589982a7c49c27fcdfeb02891"
+    },
+    {
+      "side": "Test",
+      "file": "Interface.xml",
+      "sha256": "d607a880f224f687853f921a365a8490e878cb7fb06a758793208ecb71e15c54"
+    }
+  ],
+  "prepared_utc": "2026-10-10T09:55:01.283292+00:00",
+  "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair."
+}

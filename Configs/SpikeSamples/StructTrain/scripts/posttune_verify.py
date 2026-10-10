@@ -1561,7 +1561,7 @@ def run_case(
     child_rc: int | None = None
     training_failure: tuple[int, int] | None = None
     params_source = "nm_save"
-    tip_mode = {
+    tip_mode = str(case.get("posttrain_tip_resistance_mode", {
         "br25_on": "1",
         "br25_off": "0",
         "asym25": "2",
@@ -1569,7 +1569,7 @@ def run_case(
         "br100_search": "4",
         "asym50": "1",
         "phase6_480": "1",
-    }.get(name, "1")
+    }.get(name, "1")))
     accept_mode = {
         "br100_search": "search",
         "br100_keep": "keep",
@@ -1583,12 +1583,15 @@ def run_case(
         if gold_train is not None:
             sync_estdelay_from_gold(train, Path(gold_train) / "Train")
 
-        enable = "0" if name == "br25_off" else "1"
+        enable = str(case.get("enable_posttrain_tuning", "0" if name == "br25_off" else "1"))
         for rel in ("Parameters_00.xml", "Model_00.xml"):
             p = train / rel
             if not p.exists():
                 continue
             t = p.read_text(encoding="utf-8")
+            requested_normalization_mode = case.get("normalization_mode")
+            if requested_normalization_mode is not None:
+                t = set_tag(t, "NormalizationMode", str(int(requested_normalization_mode)), 1)
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -1917,6 +1920,11 @@ def run_case(
     need = after.get("IsNeedToTrain", "0")
     row = {
         "case": name,
+        "normalization_mode": case.get("normalization_mode"),
+        "enable_posttrain_tuning": enable if not skip_train else None,
+        "posttrain_tip_resistance_mode": tip_mode,
+        "presynaptic_inhibition": case.get("presynaptic_inhibition"),
+        "presynaptic_coefficient": case.get("presynaptic_coefficient"),
         "train_status": status,
         "training_convergence": training_convergence,
         "training_failure_phase": (

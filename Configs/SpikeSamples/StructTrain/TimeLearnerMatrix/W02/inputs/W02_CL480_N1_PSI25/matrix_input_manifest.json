@@ -1,0 +1,64 @@
+{
+  "case": "W02_CL480_N1_PSI25",
+  "wave": "W02",
+  "factors": {
+    "template": "classic480",
+    "trainer": "NNeuronTimeLearner",
+    "duration_ms": 480,
+    "pattern_family": "Phase6 canonical",
+    "normalization_mode": 1,
+    "presynaptic_inhibition": true,
+    "presynaptic_coefficient": 2.5,
+    "branch_nextseg": false,
+    "posttrain_tuning": false,
+    "tipr_mode": 1,
+    "train_t": 900
+  },
+  "source": "SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin",
+  "legacy_noninhibited_template": "SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin",
+  "presynaptic_class_template": "SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin",
+  "source_files": [
+    {
+      "side": "Train",
+      "file": "Model_00.xml",
+      "sha256": "df2690f9d0a4d0044ad8959f3ea5349b5880388200d5f31488f7c2056d80ff1b"
+    },
+    {
+      "side": "Train",
+      "file": "Parameters_00.xml",
+      "sha256": "2de073477d0ac197fb04aca971059613a5be47a9662b6a42bd5e0ffa3c1a26f5"
+    },
+    {
+      "side": "Train",
+      "file": "Project.ini",
+      "sha256": "d205fd4f86fbbce5318946317fc7bcab8bb194c659b614ad71122c448f1adec1"
+    },
+    {
+      "side": "Train",
+      "file": "Interface.xml",
+      "sha256": "15d469b61539cc15905da7acd80ba1a9dc0aa04661e937d076cd63bef8816865"
+    },
+    {
+      "side": "Test",
+      "file": "Model_00.xml",
+      "sha256": "333d569c2ed7b099f92e7b90c9b5c0048ca6c6ba4e8f4eb94daee82e92f748cf"
+    },
+    {
+      "side": "Test",
+      "file": "Parameters_00.xml",
+      "sha256": "e2705d0032669efbdb47340134031be8790cdbcee6db2c30adc1e8b65aa4bd76"
+    },
+    {
+      "side": "Test",
+      "file": "Project.ini",
+      "sha256": "564634bc1bf130e672cdb3365d89f1c9a054eab6dd274f847dbb129b4b7ae95b"
+    },
+    {
+      "side": "Test",
+      "file": "Interface.xml",
+      "sha256": "d607a880f224f687853f921a365a8490e878cb7fb06a758793208ecb71e15c54"
+    }
+  ],
+  "prepared_utc": "2026-10-10T09:55:08.994509+00:00",
+  "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair."
+}

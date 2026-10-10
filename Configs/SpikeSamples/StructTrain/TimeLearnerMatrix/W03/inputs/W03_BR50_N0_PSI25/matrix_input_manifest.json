@@ -1,0 +1,64 @@
+{
+  "case": "W03_BR50_N0_PSI25",
+  "wave": "W03",
+  "factors": {
+    "template": "branch50",
+    "trainer": "NNeuronTimeLearnerBranch",
+    "duration_ms": 50,
+    "pattern_family": "Branch pack A",
+    "normalization_mode": 0,
+    "presynaptic_inhibition": true,
+    "presynaptic_coefficient": 2.5,
+    "branch_nextseg": false,
+    "posttrain_tuning": false,
+    "tipr_mode": 1,
+    "train_t": 320
+  },
+  "source": "SelectivityBranch/EXP_br_span50_packA_preinh_C1e9",
+  "legacy_noninhibited_template": "SelectivityBranch/EXP_br_span50_packA_gen_C1e9",
+  "presynaptic_class_template": "SelectivityBranch/EXP_br_span50_packA_preinh_C1e9",
+  "source_files": [
+    {
+      "side": "Train",
+      "file": "Model_00.xml",
+      "sha256": "eb49c1afe6e1f3d077a35db93ff4d9bcfb62384e9c16be8def924ad004691c06"
+    },
+    {
+      "side": "Train",
+      "file": "Parameters_00.xml",
+      "sha256": "7b31ec54a39d90874f4886344f3223a68de1865588caf7d55fb989a675e3e6b7"
+    },
+    {
+      "side": "Train",
+      "file": "Project.ini",
+      "sha256": "1b6afc3f05b497c5b175de49d4608e40450f1b3dcdaf5c809f1ff63a12bc5c86"
+    },
+    {
+      "side": "Train",
+      "file": "Interface.xml",
+      "sha256": "7421896b9bbdb52b394acd58b2f3973f0a5abf542a69c91fcdcdb761c6d3c9f0"
+    },
+    {
+      "side": "Test",
+      "file": "Model_00.xml",
+      "sha256": "8a8531cae433c305534655e8165865abba5fc83541909dd6636f9395e8e29734"
+    },
+    {
+      "side": "Test",
+      "file": "Parameters_00.xml",
+      "sha256": "5c1c192f6ba3bb1201eecaa559fe716b8fc136bbe203626aae4804ea97366d6f"
+    },
+    {
+      "side": "Test",
+      "file": "Project.ini",
+      "sha256": "1b6afc3f05b497c5b175de49d4608e40450f1b3dcdaf5c809f1ff63a12bc5c86"
+    },
+    {
+      "side": "Test",
+      "file": "Interface.xml",
+      "sha256": "7421896b9bbdb52b394acd58b2f3973f0a5abf542a69c91fcdcdb761c6d3c9f0"
+    }
+  ],
+  "prepared_utc": "2026-10-10T09:55:10.165246+00:00",
+  "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair."
+}
