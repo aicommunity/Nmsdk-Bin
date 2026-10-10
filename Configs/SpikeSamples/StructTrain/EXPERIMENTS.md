@@ -66,6 +66,19 @@ Full49 остановлен при подготовке новой матриц�
 ## Результаты волн
 
 <!-- GENERATED_WAVE_RESULTS_BEGIN -->
+### W01
+
+| Случай | Сходимость обучения | Качество PostTune | Детекция цели | Need | Fires | Категория |
+|---|---|---|---|---:|---|---|
+| W01_CL25_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL25_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL25_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL25_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL50_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL50_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL50_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+| W01_CL50_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | 1 | — | обучение не сошлось |
+
 ### W03
 
 | Случай | Сходимость обучения | Качество PostTune | Детекция цели | Need | Fires | Категория |
