@@ -268,20 +268,16 @@ def run_wave(wave: str, jobs: int) -> int:
     run_dir = RUNS / wave
     run_dir.mkdir(parents=True, exist_ok=True)
     status_path = run_dir / "wave_status.json"
-    if status_path.is_file():
-        status = json.loads(status_path.read_text(encoding="utf-8"))
-        status["jobs"] = jobs
-    else:
-        status = {
-            "wave": wave,
-            "jobs": jobs,
-            "started_utc": datetime.now(timezone.utc).isoformat(),
-            "cases": {},
-        }
+    status = {
+        "wave": wave,
+        "jobs": jobs,
+        "started_utc": datetime.now(timezone.utc).isoformat(),
+        "cases": {},
+    }
     for spec in specs:
         case_id = spec["id"]
         saved_result = run_dir / case_id / "matrix_result.json"
-        status.setdefault("cases", {})[case_id] = (
+        status["cases"][case_id] = (
             {"status": "completed", "result_file": str(saved_result.relative_to(BASE)), "resumed": True}
             if saved_result.is_file()
             else {"status": "queued"}
@@ -291,9 +287,12 @@ def run_wave(wave: str, jobs: int) -> int:
     def launch(spec: dict[str, Any]) -> tuple[str, int]:
         case_id = spec["id"]
         log_path = run_dir / f"{case_id}.log"
-        command = [sys.executable, str(Path(__file__).resolve()), "--worker", wave, case_id]
+        command = [sys.executable, "-u", str(Path(__file__).resolve()), "--worker", wave, case_id]
+        env = {**os.environ, "PYTHONUNBUFFERED": "1"}
         with log_path.open("w", encoding="utf-8") as log:
-            proc = subprocess.run(command, cwd=BASE, stdout=log, stderr=subprocess.STDOUT, text=True)
+            proc = subprocess.run(
+                command, cwd=BASE, stdout=log, stderr=subprocess.STDOUT, text=True, env=env
+            )
         return case_id, int(proc.returncode)
 
     rc = 0

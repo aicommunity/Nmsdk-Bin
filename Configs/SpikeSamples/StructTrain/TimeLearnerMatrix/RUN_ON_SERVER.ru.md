@@ -8,19 +8,19 @@
 
 ## Перед запуском
 
-Подключитесь к серверу и перейдите в каталог экспериментов:
+Подключитесь к машине с экспериментами и перейдите в каталог:
 
 ```bash
-ssh user@10.245.1.11
+ssh user@10.245.1.17
 cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain
 ```
 
-Проверьте ветки и наличие Console. Для текущего закреплённого среза ожидаемый SHA-256 Console: `63c348252618ba0d05ed29bdf422c60f58cda5be5a83087f2d8c1367ff83e4ff`. Если код или бинарник обновлялись, сначала согласуйте их версии и пересоберите на сервере.
+Проверьте ветки и наличие Console. Для текущего закреплённого среза ожидаемый SHA-256 Console: `63c348252618ba0d05ed29bdf422c60f58cda5be5a83087f2d8c1367ff83e4ff`. Если код или бинарник обновлялись, сначала согласуйте их версии и пересоберите на сервере (на Ubuntu 24.04 может понадобиться `LD_LIBRARY_PATH` с `libglog.so.0` / boost 1.74 рядом с Console).
 
 ```bash
 git -C /home/user/Nmsdk branch --show-current
 git -C /home/user/Nmsdk/Bin branch --show-current
-git -C /home/user/Nmsdk/Bin/Libraries/Nmsdk-PulseLib branch --show-current
+git -C /home/user/Nmsdk/Libraries/Nmsdk-PulseLib branch --show-current
 sha256sum /home/user/Nmsdk/Bin/Platform/Linux/NeuroModelerConsole
 ```
 
@@ -34,15 +34,26 @@ df -h /home/user/Nmsdk
 
 Не очищайте грязные рабочие каталоги через `git clean` или `git reset`: в них есть исторические исследовательские данные. Скрипт очереди добавляет в Git только пути матрицы и отчётные файлы.
 
-## Запуск всех подготовленных волн
+## Гибридный запуск (local + 10.245.1.17)
+
+Рекомендуемое распределение для текущего среза:
+
+- локально: `python3 scripts/run_timelearner_matrix_queue.py --jobs 8 --waves W01 W02` (отчёты и git-коммиты на этой машине);
+- на `user@10.245.1.17` (12 ядер): только compute, без git — `python3 -u scripts/timelearner_matrix.py --prepare/--run` для W03 затем W04 с `--jobs 12` и `PYTHONUNBUFFERED=1` / при необходимости `LD_LIBRARY_PATH=.../Bin/Platform/Linux/lib`;
+- после remote: `rsync` каталогов `_repro/TimeLearnerMatrixRuns/W03` и `W04`, затем локально `python3 scripts/update_timelearner_matrix_report.py W0x` и коммиты Bin/root в том же стиле, что у очереди.
+
+Не вызывайте `run_timelearner_matrix_queue.py` на remote — он делает автокоммиты.
+
+## Запуск всех подготовленных волн на одной машине
 
 Команда ниже создаёт отдельную tmux-сессию с уникальным именем. Очередь выполняет W01, затем W02–W04, используя до восьми параллельных экземпляров Console. Потеря SSH-соединения или выключение рабочей станции её не прерывает.
 
 ```bash
 mkdir -p _repro/TimeLearnerMatrixRuns
+export PYTHONUNBUFFERED=1
 SESSION="timelearner-matrix-$(date -u +%Y%m%dT%H%M%SZ)"
 tmux new-session -d -s "$SESSION" \
-  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && python3 scripts/run_timelearner_matrix_queue.py --jobs 8 > _repro/TimeLearnerMatrixRuns/queue.log 2>&1; rc=\$?; printf '%s\n' \"\$rc\" > _repro/TimeLearnerMatrixRuns/queue.exit"
+  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && export PYTHONUNBUFFERED=1 && python3 -u scripts/run_timelearner_matrix_queue.py --jobs 8 > _repro/TimeLearnerMatrixRuns/queue.log 2>&1; rc=\$?; printf '%s\n' \"\$rc\" > _repro/TimeLearnerMatrixRuns/queue.exit"
 printf 'Session: %s\n' "$SESSION"
 ```
 

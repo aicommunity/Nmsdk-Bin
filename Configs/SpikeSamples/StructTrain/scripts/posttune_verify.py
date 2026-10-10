@@ -1807,6 +1807,8 @@ def run_case(
     _copy_if_exists(test_flag, run_dir / "Test" / "posttune_complete.flag")
     csv_src = root / "Test" / "SelectivityLog" / "results.csv"
     _copy_if_exists(csv_src, run_dir / "Test" / "results.csv")
+    (run_dir / "Train").mkdir(parents=True, exist_ok=True)
+    (run_dir / "Test").mkdir(parents=True, exist_ok=True)
     if tipr_snapshot:
         (run_dir / "Train" / "tipr_snapshot.txt").write_text(
             tipr_snapshot + "\n", encoding="utf-8"
