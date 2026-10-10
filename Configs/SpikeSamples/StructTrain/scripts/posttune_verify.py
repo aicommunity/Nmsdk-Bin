@@ -1991,11 +1991,14 @@ def count_events_mode4(side: Path) -> int:
         if not p.is_file():
             continue
         try:
-            txt = p.read_text(encoding="utf-8", errors="replace")
+            # Event logs can grow to many GiB during a long Branch run. Stream
+            # them so post-processing cannot OOM by materializing one log.
+            with p.open("r", encoding="utf-8", errors="replace") as stream:
+                for line in stream:
+                    n += len(re.findall(r"phase\s*->\s*PostTune\s+mode=4", line))
+                    n += len(re.findall(r"PostTune mode=4", line))
         except OSError:
             continue
-        n += len(re.findall(r"phase\s*->\s*PostTune\s+mode=4", txt))
-        n += len(re.findall(r"PostTune mode=4", txt))
     return n
 
 
