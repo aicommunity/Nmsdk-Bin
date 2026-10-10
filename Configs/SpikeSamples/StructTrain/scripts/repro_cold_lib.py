@@ -266,11 +266,10 @@ def invest_root(job_id: str) -> Path:
     return INVEST_ROOT / INVEST_JOBS[job_id][2]
 
 
-def free_gib(path: Path = Path("/")) -> float:
-    import os
-
-    st = os.statvfs(path)
-    return (st.f_bavail * st.f_frsize) / (1 << 30)
+def free_gib(path: Path | None = None) -> float:
+    """Return free space for the experiment checkout's volume on any host OS."""
+    target = path if path is not None else Path(__file__).resolve()
+    return shutil.disk_usage(target).free / (1 << 30)
 
 
 def assert_disk_for_train() -> None:
