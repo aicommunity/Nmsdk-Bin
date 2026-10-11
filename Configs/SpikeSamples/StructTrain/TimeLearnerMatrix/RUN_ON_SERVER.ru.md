@@ -31,29 +31,49 @@ pgrep -af '[N]euroModelerConsole' || true
 df -h /home/user/Nmsdk
 ```
 
-Не очищайте существующие исторические или грязные каталоги через `git clean` или `git reset`. Запуски используют отдельные `_repro/runs` и `_repro/TimeLearnerMatrixRuns` каталоги с идентификаторами. Проверьте, что дискового места хватит на размер первой волны и резерв для логов; после каждой волны просматривайте фактический расход и архивируйте подтверждённые артефакты до продолжения.
-
-## Полная очередь в tmux
-
-Одна волна содержит максимум восемь независимых обучений. Очередь последовательно готовит волну, запускает до восьми экземпляров Console, собирает каждый результат, обновляет документы и фиксирует изменения отдельными коммитами в Bin и корневом репозитории. Полный запуск занимает много времени, поэтому выполняйте его в удалённой `tmux` сессии:
+Сборка выполняется в корне проекта на `.17`; локальная машина для сборки и экспериментов не используется:
 
 ```bash
-mkdir -p _repro/TimeLearnerMatrixRuns
-export PYTHONUNBUFFERED=1
-SESSION="timelearner-matrix-$(date -u +%Y%m%dT%H%M%SZ)"
-tmux new-session -d -s "$SESSION" \
-  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && export PYTHONUNBUFFERED=1 && python3 -u scripts/run_timelearner_matrix_queue.py --jobs 8 > _repro/TimeLearnerMatrixRuns/queue.log 2>&1; rc=\$?; printf '%s\\n' \"\$rc\" > _repro/TimeLearnerMatrixRuns/queue.exit"
-printf 'Session: %s\n' "$SESSION"
+cd /home/user/Nmsdk
+cmake --preset linux-gcc-debug-local
+cmake --build build/linux-gcc-debug-local \
+  --target Nmsdk-PulseLib.core NeuroModelerConsole -j"$(nproc)"
+sha256sum Bin/Platform/Linux/NeuroModelerConsole
+git rev-parse HEAD
+git -C Bin rev-parse HEAD
+git -C Libraries/Nmsdk-PulseLib rev-parse HEAD
 ```
 
-Скрипт автоматически останавливает очередь после первой волны, где есть незаписанный/инфраструктурно неполный результат, отказ или несходимость C++ обучения, провал метрик качества либо отсутствие детекции цели. Уже завершённая волна перед остановкой попадает в отчёт и отдельные коммиты. Не обходите остановку параметром продолжения, пока причина не классифицирована, решение не записано, а следующая волна не подтверждена.
+Не очищайте существующие исторические или грязные каталоги через `git clean` или `git reset`. У каждого запуска должна быть отдельная папка `_repro/TimeLearnerMatrixRuns/<RUN_ID>`; скрипт отклоняет пустой или небезопасный ID и не подхватывает результаты предыдущих запусков. Проверьте, что дискового места хватит на одну волну и резерв для логов; после каждой волны просматривайте фактический расход и архивируйте подтверждённые артефакты до продолжения.
+
+До запуска просмотрите `git status --short` в корне и в `Bin`. Очередь откажется начинать волну при заранее staged изменениях или незакоммиченных изменениях файлов отчёта этой волны; это предотвращает попадание чужих правок в wave-коммит. Остальные грязные файлы не очищаются и не добавляются.
+
+Сохранённые W01–W04 содержат 30 исходов `not_converged_at_stop` из 32. У этих результатов нет точного Console SHA, поэтому это предварительный, но сильный сигнал систематической проблемы. Первым повторите W01 из зафиксированных входов с текущей сборкой и полным runtime provenance. Если новая волна покажет несходимость, не запускайте следующую до анализа её причин. После подтверждённого завершения обучения низкая метрика разделения или отсутствие детекции записываются отдельно и сами по себе не останавливают матрицу.
+
+## Запуск одной волны в tmux
+
+Запускайте ровно одну волну за вызов, максимум восемь Console. После её завершения скрипт сохраняет отдельные результаты и provenance, обновляет сводные документы и коммитит результат в Bin и корневой репозиторий. Следующую волну запускайте отдельной командой только после анализа текущей. Для первого повтора используйте W01:
+
+```bash
+cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain
+RUN_ID="run-$(date -u +%Y%m%dT%H%M%SZ)-$$"
+RUN_DIR="_repro/TimeLearnerMatrixRuns/$RUN_ID"
+SESSION="tl-$RUN_ID"
+mkdir -p "$RUN_DIR"
+tmux new-session -d -s "$SESSION" \
+  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID='$RUN_ID' && python3 -u scripts/run_timelearner_matrix_queue.py --run-id '$RUN_ID' --waves W01 --jobs 8 > '$RUN_DIR/queue.log' 2>&1; rc=\$?; printf '%s\\n' \"\$rc\" > '$RUN_DIR/queue.exit'"
+printf 'Session: %s\nRun ID: %s\nLog: %s/queue.log\n' "$SESSION" "$RUN_ID" "$RUN_DIR"
+```
+
+`--waves W01` обязателен: runner не допускает несколько волн в одном вызове. Для следующей волны замените ID, например на `--waves W02`, и создайте новый Run ID. Автоматическая пауза срабатывает при отказе/несходимости C++-тренера, ошибке оценщика, неполном результате или инфраструктурной ошибке. Если обучение завершилось, но качество разделения слабое или цель не детектируется, это фиксируется в отчёте, однако не блокирует следующие волны.
 
 ## Наблюдение
 
 ```bash
+RUN_ID="вставьте Run ID, напечатанный при запуске"
 tmux ls
-tail -F /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/queue.log
-cat /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/queue_status.json
+tail -F "/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/$RUN_ID/queue.log"
+cat "/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/$RUN_ID/queue_status.json"
 ```
 
 Для подключения к сессии возьмите её имя из `tmux ls`:
@@ -64,16 +84,17 @@ tmux attach -t ИМЯ_СЕССИИ
 
 Отсоединиться, оставив процесс работать: нажмите `Ctrl-B`, затем `D`. Потеря SSH или выключение рабочей станции не останавливает удалённую сессию.
 
-## Запуск одного случая после разбора предыдущей волны
+## Запуск одного диагностического случая
 
-После того как причина остановки расследована и зафиксирована, один случай можно подготовить и запустить отдельно:
+Для отдельного диагностического опыта назначьте ему свой новый Run ID:
 
 ```bash
+export TIMELEARNER_MATRIX_RUN_ID="single-$(date -u +%Y%m%dT%H%M%SZ)-$$"
 python3 scripts/timelearner_matrix.py --prepare W07
 python3 scripts/timelearner_matrix.py --case W07 W07_BR25_N1_PSI25_NEXT
 ```
 
-Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат будет в `_repro/TimeLearnerMatrixRuns/<wave>/<case>/matrix_result.json`; файлы рабочего клона лежат отдельно от эталонных `inputs/`.
+Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат и Console provenance будут в `_repro/TimeLearnerMatrixRuns/<RUN_ID>/<wave>/<case>/matrix_result.json`. Одиночный диагностический запуск не обновляет сводный документ всей волны; для отчётного результата запускайте волну целиком через queue. Файлы рабочего клона лежат отдельно от эталонных `inputs/`.
 
 Пользовательские конфиги для ручного открытия в GUI находятся, например, здесь:
 
@@ -89,4 +110,4 @@ tmux send-keys -t ИМЯ_СЕССИИ C-c
 pgrep -af '[N]euroModelerConsole' || true
 ```
 
-Перед возобновлением сначала разберите остановивший очередь результат и зафиксируйте решение. После этого запустите очередь с первой ещё не выполненной волны через `--from-wave Wxx`, предварительно сверив `queue_status.json`, сохранённые case results и git-коммиты. Не удаляйте матрицу входов, исторические результаты или рабочие каталоги, пока не установлено, что они относятся к остановленному запуску и больше не нужны.
+Перед возобновлением сначала разберите остановивший очередь результат и зафиксируйте решение. Для незавершённой волны используйте тот же Run ID и тот же `--waves Wxx`: уже сохранённые случаи будут пропущены, остальные продолжатся. Для новой волны создайте новый Run ID. Перед запуском сверьте `queue_status.json`, case results и git-коммиты. Не удаляйте матрицу входов, исторические результаты или рабочие каталоги, пока не установлено, что они относятся к остановленному запуску и больше не нужны.

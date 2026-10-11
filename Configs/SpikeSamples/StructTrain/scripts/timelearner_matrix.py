@@ -25,12 +25,22 @@ from xml.etree import ElementTree as ET
 
 BASE = Path(__file__).resolve().parents[1]
 MANIFEST = BASE / "TimeLearnerMatrix" / "matrix.json"
-RUNS = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
 PV_PATH = BASE / "scripts" / "posttune_verify.py"
 CLASS_TAGS = ("NeuronClassName", "MembraneClassName", "SynapseClassName")
 INHIBITION_TAGS = ("UsePresynapticInhibition", "InhibitionCoeff")
 XML_INPUTS = ("Model_00.xml", "Parameters_00.xml")
 TAG_RE = r"(<{tag}\b[^>]*>)(.*?)(</{tag}\s*>)"
+RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}\Z")
+
+
+def run_root() -> Path:
+    run_id = os.environ.get("TIMELEARNER_MATRIX_RUN_ID", "").strip()
+    if not RUN_ID_RE.fullmatch(run_id):
+        raise RuntimeError(
+            "set TIMELEARNER_MATRIX_RUN_ID to a unique safe ID before running a matrix case"
+        )
+    return RUNS_BASE / run_id
 
 
 def load_pv():
@@ -425,7 +435,7 @@ def worker(wave: str, case_id: str) -> int:
         pv.CASES[internal_id] = {**pv.CASES[internal_id], **worker_config}
     else:
         pv.CASES[internal_id] = worker_config
-    result_dir = RUNS / wave
+    result_dir = run_root() / wave
     result_dir.mkdir(parents=True, exist_ok=True)
     run_dir = result_dir / case_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -439,9 +449,33 @@ def worker(wave: str, case_id: str) -> int:
     result["case"] = case_id
     result["matrix_factors"] = {k: v for k, v in spec.items() if k not in ("id",)}
     result["input_manifest"] = str(input_root / "matrix_input_manifest.json")
+    result["matrix_run_id"] = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
+    result["input_manifest_sha256"] = sha256(input_root / "matrix_input_manifest.json")
+    provenance_path = run_dir / "provenance.json"
+    if not provenance_path.is_file():
+        raise RuntimeError(f"runtime provenance missing for {case_id}: {provenance_path}")
+    provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    if not provenance.get("root_git") or not provenance.get("binary_sha256"):
+        raise RuntimeError(f"runtime provenance lacks root or Console SHA-256 for {case_id}")
+    result["run_provenance"] = {
+        key: provenance.get(key)
+        for key in (
+            "root_git",
+            "gitlinks",
+            "binary_sha256",
+            "source_sha256",
+            "source_sha256_after",
+            "config_sha256",
+            "config_sha256_after",
+            "inputs_mutated_during_run",
+            "train_t_effective",
+        )
+    }
     result_path = run_dir / "matrix_result.json"
     result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-    return 0 if not result.get("row_fail") else 1
+    # A completed experiment writes its outcome regardless of learned quality.
+    # The wave runner separately stops on non-convergence or broken evaluation.
+    return 0
 
 
 def run_wave(wave: str, jobs: int) -> int:
@@ -454,7 +488,7 @@ def run_wave(wave: str, jobs: int) -> int:
     missing = [s["id"] for s in specs if not (BASE / "TimeLearnerMatrix" / wave / "inputs" / s["id"]).is_dir()]
     if missing:
         raise FileNotFoundError(f"inputs not prepared: {missing}; run --prepare {wave}")
-    run_dir = RUNS / wave
+    run_dir = run_root() / wave
     run_dir.mkdir(parents=True, exist_ok=True)
     status_path = run_dir / "wave_status.json"
     status = {
@@ -507,7 +541,9 @@ def run_wave(wave: str, jobs: int) -> int:
     all_results = all(
         (run_dir / spec["id"] / "matrix_result.json").is_file() for spec in specs
     )
-    data_failures = 0
+    training_stops = 0
+    evaluation_errors = 0
+    quality_failures = 0
     if all_results:
         for spec in specs:
             try:
@@ -516,15 +552,41 @@ def run_wave(wave: str, jobs: int) -> int:
                 rc = 2
                 all_results = False
                 break
-            if result.get("row_fail"):
-                data_failures += 1
-    status["case_data_failures"] = data_failures
+            convergence = str(result.get("training_convergence") or "")
+            training_complete = convergence.startswith("converged")
+            if not training_complete:
+                training_stops += 1
+            elif (
+                result.get("gate_evaluated") is False
+                or result.get("separation_quality") in {
+                    "evaluation_error",
+                    "insufficient_data",
+                    "not_reached_or_unknown",
+                    "not_evaluated_training_incomplete",
+                }
+                or result.get("detection_quality") in {
+                    "evaluation_error",
+                    "insufficient_data",
+                    "not_evaluated_training_incomplete",
+                }
+            ):
+                evaluation_errors += 1
+            elif result.get("row_fail"):
+                # Weak separation/detection is a research result, not a reason
+                # to suppress later matrix cells.
+                quality_failures += 1
+    status["case_data_failures"] = training_stops + evaluation_errors + quality_failures
+    status["training_stop_cases"] = training_stops
+    status["evaluation_error_cases"] = evaluation_errors
+    status["quality_failure_cases"] = quality_failures
     status["run_complete"] = all_results
-    status["stop_before_next_wave"] = bool(rc == 2 or data_failures)
+    status["stop_before_next_wave"] = bool(rc == 2 or training_stops or evaluation_errors)
     status_path.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
     if rc == 2 or not all_results:
         return 2
-    return 1 if data_failures else 0
+    if evaluation_errors:
+        return 3
+    return 1 if training_stops else 0
 
 
 def main() -> int:

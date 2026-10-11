@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import json
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,9 +17,17 @@ SUCCESSFUL = BASE / "SUCCESSFUL_EXPERIMENTS.md"
 ROOT_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "evidence" / "metrics" / "TIMELEARNER_MATRIX_WAVES_20261010.md"
 WAVE_PLAN = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "plans" / "TimeLearner-full-matrix-waves-20261010.ru.md"
 FULL_MATRIX_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "TIMELEARNER_FULL_MATRIX_AND_HISTORY_2026-10-10.ru.md"
-RUNS = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}\Z")
 BEGIN = "<!-- GENERATED_WAVE_RESULTS_BEGIN -->"
 END = "<!-- GENERATED_WAVE_RESULTS_END -->"
+
+
+def run_root() -> Path:
+    run_id = os.environ.get("TIMELEARNER_MATRIX_RUN_ID", "").strip()
+    if not RUN_ID_RE.fullmatch(run_id):
+        raise RuntimeError("TIMELEARNER_MATRIX_RUN_ID must name the run whose wave is being reported")
+    return RUNS_BASE / run_id
 
 
 def load_json(path: Path) -> dict[str, Any] | None:
@@ -50,10 +59,11 @@ def collect_wave(wave: str) -> tuple[dict[str, Any], Path]:
     specs = [c for c in registry["cases"] if c["wave"] == wave]
     if not specs:
         raise ValueError(f"wave not in matrix registry: {wave}")
-    status = load_json(RUNS / wave / "wave_status.json") or {}
+    runs = run_root()
+    status = load_json(runs / wave / "wave_status.json") or {}
     cases = []
     for spec in specs:
-        path = RUNS / wave / spec["id"] / "matrix_result.json"
+        path = runs / wave / spec["id"] / "matrix_result.json"
         row = load_json(path)
         cases.append({
             "case": spec["id"],
@@ -63,6 +73,7 @@ def collect_wave(wave: str) -> tuple[dict[str, Any], Path]:
         })
     snapshot = {
         "wave": wave,
+        "run_id": os.environ.get("TIMELEARNER_MATRIX_RUN_ID"),
         "updated_utc": datetime.now(timezone.utc).isoformat(),
         "jobs": status.get("jobs", 8),
         "started_utc": status.get("started_utc"),
@@ -138,6 +149,19 @@ def accuracy_summary(row: dict[str, Any]) -> str:
     suffix = f"; FP={fp}" if fp is not None else ""
     audit = "" if label == "strict" else "; strict audit not saved"
     return f"{result} {label}{suffix}{audit}"
+
+
+def provenance_summary(row: dict[str, Any]) -> str:
+    provenance = row.get("run_provenance")
+    if not isinstance(provenance, dict):
+        return "runtime provenance missing"
+    gitlinks = provenance.get("gitlinks") or {}
+    return "; ".join([
+        f"root={str(provenance.get('root_git') or '—')[:12]}",
+        f"Bin={str(gitlinks.get('Bin') or '—')[:12]}",
+        f"PulseLib={str(gitlinks.get('Libraries/Nmsdk-PulseLib') or '—')[:12]}",
+        f"Console={str(provenance.get('binary_sha256') or '—')[:12]}",
+    ])
 
 
 def human_pattern_label(spec: dict[str, Any]) -> str:
@@ -238,8 +262,8 @@ def update_documents() -> None:
         table = [
             f"### {wave}",
             "",
-            "| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |",
-            "|---|---|---|---|---|---:|---|---|",
+            "| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |",
+            "|---|---|---|---|---|---:|---|---|---|",
         ]
         for item in group:
             result = item.get("result") or {}
@@ -253,6 +277,7 @@ def update_documents() -> None:
                 md(after.get("IsNeedToTrain")),
                 md(result.get("fires")),
                 md(category(result)),
+                md(provenance_summary(result)),
             ]) + " |")
         result_sections.extend(table + [""])
 
@@ -344,7 +369,7 @@ def update_documents() -> None:
         "",
         "Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.",
         "",
-        "Результаты показывают исходную проблему базовых запусков; до перехода к следующей волне очередь должна останавливаться на любом отказе C++-обучения, провале метрик или недетекции цели. Причины разбираются отдельно, а старые outcomes не заменяют будущую проверку с известным бинарником и хэшами входов.",
+        "Сохранённые базовые результаты содержат много незавершённых обучений и требуют повторной проверки с известным бинарником. После каждой новой волны сначала анализируются C++-сходимость и причины остановки. Отказ тренера, несходимость или ошибка оценщика останавливают очередь для разбора; если C++-обучение завершилось, но разделение или детекция цели слабые, это записывается как результат качества, и следующие волны продолжаются.",
         "",
         "## Факторы и волны в порядке запуска",
         "",
@@ -361,7 +386,7 @@ def update_documents() -> None:
     intro.extend([
         "## Протокол следующей волны",
         "",
-        "Очередь запускается в tmux на сервере `.17`, не более чем восемью процессами. После каждого завершённого опыта отчёты обновляются; перед следующим wave проводится анализ. При C++ refusal/non-convergence, невыполнении quality gate, недетекции, ошибке оценщика, отсутствующем результате или инфраструктурной ошибке очередь ставится на паузу до разбора причины. Exit code процесса отдельно от метрик не считается PASS. Подробная процедура: [RUN_ON_SERVER.ru.md](TimeLearnerMatrix/RUN_ON_SERVER.ru.md); фактический порядок и stop policy: `TimeLearnerMatrix/matrix.json`.",
+        "Каждый запуск ограничен одной волной и имеет уникальный Run ID. После волны отчёты и её результаты обновляются и коммитятся, затем требуется анализ до запуска следующей волны. C++ refusal/non-convergence, ошибка оценщика, отсутствующий результат или инфраструктурная ошибка требуют паузы. Провал разделения или недетекция после завершённого обучения записываются отдельно и сами по себе не останавливают матрицу. Exit code процесса отдельно от метрик не считается PASS. Подробная процедура: [RUN_ON_SERVER.ru.md](TimeLearnerMatrix/RUN_ON_SERVER.ru.md); фактический порядок: `TimeLearnerMatrix/matrix.json`.",
         "",
         "Исторические Train/Test исходники остаются для воспроизводимости и связаны в Git; пользовательский текущий набор запусков находится в `TimeLearnerMatrix/Wxx/inputs/<case>/{Train,Test}`. Скрипт не переносит обучение и обновление состояния из C++ в Python.",
         "",
@@ -456,7 +481,7 @@ def update_documents() -> None:
         "",
         "## Волны и порядок исполнения",
         "",
-        "Порядок ниже совпадает с `TimeLearnerMatrix/matrix.json`. По завершении каждой волны результаты анализируются и документы/манифест обновляются до перехода к следующей. Ошибка сходимости, качество ниже gate, отсутствие детекции цели, evaluator failure, инфраструктурная ошибка или пропущенный результат немедленно блокируют следующую волну до выяснения причины.",
+        "Порядок ниже совпадает с `TimeLearnerMatrix/matrix.json`. Запускайте одну волну за один вызов; после неё изучите результаты и обновите документы перед следующим запуском. Несходимость C++-обучения, отказ тренера, ошибка оценщика, инфраструктурная ошибка или неполный результат требуют паузы и классификации. Низкая метрика разделения или отсутствие детекции после завершённого обучения сохраняются как исходы эксперимента и не блокируют следующие волны автоматически.",
         "",
         "| Волна | Человеческое описание | Опытов | Case ID |",
         "|---|---|---:|---|",
