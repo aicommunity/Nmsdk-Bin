@@ -530,8 +530,8 @@ def prepare_clean_case(case_name: str, archive_root: Path) -> Path:
     return work
 
 
-def set_statistic_matrix_activity(model_path: Path, enabled: bool) -> int:
-    """Enable or disable only UStatisticDoubleMatrix observer components in a copy."""
+def suspend_statistic_matrix_writes(model_path: Path) -> int:
+    """Disable per-step file writes by UStatisticDoubleMatrix observers in a copy."""
     if not model_path.is_file():
         return 0
     text = model_path.read_text(encoding="utf-8")
@@ -539,21 +539,29 @@ def set_statistic_matrix_activity(model_path: Path, enabled: bool) -> int:
         r'(<StatisticDoubleMatrix\b[^>]*>.*?</StatisticDoubleMatrix>)', re.DOTALL
     )
     updated = 0
-    activity_text = "1" if enabled else "0"
     components = component_re.findall(text)
     for component in components:
-        changed, count = re.subn(
-            r'(<Activity\b[^>]*>)[^<]*(</Activity>)',
-            lambda m: m.group(1) + activity_text + m.group(2),
-            component,
-            count=1,
-        )
-        if count:
-            text = text.replace(component, changed, 1)
-            updated += 1
+        changed = component
+        for tag, value in (
+            ("Activity", "0"),
+            ("ManualModeEnabled", "1"),
+            ("ManualModeSwitch", "0"),
+        ):
+            changed, count = re.subn(
+                rf'(<{tag}\b[^>]*>)[^<]*(</{tag}>)',
+                lambda m, v=value: m.group(1) + v + m.group(2),
+                changed,
+                count=1,
+            )
+            if count != 1:
+                raise ValueError(
+                    f"expected one {tag} property in UStatisticDoubleMatrix in {model_path}"
+                )
+        text = text.replace(component, changed, 1)
+        updated += 1
     if components and updated != len(components):
         raise ValueError(
-            f"updated {updated}/{len(components)} UStatisticDoubleMatrix activity flags in {model_path}"
+            f"updated {updated}/{len(components)} UStatisticDoubleMatrix writers in {model_path}"
         )
     model_path.write_text(text, encoding="utf-8")
     return updated
@@ -1656,12 +1664,12 @@ def run_case(
 
         statistic_components_updated = 0
         if disable_train_statistic_logs:
-            statistic_components_updated = set_statistic_matrix_activity(
-                train / "Model_00.xml", enabled=False
+            statistic_components_updated = suspend_statistic_matrix_writes(
+                train / "Model_00.xml"
             )
             print(
-                f"  Disabled {statistic_components_updated} UStatisticDoubleMatrix "
-                "train observers; C++ iteration audit remains enabled"
+                f"  Suspended file writes for {statistic_components_updated} "
+                "UStatisticDoubleMatrix train observer; C++ iteration audit remains enabled"
             )
 
         gold_train = case.get("gold")
