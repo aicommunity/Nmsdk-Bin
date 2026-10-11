@@ -113,9 +113,17 @@ def main() -> int:
     pv.CASES[args.case] = config
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_started_utc = datetime.now(timezone.utc).isoformat()
     run_dir = args.output_root.resolve() / f"{args.case}_{stamp}"
     run_dir.mkdir(parents=True, exist_ok=False)
     hashes_before = tree_hashes(source)
+    commits_at_start = {
+        "root": git_head(REPO_ROOT),
+        "pulselib": git_head(REPO_ROOT / "Libraries/Nmsdk-PulseLib"),
+        "bin": git_head(REPO_ROOT / "Bin"),
+    }
+    console_sha256_at_start = sha256(pv.NM)
+    runner_sha256 = sha256(Path(__file__).resolve())
     pv.OUT = run_dir / "summary.md"
     result: dict[str, Any] = pv.run_case(
         args.case,
@@ -138,11 +146,16 @@ def main() -> int:
         "source_input_hashes_before": hashes_before,
         "source_input_hashes_after": hashes_after,
         "source_inputs_unchanged": hashes_before == hashes_after,
-        "root_commit": git_head(REPO_ROOT),
-        "pulselib_commit": git_head(REPO_ROOT / "Libraries/Nmsdk-PulseLib"),
-        "bin_commit": git_head(REPO_ROOT / "Bin"),
+        "run_started_utc": run_started_utc,
+        "commits_at_start": commits_at_start,
+        "commits_at_completion": {
+            "root": git_head(REPO_ROOT),
+            "pulselib": git_head(REPO_ROOT / "Libraries/Nmsdk-PulseLib"),
+            "bin": git_head(REPO_ROOT / "Bin"),
+        },
+        "runner_sha256": runner_sha256,
         "console": str(pv.NM),
-        "console_sha256": sha256(pv.NM),
+        "console_sha256": console_sha256_at_start,
         "max_polls": args.max_polls,
         "autosave_model_seconds": args.autosave_model_s,
         "stall_autosave_n": args.stall_autosave_n,
