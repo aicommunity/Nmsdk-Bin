@@ -1664,12 +1664,14 @@ def run_case(
 
         statistic_components_updated = 0
         if disable_train_statistic_logs:
-            statistic_components_updated = suspend_statistic_matrix_writes(
-                train / "Model_00.xml"
-            )
+            for rel in ("Parameters_00.xml", "Model_00.xml"):
+                statistic_components_updated += suspend_statistic_matrix_writes(
+                    train / rel
+                )
             print(
                 f"  Suspended file writes for {statistic_components_updated} "
-                "UStatisticDoubleMatrix train observer; C++ iteration audit remains enabled"
+                "UStatisticDoubleMatrix train observer definitions; "
+                "C++ iteration audit remains enabled"
             )
 
         gold_train = case.get("gold")
