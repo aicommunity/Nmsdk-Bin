@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 32 случаев: 30 не сошлись к моменту остановки, 2 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 0. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 8 случаев: 6 не сошлись к моменту остановки, 2 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 0. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -635,55 +635,16 @@
 
 ### W01
 
-| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |
-|---|---|---|---|---|---:|---|---|
-| W01_CL25_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL25_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL25_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL25_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL50_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL50_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL50_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W01_CL50_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-
-### W02
-
-| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |
-|---|---|---|---|---|---:|---|---|
-| W02_CL100_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL100_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL100_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL100_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL480_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL480_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL480_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W02_CL480_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-
-### W03
-
-| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |
-|---|---|---|---|---|---:|---|---|
-| W03_BR25_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W03_BR25_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W03_BR25_N1_PSIoff | converged_need0 | legacy_gate_pass_strict_unavailable | detected | 7/8 legacy; FP=1; strict audit not saved | 0 | 10100000 | обучение сошлось; качество=legacy_gate_pass_strict_unavailable; цель=detected |
-| W03_BR25_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W03_BR50_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W03_BR50_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W03_BR50_N1_PSIoff | converged_need0 | legacy_gate_fail | target_not_detected | 7/8 legacy; FP=0; strict audit not saved | 0 | 00000000 | обучение сошлось; качество=legacy_gate_fail; цель=target_not_detected |
-| W03_BR50_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-
-### W04
-
-| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория |
-|---|---|---|---|---|---:|---|---|
-| W04_BR100_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR100_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR100_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR100_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR480_N0_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR480_N0_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR480_N1_PSIoff | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
-| W04_BR480_N1_PSI25 | not_converged_at_stop | not_reached_or_unknown | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось |
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W01_CL25_N0_PSIoff | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL25_N0_PSI25 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL25_N1_PSIoff | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL25_N1_PSI25 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL50_N0_PSIoff | converged_need0 | evaluation_error | evaluation_error | — | 0 | — | обучение сошлось; качество=evaluation_error; цель=evaluation_error | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL50_N0_PSI25 | converged_need0 | evaluation_error | evaluation_error | — | 0 | — | обучение сошлось; качество=evaluation_error; цель=evaluation_error | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL50_N1_PSIoff | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W01_CL50_N1_PSI25 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=75b4988095ef; Bin=2f19736dd852; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ## Протокол следующей волны
 
