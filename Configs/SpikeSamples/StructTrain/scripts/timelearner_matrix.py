@@ -133,7 +133,8 @@ def apply_xml_factors(
 def copy_historical_git_source(source_rel: str, destination: Path, commit: str) -> list[Path]:
     """Copy only runnable Train/Test inputs from an immutable Bin git snapshot."""
     bin_root = BASE.parents[2]
-    git_source_path = f"Configs/SpikeSamples/StructTrain/{source_rel.replace('\\', '/')}"
+    source_norm = source_rel.replace("\\", "/")
+    git_source_path = f"Configs/SpikeSamples/StructTrain/{source_norm}"
     git_source = f"{commit}:{git_source_path}"
     listing = subprocess.check_output(
         ["git", "-C", str(bin_root), "ls-tree", "-r", "--name-only", git_source],
