@@ -1,0 +1,56 @@
+{
+  "case": "phase6_480",
+  "variant": "normal committed cold-start; W3 disabled",
+  "completion_scope": "C++ training refusal; quality gate not evaluated",
+  "binary_sha256": "1AFD07727183837BC5D6A4BC313E632CCB5A0D7DFABD88BD95B715D5259B72E8",
+  "iteration": 35,
+  "training_phase": 4,
+  "need": 1,
+  "eol_sync": 1,
+  "eol_amp": 0,
+  "failure_reason": 1,
+  "failure_reason_name": "unresolved amplitude overshoot at ResistanceMax",
+  "sync_tolerance_seconds": 0.02,
+  "last_abs_dt_seconds": [
+    0.019499999999993634,
+    0.014500000000002122,
+    0.014500000000002178,
+    1.501
+  ],
+  "initial_amp": [
+    0.015781441626429582,
+    0.015828572406203167,
+    0.01578146659932167,
+    0.015781441636542715
+  ],
+  "peak_amp": [
+    0.07782395728565772,
+    0.03807166501735093,
+    0.01577675609976037,
+    0.015781441636542715
+  ],
+  "amp_dt": [
+    -0.06204251565922814,
+    -0.022243092611147763,
+    4.710499561300097E-06,
+    0
+  ],
+  "tip_r_ohm": [
+    95741169.99429274,
+    10000000000,
+    49486853.68223004,
+    86000000
+  ],
+  "resistance_max_ohm": 10000000000,
+  "lengths": [
+    51,
+    41,
+    25,
+    1
+  ],
+  "w3_length_escape": 0,
+  "failure_interpretation": "Second trained dendrite is at Rmax=10 GOhm and still overshoots its reference amplitude: amp_dt=-22.24 mV. EOL sync is true, but amplitude EOL is false.",
+  "posttune_quality_evaluated": false,
+  "stop_reason": "After failure_reason=1 and TrainingPhase=failed were recorded, the gate-only subprocess was stopped; it cannot replace the failed C++ result.",
+  "audit_path": "Train/TimeLearnerTrainingAudit.log"
+}

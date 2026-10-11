@@ -1,0 +1,42 @@
+{
+  "case": "phase6_480",
+  "variant": "freeze-r-regulator-during-sync; feedforward length-growth resistance compensation remains enabled",
+  "completion_scope": "sync-ablation only",
+  "binary_sha256": "5C5731CFF88A447239C2FE0BEE6673AAF6727FC5AE9CB51A9676AE6BE1A8AC2F",
+  "first_eol_sync_iteration": 20,
+  "stable_through_iteration": 38,
+  "stable_iterations_after_first_eol": 18,
+  "eol_sync_stayed_true": true,
+  "state_at_eol": {
+    "tip_r_ohm": [
+      7059309.881655297,
+      11638834.358348694,
+      25902702.22444938,
+      86000000
+    ],
+    "length": [
+      51,
+      41,
+      25,
+      1
+    ],
+    "peak_amp": [
+      0.1479315042250524,
+      0.07263488385502537,
+      0.01814616671328184,
+      0.015781441636542715
+    ],
+    "last_abs_dt_seconds": [
+      0.016500000000000625,
+      0.014500000000002122,
+      0.014500000000002178,
+      1.501
+    ],
+    "need": 1,
+    "eol_amp": 0
+  },
+  "full_training_completed": false,
+  "posttune_quality_gate_completed": false,
+  "stop_reason": "The purpose was to measure sync only. After 18 unchanged EOL rows, the follow-up gate process was stopped to avoid treating this ablation as a full-training result.",
+  "audit_path": "Train/TimeLearnerTrainingAudit.log"
+}
