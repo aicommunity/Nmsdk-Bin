@@ -54,6 +54,11 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--max-polls", type=int, default=401)
     parser.add_argument("--autosave-model-s", type=int, default=1)
+    parser.add_argument(
+        "--keep-train-statistic-logs",
+        action="store_true",
+        help="keep expensive per-step UStatisticDoubleMatrix output files",
+    )
     parser.add_argument("--stall-autosave-n", type=int, default=10)
     parser.add_argument("--slog-abort-gib", type=float, default=8.0)
     args = parser.parse_args()
@@ -135,6 +140,7 @@ def main() -> int:
         autosave_model_s=args.autosave_model_s,
         stall_autosave_n=args.stall_autosave_n,
         slog_abort_gib=args.slog_abort_gib,
+        disable_train_statistic_logs=not args.keep_train_statistic_logs,
     )
     hashes_after = tree_hashes(source)
     record = {
@@ -158,6 +164,7 @@ def main() -> int:
         "console_sha256": console_sha256_at_start,
         "max_polls": args.max_polls,
         "autosave_model_seconds": args.autosave_model_s,
+        "train_statistic_logs_disabled": not args.keep_train_statistic_logs,
         "stall_autosave_n": args.stall_autosave_n,
         "result": result,
     }

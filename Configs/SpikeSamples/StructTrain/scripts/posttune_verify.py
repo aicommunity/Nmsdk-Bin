@@ -530,6 +530,35 @@ def prepare_clean_case(case_name: str, archive_root: Path) -> Path:
     return work
 
 
+def set_statistic_matrix_activity(model_path: Path, enabled: bool) -> int:
+    """Enable or disable only UStatisticDoubleMatrix observer components in a copy."""
+    if not model_path.is_file():
+        return 0
+    text = model_path.read_text(encoding="utf-8")
+    component_re = re.compile(
+        r'(<StatisticDoubleMatrix\b[^>]*>.*?</StatisticDoubleMatrix>)', re.DOTALL
+    )
+    updated = 0
+    activity_text = "1" if enabled else "0"
+    components = component_re.findall(text)
+    for component in components:
+        changed, count = re.subn(
+            r'(<Activity\b[^>]*>)[^<]*(</Activity>)',
+            lambda m: m.group(1) + activity_text + m.group(2),
+            component,
+            count=1,
+        )
+        if count:
+            text = text.replace(component, changed, 1)
+            updated += 1
+    if components and updated != len(components):
+        raise ValueError(
+            f"updated {updated}/{len(components)} UStatisticDoubleMatrix activity flags in {model_path}"
+        )
+    model_path.write_text(text, encoding="utf-8")
+    return updated
+
+
 def tipr_weights_identity(
     train: Path,
     *,
@@ -1574,6 +1603,7 @@ def run_case(
     autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S,
     stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
     max_rs_rm: float | None = None,
+    disable_train_statistic_logs: bool = False,
 ) -> dict:
     case = dict(CASES[name])
     if max_rs_rm is not None and (not math.isfinite(max_rs_rm) or max_rs_rm <= 0.0):
@@ -1623,6 +1653,16 @@ def run_case(
     if not skip_train:
         soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
         from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
+
+        statistic_components_updated = 0
+        if disable_train_statistic_logs:
+            statistic_components_updated = set_statistic_matrix_activity(
+                train / "Model_00.xml", enabled=False
+            )
+            print(
+                f"  Disabled {statistic_components_updated} UStatisticDoubleMatrix "
+                "train observers; C++ iteration audit remains enabled"
+            )
 
         gold_train = case.get("gold")
         if gold_train is not None:
@@ -1913,6 +1953,7 @@ def run_case(
             "child_rc": child_rc,
             "train_t_effective": float(case["train_t"]),
             "max_polls": polls_used,
+            "train_statistic_logs_disabled": disable_train_statistic_logs,
             "retest_class": (
                 "extended_time"
                 if (train_t is not None or max_polls is not None)
