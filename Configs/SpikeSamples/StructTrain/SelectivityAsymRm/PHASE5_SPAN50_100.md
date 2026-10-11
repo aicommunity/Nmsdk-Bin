@@ -3,6 +3,8 @@
 Recipe base from span25: C1e9, EstDelayPerSeg=0.002, Rmin=2e7, per-exp thr, last-pulse gate.
 Gate: `ok_audit` + last-pulse `t_rel ≥ 0.8·pattern_end` + `ok_single`; prefer 8/8.
 
+**Историческая привязка и предел доказательства:** корневой коммит [ac901c5b](https://github.com/aicommunity/Nmsdk/commit/ac901c5b5008364341b7710ad1ae9d80fa711420) указывает на Bin=`8aa29289` и PulseLib=`780ffc7feec4c3561ec049598c896fdde56c8320`. Сохранённые Train-снимки span50/100 показывают `Need=0`, но точный cold-reset bundle и пошаговые логи не сохранены. Поэтому эти статусы слабее подтверждения PHASE8 по холодным Train-конфигам. 8/8 относится к отдельному посттренировочному рецепту TipR и ручному порогу; качество не доказывает способ достижения `Need=0`.
+
 **Отличие от TipR base @25 мс:** на 50/100 TipR base (`8.6e7×4`) даёт **отрицательный** tgt−foil gap. Рабочий TipR: **`2e7 2e7 2e7 8.6e7`** (d0–d2 @ Rmin).
 
 ## Wave 0 — packA_gen @50 — **PASS** (2026-09-12)
