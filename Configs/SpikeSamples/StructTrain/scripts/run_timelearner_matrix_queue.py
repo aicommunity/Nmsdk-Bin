@@ -97,6 +97,11 @@ def main() -> int:
     parser.add_argument("--jobs", type=int, default=8)
     parser.add_argument("--run-id", help="unique output namespace; reuse only to resume this run")
     parser.add_argument("--waves", nargs="+", required=True, help="run one wave, then stop for result analysis")
+    parser.add_argument(
+        "--no-commit",
+        action="store_true",
+        help="prepare+run only; skip updater and git commits (dual-host: train on remote, commit on local)",
+    )
     args = parser.parse_args()
     if args.jobs < 1 or args.jobs > 8:
         raise SystemExit("--jobs must be between 1 and 8")
@@ -111,18 +116,25 @@ def main() -> int:
     unknown_waves = [wave for wave in waves if wave not in registry.get("queue_order", [])]
     if unknown_waves:
         raise SystemExit(f"unknown wave(s): {unknown_waves}")
-    ensure_wave_paths_clean(waves[0])
-    ensure_no_staged_changes(BIN_ROOT)
-    ensure_no_staged_changes(ROOT)
+    if not args.no_commit:
+        ensure_wave_paths_clean(waves[0])
+        ensure_no_staged_changes(BIN_ROOT)
+        ensure_no_staged_changes(ROOT)
+    else:
+        ensure_no_staged_changes(BIN_ROOT)
+        ensure_no_staged_changes(ROOT)
     status_path = runs / "queue_status.json"
     overall = {
         "run_id": run_id,
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "jobs": args.jobs,
+        "no_commit": bool(args.no_commit),
         "waves": {},
     }
     status_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"Run ID: {run_id}", flush=True)
+    if args.no_commit:
+        print("Mode: --no-commit (prepare+run only; no updater/git)", flush=True)
     for wave in waves:
         print(f"=== {wave} prepare ===", flush=True)
         run([sys.executable, str(RUNNER), "--prepare", wave], BASE)
@@ -134,6 +146,55 @@ def main() -> int:
             (runs / wave / case["id"] / "matrix_result.json").is_file()
             for case in registry["cases"] if case["wave"] == wave
         )
+        training_stops = int(wave_status.get("training_stop_cases", 0))
+        evaluation_errors = int(wave_status.get("evaluation_error_cases", 0))
+        quality_failures = int(wave_status.get("quality_failure_cases", 0))
+        if args.no_commit:
+            if not all_results:
+                overall["waves"][wave] = {
+                    "status": "paused_infrastructure_or_incomplete_results",
+                    "runner_exit": run_result.returncode,
+                    "run_complete": wave_status.get("run_complete"),
+                    "all_results_saved": all_results,
+                    "updated_utc": datetime.now(timezone.utc).isoformat(),
+                }
+                overall["status"] = "paused_infrastructure_or_incomplete_results"
+                overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
+                status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+                print(f"PAUSED after {wave}: infrastructure or incomplete results (--no-commit)", flush=True)
+                return 2
+            overall["waves"][wave] = {
+                "status": (
+                    "completed_checkpoint_required"
+                    if training_stops or evaluation_errors
+                    else "completed_awaiting_local_commit"
+                ),
+                "runner_exit": run_result.returncode,
+                "training_stop_cases": training_stops,
+                "evaluation_error_cases": evaluation_errors,
+                "quality_failure_cases": quality_failures,
+                "updated_utc": datetime.now(timezone.utc).isoformat(),
+            }
+            status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+            if run_result.returncode != 0 or training_stops or evaluation_errors:
+                print(
+                    f"PAUSED after {wave}: training non-convergence/refusal or evaluation error "
+                    f"(--no-commit; rsync RUN_ID then updater+commit on local)",
+                    flush=True,
+                )
+                overall["status"] = "paused_after_training_or_evaluation_issue"
+                overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
+                status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+                return run_result.returncode or 1
+            print(
+                f"WAVE RUN COMPLETE {wave}; quality failures={quality_failures}; "
+                f"--no-commit: rsync {runs} then update+commit on local",
+                flush=True,
+            )
+            overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
+            overall["status"] = "queue_completed_no_commit"
+            status_path.write_text(json.dumps(overall, indent=2) + "\n", encoding="utf-8")
+            return 0
         if not all_results:
             print(f"=== {wave} partial report and commits ===", flush=True)
             run([sys.executable, str(UPDATER), wave], BASE)
@@ -153,9 +214,6 @@ def main() -> int:
         print(f"=== {wave} report and commits ===", flush=True)
         run([sys.executable, str(UPDATER), wave], BASE)
         git_add_commit(wave)
-        training_stops = int(wave_status.get("training_stop_cases", 0))
-        evaluation_errors = int(wave_status.get("evaluation_error_cases", 0))
-        quality_failures = int(wave_status.get("quality_failure_cases", 0))
         overall["waves"][wave] = {
             "status": "completed_and_committed_checkpoint_required" if training_stops or evaluation_errors else "completed_and_committed",
             "runner_exit": run_result.returncode,
