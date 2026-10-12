@@ -89,7 +89,7 @@ Quality-gate в Windows имеет две platform-зависимые опера
 
 ## Исторический PHASE6: повтор на сентябрьском и октябрьском исходниках
 
-Сохранённая запись `Bin@b8cef720` от `2026-09-21T21:56Z` для `phase6_480` сообщает `done_canon`, `Need=0`, `mid_source=cpp`, маску `10000010` и `acc=7/8`. Исторический harness мог установить `Need=0` только при наличии C++ PostTune-флага или порога из него; `mid_source=cpp` дополнительно требует `inference=1`. C++ входит в inference после завершения обучения. Это подтверждает содержательный исторический C++ Done, но точный Console SHA и сырой flag в Git отсутствуют.
+Сохранённая запись `Bin@b8cef720` от `2026-09-21T21:56Z` для `phase6_480` сообщает `done_canon`, `Need=0`, `mid_source=cpp`, маску `10000010` и `acc=7/8`. По историческому harness, перед запуском Train выполнялся SoftCold reset с `Need=1`, а запуск принимался как завершённый при `Need=0` или C++ Train PostTune-флаге; helper мог сбросить Need только при наличии такого Train-флага или прочитанного из него порога. Финальный Train XML в Git имеет `Need=0`, поэтому это сильное, но не полностью независимо аудируемое свидетельство C++ Done. Поле `mid_source=cpp` относится к Test: в Git сохранён `Test/posttune_complete.flag` с `inference=1` и `mid=0.0168963`; Train PostTune-флаг и исходный Console SHA не сохранены.
 
 Один и тот же архивный `EXP_480_gen_posttune/Train`, одинаковый SoftCold reset и PostTrain Mode 1 повторены с двумя источниками:
 
