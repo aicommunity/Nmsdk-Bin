@@ -101,3 +101,18 @@ Quality-gate в Windows имеет две platform-зависимые опера
 На обоих источниках виден близкий плато-исход: Rmax достигнут при сильном overshoot амплитуды. В `b32d715` код удерживает сопротивление на Rmax при overshoot и не компенсирует его ростом длины. Это объясняет наблюдаемое поведение данного пути, но исторический Console от 21 сентября не идентифицирован; результаты повторов цензурированы примерно через час при `-t=900`. Поэтому категория расхождения — недостаточно точный provenance/неполное наблюдение, не доказанный отказ и не доказательство невозможности обучения.
 
 Provenance и полные iteration audit сохранены в `diagnostics/phase6_historical_positive_replay_pre_oct_{provenance,iteration_audit}_2026-10-12.*` и `diagnostics/phase6_historical_positive_replay_oct06_{provenance,iteration_audit}_2026-10-12.*`. Следом нужно искать исходный Linux Console/SHA или, если его нет, сравнить на восстановленном `94094/fb3a41f5` старый `EstDelayPerSeg=0.005` и выключенный поздний AutoScale в контролируемой паре. W3 пока не менять.
+
+### Historical SoftCold reset and active PHASE6 replays (12 Oct, 23:50 MSK)
+
+The Bin history shows that PHASE6 comparisons also cross a reset-protocol change. The helper in `Bin@b8cef720` (blob `5004d741b3503a78b4603b4e2e800d42e7fe6cb3`) set `StructureBuildMode=1`, retained Model cable segments above tip-1, and reset length tags to `1 1 1 1`. Bin commit `0bb8125d` on 30 Sep changed this to set all `StructureBuildMode=2`, strip Model to tip-1, and align scalar `NumDendriteMembraneParts=1`. Its comment records the reason: fat Model with L=1 produced `DelayLenOf=0`/`TIMING_SPAN_MISMATCH`, and a leftover `StructureBuildMode=0` blocked rebuild. This is an input-reset protocol change, separate from the C++ learner transitions, and a confounder in September versus October comparisons.
+
+Two full-window replays now explicitly use the exact b8 helper. Both have matching input SHA-256 values: Model `c5871e2c…e37faa5`, Parameters `8922e92b…e77ac2`, Project `b31f69e8…214cc69`, Interface `c5f90131…635124`; prelaunch `Need=1`, L=`1 1 1 1`, TipR=`86M` on all inputs, PostTrain Mode 1. Both use `-t=900`.
+
+| Variant | Root / PulseLib / Bin | Console SHA-256 | Status at 23:50 MSK |
+|---|---|---|---|
+| Reconstructed September source | `94094ad7` / `fb3a41f5` / `0701d205` | `4c903c3d…d55b935` | PID 45080 alive after about 10 minutes; StatisticLog growing; no final status. |
+| PulseLib parent before W3 change | `59d2100c` / `9b63613e` / `6633b357` | `7addef68…8b46006` | PID 53376 alive after about 3 minutes; StatisticLog growing; no final status. |
+
+Both runs are censored observations so far, not refusals or Done. The second uses PulseLib parent `9b63613e` before `b32d7158`, which changed the Rmax-dwell response to amplitude overshoot. The existing `b32d7158` replay used the same Root `59d2100c`, Bin `6633b357`, reset, and inputs, but was stopped externally after about 68 minutes at model-time about 104 seconds. The new parent replay is still running, so a complete W3 comparison is not yet available. Replay logs live in local `temp/historical_view/runs/` and are not committed.
+
+See the root audit for detailed provenance and interpretation: `Docs/Audit/TimeLearner-2026-09-26-review/HISTORICAL_CONVERGENCE_INVESTIGATION_2026-10-12.ru.md`.
