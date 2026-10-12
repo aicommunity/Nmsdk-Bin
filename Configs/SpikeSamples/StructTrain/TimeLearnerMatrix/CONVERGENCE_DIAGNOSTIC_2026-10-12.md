@@ -134,3 +134,24 @@ Latest trace snapshot at 00:06 MSK (all processes alive; no C++ completion flag)
 | `9b63613e`, autoscale off | 3.227 s | `[9,1,1,1]` | `[57.65M,86M,86M,86M]` | Recently started; compare at equal model time. |
 
 These snapshots show progress at unequal model times and do not establish which variant converges faster. All three use `-t=900`; none has reached natural limit or C++ Done/refusal. Provenance is in the local run directories; full StatisticLog files are not in Git.
+
+### First trajectory divergence isolated with a 1.50 s delay control (13 Oct, 01:03 MSK)
+
+The first differing state between the September reconstruction (`94094/fb3a41f5`) and the October pre-W3 source (`9b63613e`) occurs at iteration 6. To test whether the 50 ms cadence shift was causal, a short fourth run used the same `9b63613e` source, b8 reset, input XML, `AutoScaleIterationGap=0`, and `EstDelayPerSeg=0.005` as the preceding autoscale-off run. A temporary PulseLib build changed only `EffectiveDatasetDelaySec()`'s `late_bound` from `1.5 + 0.05` to `1.5`; no production source was edited.
+
+The trace shows the following transition (times are relative to iteration 0):
+
+| Run | Iteration cadence | State at iteration 5 | State at iteration 6 |
+|---|---:|---|---|
+| September `94094/fb3a41f5` | 1.991 s | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` | `L=[17,17,17,1]`, `Rs3=20MΩ` |
+| October `9b63613e`, AutoScale on | 2.041 s | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` |
+| October `9b63613e`, AutoScale off | 2.041 s | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` |
+| October `9b63613e`, only `late_bound=1.5` | 1.991 s | `L=[17,17,9,1]`, `Rs3=52.4568MΩ` | `L=[17,17,17,1]`, `Rs3=20MΩ` |
+
+Across iterations 0–6, the historical source and the delay-control run match in all recorded vectors (`L`, tip resistance, `LastAbsDt`, `AmpDt`); the absolute sample clocks differ only by their initial offset and a 0.5 ms tick quantization at later rows. Turning AutoScale off alone leaves the October trajectory unchanged through iteration 6. Lowering only the new 50 ms floor restores both the 1.991 s cadence and the historical third-dendrite growth/R update. For this PHASE6 case, the delay-floor change is therefore sufficient to explain the first trajectory divergence; this is a timing/protocol regression in the current source path, not evidence that the structural algorithm cannot grow that dendrite.
+
+The short control stopped at model time 14 s with `Need=1`, `failure_reason=0`, and no C++ completion flag. It proves neither full convergence nor historical `Need=0`. The exact internal predicate affected by the timing change is not identified because the saved traces do not include `DendStatus` and `DelayFromPulse`. The temporary build already emits some debug messages through the RDK logger, but its file logger failed to create a log (`No such file or directory`); the next diagnostic should make those C++ decisions persist in the run bundle, or add a read-only per-iteration trace keyed to the stimulus sample.
+
+At 01:03 MSK, the three `-t=900` matched-input runs were still active and censored: `94094/fb3a41f5` at model time 64.033 s (`L=[89,81,49,1]`), `9b63613e` AutoScale-on at 55.131 s (`L=[73,73,49,1]`), and AutoScale-off at 42.571 s (`L=[57,57,41,1]`). A separate new-reset replay remains active but is excluded from this matched-reset comparison. These differing-time snapshots are not convergence outcomes.
+
+The compact row-level comparison and complete provenance are in `diagnostics/phase6_first_divergence_delay_control_2026-10-13.csv` and `diagnostics/phase6_first_divergence_delay_control_provenance_2026-10-13.json`. Raw run logs and the temporary one-line source overlay remain in local `temp/historical_view/runs/` and are not committed. The alternate Console linked and ran (SHA-256 `e252b0156852956acd9bf00951189c932bd6c2f04354e94066e5d0d8c396c86f`); the post-build runtime-DLL copy step failed because `glog.dll` was locked by the concurrent runs. The source overlay was restored after building.

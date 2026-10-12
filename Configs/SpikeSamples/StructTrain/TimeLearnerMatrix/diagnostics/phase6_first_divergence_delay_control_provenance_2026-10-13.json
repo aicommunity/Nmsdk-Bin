@@ -1,0 +1,139 @@
+{
+  "study": "Classic PHASE6 canonical 480 ms first trajectory divergence",
+  "recorded_at_local": "2026-10-13 Europe/Moscow",
+  "question": "Does the 50 ms minimum Dataset delay added in PulseLib 8d429e7 explain the first difference between the September replay and the October 9b63613 replay?",
+  "reset_helper_git_blob": "5004d741b3503a78b4603b4e2e800d42e7fe6cb3",
+  "input_hashes": {
+    "historical_shared_input": {
+      "Model_00.xml": "c5871e2c0b35e43cf78d04627d72642baafd4c8e0ec3903dd9be355f9e37faa5",
+      "Parameters_00.xml": "8922e92ba56015e1beef862cb8b044e3c5728ddc5592251976f7248798e77ac2",
+      "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+      "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69"
+    },
+    "delay150_control": {
+      "Model_00.xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+      "Parameters_00.xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9",
+      "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+      "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "sept_94094_fb3a41f5",
+      "root": "94094ad72e3aa18eba4d634d1107ee4cec33d33c",
+      "pulselib": "fb3a41f5e6409404db3a047fa78edb5ac3e821ec",
+      "bin": "0701d205f106522249c65d9c580e2da2aef664ff",
+      "console_sha256": "4c903c3d4ac38821e4827d4ef4064a17d72303d7884d16fb4476e9fb0d55b935",
+      "delay_s": 1.5,
+      "iteration_gap_s": 1.5,
+      "autoscale": "not present in source",
+      "model_time_limit_s": 900
+    },
+    {
+      "run_id": "oct_9b63613_autoscale_on",
+      "root": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+      "pulselib": "9b63613ecca2ff7d7fbf1579e7e4f93a64ce5aaf",
+      "bin": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+      "console_sha256": "7addef682ddbc0fb58bce647dd1c65c2d26b3bb4238a0772e0afb31880b46006",
+      "delay_s": 1.5,
+      "iteration_gap_s": 1.5,
+      "autoscale": true,
+      "model_time_limit_s": 900
+    },
+    {
+      "run_id": "oct_9b63613_autoscale_off",
+      "root": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+      "pulselib": "9b63613ecca2ff7d7fbf1579e7e4f93a64ce5aaf",
+      "bin": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+      "console_sha256": "7addef682ddbc0fb58bce647dd1c65c2d26b3bb4238a0772e0afb31880b46006",
+      "delay_s": 1.5,
+      "iteration_gap_s": 1.5,
+      "autoscale": false,
+      "model_time_limit_s": 900,
+      "input_hashes": {
+        "Model_00.xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+        "Parameters_00.xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9",
+        "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+        "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69"
+      }
+    },
+    {
+      "run_id": "oct_9b63613_delay150_control",
+      "root": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+      "pulselib_base": "9b63613ecca2ff7d7fbf1579e7e4f93a64ce5aaf",
+      "pulselib_overlay": "only EffectiveDatasetDelaySec late_bound changed from 1.55 to 1.5",
+      "bin": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+      "console_sha256": "e252b0156852956acd9bf00951189c932bd6c2f04354e94066e5d0d8c396c86f",
+      "delay_s": 1.5,
+      "iteration_gap_s": 1.5,
+      "autoscale": false,
+      "est_delay_per_segment_s": 0.005,
+      "reset_helper_git_blob": "5004d741b3503a78b4603b4e2e800d42e7fe6cb3",
+      "model_time_limit_s": 14,
+      "exit_state": {
+        "need": 1,
+        "cpp_done": false,
+        "lengths": [
+          17,
+          17,
+          17,
+          1
+        ],
+        "tip_resistance_ohm": [
+          21243403.392814495,
+          20000000,
+          20000000,
+          86000000
+        ],
+        "reason": "external/model-time cap before training convergence"
+      }
+    }
+  ],
+  "source_change": {
+    "commit": "8d429e7463850b06163f177b42b17977baa38e45",
+    "file": "Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearner.cpp",
+    "behavior_added": "EffectiveDatasetDelaySec now enforces late_bound=1.5+0.05 globally; SetDelay ignores its value argument and uses EffectiveDatasetDelaySec."
+  },
+  "result": {
+    "intervals_s": {
+      "sept_94094_fb3a41f5": 1.991,
+      "oct_9b63613_autoscale_on": 2.041,
+      "oct_9b63613_autoscale_off": 2.041,
+      "oct_9b63613_delay150_control": 1.991
+    },
+    "first_divergence_at_iteration": 6,
+    "sept_reference_iteration_6_lengths": [
+      17,
+      17,
+      17,
+      1
+    ],
+    "oct_9b63613_iteration_6_lengths": [
+      17,
+      17,
+      9,
+      1
+    ],
+    "delay150_control_iteration_6_lengths": [
+      17,
+      17,
+      17,
+      1
+    ],
+    "delay150_control_iteration_6_tip_resistance_ohm": [
+      21243403.392814495,
+      20000000,
+      20000000,
+      86000000
+    ],
+    "interpretation": "Lowering only the 50 ms delay floor restores the old 1.991 s cadence and reproduces the September state at the first divergent iteration. AutoScale on/off alone did not change the October trajectory at this point. This establishes the delay-floor change as sufficient to cause the early trajectory divergence in this PHASE6 case. Need remains 1 in the 14 s control; no convergence claim."
+  },
+  "limitations": [
+    "The CSV contains only the first recorded state per iteration for iterations 0..6; detailed logger events and DendStatus are not recorded.",
+    "The 900 s September and October source replays are still active and censored. Their latest states are in the accompanying report; this control was capped at model time 14 s.",
+    "The control does not identify which internal predicate (for example DelayFromPulse vs EffectiveIterationGap) suppresses the length update; additional C++ diagnostic trace would be needed to prove the mechanism.",
+    "The alternate Console compiled and linked, but its post-build runtime-DLL copy failed because glog.dll was in use by running processes. It ran with the existing runtime DLLs and explicit PATH; the source overlay was restored after build."
+  ],
+  "csv": "phase6_first_divergence_delay_control_2026-10-13.csv",
+  "raw_run_logs": "local temp/historical_view/runs; not committed"
+}
