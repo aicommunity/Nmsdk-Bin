@@ -86,3 +86,18 @@ Quality-gate в Windows имеет две platform-зависимые опера
 Сборка Console SHA-256: baseline 048FF11EE26E18F838BE6D6CDB1F0FA847ADE3587B88D2392A1D18FF9AA5F9F8, диагностическая 1B6006554728555C25C6398128947EC46751B0E78E4617A7CD0109FB7105864B. PulseLib_StorageComponents прошёл 1/1. Полный provenance и iteration audit: diagnostics/phase6_first_sync_rs_freeze_provenance_2026-10-12.json, diagnostics/phase6_first_sync_rs_freeze_iteration_audit_2026-10-12.csv.
 
 Следующий шаг — точный повтор исторического PHASE6 Need=0 с восстановленными Train/границами сопротивления и максимально точным C++ provenance; затем отдельно проверить исторический EstDelayPerSeg=0.005 на актуальной сборке. Результат Classic не переносить на Branch без отдельного Branch-контроля. Качество классификации продолжать фиксировать отдельно, но не оптимизировать.
+
+## Исторический PHASE6: повтор на сентябрьском и октябрьском исходниках
+
+Сохранённая запись `Bin@b8cef720` от `2026-09-21T21:56Z` для `phase6_480` сообщает `done_canon`, `Need=0`, `mid_source=cpp`, маску `10000010` и `acc=7/8`. Исторический harness мог установить `Need=0` только при наличии C++ PostTune-флага или порога из него; `mid_source=cpp` дополнительно требует `inference=1`. C++ входит в inference после завершения обучения. Это подтверждает содержательный исторический C++ Done, но точный Console SHA и сырой flag в Git отсутствуют.
+
+Один и тот же архивный `EXP_480_gen_posttune/Train`, одинаковый SoftCold reset и PostTrain Mode 1 повторены с двумя источниками:
+
+| Источник | Итог наблюдения |
+|---|---|
+| Root `94094ad7` + PulseLib `fb3a41f5`, Console SHA-256 `4c903c3d…d55b935` | Внешняя остановка через 67.5 мин, iter53 / model time 106.135 с. `Need=1`, C++ flag отсутствует, `failure_reason=0`; `L=[97,81,49,1]`; три TipR на `100G`; AmpDt примерно `[-63.645,-63.913,-51.090]` мВ; `|dt|` внутри 20 мс. Не C++ отказ и не Done. |
+| Root `59d2100c` + PulseLib `b32d7158` от 6 октября, Console SHA-256 `bc161351…dcbf0f` | Внешняя остановка через 68.26 мин, iter50 / model time 102.662 с (последний sample модели — 104.0865 с). `Need=1`, C++ flag отсутствует; `L=[97,81,49,1]`; три TipR на `100G`; AmpDt примерно `[-63.645,-63.896,-48.437]` мВ; `|dt|=[16,16,14.5]` мс. Не C++ отказ и не Done. |
+
+На обоих источниках виден близкий плато-исход: Rmax достигнут при сильном overshoot амплитуды. В `b32d715` код удерживает сопротивление на Rmax при overshoot и не компенсирует его ростом длины. Это объясняет наблюдаемое поведение данного пути, но исторический Console от 21 сентября не идентифицирован; результаты повторов цензурированы примерно через час при `-t=900`. Поэтому категория расхождения — недостаточно точный provenance/неполное наблюдение, не доказанный отказ и не доказательство невозможности обучения.
+
+Provenance и полные iteration audit сохранены в `diagnostics/phase6_historical_positive_replay_pre_oct_{provenance,iteration_audit}_2026-10-12.*` и `diagnostics/phase6_historical_positive_replay_oct06_{provenance,iteration_audit}_2026-10-12.*`. Следом нужно искать исходный Linux Console/SHA или, если его нет, сравнить на восстановленном `94094/fb3a41f5` старый `EstDelayPerSeg=0.005` и выключенный поздний AutoScale в контролируемой паре. W3 пока не менять.
