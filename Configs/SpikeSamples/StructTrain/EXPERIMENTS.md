@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 81 случаев: 71 не сошлись к моменту остановки, 9 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 0. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 88 случаев: 76 не сошлись к моменту остановки, 11 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -768,6 +768,18 @@
 | W09_HIST_br100_search | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=4e18c5440d93; Bin=2e84b4a63ebe; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W09_HIST_asym50 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=6a04361a1e04; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W09_HIST_phase6_480 | cpp_training_refusal | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=6a04361a1e04; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+
+### W10
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W10_HIST_br50_gen | converged_posttune_finalized | pass | detected | 8/8 strict; FP=0 | 0 | 10000000 | обучение сошлось; качество=pass; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br25_preinh | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br50_preinh | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br100_preinh | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br25_nextseg | converged_posttune_finalized | pass | detected | 8/8 strict; FP=0 | 0 | 10000000 | обучение сошлось; качество=pass; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br50_nextseg | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W10_HIST_br100_nextseg | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ## Протокол следующей волны
 
