@@ -637,18 +637,53 @@ def build_provenance(
     except (subprocess.CalledProcessError, FileNotFoundError):
         root_git = None
     train = work / "Train"
+    source_sha = sha256_paths(source_paths)
+    binary_sha = sha256_file(NM)
     return {
         "case": case,
         "run_id": run_id,
         "work_root": str(work),
         "nm": str(NM),
         "nm_mtime": NM.stat().st_mtime if Path(NM).exists() else None,
-        "binary_sha256": sha256_file(NM),
+        "binary_sha256": binary_sha,
+        "binary_sha256_at_launch": binary_sha,
         "root_git": root_git,
+        "root_git_at_launch": root_git,
         "gitlinks": gitlinks,
-        "source_sha256": sha256_paths(source_paths),
+        "gitlinks_at_launch": gitlinks,
+        "source_sha256": source_sha,
+        "source_sha256_at_launch": source_sha,
         "config_sha256_before": config_sha_before or {},
         "weights_identity": tipr_weights_identity(train, params_source=params_source),
+    }
+
+
+def compare_run_inputs(
+    provenance_at_launch: dict[str, Any],
+    *,
+    source_sha_after: dict[str, str | None],
+    binary_sha_after: str | None,
+    config_sha_before: dict[str, str | None],
+    config_sha_after: dict[str, str | None],
+) -> dict[str, bool]:
+    """Report source/binary changes during execution and normal config writes."""
+    source_before = (
+        provenance_at_launch.get("source_sha256_at_launch")
+        or provenance_at_launch.get("source_sha256")
+        or {}
+    )
+    binary_before = (
+        provenance_at_launch.get("binary_sha256_at_launch")
+        or provenance_at_launch.get("binary_sha256")
+    )
+    source_changed = source_before != source_sha_after
+    binary_changed = binary_before != binary_sha_after
+    config_changed = (config_sha_before or {}) != config_sha_after
+    return {
+        "source_changed_during_run": bool(source_changed),
+        "binary_changed_during_run": bool(binary_changed),
+        "training_config_changed_during_run": bool(config_changed),
+        "inputs_mutated_during_run": bool(source_changed or binary_changed or config_changed),
     }
 
 
@@ -1644,6 +1679,7 @@ def run_case(
     child_rc: int | None = None
     training_failure: tuple[int, int] | None = None
     params_source = "nm_save"
+    provenance_at_launch: dict[str, Any] | None = None
     tip_mode = str(case.get("posttrain_tip_resistance_mode", {
         "br25_on": "1",
         "br25_off": "0",
@@ -1747,6 +1783,16 @@ def run_case(
             "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
         }
         config_sha256 = config_sha_before["Train/Parameters_00.xml"]
+        # Capture executable, source, gitlinks, and effective XML immediately
+        # before launching C++. Computing these only after the run would hide
+        # source or binary changes that happened during a long experiment.
+        provenance_at_launch = build_provenance(
+            root,
+            case=name,
+            run_id=run_id,
+            config_sha_before=config_sha_before,
+            params_source=params_source,
+        )
         polls = (
             int(max_polls)
             if max_polls is not None
@@ -1919,7 +1965,7 @@ def run_case(
         (run_dir / "Train" / "tipr_final.txt").write_text(tipr_final + "\n", encoding="utf-8")
     expect_tipr = case["expect_tipr"]
     got_tipr_class = tipr_class(tipr_final, expect_tipr)
-    provenance = build_provenance(
+    provenance = provenance_at_launch or build_provenance(
         root,
         case=name,
         run_id=run_id,
@@ -1928,22 +1974,27 @@ def run_case(
     )
     source_paths = [NMSDK_ROOT / rel for rel in PROVENANCE_SOURCE_REL]
     source_sha_after = sha256_paths(source_paths)
+    binary_sha_after = sha256_file(NM)
     config_sha_after = {
         "Train/Parameters_00.xml": sha256_file(train / "Parameters_00.xml"),
         "Train/Model_00.xml": sha256_file(train / "Model_00.xml"),
         "Test/Parameters_00.xml": sha256_file(root / "Test" / "Parameters_00.xml"),
         "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
     }
-    source_before = provenance.get("source_sha256") or {}
-    inputs_mutated = source_before != source_sha_after or (
-        config_sha_before or {}
-    ) != config_sha_after
+    run_input_changes = compare_run_inputs(
+        provenance,
+        source_sha_after=source_sha_after,
+        binary_sha_after=binary_sha_after,
+        config_sha_before=config_sha_before,
+        config_sha_after=config_sha_after,
+    )
     provenance.update(
         {
             "config_sha256": config_sha256,
             "config_sha256_after": config_sha_after,
             "source_sha256_after": source_sha_after,
-            "inputs_mutated_during_run": bool(inputs_mutated),
+            "binary_sha256_after": binary_sha_after,
+            **run_input_changes,
             "params_source": params_source,
             "weights_identity": tipr_weights_identity(train, params_source=params_source),
 

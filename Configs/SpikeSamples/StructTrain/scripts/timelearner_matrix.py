@@ -61,6 +61,59 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str]:
+    """Set only the project-wide logger switch, preserving channel settings."""
+    original = project_ini.read_text(encoding="utf-8")
+    section_re = re.compile(r"(<MultiGeneral\b[^>]*>)(.*?)(</MultiGeneral\s*>)", re.S)
+    matches = list(section_re.finditer(original))
+    if len(matches) != 1:
+        raise ValueError(f"expected one MultiGeneral block in {project_ini}, found {len(matches)}")
+    match = matches[0]
+    section = match.group(2)
+    tag_re = re.compile(r"(<DebugModeFlag\b[^>]*>)(.*?)(</DebugModeFlag\s*>)", re.S)
+    updated_section, count = tag_re.subn(
+        lambda m: f"{m.group(1)}{1 if enabled else 0}{m.group(3)}", section, count=1
+    )
+    if count != 1:
+        raise ValueError(f"MultiGeneral has no DebugModeFlag in {project_ini}")
+    updated = original[:match.start(2)] + updated_section + original[match.end(2):]
+    if updated != original:
+        project_ini.write_text(updated, encoding="utf-8", newline="")
+    return {
+        "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+        "sha256_after": sha256(project_ini),
+        "debug_logging": "1" if enabled else "0",
+    }
+
+
+def make_quiet_debug_input_overlay(input_root: Path, wave: str, case_id: str) -> tuple[Path, dict[str, Any]]:
+    """Copy immutable experiment inputs and disable verbose project log output only."""
+    overlay = run_root() / "runtime-input-overrides" / wave / case_id
+    if overlay.exists():
+        raise FileExistsError(f"runtime input overlay already exists: {overlay}")
+    overlay.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(input_root, overlay)
+    changed = []
+    for side in ("Train", "Test"):
+        project_ini = overlay / side / "Project.ini"
+        if not project_ini.is_file():
+            raise FileNotFoundError(project_ini)
+        item = set_project_debug_logging(project_ini, enabled=False)
+        item.update({"side": side, "file": f"{side}/Project.ini"})
+        changed.append(item)
+    record = {
+        "mode": "quiet_debug_logs",
+        "source_input": str(input_root),
+        "source_matrix_manifest_sha256": sha256(input_root / "matrix_input_manifest.json"),
+        "overrides": changed,
+        "note": "Only Project/MultiGeneral/DebugModeFlag is set to 0 to suppress per-step logger output; trainer EnableDebug and C++ iteration audit remain unchanged.",
+    }
+    (overlay / "runtime_input_overrides.json").write_text(
+        json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return overlay, record
+
+
 def tag_values(text: str, tag: str) -> list[str]:
     pattern = re.compile(TAG_RE.format(tag=re.escape(tag)), re.S)
     return [m.group(2).strip() for m in pattern.finditer(text)]
@@ -404,7 +457,13 @@ def prepare_wave(wave: str, *, refresh: bool = False) -> None:
     print(json.dumps({"wave": wave, "prepared": len(prepared), "cases": [x["case"] for x in prepared]}, indent=2))
 
 
-def worker(wave: str, case_id: str) -> int:
+def worker(
+    wave: str,
+    case_id: str,
+    *,
+    quiet_debug_logs: bool = False,
+    max_polls: int | None = None,
+) -> int:
     pv = load_pv()
     data = load_manifest()
     spec = next((c for c in data["cases"] if c["wave"] == wave and c["id"] == case_id), None)
@@ -413,13 +472,19 @@ def worker(wave: str, case_id: str) -> int:
     input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
     if not input_root.is_dir():
         raise FileNotFoundError(f"input snapshot missing; run --prepare {wave}: {input_root}")
+    runtime_input_root = input_root
+    runtime_input_overrides = None
+    if quiet_debug_logs:
+        runtime_input_root, runtime_input_overrides = make_quiet_debug_input_overlay(
+            input_root, wave, case_id
+        )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
         "source_config", template.get("paired_source", template["preinh_source"])
     )
     internal_id = spec.get("worker_case", case_id)
     worker_config = {
-        "root": input_root,
+        "root": runtime_input_root,
         "gold": gold,
         "train_t": float(spec.get("train_t", template["train_t"])),
         "span_ms": int(spec["duration_ms"]),
@@ -431,6 +496,7 @@ def worker(wave: str, case_id: str) -> int:
         "presynaptic_coefficient": float(spec.get("presynaptic_coefficient", 2.5)),
         "enable_posttrain_tuning": "1" if spec.get("posttrain_tuning", False) else "0",
         "posttrain_tip_resistance_mode": str(spec.get("tipr_mode", 1)),
+        "disable_train_statistic_logs": True,
     }
     if internal_id in pv.CASES:
         pv.CASES[internal_id] = {**pv.CASES[internal_id], **worker_config}
@@ -444,7 +510,9 @@ def worker(wave: str, case_id: str) -> int:
         internal_id,
         run_dir=run_dir,
         train_t=float(spec.get("train_t", template["train_t"])),
+        max_polls=max_polls,
         max_rs_rm=spec.get("max_rs_rm"),
+        disable_train_statistic_logs=True,
     )
     result["worker_case"] = internal_id
     result["case"] = case_id
@@ -452,6 +520,12 @@ def worker(wave: str, case_id: str) -> int:
     result["input_manifest"] = str(input_root / "matrix_input_manifest.json")
     result["matrix_run_id"] = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
     result["input_manifest_sha256"] = sha256(input_root / "matrix_input_manifest.json")
+    result["runtime_input_overrides"] = runtime_input_overrides
+    result["runtime_execution_options"] = {
+        "quiet_debug_logs": quiet_debug_logs,
+        "disable_train_statistic_logs": True,
+        "max_polls": max_polls,
+    }
     provenance_path = run_dir / "provenance.json"
     if not provenance_path.is_file():
         raise RuntimeError(f"runtime provenance missing for {case_id}: {provenance_path}")
@@ -479,7 +553,13 @@ def worker(wave: str, case_id: str) -> int:
     return 0
 
 
-def run_wave(wave: str, jobs: int) -> int:
+def run_wave(
+    wave: str,
+    jobs: int,
+    *,
+    quiet_debug_logs: bool = False,
+    max_polls: int | None = None,
+) -> int:
     if jobs < 1 or jobs > 8:
         raise ValueError("--jobs must be between 1 and 8 for this campaign")
     data = load_manifest()
@@ -495,6 +575,9 @@ def run_wave(wave: str, jobs: int) -> int:
     status = {
         "wave": wave,
         "jobs": jobs,
+        "quiet_debug_logs": quiet_debug_logs,
+        "disable_train_statistic_logs": True,
+        "max_polls": max_polls,
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "cases": {},
     }
@@ -512,6 +595,10 @@ def run_wave(wave: str, jobs: int) -> int:
         case_id = spec["id"]
         log_path = run_dir / f"{case_id}.log"
         command = [sys.executable, "-u", str(Path(__file__).resolve()), "--worker", wave, case_id]
+        if quiet_debug_logs:
+            command.append("--quiet-debug-logs")
+        if max_polls is not None:
+            command.extend(("--max-polls", str(max_polls)))
         env = {**os.environ, "PYTHONUNBUFFERED": "1"}
         with log_path.open("w", encoding="utf-8") as log:
             proc = subprocess.run(
@@ -597,18 +684,41 @@ def main() -> int:
     parser.add_argument("--run", metavar="WAVE", help="run a prepared wave")
     parser.add_argument("--case", nargs=2, metavar=("WAVE", "CASE"), help="run one prepared case")
     parser.add_argument("--jobs", type=int, default=8)
+    parser.add_argument(
+        "--quiet-debug-logs",
+        action="store_true",
+        help="suppress project-wide per-step debug logging while retaining trainer iteration audits",
+    )
+    parser.add_argument(
+        "--max-polls",
+        type=int,
+        help="override the worker polling ceiling (30 seconds per poll); useful for slow local simulations",
+    )
     parser.add_argument("--refresh", action="store_true", help="regenerate an existing input snapshot after an explicit design change")
     parser.add_argument("--worker", nargs=2, metavar=("WAVE", "CASE"), help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.worker:
-        return worker(*args.worker)
+        return worker(
+            *args.worker,
+            quiet_debug_logs=args.quiet_debug_logs,
+            max_polls=args.max_polls,
+        )
     if args.case:
-        return worker(*args.case)
+        return worker(
+            *args.case,
+            quiet_debug_logs=args.quiet_debug_logs,
+            max_polls=args.max_polls,
+        )
     if args.prepare:
         prepare_wave(args.prepare, refresh=args.refresh)
         return 0
     if args.run:
-        return run_wave(args.run, args.jobs)
+        return run_wave(
+            args.run,
+            args.jobs,
+            quiet_debug_logs=args.quiet_debug_logs,
+            max_polls=args.max_polls,
+        )
     parser.error("use --prepare WAVE or --run WAVE")
     return 2
 
