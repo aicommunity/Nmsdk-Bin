@@ -116,3 +116,21 @@ Two full-window replays now explicitly use the exact b8 helper. Both have matchi
 Both runs are censored observations so far, not refusals or Done. The second uses PulseLib parent `9b63613e` before `b32d7158`, which changed the Rmax-dwell response to amplitude overshoot. The existing `b32d7158` replay used the same Root `59d2100c`, Bin `6633b357`, reset, and inputs, but was stopped externally after about 68 minutes at model-time about 104 seconds. The new parent replay is still running, so a complete W3 comparison is not yet available. Replay logs live in local `temp/historical_view/runs/` and are not committed.
 
 See the root audit for detailed provenance and interpretation: `Docs/Audit/TimeLearner-2026-09-26-review/HISTORICAL_CONVERGENCE_INVESTIGATION_2026-10-12.ru.md`.
+
+### Reset XML detail and AutoScale control (13 Oct, 00:06 MSK)
+
+The post-reset XML was checked in all three run directories. Both `Parameters_00.xml` and `Model_00.xml` contain `StructureBuildMode=[1,2]`; `NumDendriteMembraneParts` is absent. The old b8 helper changed only the first matching StructureBuildMode tag, so it did not set one value for every tag.
+
+Source `94094/fb3a41f5` defaults `EstDelayPerSeg` to 0.005 s per segment and predates `AutoScaleIterationGap`. PulseLib commit `fd79b0f` (22 Sep) added autoscaling. At `9b63613e`, autoscaling defaults on while EstDelayPerSeg still defaults to 0.005. The `9b63613e` replay therefore includes the later inter-iteration timing protocol.
+
+A third control, `phase6_positive_replay_9b63613_autoscale0_full900_20261013`, now runs on the same `9b63613e` Console and old reset. Its only effective difference from the full autoscale-on run is `AutoScaleIterationGap=0`; EstDelayPerSeg is explicitly 0.005 in both Model and Parameters. Console SHA-256 `7addef68…8b46006`; PID 39520.
+
+Latest trace snapshot at 00:06 MSK (all processes alive; no C++ completion flag):
+
+| Source / mode | model time | L | TipR (ohm) | Status |
+|---|---:|---|---|---|
+| `94094/fb3a41f5` | 25.053 s | `[33,33,33,1]` | `[20M,20M,20M,86M]` | Lengths still grow; not Done. |
+| `9b63613e`, autoscale default | 17.334 s | `[25,25,9,1]` | `[20M,20M,52.46M,86M]` | In progress; not Done. |
+| `9b63613e`, autoscale off | 3.227 s | `[9,1,1,1]` | `[57.65M,86M,86M,86M]` | Recently started; compare at equal model time. |
+
+These snapshots show progress at unequal model times and do not establish which variant converges faster. All three use `-t=900`; none has reached natural limit or C++ Done/refusal. Provenance is in the local run directories; full StatisticLog files are not in Git.
