@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 72 случаев: 65 не сошлись к моменту остановки, 7 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 0. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 74 случаев: 67 не сошлись к моменту остановки, 7 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 0. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -749,6 +749,13 @@
 | W46_HIST_FAST_D001_C1E9 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 | W46_HIST_FAST_D001_C5E10 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 | W46_HIST_FAST_D001_C2_5E10 | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+
+### W47
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W47_HIST_FAST_D002_C1E9_TIPRMIN | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W47_HIST_FAST_D001_C1E9_TIPRMIN | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ## Протокол следующей волны
 
