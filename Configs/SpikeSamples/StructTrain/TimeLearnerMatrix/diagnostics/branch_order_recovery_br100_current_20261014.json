@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "case": "W04_BR100_N0_PSIoff",
+  "purpose": "Validate Branch segment-order recovery after confirmed amplitude collapse and exhausted synapses.",
+  "run": {
+    "run_id": "diag-br100-orderfix-current6ecc-20261013-02",
+    "run_fingerprint": "9a4e2170922c89dd85351bbf900273f224a3473f9fbdbd989fd793333b6ac4c7",
+    "case_fingerprint": "904f27b703e94d967edae890be19ecb4a9c9a078a31ca86ff78b51633a6b9361",
+    "input_manifest_sha256": "a4f941b3cf29795efdbb512d449ce3b02f05809fac125f4117289f57d5cb7617",
+    "train_time_limit_override_seconds": 1200,
+    "started_utc": "2026-10-13T20:47:05.798453+00:00",
+    "run_artifacts_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/runs"
+  },
+  "provenance": {
+    "console_sha256": "6ecc3fdd73df1af2fc0a68ad7f47d0eef03a4f23ec310170b487e66503b71af7",
+    "root_commit_at_launch": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "gitlinks_at_launch": {
+      "Libraries/Nmsdk-PulseLib": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+      "Bin": "86435676e46a5eb4be33fb065f5d0bad47f3d1cf",
+      "Rdk": "b3b2472dc347899af266cd46e64bca2a6ea16fea"
+    },
+    "branch_source_sha256_lf": "82ffb673375cf10d42efc13652ff1c3396c984d74ffa76ba8ac26f8118f2abf7",
+    "branch_source_note": "The LF-normalized source hash matches the locally committed e4e0274 Branch source; the server gitlink itself still named 2b30628 at launch.",
+    "runner_fix_commit": "535bec9755258d72a30abc0da5e563bdcf83b9e1",
+    "runner_source_sha256": "efd1e98d79eaf1e91746fcee6caa2ae80217ae0b383e5055be88e83694d364af"
+  },
+  "training": {
+    "status": "converged_need0",
+    "need0_iteration": 388,
+    "training_phase_at_need0": 2,
+    "failure_reason": 0,
+    "final_eol_sync": true,
+    "final_eol_amp": true,
+    "lengths_final": [24, 16, 10, 1],
+    "synapses_final": [128, 128, 128, 1],
+    "best_effort_final": [1, 1, 1, 0],
+    "pulse_synced_final": [1, 1, 1, 1],
+    "first_dendrite_transition": {
+      "iteration_386": {"lengths": [9, 16, 10, 1], "length_status": [0, 0, 0, 0], "pulse_synced": [0, 1, 1, 1]},
+      "iteration_387": {"lengths_before": [9, 16, 10, 1], "lengths_after": [16, 16, 10, 1], "best_effort": [1, 1, 1, 0], "pulse_synced": [0, 1, 1, 1]},
+      "iteration_388": {"lengths_before": [16, 16, 10, 1], "lengths_after": [24, 16, 10, 1], "pulse_synced": [1, 1, 1, 1], "need": 0}
+    },
+    "interpretation": "The exact order deadlock seen before the patch progressed through two length repairs and reached Need=0. This diagnostic used a 1200-second Console time limit; it is not an exact replay of the matrix's 640-second limit."
+  },
+  "evaluation": {
+    "gate_evaluated": true,
+    "gate_rc": 0,
+    "separation_quality": "fail",
+    "detection_quality": "target_not_detected",
+    "target_detected": false,
+    "n": 8,
+    "accuracy_correct_count": 5,
+    "accuracy_fraction": 0.625,
+    "target_hit": 0,
+    "false_positives": 2,
+    "expected_fires": "10000000",
+    "observed_fires": "00000101",
+    "response_quality": "ok_single"
+  },
+  "queue_validation": {
+    "initial_queue_status": "paused_infrastructure_or_incomplete_results",
+    "cause": "The old result validator required Test XML hashes to remain unchanged, but evaluation intentionally merges trained weights and patches attempt-local Test settings.",
+    "classification_after_validator_fix": "complete_result_revalidated_without_rerunning_training",
+    "validator_fix_tests": {
+      "test_timelearner_matrix": "12 passed",
+      "test_matrix_run_safety": "17 passed"
+    }
+  },
+  "artifacts": {
+    "attempt_path": "/media/user/Data/NmsdkStructTrainArchive/matrix_runs/active_TimeLearnerMatrixRuns/diag-br100-orderfix-current6ecc-20261013-02/W04/W04_BR100_N0_PSIoff/attempt-0001",
+    "workdir_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/runs/W04_BR100_N0_PSIoff_20261013T204706Z_3004269_9d1bca7b_work",
+    "matrix_result_sha256": "0faa02679f491661e3fac817b91192bf67291c2badc98d449a7f51bcd5a17b7f",
+    "provenance_sha256": "644565d65a90bd723138af2f2a9a1369ec5c1782912396af29fa64a20e515af3",
+    "attempt_inputs_manifest_sha256": "397136d6034252e7be3f04a9598617de34bd68f356c60af281124f2c77a0359a",
+    "training_audit_sha256": "eba0a764c47e3ff61d2e16d767601bc125a5fd66233c631f95d3178d0d29acef",
+    "test_results_sha256": "b3446f4da5858d9858f8faf0a98ecb36dd1091b86147066fdc05491223e87f61"
+  }
+}
