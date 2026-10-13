@@ -96,13 +96,22 @@ tmux attach -t ИМЯ_СЕССИИ
 
 ## Запуск одного диагностического случая
 
-Для отдельного диагностического опыта назначьте ему свой новый Run ID:
+Для отдельного диагностического опыта назначьте ему свой новый Run ID. Для Branch-абляции gamma очередь принимает `--branch-gamma-mode`: `shared-auto` сохраняет общий автоматический коэффициент, `per-input-auto` оценивает его отдельно для каждого входа, `shared-fixed-005` фиксирует общий коэффициент 0.05. Значения записываются только в копию входов конкретной попытки; исходный `TimeLearnerMatrix/.../inputs` остаётся неизменным, а применённые XML-хеши сохраняются в `runtime_input_overrides.json`. Используйте новый `RUN_ID` для каждого режима:
 
 ```bash
 RUN_ID="single-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
 export TIMELEARNER_MATRIX_RUNS_ROOT="/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-<идентификатор>/runs"
 python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
   --waves W07 --case W07_BR25_N1_PSI25_NEXT --jobs 1 --no-commit
+```
+
+Пример абляции для Branch480:
+
+```bash
+RUN_ID="gamma-per-input-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
+python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
+  --waves W04 --case W04_BR480_N1_PSIoff --jobs 1 --no-commit \
+  --branch-gamma-mode per-input-auto
 ```
 
 Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат и Console provenance будут в `_repro/TimeLearnerMatrixRuns/<RUN_ID>/<wave>/<case>/attempt-0001/`. Одиночный диагностический запуск не обновляет сводный документ всей волны; для отчётного результата запускайте волну целиком через queue. Файлы рабочего клона лежат отдельно от эталонных `inputs/`. Прямой запуск `timelearner_matrix.py --case/--run` отключён, чтобы не обходить fingerprint и изоляцию попыток.

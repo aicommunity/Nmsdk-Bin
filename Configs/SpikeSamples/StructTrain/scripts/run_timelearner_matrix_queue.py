@@ -133,6 +133,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
     condition_runtime = {
         "quiet_debug_logs": bool(args.quiet_debug_logs),
         "max_polls": args.max_polls,
+        "branch_gamma_mode": args.branch_gamma_mode,
     }
     case_fingerprints = {}
     input_hashes = {}
@@ -181,6 +182,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "jobs": args.jobs,
             "quiet_debug_logs": bool(args.quiet_debug_logs),
             "max_polls": args.max_polls,
+            "branch_gamma_mode": args.branch_gamma_mode,
             "no_commit": bool(args.no_commit),
         },
     }
@@ -262,6 +264,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                     and {
                         "quiet_debug_logs": (result.get("runtime_execution_options") or {}).get("quiet_debug_logs"),
                         "max_polls": (result.get("runtime_execution_options") or {}).get("max_polls"),
+                        "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
                     } == fingerprint.get("condition_runtime")
                     and provenance.get("binary_sha256") == fingerprint["console_sha256"]
                     and provenance.get("binary_sha256_after") == fingerprint["console_sha256"]
@@ -430,6 +433,11 @@ def main() -> int:
     parser.add_argument("--waves", nargs="+", help="run one wave, then stop for result analysis")
     parser.add_argument("--check-completed", metavar="WAVE", help="read-only exact-provenance validation used before skipping a prior wave")
     parser.add_argument("--quiet-debug-logs", action="store_true")
+    parser.add_argument(
+        "--branch-gamma-mode",
+        choices=("shared-auto", "per-input-auto", "shared-fixed-005"),
+        help="diagnostic Train-only Branch gamma mode applied to an attempt-local input overlay",
+    )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
         "--no-commit",
@@ -469,6 +477,10 @@ def main() -> int:
         specs, partial_selection = select_wave_cases(wave_specs, requested_ids, no_commit=args.no_commit)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+    if args.branch_gamma_mode and any(
+        case.get("trainer") != "NNeuronTimeLearnerBranch" for case in specs
+    ):
+        raise SystemExit("--branch-gamma-mode requires Branch-only case selection")
     selected_ids = [case["id"] for case in specs]
     if args.resume:
         # Explicit, exact-resume is checked after preparation so the input hashes are fresh.

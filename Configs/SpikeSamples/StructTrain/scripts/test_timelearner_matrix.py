@@ -46,6 +46,59 @@ class QuietDebugLoggingTests(unittest.TestCase):
                 MODULE.set_project_debug_logging(project_ini, enabled=False)
 
 
+class RuntimeBranchGammaOverlayTests(unittest.TestCase):
+    def test_per_input_gamma_overlay_is_isolated_and_train_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            xml = '<Params><AttenuationGamma Type="d">0.11</AttenuationGamma></Params>'
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                (source / "Train" / filename).write_text(xml, encoding="utf-8")
+            (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
+            attempt = base / "runs" / "r1" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W04", "case",
+                quiet_debug_logs=False, branch_gamma_mode="per-input-auto",
+            )
+
+            self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertIn("<AutoEstimateAttenuationGamma", (overlay / "Train" / "Model_00.xml").read_text(encoding="utf-8"))
+            self.assertIn("<UsePerInputAttenuationGamma", (overlay / "Train" / "Model_00.xml").read_text(encoding="utf-8"))
+            self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["branch_gamma_mode"], "per-input-auto")
+            self.assertEqual(len(record["overrides"]), 2)
+
+    def test_fixed_gamma_overlay_disables_auto_and_per_input_modes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                (source / "Train" / filename).write_text(
+                    '<Params><AttenuationGamma Type="d">0.11</AttenuationGamma></Params>',
+                    encoding="utf-8",
+                )
+            attempt = base / "runs" / "r2" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, _ = MODULE.make_runtime_input_overlay(
+                source, attempt, "W04", "case",
+                quiet_debug_logs=False, branch_gamma_mode="shared-fixed-005",
+            )
+
+            xml = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")
+            self.assertIn(">0.05</AttenuationGamma>", xml)
+            self.assertIn(">0</AutoEstimateAttenuationGamma>", xml)
+            self.assertIn(">0</UsePerInputAttenuationGamma>", xml)
+
+
 class RunProvenanceTests(unittest.TestCase):
     def test_console_resolution_uses_host_platform_and_respects_override(self):
         root = Path("/repo")

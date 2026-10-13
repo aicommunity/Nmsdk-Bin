@@ -161,26 +161,94 @@ def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str
 def make_quiet_debug_input_overlay(
     input_root: Path, attempt_dir: Path, wave: str, case_id: str
 ) -> tuple[Path, dict[str, Any]]:
-    """Copy immutable experiment inputs and disable verbose project log output only."""
+    """Copy immutable inputs and disable verbose project logging in the copy."""
+    return make_runtime_input_overlay(
+        input_root, attempt_dir, wave, case_id,
+        quiet_debug_logs=True, branch_gamma_mode=None,
+    )
+
+
+def _set_or_insert_runtime_tag(text: str, tag: str, value: str, after_tag: str) -> str:
+    if not tag_values(text, tag):
+        from repro_cold_lib import ensure_tag_after
+
+        text = ensure_tag_after(
+            text, after_tag, tag, value,
+            attrs=' Type="b" PType="257" IoType="17"',
+        )
+        if not tag_values(text, tag):
+            raise ValueError(f"cannot insert runtime parameter {tag} after {after_tag}")
+    return set_all_tags(text, tag, value)
+
+
+def make_runtime_input_overlay(
+    input_root: Path,
+    attempt_dir: Path,
+    wave: str,
+    case_id: str,
+    *,
+    quiet_debug_logs: bool,
+    branch_gamma_mode: str | None,
+) -> tuple[Path, dict[str, Any]]:
+    """Create an attempt-local input copy with recorded diagnostic overrides."""
     overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
     overlay.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(input_root, overlay)
     changed = []
-    for side in ("Train", "Test"):
-        project_ini = overlay / side / "Project.ini"
-        if not project_ini.is_file():
-            raise FileNotFoundError(project_ini)
-        item = set_project_debug_logging(project_ini, enabled=False)
-        item.update({"side": side, "file": f"{side}/Project.ini"})
-        changed.append(item)
+    if quiet_debug_logs:
+        for side in ("Train", "Test"):
+            project_ini = overlay / side / "Project.ini"
+            if not project_ini.is_file():
+                raise FileNotFoundError(project_ini)
+            item = set_project_debug_logging(project_ini, enabled=False)
+            item.update({"side": side, "file": f"{side}/Project.ini"})
+            changed.append(item)
+    if branch_gamma_mode is not None:
+        gamma_modes = {
+            "shared-auto": ("1", "0", "0.05"),
+            "per-input-auto": ("1", "1", "0.05"),
+            "shared-fixed-005": ("0", "0", "0.05"),
+        }
+        if branch_gamma_mode not in gamma_modes:
+            raise ValueError(f"unsupported Branch gamma diagnostic mode: {branch_gamma_mode}")
+        auto_estimate, per_input, gamma = gamma_modes[branch_gamma_mode]
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = set_all_tags(original, "AttenuationGamma", gamma)
+            updated = _set_or_insert_runtime_tag(
+                updated, "AutoEstimateAttenuationGamma", auto_estimate,
+                "AttenuationGamma",
+            )
+            updated = _set_or_insert_runtime_tag(
+                updated, "UsePerInputAttenuationGamma", per_input,
+                "AutoEstimateAttenuationGamma",
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "AttenuationGamma": gamma,
+                    "AutoEstimateAttenuationGamma": auto_estimate,
+                    "UsePerInputAttenuationGamma": per_input,
+                },
+            })
     record = {
-        "mode": "quiet_debug_logs",
+        "mode": "runtime_input_overlay",
         "source_input": str(input_root),
         "source_matrix_manifest_sha256": sha256(input_root / "matrix_input_manifest.json"),
+        "quiet_debug_logs": quiet_debug_logs,
+        "branch_gamma_mode": branch_gamma_mode,
         "overrides": changed,
-        "note": "Only Project/MultiGeneral/DebugModeFlag is set to 0 to suppress per-step logger output; trainer EnableDebug and C++ iteration audit remain unchanged.",
+        "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged.",
     }
     (overlay / "runtime_input_overrides.json").write_text(
         json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -650,9 +718,14 @@ def worker(
     validate_worker_attempt_directory(attempt_dir)
     runtime_input_root = input_root
     runtime_input_overrides = None
-    if quiet_debug_logs:
-        runtime_input_root, runtime_input_overrides = make_quiet_debug_input_overlay(
-            input_root, attempt_dir, wave, case_id
+    branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
+    if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
+        raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
+    if quiet_debug_logs or branch_gamma_mode is not None:
+        runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
+            input_root, attempt_dir, wave, case_id,
+            quiet_debug_logs=quiet_debug_logs,
+            branch_gamma_mode=branch_gamma_mode,
         )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
@@ -702,6 +775,7 @@ def worker(
         "quiet_debug_logs": quiet_debug_logs,
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
+        "branch_gamma_mode": branch_gamma_mode,
     }
     provenance_path = run_dir / "provenance.json"
     if not provenance_path.is_file():
@@ -788,6 +862,7 @@ def run_wave(
         "quiet_debug_logs": quiet_debug_logs,
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
+        "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
         "selected_cases": [case["id"] for case in specs],
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "cases": {},

@@ -169,7 +169,11 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                     "gitlinks": {"Bin": "bin-sha"},
                     "source_sha256": {"trainer.cpp": "source-sha"},
                     "launcher_sha256": {"queue.py": "launcher-sha"},
-                    "condition_runtime": {"quiet_debug_logs": False, "max_polls": None},
+                    "condition_runtime": {
+                        "quiet_debug_logs": False,
+                        "max_polls": None,
+                        "branch_gamma_mode": None,
+                    },
                 }
                 report = {
                     "run_id": "run-old",
@@ -181,7 +185,11 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                             "training_convergence": "not_converged_at_stop",
                             "input_manifest_sha256": "input-sha",
                             "matrix_launcher_sha256": {"queue.py": "launcher-sha"},
-                            "runtime_execution_options": {"quiet_debug_logs": False, "max_polls": None},
+                            "runtime_execution_options": {
+                                "quiet_debug_logs": False,
+                                "max_polls": None,
+                                "branch_gamma_mode": None,
+                            },
                             "run_provenance": {
                                 "binary_sha256": "console-sha",
                                 "binary_sha256_after": "console-sha",
