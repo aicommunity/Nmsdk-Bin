@@ -74,7 +74,9 @@ PHASE8 = ROOT / "SelectivityBranch" / "scripts" / "phase8_tiprmin_gate.py"
 PHASE9 = ROOT / "SelectivityAsymRm" / "scripts" / "phase9_preinh_bc_gate.py"
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 OUT = ROOT / "_repro" / "POSTTUNE_VERIFY_RESULT.md"
-RUNS_ROOT = ROOT / "_repro" / "runs"
+RUNS_ROOT = Path(
+    os.environ.get("TIMELEARNER_MATRIX_RUNS_ROOT", str(ROOT / "_repro" / "runs"))
+).expanduser().resolve()
 
 CASES = {
     "br25_on": {

@@ -324,5 +324,13 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                     os.environ["TIMELEARNER_MATRIX_RUN_ID"] = old_run_id
 
 
+class PostTuneRunsRootTests(unittest.TestCase):
+    def test_worker_workdirs_follow_external_matrix_run_root(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.dict(os.environ, {"TIMELEARNER_MATRIX_RUNS_ROOT": temporary}):
+                posttune = MODULE.load_pv()
+            self.assertEqual(posttune.RUNS_ROOT, Path(temporary).resolve())
+
+
 if __name__ == "__main__":
     unittest.main()
