@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 234 случаев: 195 не сошлись к моменту остановки, 23 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 242 случаев: 201 не сошлись к моменту остановки, 25 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -1036,6 +1036,19 @@
 | W31_CL480_N0_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=69d22b8a7c63; Bin=e262832f6f89; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W31_CL480_N1_MARGIN_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ec8a44371b78; Bin=5347d40afa74; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W31_CL480_N1_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ec8a44371b78; Bin=5347d40afa74; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+
+### W33
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W33_CL25_N0_PSIoff_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=600eb6a0e630; Bin=c046107d9e69; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL25_N0_PSI25_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=600eb6a0e630; Bin=c046107d9e69; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL25_N1_PSIoff_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=600eb6a0e630; Bin=c046107d9e69; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL25_N1_PSI25_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=600eb6a0e630; Bin=c046107d9e69; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL50_N0_PSIoff_POST | converged_posttune_finalized | evaluation_error | evaluation_error | — | 0 | — | обучение сошлось; качество=evaluation_error; цель=evaluation_error | root=53067dabf8da; Bin=35d16a8e481f; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL50_N0_PSI25_POST | converged_posttune_finalized | evaluation_error | evaluation_error | — | 0 | — | обучение сошлось; качество=evaluation_error; цель=evaluation_error | root=53067dabf8da; Bin=35d16a8e481f; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL50_N1_PSIoff_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=53067dabf8da; Bin=35d16a8e481f; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+| W33_CL50_N1_PSI25_POST | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=53067dabf8da; Bin=35d16a8e481f; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 
 ## Протокол следующей волны
 
