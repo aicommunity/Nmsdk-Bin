@@ -106,6 +106,16 @@ class RunProvenanceTests(unittest.TestCase):
 
 
 class IsolatedAttemptDispatchTests(unittest.TestCase):
+    def test_worker_accepts_queue_log_but_rejects_preexisting_attempt_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            attempt = Path(temporary) / "attempt-0001"
+            attempt.mkdir()
+            (attempt / "worker.log").write_text("queue-owned log\n", encoding="utf-8")
+            MODULE.validate_worker_attempt_directory(attempt)
+            (attempt / "stale-result.json").write_text("{}", encoding="utf-8")
+            with self.assertRaisesRegex(FileExistsError, "pre-existing artifacts"):
+                MODULE.validate_worker_attempt_directory(attempt)
+
     def test_parallel_stub_workers_and_stale_resume_never_overwrite_attempts(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary) / "StructTrain"

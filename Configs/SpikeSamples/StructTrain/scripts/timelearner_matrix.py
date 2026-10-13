@@ -119,6 +119,19 @@ def test_config_hashes_unchanged(provenance: dict[str, Any]) -> bool:
     return all(before.get(path) and before.get(path) == after.get(path) for path in test_paths)
 
 
+def validate_worker_attempt_directory(attempt_dir: Path) -> None:
+    """Allow the queue-owned log file while rejecting stale attempt artifacts."""
+    if not attempt_dir.is_dir():
+        raise FileNotFoundError(f"attempt directory is missing: {attempt_dir}")
+    unexpected = [
+        path.name
+        for path in attempt_dir.iterdir()
+        if path.name != "worker.log" or not path.is_file() or path.is_symlink()
+    ]
+    if unexpected:
+        raise FileExistsError(f"attempt directory contains pre-existing artifacts: {unexpected}")
+
+
 def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str]:
     """Set only the project-wide logger switch, preserving channel settings."""
     original = project_ini.read_text(encoding="utf-8")
@@ -633,8 +646,7 @@ def worker(
     expected_case_root = (run_root() / wave / case_id).resolve()
     if attempt_dir.parent != expected_case_root or not attempt_dir.name.startswith("attempt-"):
         raise RuntimeError(f"attempt directory is outside the expected case namespace: {attempt_dir}")
-    if not attempt_dir.is_dir() or any(attempt_dir.iterdir()):
-        raise FileExistsError(f"attempt directory must be new and empty: {attempt_dir}")
+    validate_worker_attempt_directory(attempt_dir)
     runtime_input_root = input_root
     runtime_input_overrides = None
     if quiet_debug_logs:

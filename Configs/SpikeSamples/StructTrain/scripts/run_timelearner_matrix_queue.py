@@ -20,6 +20,7 @@ from matrix_run_safety import (
     sha256_json,
     verify_run_manifest,
 )
+from timelearner_matrix import case_attempt_result
 
 BASE = Path(__file__).resolve().parents[1]
 BIN_ROOT = BASE.parents[2]
