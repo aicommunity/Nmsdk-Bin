@@ -73,6 +73,35 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def sha256_text_line_ending_variants(path: Path) -> set[str]:
+    """Hash exact text plus LF/CRLF checkout variants, excluding binaries."""
+    data = path.read_bytes()
+    exact = hashlib.sha256(data).hexdigest()
+    if b"\0" in data:
+        return {exact}
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return {exact}
+    normalized = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    crlf = normalized.replace(b"\n", b"\r\n")
+    return {
+        exact,
+        hashlib.sha256(normalized).hexdigest(),
+        hashlib.sha256(crlf).hexdigest(),
+    }
+
+
+def matrix_definition_matches(saved: dict[str, Any], matrix_path: Path) -> bool:
+    """Allow Git's LF/CRLF checkout conversion without accepting content edits."""
+    expected = {
+        str(saved.get("matrix_definition_sha256", "")),
+        str(saved.get("matrix_definition_sha256_lf", "")),
+    }
+    expected.discard("")
+    return bool(expected & sha256_text_line_ending_variants(matrix_path))
+
+
 def verify_prepared_input_snapshot(input_root: Path, manifest: dict[str, Any] | None = None) -> None:
     """Require every prepared input file to match its immutable manifest hash."""
     manifest_path = input_root / "matrix_input_manifest.json"
@@ -105,7 +134,7 @@ def verify_prepared_input_snapshot(input_root: Path, manifest: dict[str, Any] | 
         actual.add(relpath)
         if relpath not in expected:
             raise RuntimeError(f"unmanifested prepared input file: {path}")
-        if sha256(path) != expected[relpath]:
+        if expected[relpath] not in sha256_text_line_ending_variants(path):
             raise RuntimeError(f"prepared input SHA-256 mismatch: {path}")
     missing = sorted(set(expected) - actual)
     if missing:
@@ -444,10 +473,9 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
         if saved.is_file() and not refresh:
             old = json.loads(saved.read_text(encoding="utf-8"))
             if old.get("factors") == {k: v for k, v in spec.items() if k not in ("id", "wave")}:
-                current_matrix_hash = sha256(MANIFEST)
-                if old.get("matrix_definition_sha256") != current_matrix_hash:
+                if not matrix_definition_matches(old, MANIFEST):
                     raise RuntimeError(
-                        f"matrix definition changed since this input snapshot was prepared: {destination}; "
+                        f"matrix definition differs beyond line endings from this input snapshot: {destination}; "
                         "use an explicit --refresh only after preserving prior run provenance"
                     )
                 verify_prepared_input_snapshot(destination, old)
@@ -574,6 +602,9 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
         },
         "console_sha256": sha256(pv.NM) if Path(pv.NM).is_file() else None,
         "matrix_definition_sha256": sha256(MANIFEST),
+        "matrix_definition_sha256_lf": hashlib.sha256(
+            MANIFEST.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        ).hexdigest(),
         "prepared_utc": datetime.now(timezone.utc).isoformat(),
         "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair.",
     }

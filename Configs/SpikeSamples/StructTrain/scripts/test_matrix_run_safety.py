@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 import os
 import sys
@@ -267,10 +268,70 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
             try:
                 MODULE.BASE = base
                 MODULE.MANIFEST = matrix_definition
-                with self.assertRaisesRegex(RuntimeError, "matrix definition changed"):
+                with self.assertRaisesRegex(RuntimeError, "matrix definition differs"):
                     MODULE.prepare_case(spec, {"T": {"preinh_source": "unused"}}, None)
             finally:
                 MODULE.BASE, MODULE.MANIFEST = old_base, old_manifest
+
+    def test_existing_input_snapshot_accepts_only_line_ending_checkout_changes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            matrix_definition = base / "matrix.json"
+            matrix_lf = b'{"revision":2}\n'
+            matrix_crlf = matrix_lf.replace(b"\n", b"\r\n")
+            matrix_definition.write_bytes(matrix_lf)
+            destination = base / "TimeLearnerMatrix" / "W01" / "inputs" / "C1"
+            (destination / "Train").mkdir(parents=True)
+            (destination / "Test").mkdir()
+            train = b"train\n"
+            test = b"test\n"
+            (destination / "Train" / "Parameters.xml").write_bytes(train)
+            (destination / "Test" / "Parameters.xml").write_bytes(test)
+            manifest = {
+                "factors": {"template": "T", "duration_ms": 50},
+                "matrix_definition_sha256": hashlib.sha256(matrix_crlf).hexdigest(),
+                "source_files": [
+                    {
+                        "side": "Train",
+                        "file": "Parameters.xml",
+                        "sha256": hashlib.sha256(train.replace(b"\n", b"\r\n")).hexdigest(),
+                    },
+                    {
+                        "side": "Test",
+                        "file": "Parameters.xml",
+                        "sha256": hashlib.sha256(test.replace(b"\n", b"\r\n")).hexdigest(),
+                    },
+                ],
+            }
+            (destination / "matrix_input_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            old_base, old_manifest = MODULE.BASE, MODULE.MANIFEST
+            try:
+                MODULE.BASE = base
+                MODULE.MANIFEST = matrix_definition
+                prepared = MODULE.prepare_case(
+                    {"id": "C1", "wave": "W01", "template": "T", "duration_ms": 50},
+                    {"T": {"preinh_source": "unused"}},
+                    None,
+                )
+                self.assertEqual(prepared["matrix_definition_sha256"], hashlib.sha256(matrix_crlf).hexdigest())
+            finally:
+                MODULE.BASE, MODULE.MANIFEST = old_base, old_manifest
+
+    def test_line_ending_compatibility_does_not_accept_input_content_changes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "Train" / "Parameters.xml"
+            source.parent.mkdir(parents=True)
+            source.write_bytes(b"changed\n")
+            manifest = {
+                "source_files": [{
+                    "side": "Train",
+                    "file": "Parameters.xml",
+                    "sha256": hashlib.sha256(b"original\r\n").hexdigest(),
+                }]
+            }
+            with self.assertRaisesRegex(RuntimeError, "SHA-256 mismatch"):
+                MODULE.verify_prepared_input_snapshot(root, manifest)
 
     def test_only_complete_matching_provenance_is_reusable(self):
         with tempfile.TemporaryDirectory() as temporary:
