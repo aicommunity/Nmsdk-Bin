@@ -265,6 +265,45 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
     return None
 
 
+def find_related_result(wave: str, specs: list[dict], fingerprint: dict) -> dict | None:
+    """Find same inputs/trainer/binary where launcher provenance is incomplete or differs."""
+    for case in specs:
+        case_id = case["id"]
+        paths = [MATRIX / wave / "results.json", *sorted((MATRIX / wave / "run_results").glob("*.json"))]
+        for path in paths:
+            try:
+                document = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            for item in document.get("cases", []):
+                if item.get("case") != case_id:
+                    continue
+                factors = item.get("factors")
+                result = item.get("result") or {}
+                if not factors:
+                    factors = result.get("matrix_factors")
+                    if factors and "id" not in factors:
+                        factors = {"id": case_id, **factors}
+                provenance = result.get("run_provenance") or {}
+                if (
+                    factors == case
+                    and result.get("input_manifest_sha256")
+                    == fingerprint["input_manifest_sha256"].get(case_id)
+                    and provenance.get("binary_sha256") == fingerprint["console_sha256"]
+                    and provenance.get("source_sha256") == fingerprint["source_sha256"]
+                    and (provenance.get("gitlinks") or {}).get("Libraries/Nmsdk-PulseLib")
+                    == fingerprint["gitlinks"].get("Libraries/Nmsdk-PulseLib")
+                    and (provenance.get("gitlinks") or {}).get("Rdk")
+                    == fingerprint["gitlinks"].get("Rdk")
+                ):
+                    return {
+                        "case": case_id,
+                        "run_id": result.get("matrix_run_id") or document.get("run_id"),
+                        "report": str(path),
+                    }
+    return None
+
+
 def allocate_queue_status_attempt(run_root_path: Path) -> tuple[str, Path]:
     attempts = run_root_path / "queue_status_attempts"
     attempts.mkdir(parents=True, exist_ok=True)
@@ -442,10 +481,17 @@ def main() -> int:
         else:
             duplicate = find_duplicate_run(fingerprint)
             duplicate_result = find_duplicate_result(wave, specs, fingerprint)
+            related_result = find_related_result(wave, specs, fingerprint)
             if duplicate_result and not args.allow_repeat:
                 raise SystemExit(
                     "matching completed result with exact code/Console/input provenance already exists: "
                     f"{duplicate_result}; inspect it or pass --allow-repeat with a new RUN_ID"
+                )
+            if related_result and not duplicate_result and not args.allow_repeat:
+                raise SystemExit(
+                    "a published result has matching inputs, trainer, Console, and algorithm gitlinks, "
+                    "but its launcher/runtime provenance is incomplete or differs: "
+                    f"{related_result}; inspect it and pass --allow-repeat with a new RUN_ID to repeat"
                 )
             if duplicate and not args.allow_repeat:
                 raise SystemExit(

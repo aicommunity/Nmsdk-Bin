@@ -177,8 +177,13 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                 target = wave_dir / "results.json"
                 target.write_text(json.dumps(report), encoding="utf-8")
                 self.assertEqual(QUEUE.find_duplicate_result("W01", [spec], fingerprint)["run_id"], "run-old")
+                report["cases"][0]["result"].pop("matrix_launcher_sha256")
+                target.write_text(json.dumps(report), encoding="utf-8")
+                self.assertIsNone(QUEUE.find_duplicate_result("W01", [spec], fingerprint))
+                self.assertEqual(QUEUE.find_related_result("W01", [spec], fingerprint)["run_id"], "run-old")
                 fingerprint["input_manifest_sha256"]["C1"] = "new-input"
                 self.assertIsNone(QUEUE.find_duplicate_result("W01", [spec], fingerprint))
+                self.assertIsNone(QUEUE.find_related_result("W01", [spec], fingerprint))
             finally:
                 QUEUE.MATRIX = old_matrix
 
