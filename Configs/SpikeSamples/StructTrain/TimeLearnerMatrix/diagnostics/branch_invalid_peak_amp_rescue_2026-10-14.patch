@@ -1,0 +1,46 @@
+diff --git a/Core/NNeuronTimeLearnerBranch.cpp b/Core/NNeuronTimeLearnerBranch.cpp
+index 6f2a5b3..3db3325 100644
+--- a/Core/NNeuronTimeLearnerBranch.cpp
++++ b/Core/NNeuronTimeLearnerBranch.cpp
+@@ -1289,6 +1289,27 @@ bool NNeuronTimeLearnerBranch::ChangeSynapseResistanceStatus(int num)
+  const bool same_pattern = (fabs(PrevInputPattern[num] - InputPattern[num]) < 0.0001);
+  const double amp = MaxIterSomaAmp[num];
+  const double initial = InitialSomaPotential[num];
++ const bool invalid_peak_amp_rescue = IsParametricNormalization()
++  && !EnableRmaxLengthEscape.GetData()
++  && num < int(InvalidPeakNoActionCount.size())
++  && InvalidPeakNoActionCount[static_cast<size_t>(num)]
++     >= kInvalidPeakNoActionRefusalLimit
++  && num < int(SomaPeakValid.size()) && !SomaPeakValid[static_cast<size_t>(num)]
++  && !DendStatus[num] && amp < kMinMeasurableSomaAmp && dt > eps
++  && r_old > ResistanceMin.GetData() * (1.0 + 1e-6);
++ if(invalid_peak_amp_rescue)
++ {
++  const double eff_gain = (ResistanceAdjustGain.GetData() > 0.0)
++   ? ResistanceAdjustGain.GetData() : kResistanceAdjustGainDefault;
++  const double r_new = ClampResistance(r_old * (1.0 - 0.15 * eff_gain));
++  ApplyComputedResistance(num, r_old, r_new, eff_gain);
++  InvalidPeakNoActionCount[static_cast<size_t>(num)] = 0;
++  ResistanceDifference[num] = dt;
++  ResistanceStatus[num] = (r_new != r_old) ? 1 : 0;
++  SynapseStatus[num] = 0;
++  restore_dend_status();
++  return true;
++ }
+  const bool ready_for_r_tune = length_settled && !DendStatus[num];
+  const double rmin_w3 = ResistanceMin.GetData();
+  const double rmax_w3 = ResistanceMax.GetData();
+@@ -4222,7 +4243,12 @@ bool NNeuronTimeLearnerBranch::ChangeDendriteStatus(int num)
+    {
+     int &stall_count = InvalidPeakNoActionCount[static_cast<size_t>(num)];
+     ++stall_count;
+-    if(stall_count >= kInvalidPeakNoActionRefusalLimit)
++    const bool amp_rescue_available = IsParametricNormalization()
++     && !EnableRmaxLengthEscape.GetData()
++     && num < int(TipSynapseResistance.size())
++     && TipSynapseResistance[static_cast<size_t>(num)]
++        > ResistanceMin.GetData() * (1.0 + 1e-6);
++    if(stall_count >= kInvalidPeakNoActionRefusalLimit && !amp_rescue_available)
+     {
+      TrainingFailureReason.SetDataDirect(kFailureInvalidPeakNoRecovery);
+      TrainingPhase.SetDataDirect(kPhaseFailed);
