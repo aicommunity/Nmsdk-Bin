@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "case": "W04_BR480_N1_PSIoff",
+  "run_id": "diag-br480-ratio10-current6ecc-20261014-01",
+  "run_fingerprint": "16587b9fd833b5f14e9edb18a024521c098aa87016b80e47d02165014d0395fe",
+  "status": "operator_stopped_after_128_iteration_plateau",
+  "training_convergence": "not_converged_at_stop",
+  "quality": "not_evaluated_training_incomplete",
+  "run_conditions": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "normalization_mode": 1,
+    "pattern_duration_ms": 480,
+    "presynaptic_inhibition": false,
+    "branch_rs_rm_limit": 10,
+    "runtime_bounds_for_Rm_10MOhm": {
+      "rmin_ohm": 1000000,
+      "rmax_ohm": 100000000,
+      "rs_rm_min": 0.1
+    },
+    "console_time_limit_seconds": 1200,
+    "observed_cpp_runtime_seconds": 270,
+    "note": "Only the attempt-local Train XML overlay changed. No classification evaluator was run. The run was deliberately stopped before its configured timeout after a long unchanged state plateau."
+  },
+  "provenance": {
+    "console_sha256": "6ecc3fdd73df1af2fc0a68ad7f47d0eef03a4f23ec310170b487e66503b71af7",
+    "root_git": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "bin_gitlink_at_run": "86435676e46a5eb4be33fb065f5d0bad47f3d1cf",
+    "pulselib_gitlink": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "branch_source_sha256": "82ffb673375cf10d42efc13652ff1c3396c984d74ffa76ba8ac26f8118f2abf7",
+    "matrix_input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+    "run_manifest_sha256": "29ff82bed2fc0f27808c1d8bbee798e47c2a6b971ceae934e0bd71d7f2672165",
+    "attempt_input_manifest_sha256": "897eed57829f5eb1180ac9d0aea53b19e87839bb29878be4cafc1cb40aaa50dc",
+    "runtime_overlay_manifest_sha256": "e38ed075e242fc0578cd4e356c8ddb3ad24f9d79f63c01b8584beb93d49cb5c6",
+    "launcher_sha256": {
+      "run_timelearner_matrix_queue.py": "61f60c1e7c84bdbce27182e150e4b4355a1512b2a6171f4c3b6f95834992a820",
+      "timelearner_matrix.py": "610b4f2e3602b7e7613deb4e0394d02a0b7b7fd7f532002334b272bcee0c9515"
+    },
+    "input_content_matches_local_w04_after_line_ending_normalization": true
+  },
+  "observations": {
+    "audit_record_counts": {
+      "reset": 1,
+      "iteration": 143,
+      "first_iteration": 0,
+      "last_iteration": 142
+    },
+    "initial_state": {
+      "need": 1,
+      "phase": 0,
+      "dendrite_lengths": [1, 1, 1, 1],
+      "tip_r_ohm": [86000000, 86000000, 86000000, 86000000]
+    },
+    "first_rmin_hits": [
+      {"dendrite_index0": 2, "iteration": 10, "tip_r_ohm": 1000000},
+      {"dendrite_index0": 1, "iteration": 11, "tip_r_ohm": 1000000}
+    ],
+    "active_dendrite_length_trajectory": [
+      {"iteration": 11, "dendrite_index0": 1, "from": 1, "to": 9},
+      {"iteration": 13, "dendrite_index0": 1, "from": 9, "to": 6},
+      {"iteration": 14, "dendrite_index0": 1, "from": 6, "to": 10},
+      {"iteration": 15, "dendrite_index0": 1, "length": 10, "max_dendrite_length": 100}
+    ],
+    "unchanged_state_plateau": {
+      "first_iteration": 15,
+      "last_iteration": 142,
+      "iteration_records": 128,
+      "need": 1,
+      "phase": 0,
+      "active_dendrite_index0": 1,
+      "active_pulse_index0": 1,
+      "dendrite_lengths": [1, 10, 6, 1],
+      "tip_r_ohm": [86000000, 1000000, 1000000, 86000000],
+      "peak_valid": [0, 0, 1, 1],
+      "pulse_synced": [0, 0, 1, 1],
+      "eol_sync": false,
+      "eol_amp": false,
+      "failure_reason": 0
+    },
+    "active_slot_amplitude": {
+      "dendrite_index0": 1,
+      "initial_amp": 0.015828572406203167,
+      "peak_amp_at_plateau": 1.7046206635118466e-7,
+      "peak_valid": false,
+      "peak_to_initial_ratio": 1.0769263454509713e-5
+    },
+    "maximum_observed_peak_amp": {
+      "value": 0.23911895286077922,
+      "iteration": 14,
+      "dendrite_index0": 3
+    },
+    "final_state": {
+      "need": 1,
+      "phase": 0,
+      "failure_reason": 0,
+      "eol_sync": false,
+      "eol_amp": false,
+      "active_dendrite_index0": 1,
+      "pulse_synced": [0, 0, 1, 1],
+      "dendrite_lengths": [1, 10, 6, 1],
+      "tip_r_ohm": [86000000, 1000000, 1000000, 86000000],
+      "peak_amp": [0, 1.7046206635118466e-7, 0.050768825155918185, 0.00077165329974482333],
+      "peak_valid": [0, 0, 1, 1]
+    },
+    "trainer_exit_code": -15,
+    "gate_evaluated": false,
+    "classification_metrics": "not available; evaluator skipped because training did not reach a terminal state"
+  },
+  "artifacts": {
+    "data_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view",
+    "run_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/runs/diag-br480-ratio10-current6ecc-20261014-01/run_manifest.json",
+    "attempt_dir": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/runs/diag-br480-ratio10-current6ecc-20261014-01/W04/W04_BR480_N1_PSIoff/attempt-0001",
+    "raw_workdir": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/runs/W04_BR480_N1_PSIoff_20261013T222136Z_3068835_99ee495e_work",
+    "training_audit_sha256": "9554863ee76ab0bbc5f2ae2087307e26d0cb7fce9ca5316af746d68bf01c1e4a",
+    "training_audit_bytes": 258840,
+    "matrix_result_sha256": "0e9c032f0cb5416ac3befce158abb841995a5cc3fd8eacc2c55f5513d498e538",
+    "provenance_sha256": "935d5c74a2d227a8eb801c93fd6200d2ac0f52b07953349badfc363ebf6c84e8",
+    "operator_stop_note_sha256": "b26480ab8271057f19fd07dd5ce85eff2b0a83cbbc78e0dbc00dd3f444ee47b3"
+  },
+  "interpretation": "The ratio=10 bound kept both tuned resistances from falling below Rm/10 and no large amplitude runaway was observed before the stop. It did not make this BR480 condition converge: the two tuned resistances reached Rmin by iterations 10–11, the active dendrite reached length 10 (below MaxDendriteLength=100), and the active peak became invalid. The full measured state then remained unchanged for 128 iteration records with Need=1. This is evidence of a non-progressing bound/invalid-peak path under this run, not a C++ refusal, a classification result, or proof that the condition cannot converge. The C++ Branch code deliberately declines to alter length on an invalid peak unless its best-effort gate is met; the trace alone does not establish whether that guard is an implementation defect or an intended algorithm limitation.",
+  "next_step": "Inspect the invalid-peak Branch path and its interaction with the Rmin-bound state. Decide whether the trainer should make another bounded structural/parametric move or explicitly report a refusal instead of looping without progress. Validate that decision with separate Branch and Classic controls before broader reruns."
+}
