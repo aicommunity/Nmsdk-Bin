@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "kind": "diagnostic_probe_not_training_result",
+  "case": "W04_BR480_N1_PSIoff",
+  "run_id": "diag-br480-perinputgamma-inputpattern-audit-20261014-01",
+  "utc_started": "2026-10-13T23:41:50Z",
+  "remote_run_dir": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-perinputgamma-inputpattern-audit-20261014-01/attempt",
+  "source_context": {
+    "root_commit": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "pulse_lib_gitlink": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "bin_gitlink": "e8c3b246cdb76b7c79137ffd9638d6263b662dbf",
+    "telemetry_commit_in_current_branch": "5032207",
+    "console_sha256": "f2410fe068eb5694b1483525a6ec65fafbc6b4e2ba4c21ed84f746ffef863b10",
+    "branch_cpp_sha256_with_temporary_rescue_ablation": "282c011ada6ca3d33cb693775767b718de955680d825d69e9d07c2229eb45943",
+    "temporary_rescue_patch_sha256": "aae394a210b77d2d6b532e2696390e7ced566a7a3322d3bce1da286221a38d8e",
+    "temporary_rescue_patch_effect_first_seen_at_iteration": 42,
+    "restored_remote_console_sha256": "15a9297bf8021bd2538bcf506daeae7ad813397a507ce7ea3c201499e59ae085",
+    "restored_remote_branch_cpp_sha256": "3767e21d9654eda108c0ac496fb5c5784aa4fb6d3d2102eb46b71923e35f9cc7"
+  },
+  "input_archive": {
+    "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/inputs/branch-perinput-gamma/W04_BR480_N1_PSIoff",
+    "train_model_sha256": "6f97ea1dcb1aa10ac6efe7345c081440334b440e500b46b592390fc1ca67fcf2",
+    "train_parameters_sha256": "a0e768ec41dd8dd44dbe315f750f3e7cf845ef97d90e8b30bb6bb21f4803f724",
+    "test_model_sha256": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e",
+    "test_parameters_sha256": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+    "input_pattern_seconds": [0.01, 0.08, 0.16, 0.24],
+    "generator_frequency_deviation": 0,
+    "generator_pulse_length_seconds": 0.001,
+    "dataset_runtime_contract": "NNeuronTimeLearnerBranch::SyncDatasetDimsFromDendrites sets NumSamples=1, AdvanceSampleAfterBurst=false and copies InputPattern into the single-column Dataset MatrixData. The same configured sample is replayed; the input pattern is the target timing vector, not an identifier for observed generator events."
+  },
+  "prepared_run_config_sha256_before_launch": {
+    "Train/Parameters_00.xml": "97c50bdcc0a3cc0d6687db8943370a29f1c0c55b1440f3d69e63cff51e9c1d33",
+    "Train/Model_00.xml": "38574b529d683dd5cf3a48cf2f9a737002b739a2ab8020ebda12c01dbbe1ad9b",
+    "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+    "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+  },
+  "run_status": {
+    "train_status": "exited_by_poll_cap",
+    "training_convergence": "not_converged_at_stop",
+    "need": 1,
+    "max_polls": 3,
+    "child_rc": -15,
+    "quality_gate_evaluated": false,
+    "quality": "not_evaluated_training_incomplete",
+    "audit_records": 44,
+    "audit_sha256": "eae5e574f58c0cd298a420e7b8d4c16fbd8482e3b1151215410ac98a232a983d"
+  },
+  "observations": [
+    {
+      "iteration": 38,
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "prev_input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "peak_amp_input0": 0.015781441626431136,
+      "peak_valid_input0": true,
+      "tip_r_input0": 57647523.959064983,
+      "length_before": [1, 8, 6, 1],
+      "length_after": [9, 8, 6, 1]
+    },
+    {
+      "iteration": 39,
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "prev_input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "peak_amp_input0": 0.0002967384328556033,
+      "peak_valid_input0": true,
+      "tip_r_input0": 57647523.959064983,
+      "length_after": [9, 8, 6, 1],
+      "last_abs_dt_input0": 0.37066066666666697
+    },
+    {
+      "iteration": 40,
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "prev_input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "peak_amp_input0": 2.5526425417865539e-9,
+      "peak_valid_input0": false,
+      "tip_r_input0": 57647523.959064983,
+      "length_after": [9, 8, 6, 1],
+      "last_abs_dt_input0": 0.37066066666666697
+    },
+    {
+      "iteration": 41,
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "prev_input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "peak_amp_input0": 2.5526425417865539e-9,
+      "peak_valid_input0": false,
+      "tip_r_input0": 57647523.959064983,
+      "length_after": [9, 8, 6, 1]
+    },
+    {
+      "iteration": 42,
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "peak_amp_input0": 2.5526425417865539e-9,
+      "peak_valid_input0": false,
+      "tip_r_input0_after_candidate_rescue": 54188672.521521084,
+      "length_after": [9, 8, 6, 1]
+    }
+  ],
+  "interpretation": {
+    "measured_change": "Input0 peak fell by about 116248x from iteration 39 to 40 while its logged Rs and dendrite lengths were unchanged and the same configured one-sample input pattern was replayed.",
+    "classification": "unexplained model-state or peak-measurement dynamics; not evidence of input-sample switching, and not yet a proven implementation defect",
+    "limitation": "The audit records the configured timing vector but not the actual per-pulse generator event times or the neuron/synapse state at burst start. The temporary Rs-only rescue ablation first changed Rs at iteration 42; iterations 39–41 precede that intervention.",
+    "next_diagnostic": "Add read-only audit of Dataset sample/playback cursor and actual generator pulse events, then compare a fixed-weights repeated-stimulus trace with and without a neuron reset between bursts. Keep any reset treatment as an experiment; do not change trainer behavior before the cause is confirmed."
+  }
+}
