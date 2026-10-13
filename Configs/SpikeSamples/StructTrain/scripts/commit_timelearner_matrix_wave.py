@@ -75,7 +75,8 @@ def release_lock() -> None:
 def rsync_from_17(run_id: str, ssh_host: str) -> None:
     src = f"{ssh_host}:/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/{run_id}/"
     dst = RUNS_BASE / run_id
-    dst.mkdir(parents=True, exist_ok=True)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.mkdir(exist_ok=False)
     if os.environ.get("SSHPASS"):
         cmd = ["sshpass", "-e", "rsync", "-a", "-e", "ssh -o StrictHostKeyChecking=accept-new", src, str(dst) + "/"]
     else:
@@ -83,12 +84,16 @@ def rsync_from_17(run_id: str, ssh_host: str) -> None:
     run(cmd, ROOT)
 
 
-def git_add_commit(wave: str, host_tag: str) -> None:
+def git_add_commit(wave: str, host_tag: str, run_id: str) -> None:
     struct_rel = Path("Configs/SpikeSamples/StructTrain")
     bin_paths = [
         str(struct_rel / "EXPERIMENTS.md"),
         str(struct_rel / "SUCCESSFUL_EXPERIMENTS.md"),
         str(struct_rel / "TimeLearnerMatrix" / wave / "results.json"),
+        *[
+            str(path.relative_to(BIN_ROOT))
+            for path in sorted((BASE / "TimeLearnerMatrix" / wave / "run_results").glob(f"{run_id}-*.json"))
+        ],
     ]
     ensure_no_staged(BIN_ROOT)
     ensure_no_staged(ROOT)
@@ -132,12 +137,25 @@ def main() -> int:
     run_dir = RUNS_BASE / run_id
     if not (run_dir / args.wave).is_dir():
         raise SystemExit(f"missing wave dir: {run_dir / args.wave}")
+    manifest = run_dir / "run_manifest.json"
+    status = run_dir / "queue_status.json"
+    if not manifest.is_file() or not status.is_file():
+        raise SystemExit(f"refuse to report a run without immutable provenance/status: {run_dir}")
+    run_manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+    wave_status_path = run_dir / args.wave / "wave_status.json"
+    wave_status_data = json.loads(wave_status_path.read_text(encoding="utf-8")) if wave_status_path.is_file() else {}
+    registry = json.loads((BASE / "TimeLearnerMatrix" / "matrix.json").read_text(encoding="utf-8"))
+    expected_cases = {case["id"] for case in registry.get("cases", []) if case.get("wave") == args.wave}
+    if set(run_manifest_data.get("selected_cases", [])) != expected_cases:
+        raise SystemExit("refuse to publish a partial case selection as a completed wave")
+    if not wave_status_data.get("run_complete"):
+        raise SystemExit("refuse to report a wave with missing/invalid case results")
 
     if not args.skip_lock:
         acquire_lock()
     try:
         run([sys.executable, str(UPDATER), args.wave], BASE)
-        git_add_commit(args.wave, args.host_tag)
+        git_add_commit(args.wave, args.host_tag, run_id)
     finally:
         if not args.skip_lock:
             release_lock()

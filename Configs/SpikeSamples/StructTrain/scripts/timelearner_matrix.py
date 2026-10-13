@@ -17,11 +17,22 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import fnmatch
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from xml.etree import ElementTree as ET
+
+from matrix_run_safety import (
+    CpuLoadSampler,
+    active_console_count,
+    active_console_pids,
+    allocate_case_attempt,
+    atomic_write_json,
+    exclusive_file_lock,
+    logical_cpu_count,
+)
 
 BASE = Path(__file__).resolve().parents[1]
 MANIFEST = BASE / "TimeLearnerMatrix" / "matrix.json"
@@ -61,6 +72,53 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def verify_prepared_input_snapshot(input_root: Path, manifest: dict[str, Any] | None = None) -> None:
+    """Require every prepared input file to match its immutable manifest hash."""
+    manifest_path = input_root / "matrix_input_manifest.json"
+    if manifest is None:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entries = manifest.get("source_files")
+    if not isinstance(entries, list) or not entries:
+        raise RuntimeError(f"input manifest has no file hashes: {manifest_path}")
+    expected: dict[str, str] = {}
+    for entry in entries:
+        side = str(entry.get("side", ""))
+        relative = PurePosixPath(str(entry.get("file", "")).replace("\\", "/"))
+        if side not in {"Train", "Test"} or relative.is_absolute() or not relative.parts or ".." in relative.parts:
+            raise RuntimeError(f"unsafe input path in manifest: {entry!r}")
+        relpath = (Path(side) / Path(*relative.parts)).as_posix()
+        if relpath in expected:
+            raise RuntimeError(f"duplicate input path in manifest: {relpath}")
+        expected[relpath] = str(entry.get("sha256", ""))
+
+    actual: set[str] = set()
+    for path in input_root.rglob("*"):
+        if not path.is_file():
+            continue
+        relative_path = path.relative_to(input_root)
+        if not relative_path.parts or relative_path.parts[0] not in {"Train", "Test"}:
+            continue
+        if path.is_symlink():
+            raise RuntimeError(f"prepared input must not contain symlinks: {path}")
+        relpath = relative_path.as_posix()
+        actual.add(relpath)
+        if relpath not in expected:
+            raise RuntimeError(f"unmanifested prepared input file: {path}")
+        if sha256(path) != expected[relpath]:
+            raise RuntimeError(f"prepared input SHA-256 mismatch: {path}")
+    missing = sorted(set(expected) - actual)
+    if missing:
+        raise RuntimeError(f"manifested prepared input files are missing: {missing}")
+
+
+def test_config_hashes_unchanged(provenance: dict[str, Any]) -> bool:
+    """Train XML may change as the learned output; Test XML must remain fixed."""
+    before = provenance.get("config_sha256_before") or {}
+    after = provenance.get("config_sha256_after") or {}
+    test_paths = ("Test/Parameters_00.xml", "Test/Model_00.xml")
+    return all(before.get(path) and before.get(path) == after.get(path) for path in test_paths)
+
+
 def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str]:
     """Set only the project-wide logger switch, preserving channel settings."""
     original = project_ini.read_text(encoding="utf-8")
@@ -86,9 +144,11 @@ def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str
     }
 
 
-def make_quiet_debug_input_overlay(input_root: Path, wave: str, case_id: str) -> tuple[Path, dict[str, Any]]:
+def make_quiet_debug_input_overlay(
+    input_root: Path, attempt_dir: Path, wave: str, case_id: str
+) -> tuple[Path, dict[str, Any]]:
     """Copy immutable experiment inputs and disable verbose project log output only."""
-    overlay = run_root() / "runtime-input-overrides" / wave / case_id
+    overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
     overlay.parent.mkdir(parents=True, exist_ok=True)
@@ -304,9 +364,11 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
             if old.get("factors") == {k: v for k, v in spec.items() if k not in ("id", "wave")}:
                 current_matrix_hash = sha256(MANIFEST)
                 if old.get("matrix_definition_sha256") != current_matrix_hash:
-                    old["matrix_definition_sha256"] = current_matrix_hash
-                    old["registry_refreshed_utc"] = datetime.now(timezone.utc).isoformat()
-                    saved.write_text(json.dumps(old, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    raise RuntimeError(
+                        f"matrix definition changed since this input snapshot was prepared: {destination}; "
+                        "use an explicit --refresh only after preserving prior run provenance"
+                    )
+                verify_prepared_input_snapshot(destination, old)
                 return old
             raise RuntimeError(f"config factors changed; use --refresh to regenerate {destination}")
         if not saved.is_file():
@@ -444,6 +506,73 @@ def load_manifest() -> dict[str, Any]:
     return data
 
 
+def load_run_manifest() -> dict[str, Any]:
+    path = run_root() / "run_manifest.json"
+    if not path.is_file():
+        raise RuntimeError(
+            f"run manifest missing at {path}; create or resume the run through run_timelearner_matrix_queue.py"
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def case_attempt_result(
+    case_root: Path,
+    *,
+    case_id: str,
+    run_manifest: dict[str, Any],
+    input_manifest_sha256: str,
+) -> tuple[Path, dict[str, Any]] | None:
+    """Find a completed immutable attempt with matching run and input provenance."""
+    run_id = run_manifest.get("run_id")
+    run_fingerprint = run_manifest.get("run_fingerprint")
+    case_fingerprint = run_manifest.get("case_fingerprints", {}).get(case_id)
+    if not run_id or not run_fingerprint or not case_fingerprint:
+        return None
+    candidates = sorted(
+        (path for path in case_root.glob("attempt-*") if path.is_dir()), reverse=True
+    )
+    for attempt_dir in candidates:
+        result_path = attempt_dir / "matrix_result.json"
+        provenance_path = attempt_dir / "provenance.json"
+        if not result_path.is_file() or not provenance_path.is_file():
+            continue
+        try:
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        run_provenance = result.get("run_provenance") or {}
+        if (
+            result.get("case") != case_id
+            or result.get("matrix_run_id") != run_id
+            or result.get("matrix_run_fingerprint") != run_fingerprint
+            or result.get("case_fingerprint") != case_fingerprint
+            or result.get("matrix_launcher_sha256") != run_manifest.get("launcher_sha256")
+            or result.get("input_manifest_sha256") != input_manifest_sha256
+            or run_provenance.get("binary_sha256") != run_manifest.get("binary_sha256")
+            or run_provenance.get("root_git") != run_manifest.get("root_git")
+            or run_provenance.get("gitlinks") != run_manifest.get("gitlinks")
+            or provenance.get("binary_sha256_at_launch") != run_manifest.get("binary_sha256")
+            or provenance.get("binary_sha256_after") != run_manifest.get("binary_sha256")
+            or provenance.get("root_git") != run_manifest.get("root_git")
+            or provenance.get("root_git_at_launch") != run_manifest.get("root_git")
+            or provenance.get("gitlinks_at_launch") != run_manifest.get("gitlinks")
+            or provenance.get("source_sha256_at_launch") != run_manifest.get("source_sha256")
+            or provenance.get("source_sha256_after") != run_manifest.get("source_sha256")
+            or provenance.get("source_changed_during_run") is not False
+            or provenance.get("binary_changed_during_run") is not False
+            or not test_config_hashes_unchanged(provenance)
+            or run_provenance.get("source_sha256") != run_manifest.get("source_sha256")
+            or run_provenance.get("source_sha256_after") != run_manifest.get("source_sha256")
+            or run_provenance.get("binary_sha256_after") != run_manifest.get("binary_sha256")
+            or run_provenance.get("source_changed_during_run") is not False
+            or run_provenance.get("binary_changed_during_run") is not False
+        ):
+            continue
+        return attempt_dir, result
+    return None
+
+
 def prepare_wave(wave: str, *, refresh: bool = False) -> None:
     pv = load_pv()
     data = load_manifest()
@@ -466,17 +595,37 @@ def worker(
 ) -> int:
     pv = load_pv()
     data = load_manifest()
+    run_manifest = load_run_manifest()
+    if case_id not in run_manifest.get("selected_cases", run_manifest.get("case_ids", [])):
+        raise RuntimeError(f"case {case_id} is not part of run fingerprint {run_manifest.get('run_fingerprint')}")
     spec = next((c for c in data["cases"] if c["wave"] == wave and c["id"] == case_id), None)
     if spec is None:
         raise ValueError(f"unknown case {wave}/{case_id}")
     input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
     if not input_root.is_dir():
         raise FileNotFoundError(f"input snapshot missing; run --prepare {wave}: {input_root}")
+    input_manifest_path = input_root / "matrix_input_manifest.json"
+    input_manifest = json.loads(input_manifest_path.read_text(encoding="utf-8"))
+    verify_prepared_input_snapshot(input_root, input_manifest)
+    expected_input_sha = run_manifest.get("input_manifest_sha256", {}).get(case_id)
+    if not expected_input_sha or sha256(input_manifest_path) != expected_input_sha:
+        raise RuntimeError(f"prepared input manifest no longer matches the run fingerprint: {input_manifest_path}")
+    if os.environ.get("TIMELEARNER_MATRIX_QUEUE_LOCKED") != "1":
+        raise RuntimeError("direct worker launches are disabled; start cases through run_timelearner_matrix_queue.py")
+    attempt_value = os.environ.get("TIMELEARNER_MATRIX_ATTEMPT_DIR", "").strip()
+    if not attempt_value:
+        raise RuntimeError("worker requires an attempt directory allocated by the queue")
+    attempt_dir = Path(attempt_value).resolve()
+    expected_case_root = (run_root() / wave / case_id).resolve()
+    if attempt_dir.parent != expected_case_root or not attempt_dir.name.startswith("attempt-"):
+        raise RuntimeError(f"attempt directory is outside the expected case namespace: {attempt_dir}")
+    if not attempt_dir.is_dir() or any(attempt_dir.iterdir()):
+        raise FileExistsError(f"attempt directory must be new and empty: {attempt_dir}")
     runtime_input_root = input_root
     runtime_input_overrides = None
     if quiet_debug_logs:
         runtime_input_root, runtime_input_overrides = make_quiet_debug_input_overlay(
-            input_root, wave, case_id
+            input_root, attempt_dir, wave, case_id
         )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
@@ -502,10 +651,7 @@ def worker(
         pv.CASES[internal_id] = {**pv.CASES[internal_id], **worker_config}
     else:
         pv.CASES[internal_id] = worker_config
-    result_dir = run_root() / wave
-    result_dir.mkdir(parents=True, exist_ok=True)
-    run_dir = result_dir / case_id
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_dir = attempt_dir
     result = pv.run_case(
         internal_id,
         run_dir=run_dir,
@@ -519,6 +665,10 @@ def worker(
     result["matrix_factors"] = {k: v for k, v in spec.items() if k not in ("id",)}
     result["input_manifest"] = str(input_root / "matrix_input_manifest.json")
     result["matrix_run_id"] = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
+    result["matrix_run_fingerprint"] = run_manifest["run_fingerprint"]
+    result["matrix_launcher_sha256"] = run_manifest.get("launcher_sha256")
+    result["case_fingerprint"] = run_manifest["case_fingerprints"][case_id]
+    result["attempt_id"] = attempt_dir.name
     result["input_manifest_sha256"] = sha256(input_root / "matrix_input_manifest.json")
     result["runtime_input_overrides"] = runtime_input_overrides
     result["runtime_execution_options"] = {
@@ -536,18 +686,27 @@ def worker(
         key: provenance.get(key)
         for key in (
             "root_git",
+            "root_git_at_launch",
             "gitlinks",
+            "gitlinks_at_launch",
             "binary_sha256",
+            "binary_sha256_at_launch",
+            "binary_sha256_after",
             "source_sha256",
+            "source_sha256_at_launch",
             "source_sha256_after",
+            "source_changed_during_run",
+            "binary_changed_during_run",
+            "training_config_changed_during_run",
             "config_sha256",
+            "config_sha256_before",
             "config_sha256_after",
             "inputs_mutated_during_run",
             "train_t_effective",
         )
     }
     result_path = run_dir / "matrix_result.json"
-    result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(result_path, result, replace=False)
     # A completed experiment writes its outcome regardless of learned quality.
     # The wave runner separately stops on non-convergence or broken evaluation.
     return 0
@@ -557,6 +716,7 @@ def run_wave(
     wave: str,
     jobs: int,
     *,
+    case_ids: list[str] | None = None,
     quiet_debug_logs: bool = False,
     max_polls: int | None = None,
 ) -> int:
@@ -564,42 +724,86 @@ def run_wave(
         raise ValueError("--jobs must be between 1 and 8 for this campaign")
     data = load_manifest()
     specs = [case for case in data["cases"] if case["wave"] == wave]
+    if case_ids is not None:
+        requested = set(case_ids)
+        unknown = sorted(requested - {case["id"] for case in specs})
+        if unknown:
+            raise ValueError(f"unknown cases for {wave}: {unknown}")
+        specs = [case for case in specs if case["id"] in requested]
     if not specs:
         raise ValueError(f"no cases in manifest for {wave}")
     missing = [s["id"] for s in specs if not (BASE / "TimeLearnerMatrix" / wave / "inputs" / s["id"]).is_dir()]
     if missing:
         raise FileNotFoundError(f"inputs not prepared: {missing}; run --prepare {wave}")
-    run_dir = run_root() / wave
-    run_dir.mkdir(parents=True, exist_ok=True)
-    status_path = run_dir / "wave_status.json"
+    run_manifest = load_run_manifest()
+    manifest_cases = set(run_manifest.get("selected_cases", run_manifest.get("case_ids", [])))
+    requested_cases = {case["id"] for case in specs}
+    if requested_cases != manifest_cases:
+        raise RuntimeError(
+            "selected cases do not match the immutable run manifest; invoke the queue with the original case selection"
+        )
+    input_manifest_shas: dict[str, str] = {}
+    for spec in specs:
+        case_id = spec["id"]
+        input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
+        input_manifest_path = input_root / "matrix_input_manifest.json"
+        input_manifest = json.loads(input_manifest_path.read_text(encoding="utf-8"))
+        verify_prepared_input_snapshot(input_root, input_manifest)
+        input_manifest_shas[case_id] = sha256(input_manifest_path)
+        if input_manifest_shas[case_id] != run_manifest.get("input_manifest_sha256", {}).get(case_id):
+            raise RuntimeError(f"prepared input manifest changed after run fingerprinting: {input_manifest_path}")
+    wave_dir = run_root() / wave
+    wave_dir.mkdir(parents=True, exist_ok=True)
+    status_path = wave_dir / "wave_status.json"
     status = {
         "wave": wave,
         "jobs": jobs,
         "quiet_debug_logs": quiet_debug_logs,
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
+        "selected_cases": [case["id"] for case in specs],
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "cases": {},
     }
+    attempt_dirs: dict[str, Path] = {}
     for spec in specs:
         case_id = spec["id"]
-        saved_result = run_dir / case_id / "matrix_result.json"
-        status["cases"][case_id] = (
-            {"status": "completed", "result_file": str(saved_result.relative_to(BASE)), "resumed": True}
-            if saved_result.is_file()
-            else {"status": "queued"}
+        input_manifest_sha256 = input_manifest_shas[case_id]
+        case_root = wave_dir / case_id
+        saved = case_attempt_result(
+            case_root,
+            case_id=case_id,
+            run_manifest=run_manifest,
+            input_manifest_sha256=input_manifest_sha256,
         )
-    status_path.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+        if saved:
+            saved_dir, _ = saved
+            status["cases"][case_id] = {
+                "status": "completed",
+                "result_file": str((saved_dir / "matrix_result.json").relative_to(BASE)),
+                "attempt_id": saved_dir.name,
+                "resumed": True,
+            }
+        else:
+            attempt_id, attempt_dir = allocate_case_attempt(case_root)
+            attempt_dirs[case_id] = attempt_dir
+            status["cases"][case_id] = {"status": "queued", "attempt_id": attempt_id}
+    atomic_write_json(status_path, status)
 
     def launch(spec: dict[str, Any]) -> tuple[str, int]:
         case_id = spec["id"]
-        log_path = run_dir / f"{case_id}.log"
+        attempt_dir = attempt_dirs[case_id]
+        log_path = attempt_dir / "worker.log"
         command = [sys.executable, "-u", str(Path(__file__).resolve()), "--worker", wave, case_id]
         if quiet_debug_logs:
             command.append("--quiet-debug-logs")
         if max_polls is not None:
             command.extend(("--max-polls", str(max_polls)))
-        env = {**os.environ, "PYTHONUNBUFFERED": "1"}
+        env = {
+            **os.environ,
+            "PYTHONUNBUFFERED": "1",
+            "TIMELEARNER_MATRIX_ATTEMPT_DIR": str(attempt_dir),
+        }
         with log_path.open("w", encoding="utf-8") as log:
             proc = subprocess.run(
                 command, cwd=BASE, stdout=log, stderr=subprocess.STDOUT, text=True, env=env
@@ -607,27 +811,97 @@ def run_wave(
         return case_id, int(proc.returncode)
 
     rc = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, min(jobs, len(specs)))) as pool:
-        pending = [spec for spec in specs if not (run_dir / spec["id"] / "matrix_result.json").is_file()]
-        futures = {pool.submit(launch, spec): spec["id"] for spec in pending}
-        for future in concurrent.futures.as_completed(futures):
-            case_id, code = future.result()
-            result_file = run_dir / case_id / "matrix_result.json"
-            has_result = result_file.is_file()
-            status["cases"][case_id] = {
-                "status": "completed" if has_result else "worker_infrastructure_error",
-                "worker_exit_code": code,
-                "result_file": str(result_file.relative_to(BASE)) if has_result else None,
-                "log_file": str((run_dir / f"{case_id}.log").relative_to(BASE)),
-                "finished_utc": datetime.now(timezone.utc).isoformat(),
-            }
-            status_path.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
-            print(f"{case_id}: worker_exit={code}")
-            if not has_result:
-                rc = 2
+    pending_specs = [spec for spec in specs if spec["id"] in attempt_dirs]
+    max_total = max(1, logical_cpu_count() - 1)
+    worker_cap = max(1, min(jobs, len(pending_specs), max_total))
+    baseline_console_pids = active_console_pids()
+    cpu_sampler = CpuLoadSampler()
+    throttled = False
+    low_load_samples = 0
+    cpu_samples: list[float] = []
+    pending_index = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=worker_cap) as pool:
+        futures: dict[concurrent.futures.Future, str] = {}
+        while pending_index < len(pending_specs) or futures:
+            cpu = cpu_sampler.sample()
+            if cpu is not None:
+                cpu_samples.append(cpu)
+                if cpu > 85.0:
+                    throttled = True
+                    low_load_samples = 0
+                elif throttled and cpu < 70.0:
+                    low_load_samples += 1
+                    if low_load_samples >= 2:
+                        throttled = False
+                        low_load_samples = 0
+                elif throttled:
+                    low_load_samples = 0
+            active_now = active_console_count()
+            baseline_alive = len(baseline_console_pids.intersection(active_console_pids()))
+            estimated_occupied = max(active_now, baseline_alive + len(futures))
+            available = max(0, max_total - estimated_occupied)
+            can_launch = 0 if throttled else min(
+                available,
+                worker_cap - len(futures),
+                len(pending_specs) - pending_index,
+            )
+            for _ in range(can_launch):
+                spec = pending_specs[pending_index]
+                pending_index += 1
+                future = pool.submit(launch, spec)
+                futures[future] = spec["id"]
+                status["cases"][spec["id"]] = {
+                    "status": "running",
+                    "attempt_id": attempt_dirs[spec["id"]].name,
+                    "started_utc": datetime.now(timezone.utc).isoformat(),
+                    "active_console_count_at_dispatch": active_now,
+                    "cpu_percent_at_dispatch": cpu,
+                }
+                atomic_write_json(status_path, status)
+            if not futures:
+                time.sleep(2 if throttled or available == 0 else 0.25)
+                continue
+            done, _ = concurrent.futures.wait(
+                futures,
+                timeout=2.0,
+                return_when=concurrent.futures.FIRST_COMPLETED,
+            )
+            for future in done:
+                case_id = futures.pop(future)
+                code_case, code = future.result()
+                attempt_dir = attempt_dirs[case_id]
+                result_file = attempt_dir / "matrix_result.json"
+                has_result = case_attempt_result(
+                    attempt_dir.parent,
+                    case_id=case_id,
+                    run_manifest=run_manifest,
+                    input_manifest_sha256=sha256(
+                        BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id / "matrix_input_manifest.json"
+                    ),
+                ) is not None
+                status["cases"][case_id] = {
+                    "status": "completed" if has_result else "worker_infrastructure_error",
+                    "worker_exit_code": code,
+                    "result_file": str(result_file.relative_to(BASE)) if has_result else None,
+                    "log_file": str((attempt_dir / "worker.log").relative_to(BASE)),
+                    "attempt_id": attempt_dir.name,
+                    "finished_utc": datetime.now(timezone.utc).isoformat(),
+                }
+                atomic_write_json(status_path, status)
+                print(f"{code_case}: worker_exit={code} valid_result={has_result}")
+                if not has_result:
+                    rc = 2
     status["finished_utc"] = datetime.now(timezone.utc).isoformat()
     all_results = all(
-        (run_dir / spec["id"] / "matrix_result.json").is_file() for spec in specs
+        case_attempt_result(
+            wave_dir / spec["id"],
+            case_id=spec["id"],
+            run_manifest=run_manifest,
+            input_manifest_sha256=sha256(
+                BASE / "TimeLearnerMatrix" / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
+            ),
+        ) is not None
+        for spec in specs
     )
     training_stops = 0
     evaluation_errors = 0
@@ -635,7 +909,17 @@ def run_wave(
     if all_results:
         for spec in specs:
             try:
-                result = json.loads((run_dir / spec["id"] / "matrix_result.json").read_text(encoding="utf-8"))
+                saved = case_attempt_result(
+                    wave_dir / spec["id"],
+                    case_id=spec["id"],
+                    run_manifest=run_manifest,
+                    input_manifest_sha256=sha256(
+                        BASE / "TimeLearnerMatrix" / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
+                    ),
+                )
+                if saved is None:
+                    raise FileNotFoundError(f"no valid completed attempt for {spec['id']}")
+                result = saved[1]
             except (OSError, json.JSONDecodeError):
                 rc = 2
                 all_results = False
@@ -664,12 +948,17 @@ def run_wave(
                 # to suppress later matrix cells.
                 quality_failures += 1
     status["case_data_failures"] = training_stops + evaluation_errors + quality_failures
+    status["process_limit"] = max_total
+    status["requested_jobs"] = jobs
+    status["existing_console_count_at_start"] = len(baseline_console_pids)
+    status["cpu_percent_samples"] = cpu_samples
+    status["cpu_throttle_applied"] = any(value > 85.0 for value in cpu_samples)
     status["training_stop_cases"] = training_stops
     status["evaluation_error_cases"] = evaluation_errors
     status["quality_failure_cases"] = quality_failures
     status["run_complete"] = all_results
     status["stop_before_next_wave"] = bool(rc == 2 or training_stops or evaluation_errors)
-    status_path.write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+    atomic_write_json(status_path, status)
     if rc == 2 or not all_results:
         return 2
     if evaluation_errors:
@@ -682,7 +971,8 @@ def main() -> int:
     parser.add_argument("wave", nargs="?")
     parser.add_argument("--prepare", metavar="WAVE", help="prepare immutable input snapshots for a wave")
     parser.add_argument("--run", metavar="WAVE", help="run a prepared wave")
-    parser.add_argument("--case", nargs=2, metavar=("WAVE", "CASE"), help="run one prepared case")
+    parser.add_argument("--case", nargs=2, metavar=("WAVE", "CASE"), help=argparse.SUPPRESS)
+    parser.add_argument("--case-ids", nargs="+", help=argparse.SUPPRESS)
     parser.add_argument("--jobs", type=int, default=8)
     parser.add_argument(
         "--quiet-debug-logs",
@@ -704,18 +994,22 @@ def main() -> int:
             max_polls=args.max_polls,
         )
     if args.case:
-        return worker(
-            *args.case,
-            quiet_debug_logs=args.quiet_debug_logs,
-            max_polls=args.max_polls,
-        )
+        raise SystemExit("direct single-case launches are disabled; use run_timelearner_matrix_queue.py --case CASE --no-commit")
     if args.prepare:
-        prepare_wave(args.prepare, refresh=args.refresh)
+        if os.environ.get("TIMELEARNER_MATRIX_QUEUE_LOCKED") == "1":
+            prepare_wave(args.prepare, refresh=args.refresh)
+        else:
+            queue_lock = BASE / "_repro" / ".timelearner_matrix_queue.lock"
+            with exclusive_file_lock(queue_lock, purpose=f"prepare matrix inputs {args.prepare}"):
+                prepare_wave(args.prepare, refresh=args.refresh)
         return 0
     if args.run:
+        if os.environ.get("TIMELEARNER_MATRIX_QUEUE_LOCKED") != "1":
+            raise SystemExit("direct matrix launches are disabled; use run_timelearner_matrix_queue.py")
         return run_wave(
             args.run,
             args.jobs,
+            case_ids=args.case_ids,
             quiet_debug_logs=args.quiet_debug_logs,
             max_polls=args.max_polls,
         )

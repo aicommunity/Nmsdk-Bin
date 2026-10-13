@@ -20,6 +20,7 @@ import os
 import subprocess
 import sys
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -83,18 +84,17 @@ def release_lock() -> None:
 
 
 def make_run_id(prefix: str) -> str:
-    return f"{prefix}-{utc_stamp()}-{os.getpid()}"
+    return f"{prefix}-{utc_stamp()}-{os.getpid()}-{uuid.uuid4().hex[:8]}"
 
 
 def wave_done_locally(wave: str) -> bool:
-    p = BASE / "TimeLearnerMatrix" / wave / "results.json"
-    if not p.is_file():
-        return False
-    try:
-        data = json.loads(p.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return False
-    return bool(data.get("run_complete")) and bool(data.get("cases"))
+    cp = subprocess.run(
+        [sys.executable, str(QUEUE), "--check-completed", wave],
+        cwd=str(BASE), text=True, capture_output=True, check=False,
+    )
+    if cp.stdout.strip():
+        log(f"PROVENANCE CHECK {wave}: {cp.stdout.strip()}")
+    return cp.returncode == 0
 
 
 def run_local_wave(wave: str, jobs: int) -> int:
@@ -163,8 +163,6 @@ def remote_run_wave(wave: str, jobs: int) -> tuple[int, str]:
     remote_cmd = (
         "set -e; cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain; "
         f"export TIMELEARNER_MATRIX_RUN_ID={run_id}; "
-        "git -C /home/user/Nmsdk/Bin diff --cached --quiet || git -C /home/user/Nmsdk/Bin reset HEAD; "
-        "git -C /home/user/Nmsdk diff --cached --quiet || git -C /home/user/Nmsdk reset HEAD; "
         f"python3 -u scripts/run_timelearner_matrix_queue.py --run-id {run_id} "
         f"--waves {wave} --jobs {jobs} --no-commit; "
         f"echo QUEUE_RC=$?; echo RUN_ID={run_id}; "
@@ -179,7 +177,8 @@ def ingest_remote_wave(wave: str, run_id: str) -> int:
     host = os.environ.get("TIMELEARNER_MATRIX_SSH", "user@10.245.1.17")
     src = f"{host}:/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/{run_id}/"
     dst = RUNS_BASE / run_id
-    dst.mkdir(parents=True, exist_ok=True)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.mkdir(exist_ok=False)
     log(f"RSYNC {run_id} → local")
     run(rsync_base() + [src, str(dst) + "/"], check=True)
     env = os.environ.copy()
@@ -192,6 +191,9 @@ def ingest_remote_wave(wave: str, run_id: str) -> int:
              "Configs/SpikeSamples/StructTrain/SUCCESSFUL_EXPERIMENTS.md",
              f"Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/{wave}/results.json"],
             cwd=BIN_ROOT)
+        snapshot_files = sorted((BASE / "TimeLearnerMatrix" / wave / "run_results").glob(f"{run_id}-*.json"))
+        if snapshot_files:
+            run(["git", "add", "--", *[str(path.relative_to(BIN_ROOT)) for path in snapshot_files]], cwd=BIN_ROOT)
         msg = f"research(TimeLearner): record {wave} results (host=17)"
         run(["git", "commit", "-m", msg], cwd=BIN_ROOT, check=False)
         run(["git", "add", "Bin",
@@ -203,15 +205,11 @@ def ingest_remote_wave(wave: str, run_id: str) -> int:
     finally:
         release_lock()
     _push_after_commit()
-    # archive on .17 Data + purge remote active run
+    # Archive the remote copy after ingestion; preserve the working run directory.
     arch = (
-        f"mkdir -p {ARCHIVE_17} && "
+        f"mkdir -p {ARCHIVE_17} && test ! -e {ARCHIVE_17}/{run_id} && "
         f"rsync -a /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/{run_id}/ "
-        f"{ARCHIVE_17}/{run_id}/ && "
-        f"rm -rf /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/{run_id} && "
-        "git -C /home/user/Nmsdk/Bin checkout -- Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/*/inputs 2>/dev/null || true; "
-        "git -C /home/user/Nmsdk pull --ff-only origin codex/timelearner-audit-followup-20261010 || true; "
-        "git -C /home/user/Nmsdk/Bin pull --ff-only origin codex/timelearner-audit-followup-20261010 || true"
+        f"{ARCHIVE_17}/{run_id}/"
     )
     run(ssh_base() + [arch], check=False)
     log(f"INGESTED {wave} {run_id}")
@@ -290,6 +288,7 @@ def run_local_role(jobs: int, remote_waves: list[str], local_waves: list[str]) -
             remote_cmd = (
                 "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain && "
                 f"export TIMELEARNER_MATRIX_RUN_ID={run_id} && "
+                f"test ! -e _repro/TimeLearnerMatrixRuns/{run_id} && "
                 f"nohup python3 -u scripts/run_timelearner_matrix_queue.py "
                 f"--run-id {run_id} --waves {wave} --jobs {jobs} --no-commit "
                 f"> _repro/TimeLearnerMatrixRuns/{run_id}.campaign.log 2>&1 & "

@@ -42,6 +42,25 @@ class QuietDebugLoggingTests(unittest.TestCase):
 
 
 class RunProvenanceTests(unittest.TestCase):
+    def test_expected_train_output_change_is_allowed_but_test_input_change_is_not(self):
+        provenance = {
+            "config_sha256_before": {
+                "Train/Parameters_00.xml": "train-before",
+                "Train/Model_00.xml": "model-before",
+                "Test/Parameters_00.xml": "test-params",
+                "Test/Model_00.xml": "test-model",
+            },
+            "config_sha256_after": {
+                "Train/Parameters_00.xml": "train-after",
+                "Train/Model_00.xml": "model-after",
+                "Test/Parameters_00.xml": "test-params",
+                "Test/Model_00.xml": "test-model",
+            },
+        }
+        self.assertTrue(MODULE.test_config_hashes_unchanged(provenance))
+        provenance["config_sha256_after"]["Test/Model_00.xml"] = "changed-test-model"
+        self.assertFalse(MODULE.test_config_hashes_unchanged(provenance))
+
     def test_launch_hashes_detect_source_or_binary_changes(self):
         before = {
             "source_sha256_at_launch": {"trainer.cpp": "source-a"},

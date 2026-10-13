@@ -5,9 +5,13 @@ import argparse
 import json
 import os
 import re
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+from matrix_run_safety import atomic_write_json, exclusive_file_lock, sha256_file
+from timelearner_matrix import case_attempt_result
 
 BASE = Path(__file__).resolve().parents[1]
 ROOT = BASE.parents[2].parent
@@ -37,6 +41,57 @@ def load_json(path: Path) -> dict[str, Any] | None:
         return None
 
 
+def append_wave_snapshot(wave_dir: Path, snapshot: dict[str, Any]) -> Path:
+    """Persist one immutable run snapshot and atomically advance the compatibility index."""
+    snapshots_dir = wave_dir / "run_results"
+    snapshots_dir.mkdir(parents=True, exist_ok=True)
+    run_id = str(snapshot["run_id"])
+    snapshot_name = (
+        f"{run_id}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}-{uuid.uuid4().hex[:8]}.json"
+    )
+    target = snapshots_dir / snapshot_name
+    index_path = wave_dir / "results.json"
+    with exclusive_file_lock(
+        wave_dir / ".results-index.lock",
+        purpose=f"update {wave_dir.name} results index",
+        wait_timeout_s=60.0,
+    ):
+        previous = load_json(index_path) or {}
+        history = list(previous.get("runs", []))
+        existing = []
+        for candidate in sorted(snapshots_dir.glob("*.json")):
+            data = load_json(candidate)
+            if isinstance(data, dict) and str(data.get("run_id")) == run_id:
+                existing.append((candidate, data))
+        if existing:
+            immutable_view = {key: value for key, value in snapshot.items() if key != "updated_utc"}
+            for candidate, old in existing:
+                old_view = {key: value for key, value in old.items() if key != "updated_utc"}
+                if old_view == immutable_view:
+                    target = candidate
+                    break
+            else:
+                raise RuntimeError(
+                    f"RUN_ID {run_id} already has an immutable result snapshot with different contents"
+                )
+        else:
+            atomic_write_json(target, snapshot, replace=False)
+        entry = {
+            "run_id": run_id,
+            "run_fingerprint": snapshot.get("run_fingerprint"),
+            "snapshot": str(target.relative_to(wave_dir)).replace(os.sep, "/"),
+            "run_complete": bool(snapshot.get("run_complete")),
+            "updated_utc": snapshot.get("updated_utc"),
+        }
+        if not any(
+            item.get("run_id") == run_id and item.get("snapshot") == entry["snapshot"]
+            for item in history
+        ):
+            history.append(entry)
+        atomic_write_json(index_path, {**snapshot, "runs": history})
+    return target
+
+
 def md(value: Any) -> str:
     if value is None or str(value) == "":
         return "—"
@@ -46,11 +101,26 @@ def md(value: Any) -> str:
 def result_rows() -> list[dict[str, Any]]:
     rows = []
     for wave_file in sorted(MATRIX.glob("W*/results.json")):
+        wave = wave_file.parent.name
+        seen: set[tuple[str, str]] = set()
+        snapshots = sorted((wave_file.parent / "run_results").glob("*.json"))
+        for snapshot_file in snapshots:
+            data = load_json(snapshot_file)
+            if not isinstance(data, dict):
+                continue
+            run_id = str(data.get("run_id") or snapshot_file.stem)
+            seen.add((wave, run_id))
+            for case in data.get("cases", []):
+                rows.append({"wave": data.get("wave", wave), "run_id": run_id, **case})
+        # Keep legacy committed results visible, unless that exact RUN_ID has an
+        # immutable snapshot already. The canonical file remains a latest-view
+        # compatibility layer for older scripts and users.
         data = load_json(wave_file)
-        if not isinstance(data, dict):
-            continue
-        for case in data.get("cases", []):
-            rows.append({"wave": data.get("wave", wave_file.parent.name), **case})
+        if isinstance(data, dict):
+            run_id = str(data.get("run_id") or "legacy")
+            if (wave, run_id) not in seen:
+                for case in data.get("cases", []):
+                    rows.append({"wave": data.get("wave", wave), "run_id": run_id, **case})
     return rows
 
 
@@ -60,30 +130,54 @@ def collect_wave(wave: str) -> tuple[dict[str, Any], Path]:
     if not specs:
         raise ValueError(f"wave not in matrix registry: {wave}")
     runs = run_root()
+    run_manifest_path = runs / "run_manifest.json"
+    run_manifest = load_json(run_manifest_path)
+    if not isinstance(run_manifest, dict):
+        raise RuntimeError(f"run manifest missing/invalid: {run_manifest_path}")
+    if run_manifest.get("wave") != wave:
+        raise RuntimeError(f"run manifest wave mismatch: expected {wave}")
     status = load_json(runs / wave / "wave_status.json") or {}
     cases = []
+    selected_cases = set(run_manifest.get("selected_cases", run_manifest.get("case_ids", [])))
+    wave_case_ids = {spec["id"] for spec in specs}
     for spec in specs:
-        path = runs / wave / spec["id"] / "matrix_result.json"
-        row = load_json(path)
+        case_id = spec["id"]
+        row = None
+        attempt_dir = None
+        if case_id in selected_cases:
+            input_manifest = MATRIX / wave / "inputs" / case_id / "matrix_input_manifest.json"
+            if not input_manifest.is_file():
+                raise FileNotFoundError(f"input manifest missing: {input_manifest}")
+            saved = case_attempt_result(
+                runs / wave / case_id,
+                case_id=case_id,
+                run_manifest=run_manifest,
+                input_manifest_sha256=sha256_file(input_manifest),
+            )
+            if saved:
+                attempt_dir, row = saved
         cases.append({
-            "case": spec["id"],
+            "case": case_id,
             "factors": spec,
             "result": row,
-            "infrastructure_status": status.get("cases", {}).get(spec["id"], {}).get("status", "missing"),
+            "attempt_id": attempt_dir.name if attempt_dir else None,
+            "infrastructure_status": (
+                status.get("cases", {}).get(case_id, {}).get("status", "missing")
+                if case_id in selected_cases else "not_selected"
+            ),
         })
     snapshot = {
         "wave": wave,
         "run_id": os.environ.get("TIMELEARNER_MATRIX_RUN_ID"),
+        "run_fingerprint": run_manifest.get("run_fingerprint"),
         "updated_utc": datetime.now(timezone.utc).isoformat(),
         "jobs": status.get("jobs", 8),
         "started_utc": status.get("started_utc"),
         "finished_utc": status.get("finished_utc"),
-        "run_complete": bool(status.get("run_complete")),
+        "run_complete": bool(status.get("run_complete")) and selected_cases == wave_case_ids,
         "cases": cases,
     }
-    target = MATRIX / wave / "results.json"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    target = append_wave_snapshot(MATRIX / wave, snapshot)
     return snapshot, target
 
 
@@ -262,14 +356,15 @@ def update_documents() -> None:
         table = [
             f"### {wave}",
             "",
-            "| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |",
-            "|---|---|---|---|---|---:|---|---|---|",
+            "| Случай | RUN_ID | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |",
+            "|---|---|---|---|---|---:|---|---|---|---|",
         ]
         for item in group:
             result = item.get("result") or {}
             after = result.get("after") or {}
             table.append("| " + " | ".join([
                 md(item["case"]),
+                md(item.get("run_id")),
                 md(result.get("training_convergence", item.get("infrastructure_status"))),
                 md(separation_quality(result)),
                 md(target_detection(result)),

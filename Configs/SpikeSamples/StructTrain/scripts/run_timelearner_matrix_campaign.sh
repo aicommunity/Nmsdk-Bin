@@ -42,9 +42,7 @@ rsync_from_17() {
 
 wave_done() {
   local w=$1
-  local f="$ST/TimeLearnerMatrix/$w/results.json"
-  [[ -f "$f" ]] || return 1
-  python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get('run_complete') and d.get('cases') else 1)" "$f"
+  (cd "$ST" && python3 "$QUEUE" --check-completed "$w" >/dev/null 2>&1)
 }
 
 acquire_lock() {
@@ -83,38 +81,40 @@ PY
 ingest_17() {
   local wave=$1 run_id=$2
   log "INGEST $wave $run_id"
-  mkdir -p "$RUNS/$run_id"
+  if [[ -e "$RUNS/$run_id" ]]; then
+    log "REFUSE ingest: local RUN_ID already exists; preserving both copies"
+    return 2
+  fi
+  mkdir "$RUNS/$run_id"
   rsync_from_17 "$SSH_HOST:$ST/_repro/TimeLearnerMatrixRuns/$run_id/" "$RUNS/$run_id/"
   commit_wave_from_run "$wave" "$run_id" " (host=17)"
-  ssh17 "mkdir -p $ARCHIVE_17 && rsync -a $ST/_repro/TimeLearnerMatrixRuns/$run_id/ $ARCHIVE_17/$run_id/ && rm -rf $ST/_repro/TimeLearnerMatrixRuns/$run_id && (git -C $ROOT/Bin checkout -- Configs/SpikeSamples/StructTrain/TimeLearnerMatrix 2>/dev/null || true) && (git -C $ROOT pull --ff-only origin codex/timelearner-audit-followup-20261010 || true) && (git -C $ROOT/Bin pull --ff-only origin codex/timelearner-audit-followup-20261010 || true)"
+  ssh17 "mkdir -p $ARCHIVE_17 && rsync -a $ST/_repro/TimeLearnerMatrixRuns/$run_id/ $ARCHIVE_17/$run_id/"
   log "INGEST done $wave"
 }
 
 start_remote_wave() {
   local wave=$1
-  remote_run="run-17-$(date -u +%Y%m%dT%H%M%SZ)-$$"
+  remote_run="run-17-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
   remote_wave=$wave
   log "START remote $wave RUN_ID=$remote_run"
   ssh17 "set -e
 cd $ST
-mkdir -p $RUNS/$remote_run
-git -C $ROOT diff --cached --quiet || git -C $ROOT reset HEAD
-git -C $ROOT/Bin diff --cached --quiet || git -C $ROOT/Bin reset HEAD
+test ! -e $RUNS/$remote_run
 nohup bash -c '
   export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$remote_run
   cd $ST
-  python3 -u scripts/run_timelearner_matrix_queue.py --run-id $remote_run --waves $wave --jobs $JOBS --no-commit \
-    > $RUNS/$remote_run/queue.log 2>&1
+  python3 -u scripts/run_timelearner_matrix_queue.py --run-id $remote_run --waves $wave --jobs $JOBS --no-commit
   rc=\$?
+  printf \"%s\\n\" \"\$rc\" > $RUNS/$remote_run.launch.exit
   printf \"%s\\n\" \"\$rc\" > $RUNS/$remote_run/queue.exit
-' >/dev/null 2>&1 &
-echo \$! > $RUNS/$remote_run/campaign.pid
+' > $RUNS/$remote_run.launch.log 2>&1 &
+echo \$! > $RUNS/$remote_run.launch.pid
 "
 }
 
 remote_finished() {
   [[ -n "${remote_run:-}" ]] || return 1
-  ssh17 "test -f $RUNS/$remote_run/queue.exit" >/dev/null 2>&1
+  ssh17 "test -f $RUNS/$remote_run.launch.exit" >/dev/null 2>&1
 }
 
 commit_wave_from_run() {
@@ -130,6 +130,7 @@ commit_wave_from_run() {
     git add -- Configs/SpikeSamples/StructTrain/EXPERIMENTS.md \
       Configs/SpikeSamples/StructTrain/SUCCESSFUL_EXPERIMENTS.md \
       "Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/$wave/results.json"
+    git add -- Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/"$wave"/run_results/"$run_id"-*.json
     if ! git diff --cached --quiet; then
       git commit -m "research(TimeLearner): record $wave results${host_tag}"
     fi
@@ -150,18 +151,20 @@ commit_wave_from_run() {
 
 run_local_wave() {
   local wave=$1
-  local run_id="run-local-$(date -u +%Y%m%dT%H%M%SZ)-$$"
+  local run_id="run-local-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
   log "START local $wave RUN_ID=$run_id"
   # --no-commit avoids ensure_wave_paths_clean failing on dirty Bin gitlink (untracked clutter).
-  mkdir -p "$RUNS/$run_id"
   set +e
   (
     cd "$ST"
     export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$run_id
     python3 -u "$QUEUE" --run-id "$run_id" --waves "$wave" --jobs "$JOBS" --no-commit \
-      > "$RUNS/$run_id/queue.log" 2>&1
+      > "$RUNS/$run_id.launch.log" 2>&1
     rc=$?
-    printf '%s\n' "$rc" > "$RUNS/$run_id/queue.exit"
+    if [[ -d "$RUNS/$run_id" ]]; then
+      printf '%s\n' "$rc" > "$RUNS/$run_id/queue.exit"
+      mv -n "$RUNS/$run_id.launch.log" "$RUNS/$run_id/queue.log"
+    fi
     exit "$rc"
   )
   local rc=$?
@@ -256,10 +259,11 @@ while (( ri < ${#WAVES_17[@]} || li < ${#WAVES_LOCAL[@]} )); do
         sleep 60
       fi
     done
+    ssh17 "if [ -d $RUNS/$remote_run ]; then mv -n $RUNS/$remote_run.launch.log $RUNS/$remote_run/queue.log; fi" || true
     rc_remote=$(ssh17 "cat $RUNS/$remote_run/queue.exit")
     status=$(ssh17 "python3 -c \"import json;print(json.load(open('$RUNS/$remote_run/queue_status.json')).get('status',''))\"" || true)
     log "REMOTE EXIT $remote_wave rc=$rc_remote status=$status"
-    if [[ "$status" == *infrastructure* || "$status" == *incomplete* ]]; then
+    if [[ -z "$status" || "$status" == *infrastructure* || "$status" == *incomplete* ]]; then
       log "INFRA on remote — stop"; save_state "remote_infra_fail"; exit 2
     fi
     ingest_17 "$remote_wave" "$remote_run"
