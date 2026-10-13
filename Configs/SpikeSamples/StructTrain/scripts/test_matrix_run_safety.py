@@ -10,6 +10,7 @@ from pathlib import Path
 from matrix_run_safety import (
     allocate_case_attempt,
     atomic_write_json,
+    cpu_percent_from_counters,
     exclusive_file_lock,
     linux_console_pids,
     reserve_run_root,
@@ -34,6 +35,11 @@ QUEUE_SPEC.loader.exec_module(QUEUE)
 
 
 class RunNamespaceSafetyTests(unittest.TestCase):
+    def test_cpu_percentage_uses_idle_and_total_counter_deltas(self):
+        self.assertEqual(cpu_percent_from_counters((1000, 200), (1100, 250)), 50.0)
+        self.assertEqual(cpu_percent_from_counters((1000, 200), (1100, 100)), 100.0)
+        self.assertIsNone(cpu_percent_from_counters((1000, 200), (1000, 210)))
+
     def test_explicit_parallel_subset_requires_no_commit_and_rejects_bad_ids(self):
         wave = [{"id": "C1"}, {"id": "C2"}, {"id": "C3"}]
         selected, partial = QUEUE.select_wave_cases(wave, ["C1", "C3"], no_commit=True)

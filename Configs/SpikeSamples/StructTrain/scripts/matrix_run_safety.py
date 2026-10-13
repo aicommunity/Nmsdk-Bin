@@ -3,52 +3,81 @@ from __future__ import annotations
 
 import hashlib
 import csv
+import ctypes
 import json
 import os
 import socket
 import subprocess
 import tempfile
 import time
+from ctypes import wintypes
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
 
 class CpuLoadSampler:
-    """Best-effort instantaneous CPU utilization using OS counters, no dependencies."""
+    """Best-effort host CPU utilization using native counters, without subprocesses."""
 
     def __init__(self) -> None:
         self.previous: tuple[int, int] | None = None
 
     def sample(self) -> float | None:
         if os.name == "nt":
-            command = [
-                "powershell", "-NoProfile", "-NonInteractive", "-Command",
-                "(Get-CimInstance Win32_PerfFormattedData_PerfOS_Processor -Filter \"Name='_Total'\").PercentProcessorTime",
-            ]
-            try:
-                value = subprocess.check_output(command, text=True, timeout=4).strip()
-                return float(value) if value else None
-            except (OSError, subprocess.SubprocessError, ValueError):
+            counters = windows_cpu_counters()
+            if counters is None:
                 return None
+            return self._sample_delta(counters)
         try:
             line = Path("/proc/stat").read_text(encoding="ascii").splitlines()[0]
             fields = [int(value) for value in line.split()[1:]]
-            total = sum(fields)
-            idle = fields[3] + (fields[4] if len(fields) > 4 else 0)
+            current = (sum(fields), fields[3] + (fields[4] if len(fields) > 4 else 0))
         except (OSError, IndexError, ValueError):
             return None
-        current = (total, idle)
+        return self._sample_delta(current)
+
+    def _sample_delta(self, current: tuple[int, int]) -> float | None:
         previous = self.previous
         self.previous = current
         if previous is None:
             time.sleep(0.2)
             return self.sample()
-        total_delta = total - previous[0]
-        idle_delta = idle - previous[1]
-        if total_delta <= 0:
+        return cpu_percent_from_counters(previous, current)
+
+
+def windows_cpu_counters() -> tuple[int, int] | None:
+    """Return total and idle 100-ns ticks from GetSystemTimes on Windows."""
+    class FILETIME(ctypes.Structure):
+        _fields_ = (("dwLowDateTime", wintypes.DWORD), ("dwHighDateTime", wintypes.DWORD))
+
+    try:
+        get_system_times = ctypes.WinDLL("kernel32", use_last_error=True).GetSystemTimes
+        get_system_times.argtypes = (
+            ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME)
+        )
+        get_system_times.restype = wintypes.BOOL
+        idle, kernel, user = FILETIME(), FILETIME(), FILETIME()
+        if not get_system_times(ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user)):
             return None
-        return max(0.0, min(100.0, 100.0 * (total_delta - idle_delta) / total_delta))
+
+        def ticks(value: FILETIME) -> int:
+            return (int(value.dwHighDateTime) << 32) | int(value.dwLowDateTime)
+
+        idle_ticks = ticks(idle)
+        return ticks(kernel) + ticks(user), idle_ticks
+    except (AttributeError, OSError, TypeError):
+        return None
+
+
+def cpu_percent_from_counters(
+    previous: tuple[int, int], current: tuple[int, int]
+) -> float | None:
+    """Convert (total,idle) counter deltas into a bounded CPU percentage."""
+    total_delta = current[0] - previous[0]
+    idle_delta = current[1] - previous[1]
+    if total_delta <= 0:
+        return None
+    return max(0.0, min(100.0, 100.0 * (total_delta - idle_delta) / total_delta))
 
 
 def logical_cpu_count() -> int:
