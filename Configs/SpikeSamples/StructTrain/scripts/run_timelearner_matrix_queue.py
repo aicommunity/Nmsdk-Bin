@@ -135,6 +135,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "quiet_debug_logs": bool(args.quiet_debug_logs),
         "max_polls": args.max_polls,
         "branch_gamma_mode": args.branch_gamma_mode,
+        "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
     }
     case_fingerprints = {}
@@ -185,6 +186,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "quiet_debug_logs": bool(args.quiet_debug_logs),
             "max_polls": args.max_polls,
             "branch_gamma_mode": args.branch_gamma_mode,
+            "branch_rs_rm_limit": args.branch_rs_rm_limit,
             "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
             "no_commit": bool(args.no_commit),
         },
@@ -268,6 +270,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "quiet_debug_logs": (result.get("runtime_execution_options") or {}).get("quiet_debug_logs"),
                         "max_polls": (result.get("runtime_execution_options") or {}).get("max_polls"),
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
+                        "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
                         "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
                             "train_time_limit_override_seconds"
                         ),
@@ -444,6 +447,11 @@ def main() -> int:
         choices=("shared-auto", "per-input-auto", "shared-fixed-005"),
         help="diagnostic Train-only Branch gamma mode applied to an attempt-local input overlay",
     )
+    parser.add_argument(
+        "--branch-rs-rm-limit",
+        type=float,
+        help="diagnostic Branch parametric-training Rs/Rm limit; derives bounds from membrane R on an attempt-local input overlay",
+    )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
         "--train-time-limit-override-seconds",
@@ -471,6 +479,10 @@ def main() -> int:
         or args.train_time_limit_override_seconds <= 0
     ):
         raise SystemExit("--train-time-limit-override-seconds must be finite and positive")
+    if args.branch_rs_rm_limit is not None and (
+        not math.isfinite(args.branch_rs_rm_limit) or args.branch_rs_rm_limit < 1.0
+    ):
+        raise SystemExit("--branch-rs-rm-limit must be finite and >= 1")
     if args.resume and not args.run_id:
         raise SystemExit("--resume requires an explicit --run-id")
     if args.resume and args.allow_repeat:
@@ -497,6 +509,12 @@ def main() -> int:
         case.get("trainer") != "NNeuronTimeLearnerBranch" for case in specs
     ):
         raise SystemExit("--branch-gamma-mode requires Branch-only case selection")
+    if args.branch_rs_rm_limit is not None and any(
+        case.get("trainer") != "NNeuronTimeLearnerBranch"
+        or int(case.get("normalization_mode", 0)) != 1
+        for case in specs
+    ):
+        raise SystemExit("--branch-rs-rm-limit requires parametric Branch-only cases")
     selected_ids = [case["id"] for case in specs]
     if args.resume:
         # Explicit, exact-resume is checked after preparation so the input hashes are fresh.

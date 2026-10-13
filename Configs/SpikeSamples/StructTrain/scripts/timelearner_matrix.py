@@ -252,16 +252,24 @@ def make_quiet_debug_input_overlay(
     return make_runtime_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
+        branch_rs_rm_limit=None,
     )
 
 
-def _set_or_insert_runtime_tag(text: str, tag: str, value: str, after_tag: str) -> str:
+def _set_or_insert_runtime_tag(
+    text: str,
+    tag: str,
+    value: str,
+    after_tag: str,
+    *,
+    value_type: str = "b",
+) -> str:
     if not tag_values(text, tag):
         from repro_cold_lib import ensure_tag_after
 
         text = ensure_tag_after(
             text, after_tag, tag, value,
-            attrs=' Type="b" PType="257" IoType="17"',
+            attrs=f' Type="{value_type}" PType="257" IoType="17"',
         )
         if not tag_values(text, tag):
             raise ValueError(f"cannot insert runtime parameter {tag} after {after_tag}")
@@ -276,8 +284,13 @@ def make_runtime_input_overlay(
     *,
     quiet_debug_logs: bool,
     branch_gamma_mode: str | None,
+    branch_rs_rm_limit: float | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Create an attempt-local input copy with recorded diagnostic overrides."""
+    if branch_rs_rm_limit is not None and (
+        not math.isfinite(branch_rs_rm_limit) or branch_rs_rm_limit < 1.0
+    ):
+        raise ValueError("Branch Rs/Rm limit must be finite and >= 1")
     overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
@@ -328,12 +341,37 @@ def make_runtime_input_overlay(
                     "UsePerInputAttenuationGamma": per_input,
                 },
             })
+    if branch_rs_rm_limit is not None:
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = _set_or_insert_runtime_tag(
+                original,
+                "MaxSynapseToMembraneResistanceRatio",
+                format(branch_rs_rm_limit, ".17g"),
+                "ResistanceMax",
+                value_type="d",
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "MaxSynapseToMembraneResistanceRatio": format(branch_rs_rm_limit, ".17g"),
+                },
+            })
     record = {
         "mode": "runtime_input_overlay",
         "source_input": str(input_root),
         "source_matrix_manifest_sha256": sha256(input_root / "matrix_input_manifest.json"),
         "quiet_debug_logs": quiet_debug_logs,
         "branch_gamma_mode": branch_gamma_mode,
+        "branch_rs_rm_limit": branch_rs_rm_limit,
         "overrides": changed,
         "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged.",
     }
@@ -813,13 +851,20 @@ def worker(
     runtime_input_root = input_root
     runtime_input_overrides = None
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
+    branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
         raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
-    if quiet_debug_logs or branch_gamma_mode is not None:
+    if branch_rs_rm_limit is not None and (
+        spec.get("trainer") != "NNeuronTimeLearnerBranch"
+        or int(spec.get("normalization_mode", 0)) != 1
+    ):
+        raise ValueError("Branch Rs/Rm diagnostic limits require parametric Branch cases")
+    if quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None:
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
             input_root, attempt_dir, wave, case_id,
             quiet_debug_logs=quiet_debug_logs,
             branch_gamma_mode=branch_gamma_mode,
+            branch_rs_rm_limit=branch_rs_rm_limit,
         )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
@@ -870,6 +915,7 @@ def worker(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": branch_gamma_mode,
+        "branch_rs_rm_limit": branch_rs_rm_limit,
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
@@ -965,6 +1011,7 @@ def run_wave(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
+        "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),

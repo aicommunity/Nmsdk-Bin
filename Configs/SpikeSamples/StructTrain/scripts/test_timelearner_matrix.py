@@ -138,6 +138,55 @@ class RuntimeBranchGammaOverlayTests(unittest.TestCase):
             self.assertIn(">0</UsePerInputAttenuationGamma>", xml)
 
 
+class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
+    def test_rs_rm_limit_overlay_is_isolated_and_train_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            xml = '<Params><ResistanceMax Type="d">100000000000</ResistanceMax></Params>'
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                (source / "Train" / filename).write_text(xml, encoding="utf-8")
+            (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
+            attempt = base / "runs" / "r3" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W04", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                branch_rs_rm_limit=10.0,
+            )
+
+            self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                updated = (overlay / "Train" / filename).read_text(encoding="utf-8")
+                self.assertIn(
+                    '<MaxSynapseToMembraneResistanceRatio Type="d" PType="257" IoType="17">10</MaxSynapseToMembraneResistanceRatio>',
+                    updated,
+                )
+            self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["branch_rs_rm_limit"], 10.0)
+            self.assertEqual(len(record["overrides"]), 2)
+
+    def test_rs_rm_limit_requires_finite_value_at_least_one(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            source.mkdir()
+            attempt = base / "runs" / "r4" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+            for value in (0.5, float("inf"), float("nan")):
+                with self.subTest(value=value), self.assertRaises(ValueError):
+                    MODULE.make_runtime_input_overlay(
+                        source, attempt, "W04", "case",
+                        quiet_debug_logs=False, branch_gamma_mode=None,
+                        branch_rs_rm_limit=value,
+                    )
+            self.assertFalse((attempt / "runtime-input-overrides").exists())
+
+
 class RunProvenanceTests(unittest.TestCase):
     def test_console_resolution_uses_host_platform_and_respects_override(self):
         root = Path("/repo")
