@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 292 случаев: 243 не сошлись к моменту остановки, 33 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 4. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 300 случаев: 249 не сошлись к моменту остановки, 35 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 4. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -1134,6 +1134,19 @@
 | W39_BR100_N0_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ee8ed93cc5ba; Bin=87f81e070ae8; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W39_BR480_N0_PSIoff_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ee8ed93cc5ba; Bin=87f81e070ae8; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W39_BR480_N0_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ee8ed93cc5ba; Bin=87f81e070ae8; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+
+### W40
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W40_BR25_N1_PSIoff_REV | converged_need0 | fail | detected | 7/8 strict; FP=1 | 0 | 10100000 | обучение сошлось; качество=fail; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR25_N1_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR50_N1_PSIoff_REV | converged_need0 | fail | target_not_detected | 7/8 strict; FP=0 | 0 | 00000000 | обучение сошлось; качество=fail; цель=target_not_detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR50_N1_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR100_N1_PSIoff_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR100_N1_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR480_N1_PSIoff_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W40_BR480_N1_PSI25_REV | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ## Протокол следующей волны
 
