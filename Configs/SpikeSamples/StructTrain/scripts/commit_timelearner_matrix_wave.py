@@ -23,10 +23,12 @@ import sys
 import time
 from pathlib import Path
 
+from matrix_run_safety import resolve_runs_base
+
 BASE = Path(__file__).resolve().parents[1]
 BIN_ROOT = BASE.parents[2]
 ROOT = BIN_ROOT.parent
-RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = resolve_runs_base(BASE / "_repro" / "TimeLearnerMatrixRuns")
 UPDATER = BASE / "scripts" / "update_timelearner_matrix_report.py"
 LOCK = BASE / "_repro" / ".matrix_commit.lock"
 METRICS = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "evidence" / "metrics" / "TIMELEARNER_MATRIX_WAVES_20261010.md"

@@ -16,6 +16,22 @@ from pathlib import Path
 from typing import Any, Iterator
 
 
+def resolve_runs_base(default: Path, environ: dict[str, str] | None = None) -> Path:
+    """Resolve the run-artifact root, allowing large logs to live on a data disk.
+
+    The override must be absolute so queue and child runner invocations resolve
+    the same location regardless of their working directory.
+    """
+    source = os.environ if environ is None else environ
+    configured = source.get("TIMELEARNER_MATRIX_RUNS_ROOT", "").strip()
+    if not configured:
+        return default
+    root = Path(configured).expanduser()
+    if not root.is_absolute():
+        raise ValueError("TIMELEARNER_MATRIX_RUNS_ROOT must be an absolute path")
+    return root.resolve()
+
+
 class CpuLoadSampler:
     """Best-effort host CPU utilization using native counters, without subprocesses."""
 

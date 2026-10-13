@@ -14,6 +14,7 @@ from matrix_run_safety import (
     exclusive_file_lock,
     linux_console_pids,
     reserve_run_root,
+    resolve_runs_base,
     verify_run_manifest,
 )
 
@@ -35,6 +36,18 @@ QUEUE_SPEC.loader.exec_module(QUEUE)
 
 
 class RunNamespaceSafetyTests(unittest.TestCase):
+    def test_runs_root_override_requires_absolute_path_and_is_resolved(self):
+        default = Path("relative-default")
+        with tempfile.TemporaryDirectory() as temporary:
+            configured = str(Path(temporary) / "external" / "runs")
+            self.assertEqual(
+                resolve_runs_base(default, {"TIMELEARNER_MATRIX_RUNS_ROOT": configured}),
+                (Path(configured)).resolve(),
+            )
+        with self.assertRaisesRegex(ValueError, "must be an absolute path"):
+            resolve_runs_base(default, {"TIMELEARNER_MATRIX_RUNS_ROOT": "relative/runs"})
+        self.assertEqual(resolve_runs_base(default, {}), default)
+
     def test_cpu_percentage_uses_idle_and_total_counter_deltas(self):
         self.assertEqual(cpu_percent_from_counters((1000, 200), (1100, 250)), 50.0)
         self.assertEqual(cpu_percent_from_counters((1000, 200), (1100, 100)), 100.0)

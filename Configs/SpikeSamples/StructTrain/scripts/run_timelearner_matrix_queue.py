@@ -19,13 +19,14 @@ from matrix_run_safety import (
     sha256_file,
     sha256_json,
     verify_run_manifest,
+    resolve_runs_base,
 )
 from timelearner_matrix import case_attempt_result
 
 BASE = Path(__file__).resolve().parents[1]
 BIN_ROOT = BASE.parents[2]
 ROOT = BIN_ROOT.parent
-RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = resolve_runs_base(BASE / "_repro" / "TimeLearnerMatrixRuns")
 MATRIX = BASE / "TimeLearnerMatrix"
 METRICS = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "evidence" / "metrics" / "TIMELEARNER_MATRIX_WAVES_20261010.md"
 WAVE_PLAN = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "plans" / "TimeLearner-full-matrix-waves-20261010.ru.md"

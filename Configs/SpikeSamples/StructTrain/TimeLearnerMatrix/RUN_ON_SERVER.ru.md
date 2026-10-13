@@ -35,8 +35,8 @@ df -h /home/user/Nmsdk
 
 ```bash
 cd /home/user/Nmsdk
-cmake --preset linux-gcc-debug-local
-cmake --build build/linux-gcc-debug-local \
+cmake --preset linux-gcc-release-local
+cmake --build build/linux-gcc-release-local \
   --target Nmsdk-PulseLib.core NeuroModelerConsole -j"$(nproc)"
 sha256sum Bin/Platform/Linux/NeuroModelerConsole
 git rev-parse HEAD
@@ -56,10 +56,18 @@ git -C Libraries/Nmsdk-PulseLib rev-parse HEAD
 
 Запускайте ровно одну волну за вызов. `--jobs` задаёт верхний предел; фактический параллелизм автоматически ограничен числом логических CPU минус одно ядро и числом уже работающих Console. При загрузке CPU выше 85% очередь приостанавливает выдачу новых случаев и возобновляет её после двух замеров подряд ниже 70%. После волны скрипт сохраняет результаты и provenance, обновляет документы и коммитит результат в Bin и корневой репозиторий. Следующую волну запускайте после анализа текущей. Для нового запуска используйте свежий Run ID:
 
+Для больших логов задайте абсолютный корень на диске с достаточным местом. Очередь, её дочерний runner и отчётчик используют одну переменную `TIMELEARNER_MATRIX_RUNS_ROOT`. Пример для `.17`:
+
+```bash
+RUNS_ROOT="/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-<идентификатор>"
+export TIMELEARNER_MATRIX_RUNS_ROOT="$RUNS_ROOT/runs"
+mkdir -p "$TIMELEARNER_MATRIX_RUNS_ROOT"
+```
+
 ```bash
 cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain
 RUN_ID="run-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
-RUNS="_repro/TimeLearnerMatrixRuns"
+RUNS="$TIMELEARNER_MATRIX_RUNS_ROOT"
 SESSION="tl-$RUN_ID"
 mkdir -p "$RUNS"
 tmux new-session -d -s "$SESSION" \
@@ -74,8 +82,8 @@ printf 'Session: %s\\nRun ID: %s\\nLog: %s/%s.launch.log\\n' "$SESSION" "$RUN_ID
 ```bash
 RUN_ID="вставьте Run ID, напечатанный при запуске"
 tmux ls
-tail -F "/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/$RUN_ID/queue.log"
-cat "/home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/$RUN_ID/queue_status.json"
+tail -F "$TIMELEARNER_MATRIX_RUNS_ROOT/$RUN_ID/queue.log"
+cat "$TIMELEARNER_MATRIX_RUNS_ROOT/$RUN_ID/queue_status.json"
 ```
 
 Для подключения к сессии возьмите её имя из `tmux ls`:
@@ -92,6 +100,7 @@ tmux attach -t ИМЯ_СЕССИИ
 
 ```bash
 RUN_ID="single-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
+export TIMELEARNER_MATRIX_RUNS_ROOT="/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-<идентификатор>/runs"
 python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
   --waves W07 --case W07_BR25_N1_PSI25_NEXT --jobs 1 --no-commit
 ```

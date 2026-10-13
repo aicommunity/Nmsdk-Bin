@@ -32,11 +32,12 @@ from matrix_run_safety import (
     atomic_write_json,
     exclusive_file_lock,
     logical_cpu_count,
+    resolve_runs_base,
 )
 
 BASE = Path(__file__).resolve().parents[1]
 MANIFEST = BASE / "TimeLearnerMatrix" / "matrix.json"
-RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = resolve_runs_base(BASE / "_repro" / "TimeLearnerMatrixRuns")
 PV_PATH = BASE / "scripts" / "posttune_verify.py"
 CLASS_TAGS = ("NeuronClassName", "MembraneClassName", "SynapseClassName")
 INHIBITION_TAGS = ("UsePresynapticInhibition", "InhibitionCoeff")

@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from matrix_run_safety import atomic_write_json, exclusive_file_lock, sha256_file
+from matrix_run_safety import atomic_write_json, exclusive_file_lock, resolve_runs_base, sha256_file
 from timelearner_matrix import case_attempt_result
 
 BASE = Path(__file__).resolve().parents[1]
@@ -21,7 +21,7 @@ SUCCESSFUL = BASE / "SUCCESSFUL_EXPERIMENTS.md"
 ROOT_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "evidence" / "metrics" / "TIMELEARNER_MATRIX_WAVES_20261010.md"
 WAVE_PLAN = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "plans" / "TimeLearner-full-matrix-waves-20261010.ru.md"
 FULL_MATRIX_REPORT = ROOT / "Docs" / "Audit" / "TimeLearner-2026-09-26-review" / "TIMELEARNER_FULL_MATRIX_AND_HISTORY_2026-10-10.ru.md"
-RUNS_BASE = BASE / "_repro" / "TimeLearnerMatrixRuns"
+RUNS_BASE = resolve_runs_base(BASE / "_repro" / "TimeLearnerMatrixRuns")
 RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}\Z")
 BEGIN = "<!-- GENERATED_WAVE_RESULTS_BEGIN -->"
 END = "<!-- GENERATED_WAVE_RESULTS_END -->"
