@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 242 случаев: 201 не сошлись к моменту остановки, 25 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 250 случаев: 207 не сошлись к моменту остановки, 27 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 3. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -1036,6 +1036,19 @@
 | W31_CL480_N0_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=69d22b8a7c63; Bin=e262832f6f89; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W31_CL480_N1_MARGIN_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ec8a44371b78; Bin=5347d40afa74; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W31_CL480_N1_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=ec8a44371b78; Bin=5347d40afa74; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+
+### W32
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W32_BR25_N0_MARGIN_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR25_N0_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR25_N1_MARGIN_CURRENT | converged_need0 | fail | detected | 7/8 strict; FP=1 | 0 | 10100000 | обучение сошлось; качество=fail; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR25_N1_MARGIN_HALF | converged_need0 | pass | detected | 8/8 strict; FP=0 | 0 | 10000000 | обучение сошлось; качество=pass; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR480_N0_MARGIN_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR480_N0_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR480_N1_MARGIN_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W32_BR480_N1_MARGIN_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ### W33
 
