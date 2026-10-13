@@ -98,6 +98,17 @@ python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
 
 Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат и Console provenance будут в `_repro/TimeLearnerMatrixRuns/<RUN_ID>/<wave>/<case>/attempt-0001/`. Одиночный диагностический запуск не обновляет сводный документ всей волны; для отчётного результата запускайте волну целиком через queue. Файлы рабочего клона лежат отдельно от эталонных `inputs/`. Прямой запуск `timelearner_matrix.py --case/--run` отключён, чтобы не обходить fingerprint и изоляцию попыток.
 
+Несколько заранее выбранных случаев одной волны можно запустить параллельно в одном безопасном запуске. Для неполного набора обязателен `--no-commit`; его результаты сохраняются по отдельным каталогам попыток и не публикуются как завершённая волна:
+
+```bash
+RUN_ID="diag-$(date -u +%Y%m%dT%H%M%SZ)-$$-$RANDOM"
+python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
+  --waves W04 --cases W04_BR100_N1_PSIoff W04_BR480_N1_PSIoff \
+  --jobs 8 --no-commit
+```
+
+Фактический параллелизм автоматически ограничивается числом Console, свободными логическими CPU и текущей загрузкой; RUN_ID и case ID должны быть новыми либо пройти строгую проверку повтора/возобновления.
+
 Пользовательские конфиги для ручного открытия в GUI находятся, например, здесь:
 
 - `TimeLearnerMatrix/W07/inputs/W07_BR25_N1_PSI25_NEXT/Train/Project.ini`

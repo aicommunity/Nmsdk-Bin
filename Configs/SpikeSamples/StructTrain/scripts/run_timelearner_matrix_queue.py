@@ -38,6 +38,22 @@ def run(command: list[str], cwd: Path, *, check: bool = True) -> subprocess.Comp
     return subprocess.run(command, cwd=cwd, text=True, check=check)
 
 
+def select_wave_cases(
+    wave_specs: list[dict], requested_ids: list[str], *, no_commit: bool
+) -> tuple[list[dict], bool]:
+    """Validate a full-wave or explicit subset without relabeling partial output."""
+    if len(requested_ids) != len(set(requested_ids)):
+        raise ValueError("case selection contains duplicate IDs")
+    unknown = sorted(set(requested_ids) - {case["id"] for case in wave_specs})
+    if unknown:
+        raise ValueError(f"unknown case(s): {unknown}")
+    selected = [case for case in wave_specs if not requested_ids or case["id"] in requested_ids]
+    partial = len(selected) != len(wave_specs)
+    if partial and not no_commit:
+        raise ValueError("partial case selections require --no-commit and cannot be published as full-wave results")
+    return selected, partial
+
+
 def git_text(path: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
 
@@ -406,7 +422,9 @@ def main() -> int:
     parser.add_argument("--run-id", help="new unique output namespace; existing IDs require --resume")
     parser.add_argument("--resume", action="store_true", help="resume an existing run only after exact fingerprint validation")
     parser.add_argument("--allow-repeat", action="store_true", help="explicitly allow repeating an identical completed/incomplete condition in a new RUN_ID")
-    parser.add_argument("--case", help="run one registered case from the selected wave (requires --no-commit)")
+    case_group = parser.add_mutually_exclusive_group()
+    case_group.add_argument("--case", help="run one registered case from the selected wave (requires --no-commit)")
+    case_group.add_argument("--cases", nargs="+", help="run selected registered cases from the wave (partial selection requires --no-commit)")
     parser.add_argument("--waves", nargs="+", help="run one wave, then stop for result analysis")
     parser.add_argument("--check-completed", metavar="WAVE", help="read-only exact-provenance validation used before skipping a prior wave")
     parser.add_argument("--quiet-debug-logs", action="store_true")
@@ -443,13 +461,12 @@ def main() -> int:
     if unknown_waves:
         raise SystemExit(f"unknown wave(s): {unknown_waves}")
     wave = waves[0]
-    specs = [case for case in registry["cases"] if case["wave"] == wave]
-    if args.case:
-        specs = [case for case in specs if case["id"] == args.case]
-        if not specs:
-            raise SystemExit(f"unknown case for {wave}: {args.case}")
-        if not args.no_commit:
-            raise SystemExit("single-case diagnostics require --no-commit")
+    wave_specs = [case for case in registry["cases"] if case["wave"] == wave]
+    requested_ids = args.cases or ([args.case] if args.case else [])
+    try:
+        specs, partial_selection = select_wave_cases(wave_specs, requested_ids, no_commit=args.no_commit)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     selected_ids = [case["id"] for case in specs]
     if args.resume:
         # Explicit, exact-resume is checked after preparation so the input hashes are fresh.
@@ -527,8 +544,8 @@ def main() -> int:
         if args.no_commit:
             print("Mode: --no-commit (prepare+run only; no updater/git)", flush=True)
         runner_command = [sys.executable, str(RUNNER), "--run", wave, "--jobs", str(args.jobs)]
-        if args.case:
-            runner_command.extend(("--case-ids", args.case))
+        if requested_ids:
+            runner_command.extend(("--case-ids", *selected_ids))
         if args.quiet_debug_logs:
             runner_command.append("--quiet-debug-logs")
         if args.max_polls is not None:
@@ -598,7 +615,7 @@ def main() -> int:
             return 0
         if not all_results:
             print(f"=== {wave} incomplete; preserve artifacts for exact resume ===", flush=True)
-            if args.case:
+            if partial_selection:
                 save_queue_status(runs, status_path, overall)
                 print("PARTIAL CASE NOT REPORTED/COMMITTED; inspect RUN_ID artifacts", flush=True)
                 return 2
@@ -619,7 +636,7 @@ def main() -> int:
             )
             return 2
         print(f"=== {wave} report and commits ===", flush=True)
-        if args.case:
+        if partial_selection:
             save_queue_status(runs, status_path, overall)
             print("PARTIAL CASE NOT REPORTED/COMMITTED; inspect RUN_ID artifacts", flush=True)
             return 0

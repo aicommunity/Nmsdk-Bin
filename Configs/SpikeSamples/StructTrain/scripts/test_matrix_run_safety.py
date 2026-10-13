@@ -34,6 +34,18 @@ QUEUE_SPEC.loader.exec_module(QUEUE)
 
 
 class RunNamespaceSafetyTests(unittest.TestCase):
+    def test_explicit_parallel_subset_requires_no_commit_and_rejects_bad_ids(self):
+        wave = [{"id": "C1"}, {"id": "C2"}, {"id": "C3"}]
+        selected, partial = QUEUE.select_wave_cases(wave, ["C1", "C3"], no_commit=True)
+        self.assertEqual([case["id"] for case in selected], ["C1", "C3"])
+        self.assertTrue(partial)
+        with self.assertRaisesRegex(ValueError, "require --no-commit"):
+            QUEUE.select_wave_cases(wave, ["C1"], no_commit=False)
+        with self.assertRaisesRegex(ValueError, "duplicate IDs"):
+            QUEUE.select_wave_cases(wave, ["C1", "C1"], no_commit=True)
+        with self.assertRaisesRegex(ValueError, "unknown case"):
+            QUEUE.select_wave_cases(wave, ["missing"], no_commit=True)
+
     def test_run_id_is_reserved_once_and_distinct_ids_are_disjoint(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
