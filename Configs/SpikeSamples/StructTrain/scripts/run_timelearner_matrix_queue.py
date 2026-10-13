@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import math
 import os
 import re
 import subprocess
@@ -134,6 +135,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "quiet_debug_logs": bool(args.quiet_debug_logs),
         "max_polls": args.max_polls,
         "branch_gamma_mode": args.branch_gamma_mode,
+        "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
     }
     case_fingerprints = {}
     input_hashes = {}
@@ -183,6 +185,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "quiet_debug_logs": bool(args.quiet_debug_logs),
             "max_polls": args.max_polls,
             "branch_gamma_mode": args.branch_gamma_mode,
+            "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
             "no_commit": bool(args.no_commit),
         },
     }
@@ -265,6 +268,9 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "quiet_debug_logs": (result.get("runtime_execution_options") or {}).get("quiet_debug_logs"),
                         "max_polls": (result.get("runtime_execution_options") or {}).get("max_polls"),
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
+                        "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
+                            "train_time_limit_override_seconds"
+                        ),
                     } == fingerprint.get("condition_runtime")
                     and provenance.get("binary_sha256") == fingerprint["console_sha256"]
                     and provenance.get("binary_sha256_after") == fingerprint["console_sha256"]
@@ -440,6 +446,11 @@ def main() -> int:
     )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
+        "--train-time-limit-override-seconds",
+        type=float,
+        help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
+    )
+    parser.add_argument(
         "--no-commit",
         action="store_true",
         help="prepare+run only; skip updater and git commits (dual-host: train on remote, commit on local)",
@@ -455,6 +466,11 @@ def main() -> int:
         raise SystemExit("--jobs must be between 1 and 8; effective process count is capped at logical CPUs minus one")
     if args.max_polls is not None and args.max_polls < 1:
         raise SystemExit("--max-polls must be positive")
+    if args.train_time_limit_override_seconds is not None and (
+        not math.isfinite(args.train_time_limit_override_seconds)
+        or args.train_time_limit_override_seconds <= 0
+    ):
+        raise SystemExit("--train-time-limit-override-seconds must be finite and positive")
     if args.resume and not args.run_id:
         raise SystemExit("--resume requires an explicit --run-id")
     if args.resume and args.allow_repeat:
@@ -564,6 +580,11 @@ def main() -> int:
             runner_command.append("--quiet-debug-logs")
         if args.max_polls is not None:
             runner_command.extend(("--max-polls", str(args.max_polls)))
+        if args.train_time_limit_override_seconds is not None:
+            runner_command.extend((
+                "--train-time-limit-override-seconds",
+                str(args.train_time_limit_override_seconds),
+            ))
         run_result = run(runner_command, BASE, check=False)
         wave_status_file = runs / wave / "wave_status.json"
         wave_status = json.loads(wave_status_file.read_text(encoding="utf-8")) if wave_status_file.exists() else {}

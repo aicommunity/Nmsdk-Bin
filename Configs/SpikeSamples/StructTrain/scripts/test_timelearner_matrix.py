@@ -46,6 +46,45 @@ class QuietDebugLoggingTests(unittest.TestCase):
                 MODULE.set_project_debug_logging(project_ini, enabled=False)
 
 
+class TrainingLimitOverrideTests(unittest.TestCase):
+    def test_default_and_diagnostic_override_are_resolved(self):
+        spec = {"template": "t", "train_t": 640}
+        templates = {"t": {"train_t": 800}}
+        self.assertEqual(
+            MODULE.effective_train_time_limit_seconds(spec, templates, {"runtime": {}}),
+            640,
+        )
+        self.assertEqual(
+            MODULE.effective_train_time_limit_seconds(
+                spec, templates, {"runtime": {"train_time_limit_override_seconds": 1200}}
+            ),
+            1200,
+        )
+
+    def test_invalid_override_is_rejected(self):
+        spec = {"template": "t", "train_t": 640}
+        templates = {"t": {"train_t": 800}}
+        for value in (0, -1, float("inf"), float("nan")):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                MODULE.effective_train_time_limit_seconds(
+                    spec, templates, {"runtime": {"train_time_limit_override_seconds": value}}
+                )
+
+
+class ReportPathTests(unittest.TestCase):
+    def test_checkout_paths_are_relative_and_external_paths_are_absolute(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            old_base = MODULE.BASE
+            try:
+                MODULE.BASE = Path(temporary) / "repo"
+                inside = MODULE.BASE / "Bin" / "result.json"
+                outside = Path(temporary) / "archive" / "result.json"
+                self.assertEqual(MODULE.report_path(inside), str(Path("Bin") / "result.json"))
+                self.assertEqual(MODULE.report_path(outside), str(outside.resolve()))
+            finally:
+                MODULE.BASE = old_base
+
+
 class RuntimeBranchGammaOverlayTests(unittest.TestCase):
     def test_per_input_gamma_overlay_is_isolated_and_train_only(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -174,6 +174,7 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                         "quiet_debug_logs": False,
                         "max_polls": None,
                         "branch_gamma_mode": None,
+                        "train_time_limit_override_seconds": None,
                     },
                 }
                 report = {
@@ -190,6 +191,7 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                                 "quiet_debug_logs": False,
                                 "max_polls": None,
                                 "branch_gamma_mode": None,
+                                "train_time_limit_override_seconds": None,
                             },
                             "run_provenance": {
                                 "binary_sha256": "console-sha",

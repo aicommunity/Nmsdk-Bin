@@ -12,6 +12,7 @@ import concurrent.futures
 import hashlib
 import importlib.util
 import json
+import math
 import os
 import re
 import shutil
@@ -53,6 +54,15 @@ def run_root() -> Path:
             "set TIMELEARNER_MATRIX_RUN_ID to a unique safe ID before running a matrix case"
         )
     return RUNS_BASE / run_id
+
+
+def report_path(path: Path) -> str:
+    """Render repository paths relative to the checkout and external artifacts absolutely."""
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(BASE.resolve()))
+    except ValueError:
+        return str(resolved)
 
 
 def load_pv():
@@ -160,6 +170,19 @@ def validate_worker_attempt_directory(attempt_dir: Path) -> None:
     ]
     if unexpected:
         raise FileExistsError(f"attempt directory contains pre-existing artifacts: {unexpected}")
+
+
+def effective_train_time_limit_seconds(
+    spec: dict[str, Any], templates: dict[str, Any], run_manifest: dict[str, Any]
+) -> float:
+    """Resolve the matrix default or a fingerprinted diagnostic runtime override."""
+    template = templates[spec["template"]]
+    default = float(spec.get("train_t", template["train_t"]))
+    override = run_manifest.get("runtime", {}).get("train_time_limit_override_seconds")
+    value = default if override is None else float(override)
+    if not math.isfinite(value) or value <= 0:
+        raise ValueError("training time limit must be a finite positive number of seconds")
+    return value
 
 
 def set_project_debug_logging(project_ini: Path, enabled: bool) -> dict[str, str]:
@@ -728,6 +751,7 @@ def worker(
     spec = next((c for c in data["cases"] if c["wave"] == wave and c["id"] == case_id), None)
     if spec is None:
         raise ValueError(f"unknown case {wave}/{case_id}")
+    train_time_limit = effective_train_time_limit_seconds(spec, data["templates"], run_manifest)
     input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
     if not input_root.is_dir():
         raise FileNotFoundError(f"input snapshot missing; run --prepare {wave}: {input_root}")
@@ -766,7 +790,7 @@ def worker(
     worker_config = {
         "root": runtime_input_root,
         "gold": gold,
-        "train_t": float(spec.get("train_t", template["train_t"])),
+        "train_t": train_time_limit,
         "span_ms": int(spec["duration_ms"]),
         "kind": template["kind"],
         "expect_tipr": spec.get("expect_tipr", "canon"),
@@ -786,7 +810,7 @@ def worker(
     result = pv.run_case(
         internal_id,
         run_dir=run_dir,
-        train_t=float(spec.get("train_t", template["train_t"])),
+        train_t=train_time_limit,
         max_polls=max_polls,
         max_rs_rm=spec.get("max_rs_rm"),
         disable_train_statistic_logs=True,
@@ -807,6 +831,9 @@ def worker(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": branch_gamma_mode,
+        "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
+            "train_time_limit_override_seconds"
+        ),
     }
     provenance_path = run_dir / "provenance.json"
     if not provenance_path.is_file():
@@ -851,9 +878,14 @@ def run_wave(
     case_ids: list[str] | None = None,
     quiet_debug_logs: bool = False,
     max_polls: int | None = None,
+    train_time_limit_override_seconds: float | None = None,
 ) -> int:
     if jobs < 1 or jobs > 8:
         raise ValueError("--jobs must be between 1 and 8 for this campaign")
+    if train_time_limit_override_seconds is not None and (
+        not math.isfinite(train_time_limit_override_seconds) or train_time_limit_override_seconds <= 0
+    ):
+        raise ValueError("--train-time-limit-override-seconds must be finite and positive")
     data = load_manifest()
     specs = [case for case in data["cases"] if case["wave"] == wave]
     if case_ids is not None:
@@ -894,6 +926,9 @@ def run_wave(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
+        "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
+            "train_time_limit_override_seconds"
+        ),
         "selected_cases": [case["id"] for case in specs],
         "started_utc": datetime.now(timezone.utc).isoformat(),
         "cases": {},
@@ -913,7 +948,7 @@ def run_wave(
             saved_dir, _ = saved
             status["cases"][case_id] = {
                 "status": "completed",
-                "result_file": str((saved_dir / "matrix_result.json").relative_to(BASE)),
+                "result_file": report_path(saved_dir / "matrix_result.json"),
                 "attempt_id": saved_dir.name,
                 "resumed": True,
             }
@@ -1012,8 +1047,8 @@ def run_wave(
                 status["cases"][case_id] = {
                     "status": "completed" if has_result else "worker_infrastructure_error",
                     "worker_exit_code": code,
-                    "result_file": str(result_file.relative_to(BASE)) if has_result else None,
-                    "log_file": str((attempt_dir / "worker.log").relative_to(BASE)),
+                    "result_file": report_path(result_file) if has_result else None,
+                    "log_file": report_path(attempt_dir / "worker.log"),
                     "attempt_id": attempt_dir.name,
                     "finished_utc": datetime.now(timezone.utc).isoformat(),
                 }
@@ -1114,6 +1149,11 @@ def main() -> int:
         type=int,
         help="override the worker polling ceiling (30 seconds per poll); useful for slow local simulations",
     )
+    parser.add_argument(
+        "--train-time-limit-override-seconds",
+        type=float,
+        help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
+    )
     parser.add_argument("--refresh", action="store_true", help="regenerate an existing input snapshot after an explicit design change")
     parser.add_argument("--worker", nargs=2, metavar=("WAVE", "CASE"), help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -1142,6 +1182,7 @@ def main() -> int:
             case_ids=args.case_ids,
             quiet_debug_logs=args.quiet_debug_logs,
             max_polls=args.max_polls,
+            train_time_limit_override_seconds=args.train_time_limit_override_seconds,
         )
     parser.error("use --prepare WAVE or --run WAVE")
     return 2
