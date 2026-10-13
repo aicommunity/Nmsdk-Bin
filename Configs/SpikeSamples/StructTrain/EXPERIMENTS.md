@@ -22,7 +22,7 @@
 
 ## Ранее сохранённые результаты базовых 32 случаев
 
-В имеющихся снимках W01–W04 записано 228 случаев: 191 не сошлись к моменту остановки, 21 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
+В имеющихся снимках W01–W04 записано 234 случаев: 195 не сошлись к моменту остановки, 23 завершились с Need=0; строгих подтверждённых PASS по одновременным критериям сходимости, разделения и детекции — 2. Это ранее сохранённые результаты, не новые прогоны текущей подготовки. У них нет зафиксированного Console SHA, поэтому точную версию бинарника по этим таблицам восстановить нельзя.
 
 Среди двух сошедшихся случаев: `W03_BR25_N1_PSIoff` обнаружил цель, но получил только legacy `ok=1`, `Acc=7/8`, один false acceptance; strict-аудит в run bundle отсутствует. `W03_BR50_N1_PSIoff` не обнаружил цель (`Acc=7/8`, все `fires=00000000`; legacy gate `ok=0`). Старое поле `detection_quality=pass` переинтерпретируется по `target_hit`/`fires` и не считается качеством разделения.
 
@@ -1012,6 +1012,17 @@
 | W29_CL480_SYNC_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=bf10b491e107; Bin=1fecf00f99ef; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W29_CL480_SYNC_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=60aef415b307; Bin=0b17f1b97bd3; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
 | W29_CL480_SYNC_DOUBLE | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=bf10b491e107; Bin=1fecf00f99ef; PulseLib=2bb72a3b6b28; Console=e4df62fb9163 |
+
+### W30
+
+| Случай | Сходимость C++ | Качество разделения | Детекция цели | Acc / FP | Need | Fires | Категория | Provenance (SHA, начало) |
+|---|---|---|---|---|---:|---|---|---|
+| W30_BR25_SYNC_CURRENT | converged_need0 | fail | detected | 7/8 strict; FP=1 | 0 | 10100000 | обучение сошлось; качество=fail; цель=detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W30_BR25_SYNC_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W30_BR25_SYNC_DOUBLE | converged_need0 | fail | target_not_detected | 7/8 strict; FP=0 | 0 | 00000000 | обучение сошлось; качество=fail; цель=target_not_detected | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W30_BR480_SYNC_CURRENT | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W30_BR480_SYNC_HALF | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
+| W30_BR480_SYNC_DOUBLE | not_converged_at_stop | not_evaluated_training_incomplete | not_evaluated_training_incomplete | — | 1 | — | обучение не сошлось | root=9258a114accb; Bin=f8054f809e8c; PulseLib=2bb72a3b6b28; Console=51da1f19a441 |
 
 ### W31
 
