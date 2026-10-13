@@ -573,6 +573,20 @@ def case_attempt_result(
     return None
 
 
+def execute_worker(command: list[str], *, cwd: Path, env: dict[str, str], log_path: Path) -> int:
+    """Run one isolated worker process; split out so orchestration can be tested with a stub."""
+    with log_path.open("w", encoding="utf-8") as log:
+        proc = subprocess.run(
+            command,
+            cwd=cwd,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            text=True,
+            env=env,
+        )
+    return int(proc.returncode)
+
+
 def prepare_wave(wave: str, *, refresh: bool = False) -> None:
     pv = load_pv()
     data = load_manifest()
@@ -804,11 +818,8 @@ def run_wave(
             "PYTHONUNBUFFERED": "1",
             "TIMELEARNER_MATRIX_ATTEMPT_DIR": str(attempt_dir),
         }
-        with log_path.open("w", encoding="utf-8") as log:
-            proc = subprocess.run(
-                command, cwd=BASE, stdout=log, stderr=subprocess.STDOUT, text=True, env=env
-            )
-        return case_id, int(proc.returncode)
+        code = execute_worker(command, cwd=BASE, env=env, log_path=log_path)
+        return case_id, code
 
     rc = 0
     pending_specs = [spec for spec in specs if spec["id"] in attempt_dirs]

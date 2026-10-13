@@ -1,7 +1,11 @@
 import importlib.util
+import json
+import os
 import tempfile
+from threading import Barrier, Lock
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from posttune_verify import compare_run_inputs
 
@@ -89,6 +93,162 @@ class RunProvenanceTests(unittest.TestCase):
         self.assertTrue(changed["binary_changed_during_run"])
         self.assertFalse(changed["training_config_changed_during_run"])
         self.assertTrue(changed["inputs_mutated_during_run"])
+
+
+class IsolatedAttemptDispatchTests(unittest.TestCase):
+    def test_parallel_stub_workers_and_stale_resume_never_overwrite_attempts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary) / "StructTrain"
+            matrix = base / "TimeLearnerMatrix"
+            cases = ["C1", "C2"]
+            specs = [
+                {
+                    "id": case_id, "wave": "W01", "template": "T",
+                    "duration_ms": 50, "normalization_mode": 0,
+                    "presynaptic_inhibition": False,
+                }
+                for case_id in cases
+            ]
+            (matrix / "W01").mkdir(parents=True)
+            matrix_definition = matrix / "matrix.json"
+            matrix_definition.write_text(json.dumps({"schema": 1, "templates": {"T": {}}, "cases": specs}), encoding="utf-8")
+
+            inputs = {}
+            for case_id in cases:
+                input_root = matrix / "W01" / "inputs" / case_id
+                file_entries = []
+                for side in ("Train", "Test"):
+                    side_dir = input_root / side
+                    side_dir.mkdir(parents=True)
+                    for name in ("Parameters_00.xml", "Model_00.xml"):
+                        path = side_dir / name
+                        path.write_text(f"{case_id}-{side}-{name}\n", encoding="utf-8")
+                        file_entries.append({"side": side, "file": name, "sha256": MODULE.sha256(path)})
+                manifest_path = input_root / "matrix_input_manifest.json"
+                manifest_path.write_text(json.dumps({"source_files": file_entries}) + "\n", encoding="utf-8")
+                inputs[case_id] = MODULE.sha256(manifest_path)
+
+            run_id = "stub-run"
+            run_root = base / "_repro" / "TimeLearnerMatrixRuns" / run_id
+            run_root.mkdir(parents=True)
+            run_manifest = {
+                "run_id": run_id,
+                "run_fingerprint": "run-fingerprint",
+                "selected_cases": cases,
+                "case_fingerprints": {case_id: f"fingerprint-{case_id}" for case_id in cases},
+                "input_manifest_sha256": inputs,
+                "binary_sha256": "console-sha",
+                "root_git": "root-sha",
+                "gitlinks": {"Libraries/Nmsdk-PulseLib": "pulse-sha", "Rdk": "rdk-sha"},
+                "source_sha256": {"trainer.cpp": "source-sha"},
+                "launcher_sha256": {"runner.py": "launcher-sha"},
+            }
+            (run_root / "run_manifest.json").write_text(json.dumps(run_manifest), encoding="utf-8")
+
+            old_base, old_manifest, old_runs = MODULE.BASE, MODULE.MANIFEST, MODULE.RUNS_BASE
+            old_run_id = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
+            MODULE.BASE = base
+            MODULE.MANIFEST = matrix_definition
+            MODULE.RUNS_BASE = base / "_repro" / "TimeLearnerMatrixRuns"
+            os.environ["TIMELEARNER_MATRIX_RUN_ID"] = run_id
+            calls = []
+            calls_lock = Lock()
+            parallel_barrier = Barrier(2)
+
+            def stub_worker(command, *, cwd, env, log_path):
+                case_id = command[-1]
+                with calls_lock:
+                    calls.append(case_id)
+                    call_number = len(calls)
+                if call_number <= 2:
+                    parallel_barrier.wait(timeout=5)
+                attempt_dir = Path(env["TIMELEARNER_MATRIX_ATTEMPT_DIR"])
+                (attempt_dir / "case.marker").write_text(case_id, encoding="utf-8")
+                log_path.write_text(f"stub worker {case_id}\n", encoding="utf-8")
+                config_before = {
+                    "Train/Parameters_00.xml": "train-before",
+                    "Train/Model_00.xml": "model-before",
+                    "Test/Parameters_00.xml": f"{case_id}-test-params",
+                    "Test/Model_00.xml": f"{case_id}-test-model",
+                }
+                config_after = {
+                    "Train/Parameters_00.xml": "train-after",
+                    "Train/Model_00.xml": "model-after",
+                    "Test/Parameters_00.xml": f"{case_id}-test-params",
+                    "Test/Model_00.xml": f"{case_id}-test-model",
+                }
+                provenance = {
+                    "root_git": "root-sha", "root_git_at_launch": "root-sha",
+                    "gitlinks": run_manifest["gitlinks"],
+                    "gitlinks_at_launch": run_manifest["gitlinks"],
+                    "binary_sha256": "console-sha", "binary_sha256_at_launch": "console-sha",
+                    "binary_sha256_after": "console-sha",
+                    "source_sha256": run_manifest["source_sha256"],
+                    "source_sha256_at_launch": run_manifest["source_sha256"],
+                    "source_sha256_after": run_manifest["source_sha256"],
+                    "source_changed_during_run": False, "binary_changed_during_run": False,
+                    "training_config_changed_during_run": True, "inputs_mutated_during_run": True,
+                    "config_sha256_before": config_before, "config_sha256_after": config_after,
+                }
+                (attempt_dir / "provenance.json").write_text(json.dumps(provenance), encoding="utf-8")
+                MODULE.atomic_write_json(attempt_dir / "matrix_result.json", {
+                    "case": case_id,
+                    "matrix_run_id": run_id,
+                    "matrix_run_fingerprint": run_manifest["run_fingerprint"],
+                    "case_fingerprint": run_manifest["case_fingerprints"][case_id],
+                    "matrix_launcher_sha256": run_manifest["launcher_sha256"],
+                    "input_manifest_sha256": inputs[case_id],
+                    "training_convergence": "converged_need_zero",
+                    "gate_evaluated": True,
+                    "separation_quality": "pass",
+                    "detection_quality": "detected",
+                    "row_fail": False,
+                    "run_provenance": {
+                        "root_git": "root-sha", "gitlinks": run_manifest["gitlinks"],
+                        "binary_sha256": "console-sha", "binary_sha256_after": "console-sha",
+                        "source_sha256": run_manifest["source_sha256"],
+                        "source_sha256_after": run_manifest["source_sha256"],
+                        "source_changed_during_run": False, "binary_changed_during_run": False,
+                    },
+                }, replace=False)
+                return 0
+
+            def execute_once():
+                with (
+                    patch.object(MODULE, "execute_worker", side_effect=stub_worker),
+                    patch.object(MODULE, "CpuLoadSampler", lambda: type("QuietSampler", (), {"sample": lambda self: 0.0})()),
+                    patch.object(MODULE, "active_console_count", return_value=0),
+                    patch.object(MODULE, "active_console_pids", return_value=set()),
+                    patch.object(MODULE, "logical_cpu_count", return_value=3),
+                ):
+                    return MODULE.run_wave("W01", 2)
+
+            try:
+                first_rc = execute_once()
+                self.assertEqual(first_rc, 0)
+                self.assertEqual(set(calls), set(cases))
+                for case_id in cases:
+                    attempt = run_root / "W01" / case_id / "attempt-0001"
+                    self.assertEqual((attempt / "case.marker").read_text(encoding="utf-8"), case_id)
+
+                stale_path = run_root / "W01" / "C1" / "attempt-0001" / "matrix_result.json"
+                stale_result = json.loads(stale_path.read_text(encoding="utf-8"))
+                stale_result["case_fingerprint"] = "stale-fingerprint"
+                stale_path.write_text(json.dumps(stale_result), encoding="utf-8")
+                self.assertEqual(execute_once(), 0)
+                self.assertEqual(calls.count("C1"), 2)
+                self.assertEqual(calls.count("C2"), 1)
+                self.assertTrue((run_root / "W01" / "C1" / "attempt-0001" / "case.marker").is_file())
+                self.assertTrue((run_root / "W01" / "C1" / "attempt-0002" / "case.marker").is_file())
+                status = json.loads((run_root / "W01" / "wave_status.json").read_text(encoding="utf-8"))
+                self.assertTrue(status["cases"]["C2"]["resumed"])
+                self.assertEqual(status["cases"]["C1"]["attempt_id"], "attempt-0002")
+            finally:
+                MODULE.BASE, MODULE.MANIFEST, MODULE.RUNS_BASE = old_base, old_manifest, old_runs
+                if old_run_id is None:
+                    os.environ.pop("TIMELEARNER_MATRIX_RUN_ID", None)
+                else:
+                    os.environ["TIMELEARNER_MATRIX_RUN_ID"] = old_run_id
 
 
 if __name__ == "__main__":
