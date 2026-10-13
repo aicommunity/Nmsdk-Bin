@@ -148,25 +148,6 @@ class RunProvenanceTests(unittest.TestCase):
         self.assertEqual(resolve_console(root, env={}), expected)
         self.assertEqual(resolve_console(root, env={"NMSDK_CONSOLE": "custom/Console"}), Path("custom/Console"))
 
-    def test_expected_train_output_change_is_allowed_but_test_input_change_is_not(self):
-        provenance = {
-            "config_sha256_before": {
-                "Train/Parameters_00.xml": "train-before",
-                "Train/Model_00.xml": "model-before",
-                "Test/Parameters_00.xml": "test-params",
-                "Test/Model_00.xml": "test-model",
-            },
-            "config_sha256_after": {
-                "Train/Parameters_00.xml": "train-after",
-                "Train/Model_00.xml": "model-after",
-                "Test/Parameters_00.xml": "test-params",
-                "Test/Model_00.xml": "test-model",
-            },
-        }
-        self.assertTrue(MODULE.test_config_hashes_unchanged(provenance))
-        provenance["config_sha256_after"]["Test/Model_00.xml"] = "changed-test-model"
-        self.assertFalse(MODULE.test_config_hashes_unchanged(provenance))
-
     def test_launch_hashes_detect_source_or_binary_changes(self):
         before = {
             "source_sha256_at_launch": {"trainer.cpp": "source-a"},
@@ -286,9 +267,15 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                 config_after = {
                     "Train/Parameters_00.xml": "train-after",
                     "Train/Model_00.xml": "model-after",
-                    "Test/Parameters_00.xml": f"{case_id}-test-params",
-                    "Test/Model_00.xml": f"{case_id}-test-model",
+                    "Test/Parameters_00.xml": f"{case_id}-test-params-after",
+                    "Test/Model_00.xml": f"{case_id}-test-model-after",
                 }
+                (attempt_dir / "inputs_manifest.json").write_text(json.dumps({
+                    "copied": [
+                        {"side": "Test", "rel": "Parameters_00.xml", "sha256": config_before["Test/Parameters_00.xml"]},
+                        {"side": "Test", "rel": "Model_00.xml", "sha256": config_before["Test/Model_00.xml"]},
+                    ],
+                }), encoding="utf-8")
                 provenance = {
                     "root_git": "root-sha", "root_git_at_launch": "root-sha",
                     "gitlinks": run_manifest["gitlinks"],
@@ -321,6 +308,8 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                         "source_sha256": run_manifest["source_sha256"],
                         "source_sha256_after": run_manifest["source_sha256"],
                         "source_changed_during_run": False, "binary_changed_during_run": False,
+                        "config_sha256_before": config_before,
+                        "config_sha256_after": config_after,
                     },
                 }, replace=False)
                 return 0

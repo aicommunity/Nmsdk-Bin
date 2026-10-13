@@ -151,12 +151,47 @@ def verify_prepared_input_snapshot(input_root: Path, manifest: dict[str, Any] | 
         raise RuntimeError(f"manifested prepared input files are missing: {missing}")
 
 
-def test_config_hashes_unchanged(provenance: dict[str, Any]) -> bool:
-    """Train XML may change as the learned output; Test XML must remain fixed."""
+def test_config_hashes_are_provenanced(
+    provenance: dict[str, Any],
+    result_provenance: dict[str, Any],
+    attempt_dir: Path,
+) -> bool:
+    """Anchor Test inputs to the attempt copy and record allowed runtime transforms.
+
+    The evaluator intentionally merges learned weights and may patch threshold /
+    analyzer settings in the attempt-local Test project. Therefore its final XML
+    hashes are not expected to equal the pre-run hashes. The immutable attempt
+    copy manifest must match the pre-run hashes, and the result must preserve the
+    exact before/after hashes from the detailed provenance record.
+    """
     before = provenance.get("config_sha256_before") or {}
     after = provenance.get("config_sha256_after") or {}
-    test_paths = ("Test/Parameters_00.xml", "Test/Model_00.xml")
-    return all(before.get(path) and before.get(path) == after.get(path) for path in test_paths)
+    result_before = result_provenance.get("config_sha256_before") or {}
+    result_after = result_provenance.get("config_sha256_after") or {}
+    try:
+        attempt_inputs = json.loads((attempt_dir / "inputs_manifest.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    copied_items = attempt_inputs.get("copied")
+    if not isinstance(copied_items, list):
+        return False
+    copied = {
+        (str(item.get("side", "")), str(item.get("rel", ""))): item.get("sha256")
+        for item in copied_items
+        if isinstance(item, dict)
+    }
+    test_files = ("Parameters_00.xml", "Model_00.xml")
+    for filename in test_files:
+        path = f"Test/{filename}"
+        initial_hash = before.get(path)
+        final_hash = after.get(path)
+        if not initial_hash or not final_hash:
+            return False
+        if copied.get(("Test", filename)) != initial_hash:
+            return False
+        if result_before.get(path) != initial_hash or result_after.get(path) != final_hash:
+            return False
+    return True
 
 
 def validate_worker_attempt_directory(attempt_dir: Path) -> None:
@@ -697,7 +732,11 @@ def case_attempt_result(
             or provenance.get("source_sha256_after") != run_manifest.get("source_sha256")
             or provenance.get("source_changed_during_run") is not False
             or provenance.get("binary_changed_during_run") is not False
-            or not test_config_hashes_unchanged(provenance)
+            or not test_config_hashes_are_provenanced(
+                provenance,
+                result.get("run_provenance") or {},
+                attempt_dir,
+            )
             or run_provenance.get("source_sha256") != run_manifest.get("source_sha256")
             or run_provenance.get("source_sha256_after") != run_manifest.get("source_sha256")
             or run_provenance.get("binary_sha256_after") != run_manifest.get("binary_sha256")

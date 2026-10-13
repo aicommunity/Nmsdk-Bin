@@ -350,6 +350,24 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 "launcher_sha256": {"queue.py": "launcher-sha"},
             }
             input_sha = "input-sha"
+            config_before = {
+                "Train/Parameters_00.xml": "train-before",
+                "Train/Model_00.xml": "model-before",
+                "Test/Parameters_00.xml": "test-params-before",
+                "Test/Model_00.xml": "test-model-before",
+            }
+            config_after = {
+                "Train/Parameters_00.xml": "train-after",
+                "Train/Model_00.xml": "model-after",
+                "Test/Parameters_00.xml": "test-params-after",
+                "Test/Model_00.xml": "test-model-after",
+            }
+            (attempt / "inputs_manifest.json").write_text(json.dumps({
+                "copied": [
+                    {"side": "Test", "rel": "Parameters_00.xml", "sha256": "test-params-before"},
+                    {"side": "Test", "rel": "Model_00.xml", "sha256": "test-model-before"},
+                ],
+            }), encoding="utf-8")
             result = {
                 "case": "case-a",
                 "matrix_run_id": "run-a",
@@ -368,6 +386,8 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                     "binary_changed_during_run": False,
                     "training_config_changed_during_run": True,
                     "inputs_mutated_during_run": True,
+                    "config_sha256_before": config_before,
+                    "config_sha256_after": config_after,
                 },
             }
             (attempt / "matrix_result.json").write_text(json.dumps(result), encoding="utf-8")
@@ -383,18 +403,8 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 "binary_changed_during_run": False,
                 "training_config_changed_during_run": True,
                 "inputs_mutated_during_run": True,
-                "config_sha256_before": {
-                    "Train/Parameters_00.xml": "train-before",
-                    "Train/Model_00.xml": "model-before",
-                    "Test/Parameters_00.xml": "test-params",
-                    "Test/Model_00.xml": "test-model",
-                },
-                "config_sha256_after": {
-                    "Train/Parameters_00.xml": "train-after",
-                    "Train/Model_00.xml": "model-after",
-                    "Test/Parameters_00.xml": "test-params",
-                    "Test/Model_00.xml": "test-model",
-                },
+                "config_sha256_before": config_before,
+                "config_sha256_after": config_after,
             }), encoding="utf-8")
             provenance = json.loads((attempt / "provenance.json").read_text(encoding="utf-8"))
             found = MODULE.case_attempt_result(
@@ -405,13 +415,23 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
             )
             self.assertIsNotNone(found)
 
+            input_manifest_record = json.loads((attempt / "inputs_manifest.json").read_text(encoding="utf-8"))
+            input_manifest_record["copied"][0]["sha256"] = "changed-test-params"
+            (attempt / "inputs_manifest.json").write_text(json.dumps(input_manifest_record), encoding="utf-8")
+            self.assertIsNone(MODULE.case_attempt_result(
+                attempt.parent, case_id="case-a", run_manifest=manifest,
+                input_manifest_sha256=input_sha,
+            ))
+            input_manifest_record["copied"][0]["sha256"] = "test-params-before"
+            (attempt / "inputs_manifest.json").write_text(json.dumps(input_manifest_record), encoding="utf-8")
+
             provenance["config_sha256_after"]["Test/Model_00.xml"] = "mutated-test-model"
             (attempt / "provenance.json").write_text(json.dumps(provenance), encoding="utf-8")
             self.assertIsNone(MODULE.case_attempt_result(
                 attempt.parent, case_id="case-a", run_manifest=manifest,
                 input_manifest_sha256=input_sha,
             ))
-            provenance["config_sha256_after"]["Test/Model_00.xml"] = "test-model"
+            provenance["config_sha256_after"]["Test/Model_00.xml"] = "test-model-after"
             (attempt / "provenance.json").write_text(json.dumps(provenance), encoding="utf-8")
 
             result["case_fingerprint"] = "stale-case-fp"
@@ -460,6 +480,12 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
             run_root = base / "_repro" / "TimeLearnerMatrixRuns" / run_id
             attempt = run_root / "W01" / "C1" / "attempt-0001"
             attempt.mkdir(parents=True)
+            (attempt / "inputs_manifest.json").write_text(json.dumps({
+                "copied": [
+                    {"side": "Test", "rel": "Parameters_00.xml", "sha256": "test-params"},
+                    {"side": "Test", "rel": "Model_00.xml", "sha256": "test-model"},
+                ],
+            }), encoding="utf-8")
             input_sha = MODULE.sha256(input_manifest)
             run_manifest = {
                 "run_id": run_id,
