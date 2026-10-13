@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from posttune_verify import compare_run_inputs
+from repro_cold_lib import resolve_console
 
 
 SCRIPT = Path(__file__).with_name("timelearner_matrix.py")
@@ -46,6 +47,15 @@ class QuietDebugLoggingTests(unittest.TestCase):
 
 
 class RunProvenanceTests(unittest.TestCase):
+    def test_console_resolution_uses_host_platform_and_respects_override(self):
+        root = Path("/repo")
+        if os.name == "nt":
+            expected = root / "Bin/Platform/Win/NeuroModelerConsole.exe"
+        else:
+            expected = root / "Bin/Platform/Linux/NeuroModelerConsole"
+        self.assertEqual(resolve_console(root, env={}), expected)
+        self.assertEqual(resolve_console(root, env={"NMSDK_CONSOLE": "custom/Console"}), Path("custom/Console"))
+
     def test_expected_train_output_change_is_allowed_but_test_input_change_is_not(self):
         provenance = {
             "config_sha256_before": {

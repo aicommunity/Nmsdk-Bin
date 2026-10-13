@@ -21,7 +21,11 @@ def resolve_console(root: Path, env: dict[str, str] | None = None) -> Path:
     """Resolve the runner from this checkout; allow explicit per-host override."""
     env = os.environ if env is None else env
     override = env.get("NMSDK_CONSOLE")
-    return Path(override) if override else root / "Bin/Platform/Linux/NeuroModelerConsole"
+    if override:
+        return Path(override)
+    if os.name == "nt":
+        return root / "Bin/Platform/Win/NeuroModelerConsole.exe"
+    return root / "Bin/Platform/Linux/NeuroModelerConsole"
 
 
 NM = resolve_console(NMSDK_ROOT)
