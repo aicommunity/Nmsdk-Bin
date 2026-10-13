@@ -56,7 +56,7 @@ git -C Libraries/Nmsdk-PulseLib rev-parse HEAD
 
 Запускайте ровно одну волну за вызов. `--jobs` задаёт верхний предел; фактический параллелизм автоматически ограничен числом логических CPU минус одно ядро и числом уже работающих Console. При загрузке CPU выше 85% очередь приостанавливает выдачу новых случаев и возобновляет её после двух замеров подряд ниже 70%. После волны скрипт сохраняет результаты и provenance, обновляет документы и коммитит результат в Bin и корневой репозиторий. Следующую волну запускайте после анализа текущей. Для нового запуска используйте свежий Run ID:
 
-Для больших логов задайте абсолютный корень на диске с достаточным местом. Очередь, её дочерний runner и отчётчик используют одну переменную `TIMELEARNER_MATRIX_RUNS_ROOT`. Пример для `.17`:
+Для больших логов задайте абсолютный корень на диске с достаточным местом. Очередь, её дочерний runner и `posttune_verify.py` используют одну переменную `TIMELEARNER_MATRIX_RUNS_ROOT`: она направляет на выбранный диск и состояние очереди, и рабочие копии Console с сырыми логами. Одного symlink для `_repro/TimeLearnerMatrixRuns` недостаточно: без этой переменной рабочие копии по умолчанию остаются в `_repro/runs` на системном диске. Пример для `.17`:
 
 ```bash
 RUNS_ROOT="/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-<идентификатор>"
@@ -71,7 +71,7 @@ RUNS="$TIMELEARNER_MATRIX_RUNS_ROOT"
 SESSION="tl-$RUN_ID"
 mkdir -p "$RUNS"
 tmux new-session -d -s "$SESSION" \
-  "cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain; python3 -u scripts/run_timelearner_matrix_queue.py --run-id '$RUN_ID' --waves W01 --jobs 8 > '$RUNS/$RUN_ID.launch.log' 2>&1; rc=\$?; printf '%s\\n' \"\$rc\" > '$RUNS/$RUN_ID.launch.exit'; if [ -d '$RUNS/$RUN_ID' ]; then printf '%s\\n' \"\$rc\" > '$RUNS/$RUN_ID/queue.exit'; mv -n '$RUNS/$RUN_ID.launch.log' '$RUNS/$RUN_ID/queue.log'; fi"
+  "export TIMELEARNER_MATRIX_RUNS_ROOT='$TIMELEARNER_MATRIX_RUNS_ROOT'; cd /home/user/Nmsdk/Bin/Configs/SpikeSamples/StructTrain; python3 -u scripts/run_timelearner_matrix_queue.py --run-id '$RUN_ID' --waves W01 --jobs 8 > '$RUNS/$RUN_ID.launch.log' 2>&1; rc=\$?; printf '%s\\n' \"\$rc\" > '$RUNS/$RUN_ID.launch.exit'; if [ -d '$RUNS/$RUN_ID' ]; then printf '%s\\n' \"\$rc\" > '$RUNS/$RUN_ID/queue.exit'; mv -n '$RUNS/$RUN_ID.launch.log' '$RUNS/$RUN_ID/queue.log'; fi"
 printf 'Session: %s\\nRun ID: %s\\nLog: %s/%s.launch.log\\n' "$SESSION" "$RUN_ID" "$RUNS" "$RUN_ID"
 ```
 
@@ -114,7 +114,7 @@ python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
   --branch-gamma-mode per-input-auto
 ```
 
-Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат и Console provenance будут в `_repro/TimeLearnerMatrixRuns/<RUN_ID>/<wave>/<case>/attempt-0001/`. Одиночный диагностический запуск не обновляет сводный документ всей волны; для отчётного результата запускайте волну целиком через queue. Файлы рабочего клона лежат отдельно от эталонных `inputs/`. Прямой запуск `timelearner_matrix.py --case/--run` отключён, чтобы не обходить fingerprint и изоляцию попыток.
+Используйте ID из `TimeLearnerMatrix/matrix.json`. Результат и Console provenance будут в `$TIMELEARNER_MATRIX_RUNS_ROOT/<RUN_ID>/<wave>/<case>/attempt-0001/`, а рабочая копия и сырые логи Console — в `$TIMELEARNER_MATRIX_RUNS_ROOT/<case>_*_work/`. Убедитесь, что оба пути находятся на выбранном диске (`df -h "$TIMELEARNER_MATRIX_RUNS_ROOT"`). Одиночный диагностический запуск не обновляет сводный документ всей волны; для отчётного результата запускайте волну целиком через queue. Файлы рабочего клона лежат отдельно от эталонных `inputs/`. Прямой запуск `timelearner_matrix.py --case/--run` отключён, чтобы не обходить fingerprint и изоляцию попыток.
 
 Несколько заранее выбранных случаев одной волны можно запустить параллельно в одном безопасном запуске. Для неполного набора обязателен `--no-commit`; его результаты сохраняются по отдельным каталогам попыток и не публикуются как завершённая волна:
 
