@@ -1,0 +1,78 @@
+{
+  "experiment": "PHASE6 exact-input Classic tolerance-only pair",
+  "input_sha256": {
+    "Model_00.xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+    "Parameters_00.xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9",
+    "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+    "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d6f3f9036be87e214cc69"
+  },
+  "source": {
+    "root": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+    "pulselib_base": "9b63613ecca2ff7d7fbf1579e7e4f93a64ce5aaf",
+    "bin": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+    "reset_helper_git_blob": "5004d741b3503a78b4603b4e2e800d42e7fe6cb3"
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "run_id": "phase6_positive_replay_9b63613_jsonlog_autoscale0_t14_20261013",
+      "run_provenance": "phase6_delay_roundoff_gate_provenance_2026-10-13.json",
+      "console_sha256": "7addef682ddbc0fb58bce647dd1c65c2d26b3bb4238a0772e0afb31880b46006",
+      "only_difference": "Classic strict lower guard delay_k < 0.0",
+      "iteration6": {
+        "active_dendrite_index0": 2,
+        "peak_valid": true,
+        "raw_delay_from_pulse_s": -1.7763568394002505e-15,
+        "delay_decision": "rejected as negative",
+        "dend_status": 0,
+        "length_before_and_after": 9,
+        "tip_resistance_ohm": 52456793.160242856
+      },
+      "at_model_time_limit": {
+        "model_time_s": 13.9995,
+        "need": 1,
+        "cpp_done": false,
+        "failure_reason": 0,
+        "lengths": [17, 17, 9, 1],
+        "tip_resistance_ohm": [21243403.392814495, 20000000, 52456793.160242856, 86000000]
+      }
+    },
+    {
+      "variant": "tolerance_only",
+      "run_id": "phase6_roundoff_exact_inputs_tolerance_t14_retry2_20261013",
+      "console_sha256": "bcf4ccae2c5cfbaf021e634c8b4635a89aca4869d65d5463baa685a5ab3bc080",
+      "only_difference": "Classic strict lower guard changed to delay_k < -1e-12 s; no other source or input change",
+      "iteration6": {
+        "active_dendrite_index0": 2,
+        "peak_valid": true,
+        "raw_delay_from_pulse_s": -1.7763568394002505e-15,
+        "delay_used_s": 0.04,
+        "needed_s": 0.2545,
+        "dt_s": 0.2145,
+        "dend_status": 1,
+        "length_before": 9,
+        "length_after": 17,
+        "tip_resistance_before_ohm": 52456793.160242856,
+        "tip_resistance_after_ohm": 20000000
+      },
+      "at_model_time_limit": {
+        "model_time_s": 13.9995,
+        "need": 1,
+        "cpp_done": false,
+        "failure_reason": 0,
+        "eol_sync": false,
+        "eol_amp": false,
+        "lengths": [17, 17, 17, 1],
+        "tip_resistance_ohm": [21243403.392814495, 20000000, 20000000, 86000000],
+        "amp_dt_v": [-0.0076981596351500814, -0.018359632511604995, 0.014179356335927595, 0]
+      }
+    }
+  ],
+  "conclusion": "The strict zero boundary alone prevented Classic from using the modeled cable delay and scheduling this length growth on these exact inputs. The tolerance-only build applied the growth on iteration 6. Both runs stopped at the external model-time cap with Need=1; this fixes one demonstrated iteration-level implementation defect but does not establish full convergence.",
+  "production_fix": {
+    "scope": "Classic only",
+    "rule": "Clamp a negative delay to zero only when its magnitude is at most 4*epsilon*max(1, abs(peak_time), abs(pulse_time)). Preserve raw DelayFromPulse in the C++ decision audit.",
+    "branch": "Unchanged; no corresponding negative-roundoff Branch event was found in the available run logs.",
+    "compile_and_test": "The modified PulseLib and integration-test translation units compiled with VS2019. The integration executable was not linked or run: the cached local build mixed v142 linking with prebuilt v143 static libraries and failed on unresolved __std_* symbols."
+  }
+}

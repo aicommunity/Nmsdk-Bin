@@ -61,7 +61,7 @@
     "peak_valid": true,
     "expected_relative_pulse_s": 0.24,
     "measured_peak_relative_s": 0.24,
-    "delay_from_pulse_s": -1.7763568394002505e-15,
+    "delay_from_pulse_s": -1.7763568394002505E-15,
     "source_guard": "if(delay_k < 0.0 || delay_k >= EffectiveIterationGapSec())",
     "reference_logger_index": 3,
     "active_dendrite_length": 9,
@@ -69,6 +69,6 @@
     "dend_status_after_guard": 0,
     "consequence": "length change for active dendrite skipped at iteration 6"
   },
-  "interpretation": "The exact-zero physical delay computes as a tiny negative double. The strict sign guard takes its invalid-delay path; because active L=9 exceeds the final reference L=1, the fallback does not set DendStatus to grow. This explains the iteration-6 no-growth decision in the 1.55 s cadence run. The paired 1.50 s control grows the same dendrite at iteration 6; it does not capture its DelayFromPulse, so the cadence-dependent sign-boundary mechanism is the best-supported explanation but remains to be tested with a tolerance-only C++ control. No full convergence claim: Need=1 at the time cap.",
+  "interpretation": "An exact-input tolerance-only Classic control has now confirmed the iteration-level mechanism. Baseline and control both measured raw DelayFromPulse=-1.7763568394002505e-15 s at iteration 6. The baseline strict guard kept DendStatus=0 and length 9; changing only the lower guard to delay_k < -1e-12 s set DendStatus=1 and grew length 9 to 17. See phase6_delay_roundoff_tolerance_pair_2026-10-13.json. This confirms a narrow Classic implementation defect in the near-zero delay decision. Both runs remain censored at the external model-time cap with Need=1, so this does not establish full training convergence.",
   "diagnostic_events": "phase6_delay_roundoff_gate_events_2026-10-13.jsonl"
 }
