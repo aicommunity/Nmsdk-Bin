@@ -1,6 +1,7 @@
 import importlib.util
 import json
 import os
+import re
 import tempfile
 from threading import Barrier, Lock
 import unittest
@@ -283,7 +284,9 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             )
             for name in ("Model_00.xml", "Parameters_00.xml"):
                 (train / name).write_text(
-                    f'<Root><ResetToUntrainedState Type="b">1</ResetToUntrainedState>{segment}</Root>',
+                    '<Root><ResetToUntrainedState Type="b">1</ResetToUntrainedState>'
+                    '<StructureBuildMode Type="i">1</StructureBuildMode>'
+                    f'{segment}<Neuron><StructureBuildMode Type="i">2</StructureBuildMode></Neuron></Root>',
                     encoding="utf-8",
                 )
 
@@ -296,6 +299,10 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 self.assertEqual(text.count("<FBResistance>5000000</FBResistance>"), 2)
                 self.assertEqual(text.count("<RestingResistance>5000000</RestingResistance>"), 2)
                 self.assertRegex(text, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
+                self.assertEqual(
+                    re.findall(r'<StructureBuildMode\b[^>]*>(.*?)</StructureBuildMode>', text),
+                    ["2", "2"],
+                )
 
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):

@@ -394,7 +394,7 @@ def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) 
 def apply_branch_segment_rm_profile_to_train(
     train: Path, profile: dict[int, float]
 ) -> list[str]:
-    """Apply Rm after SoftCold and prevent C++ cold rebuild from discarding it."""
+    """Apply Rm after SoftCold and preserve the prepared neuron through C++ build/reset."""
     updated_files: list[str] = []
     for filename in ("Model_00.xml", "Parameters_00.xml"):
         path = train / filename
@@ -403,7 +403,13 @@ def apply_branch_segment_rm_profile_to_train(
         text = path.read_text(encoding="utf-8")
         if get_tag(text, "ResetToUntrainedState") is None:
             raise ValueError(f"ResetToUntrainedState missing after SoftCold reset in {path}")
+        if get_tag(text, "StructureBuildMode") is None:
+            raise ValueError(f"StructureBuildMode missing after SoftCold reset in {path}")
         text = set_tag_all(text, "ResetToUntrainedState", "0")
+        # The top-level trainer otherwise calls BuildStructure() in ABuild,
+        # replaces the loaded neuron with a class instance, and discards this
+        # diagnostic channel profile before the first learning iteration.
+        text = set_tag_all(text, "StructureBuildMode", "2")
         path.write_text(
             apply_branch_segment_rm_profile(text, profile),
             encoding="utf-8",

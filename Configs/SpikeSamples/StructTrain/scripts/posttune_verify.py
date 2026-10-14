@@ -1766,7 +1766,7 @@ def run_case(
                 print(
                     "Applied Branch segment-1 Rm profile after SoftCold reset to "
                     + ", ".join(updated)
-                    + "; ResetToUntrainedState=0 preserves the profile through C++ startup"
+                    + "; ResetToUntrainedState=0 and StructureBuildMode=2 preserve it through C++ startup"
                 )
         from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
 
