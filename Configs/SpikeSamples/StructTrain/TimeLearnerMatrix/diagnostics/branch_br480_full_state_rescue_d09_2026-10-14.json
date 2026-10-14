@@ -75,8 +75,9 @@
     "scope": "Branch diagnostic build only",
     "behavior": "When parametric normalization is active, W3 is off, the measured peak is invalid or below target for at least three no-action cycles, and Rs is above Rmin, allow a bounded Rs reduction Rs *= 1 - 0.15 * gain (gain=0.4, so 6%); do not change dendrite length and defer refusal while Rs remains above Rmin.",
     "purpose": "Extend observation to full state while permitting only Rs-only amplitude recovery; not adopted into tracked C++ code.",
-    "recovery_steps_applied_before_refusal": 0,
-    "reason": "Rs had already reached Rmin by the time the invalid-peak no-action counter reached the refusal threshold."
+    "recovery_steps_applied_before_refusal": 6,
+    "recovery_step_iterations": [24, 27, 30, 33, 36, 39],
+    "reason": "Six bounded Rs-only steps were applied while length stayed at 65. On iteration 40 the regular amplitude and length corrections drove Rs to Rmin; no further Rs-only step was possible before refusal."
   },
   "result": {
     "wrapper_exit_code": 0,
@@ -102,6 +103,26 @@
     "iteration_40_length_before": [1, 65, 89, 1],
     "iteration_40_length_after": [1, 73, 89, 1],
     "iteration_40_tip_Rs_ohm_before_to_after": [1626673.9525, 1000000],
+    "iteration_40_peak_to_initial_ratio": 0.00006379161686340253,
+    "iteration_40_gamma_before_for_active_input": 0.08721382152799868,
+    "iteration_40_gamma_observed_from_peak_ratio": 0.15093576208394127,
+    "iteration_40_gamma_after_smoothing_for_active_input": 0.10633040369478144,
+    "iteration_40_length_unsettled": true,
+    "iteration_40_damped_P_step_applied": false,
+    "iteration_40_damped_P_step_reason": "DendStatus remained nonzero, so ready_for_r_tune was false while the length correction was pending.",
+    "iteration_40_feedforward_factor_after_gamma_update": 0.4271400944321424,
+    "iteration_40_feedforward_R_from_preupdate_value_before_clamp_ohm": 694817.6657,
+    "iteration_40_feedforward_R_after_clamp_ohm": 1000000,
+    "iterations_22_to_39_rs_only_rescue": {
+      "length": 65,
+      "rescue_iterations": [24, 27, 30, 33, 36, 39],
+      "Rs_start_ohm": 2357943.480374483,
+      "Rs_end_ohm": 1626673.9525483667,
+      "peak_start": 8.799079308507984e-7,
+      "peak_end": 9.893844882258307e-7,
+      "amplitude_gain_factor": 1.1244,
+      "peak_to_initial_at_end": 0.0000625
+    },
     "iteration_41_lengths": [1, 73, 89, 1],
     "iteration_41_tip_Rs_ohm": [86000000, 1000000, 1000000, 86000000],
     "generator_times_seconds": {
@@ -118,7 +139,9 @@
     "The refusal happened at Rmin while active dendrite length was 73, below MaxLen=100; MaxLen does not explain this refusal.",
     "The input pulse intervals remained regular and matched the same sample; this run does not indicate dataset or generator timing drift.",
     "Length and Rs were both changed in the inter-burst update before the large peak drop. The next pulse attached at dendrite 73 and its component snapshot showed the updated Rs; this does not establish a reset/relink defect.",
-    "The temporary Rs-only recovery was not applied because Rs was already at Rmin, so the run does not test whether that recovery can restore the peak.",
+    "Six temporary Rs-only recovery steps were applied at fixed length 65: Rs fell about 31% while peak amplitude rose 12.4%, remaining about 16,000 times below its initial target. The rescue did not restore a useful peak.",
+    "On iteration 40 the pending length change made ready_for_r_tune false, so the damped P amplitude step was not applied. The low measured peak updated per-input gamma from 0.08721 to 0.10633; the subsequent +8-segment feedforward step alone requested Rs about 0.695 MOhm, which was clamped to Rmin=1 MOhm. The immediate Rmin hit follows the implemented length-compensation path; no lost state write was observed.",
+    "After length moved 65 to 73 with Rs at Rmin, the next recorded peak was about 18.8 times smaller. Since length and Rs changed in the same update, this ratio does not isolate their causal contributions.",
     "A controlled fixed-response ablation separating the effects of length and Rs is still needed before attributing the lower response to either change."
   ],
   "next_step": "Run a short paired fixed-response diagnostic on the same reset state and exact input: baseline trajectory, length-only update, Rs-only update, and joint update; capture pre-pulse membrane and synapse state. Keep training logic in C++ and preserve each attempt in a unique Data-disk directory.",
