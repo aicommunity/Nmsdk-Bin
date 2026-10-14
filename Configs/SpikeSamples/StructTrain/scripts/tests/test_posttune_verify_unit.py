@@ -9,7 +9,7 @@ import unittest
 import importlib.util
 import os
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPTS))
@@ -377,6 +377,48 @@ class TestRuntimeTrainingFailureAudit(unittest.TestCase):
             )
 
             self.assertEqual(pv.runtime_training_failure_from_audit(train), (5, 3))
+
+    def test_wait_need0_stops_stub_console_on_long_failure_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "case"
+            train = root / "Train"
+            train.mkdir(parents=True)
+            (train / "Parameters_00.xml").write_text(
+                "<Root><IsNeedToTrain>1</IsNeedToTrain>"
+                "<ResistanceMax>1000000000</ResistanceMax>"
+                "<TipSynapseResistance>1 1 1 1</TipSynapseResistance></Root>",
+                encoding="utf-8",
+            )
+            (train / "TimeLearnerTrainingAudit.log").write_text(
+                "schema=1;kind=iteration;phase=5;failure_reason=3;"
+                "component_state=" + "x" * 100_000 + "\n",
+                encoding="utf-8",
+            )
+            process = Mock()
+            process.poll.return_value = None
+
+            def finish_after_terminate(*, timeout):
+                process.poll.return_value = -15
+                return -15
+
+            process.wait.side_effect = finish_after_terminate
+            with (
+                patch.object(pv, "assert_disk_for_train"),
+                patch.object(pv, "free_gib", return_value=100.0),
+                patch.object(pv.time, "sleep"),
+                patch.object(pv.subprocess, "Popen", return_value=process) as popen_mock,
+            ):
+                status, child_rc = pv.wait_need0(
+                    train,
+                    1200.0,
+                    root / "runner.log",
+                    max_polls=1,
+                )
+                popen_mock.call_args.kwargs["stdout"].close()
+
+            self.assertEqual(status, "cpp_training_failure_3")
+            self.assertEqual(child_rc, -15)
+            process.terminate.assert_called_once()
 
     def test_incomplete_trailing_record_does_not_mask_last_complete_record(self):
         with tempfile.TemporaryDirectory() as td:

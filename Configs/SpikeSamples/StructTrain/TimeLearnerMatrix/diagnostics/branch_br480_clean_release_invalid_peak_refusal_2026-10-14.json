@@ -38,10 +38,10 @@
     "python_unit_tests": {
       "suite": "Bin/Configs/SpikeSamples/StructTrain/scripts/tests/test_posttune_verify_unit.py",
       "initial_result": "47/51; four unchanged tests used stale platform/API expectations",
-      "final_passed": 51,
+      "final_passed": 52,
       "final_failed": 0,
       "final_exit_code": 0,
-      "note": "The four test expectations were updated to the current platform-aware Console resolver and classify_detection_quality contract. No training or runner behavior changed in this test-only follow-up."
+      "note": "The four stale expectations were updated to the current platform-aware Console resolver and classify_detection_quality contract; a stub-Console polling test also verifies refusal detection and termination. No C++ training or learning behavior changed."
     }
   },
   "run": {
@@ -105,7 +105,8 @@
     "fix": "Read complete audit records backwards in binary chunks, extending across chunk boundaries; ignore an incomplete unterminated tail while the log is being appended.",
     "regression_tests": [
       "A 100,000-byte iteration record reports (phase=5, failure_reason=3).",
-      "An incomplete final record does not hide the preceding complete refusal."
+      "An incomplete final record does not hide the preceding complete refusal.",
+      "wait_need0 recognizes the long-record refusal and terminates a stub Console."
     ]
   },
   "remote_replay": {
