@@ -216,7 +216,60 @@
         "min_ohm": 1000000.0,
         "max_ohm": 86000000.0,
         "non_finite_total": 0
+      },
+      "explicit_step_gain_corrected": {
+        "conductance_source": "sum of C++ serialized SynapticInputs vector; previous analyzer incorrectly used the separately serialized SumSynapticInput state",
+        "analyzer_summary_sha256": "82e3771f5857aca1fa15d9a790c70b5250b9abd71697e5104a6dae9dfc493a86",
+        "records": 26971,
+        "channels": 180,
+        "maximum_K": 3.612500093915373,
+        "samples_K_over_1": 324,
+        "samples_K_over_2": 144,
+        "sign_crossings": 144,
+        "signed_envelope_violations": 252,
+        "absolute_rest_bound_violations": 216,
+        "nonfinite_channel_samples": 0,
+        "assessment": "The unstable explicit update is directly observed; several K>2 steps reproduce alternating sign and over-range channel outputs under fixed-sign input."
+      },
+      "unstable_step_example": {
+        "channel": "d25.c0",
+        "declared_type": -1,
+        "fixed_channel_input": -1,
+        "channel_resistance_ohm": 10000000,
+        "capacity_farad": 1e-09,
+        "update_frequency_hz": 2000,
+        "samples": [
+          {
+            "model_time_s": 10.216,
+            "output_before": 0.5,
+            "summed_SynapticInputs_siemens": 7.5e-07,
+            "time_constant_s": 0.0011764705882352942,
+            "K": 3.6125,
+            "output_after_observed": -1.7312499999999997,
+            "output_after_from_cpp_formula": -1.7312499999999997
+          },
+          {
+            "model_time_s": 10.2165,
+            "output_before": -1.7312499999999997,
+            "summed_SynapticInputs_siemens": 6.75e-07,
+            "time_constant_s": 0.0012903225806451613,
+            "K": 3.003125,
+            "output_after_observed": 3.08041015625,
+            "output_after_from_cpp_formula": 3.08041015625
+          }
+        ]
+      },
+      "analyzer_correction": {
+        "old_field_used": "SumSynapticInput state, which was serialized as zero in this trace",
+        "actual_cpp_conductance": "NPulseChannel::ACalculate2 sums the SynapticInputs vector",
+        "code_fix": "Bin/Configs/SpikeSamples/StructTrain/scripts/analyze_timelearner_dynamics.py now sums the serialized vector and falls back only for older records without it",
+        "training_code_changed": false
       }
     }
+  },
+  "corrected_step_gain_reanalysis": {
+    "remote_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/manifest.json",
+    "remote_manifest_sha256": "bfb666ce415abffb5baee8268e6769c45588053315015dc70a57e0b7",
+    "analyzer_source_sha256": "b1f636d0ffcdaaf88850b2922ee7c141ae426a55da160d70d0c366db0d843a1f"
   }
 }

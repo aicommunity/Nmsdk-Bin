@@ -113,13 +113,19 @@ def parse_record(line: str) -> dict[str, Any] | None:
                 "name": channel_match.group("name"),
                 "output": _number(channel_fields[0] if len(channel_fields) > 0 else None),
                 "sum_channel_input": _number(channel_fields[1] if len(channel_fields) > 1 else None),
+                # SumSynapticInput is a separately serialized state and may be
+                # stale/zero. The trainer actually sums SynapticInputs in
+                # NPulseChannel::ACalculate2, so replace this fallback below
+                # whenever the per-synapse vector is present in the snapshot.
+                "sum_synaptic_input_state": _number(channel_fields[2] if len(channel_fields) > 2 else None),
                 "synaptic_conductance": _number(channel_fields[2] if len(channel_fields) > 2 else None),
                 "activated": _number(channel_fields[3] if len(channel_fields) > 3 else None),
                 "type": _number(channel_fields[4].split("=", 1)[1])
                 if len(channel_fields) > 4 and channel_fields[4].startswith("type=") else None,
             }
             if separator:
-                bio_values = bio_raw.split(":channel_inputs=", 1)[0].split(":")
+                bio_prefix, channel_inputs_separator, input_vectors = bio_raw.partition(":channel_inputs=")
+                bio_values = bio_prefix.split(":")
                 channel["bio"] = {
                     "channel_input": _number(bio_values[0] if len(bio_values) > 0 else None),
                     "capacity": _number(bio_values[1] if len(bio_values) > 1 else None),
@@ -129,6 +135,24 @@ def parse_record(line: str) -> dict[str, Any] | None:
                     "time_constant": _number(bio_values[5] if len(bio_values) > 5 else None),
                     "connected_synapses": _number(bio_values[6] if len(bio_values) > 6 else None),
                 }
+                if channel_inputs_separator:
+                    channel_inputs_raw, synaptic_separator, synaptic_inputs_raw = input_vectors.partition(":synaptic_inputs=")
+                    channel["bio"]["channel_inputs"] = [
+                        value for token in channel_inputs_raw.split(":")
+                        if (value := _number(token)) is not None
+                    ]
+                    if synaptic_separator:
+                        synaptic_inputs = [
+                            value for token in synaptic_inputs_raw.split(":")
+                            if (value := _number(token)) is not None
+                        ]
+                        channel["bio"]["synaptic_inputs"] = synaptic_inputs
+                        channel["synaptic_conductance"] = sum(synaptic_inputs)
+                        channel["synaptic_conductance_source"] = "SynapticInputs"
+                    else:
+                        channel["synaptic_conductance_source"] = "SumSynapticInput_fallback"
+                else:
+                    channel["synaptic_conductance_source"] = "SumSynapticInput_fallback"
             component["channels"].append(channel)
 
         for synapse_match in SYNAPSE_RE.finditer(body):
@@ -326,7 +350,8 @@ def analyze_file(path: Path, *, rest_bound: float = 1.0,
             "rest_bound": rest_bound,
             "signed_channel_envelope": "serialized NPulseChannel.Type when available; otherwise the first nonzero observed output sign is used as a provisional fallback orientation",
             "time_step_hz": time_step_hz,
-            "step_gain": "estimated from C, observed TimeConstant and summed synaptic conductance; fixed-input local step only",
+            "synaptic_conductance": "summed serialized SynapticInputs vector, matching NPulseChannel::ACalculate2; older snapshots without the vector fall back to SumSynapticInput state",
+            "step_gain": "estimated from C, observed TimeConstant and actual summed SynapticInputs conductance; fixed-input local step only",
             "soma_abs_limit": soma_abs_limit,
         },
         "soma_sum_potential": {

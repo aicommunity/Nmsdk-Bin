@@ -300,7 +300,18 @@
             "line": 7944,
             "channel": "d4.c0"
           }
-        ]
+        ],
+        "corrected_step_gain_analysis": {
+          "summary_sha256": "3e466a884f057e1a43a46198c1c9cd743555844ed326ca5afb631ff247b8d1dd",
+          "max_K": 28200.05082976926,
+          "K_over_1": 852,
+          "K_over_2": 756,
+          "sign_crossings": 51734,
+          "signed_envelope_violations": 102148,
+          "absolute_rest_bound_violations": 100650,
+          "channel_nonfinite_samples": 119448,
+          "conductance_source": "sum of serialized SynapticInputs vector"
+        }
       }
     },
     {
@@ -507,7 +518,18 @@
           "max_ohm": 86000000.0,
           "non_finite_total": 0
         },
-        "non_finite_examples": []
+        "non_finite_examples": [],
+        "corrected_step_gain_analysis": {
+          "summary_sha256": "192b9b380462554c45d7357caaf0c8ecabd17896bd5afe9d5e2b313e2ac3e40b",
+          "max_K": 0.6494775629827197,
+          "K_over_1": 0,
+          "K_over_2": 0,
+          "sign_crossings": 0,
+          "signed_envelope_violations": 0,
+          "absolute_rest_bound_violations": 0,
+          "channel_nonfinite_samples": 0,
+          "conductance_source": "sum of serialized SynapticInputs vector"
+        }
       }
     }
   ],
@@ -516,5 +538,15 @@
     "floor_on": "With the production stability floor Rs/Rm=0.288007 (2.8800716 MOhm), no non-finite values, sign crossings, or envelope violations occur in the matching run; channel outputs remain [-1,1]. It still refuses with Need=1 on a later invalid peak before evaluation.",
     "conclusion": "The derived floor is supported as a necessary numerical-stability guard for this tested W04 condition, and lower Rs caused the physical-state pathology under the exact matched M=1000/per-input-auto condition. This does not establish global sufficiency or mathematical impossibility of training. The floor prevents numerical divergence here; it does not fix the independent convergence refusal."
   },
-  "classification_quality": "not evaluated in either run: C++ training refused before evaluator."
+  "classification_quality": "not evaluated in either run: C++ training refused before evaluator.",
+  "analysis_correction": {
+    "issue": "Previous K summaries used SumSynapticInput state instead of the actual SynapticInputs vector summed by NPulseChannel::ACalculate2.",
+    "impact": "C++ outcomes and raw output/sign/nonfinite observations are unchanged; corrected K shows the floor-off divergence coincides with very large unstable step gains, while the computed floor trace remains below K=1.",
+    "remote_corrected_summaries": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/"
+  },
+  "corrected_step_gain_reanalysis": {
+    "remote_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/manifest.json",
+    "remote_manifest_sha256": "bfb666ce415abffb5baee8268e6769c45588053315015dc70a57e0b7",
+    "analyzer_source_sha256": "b1f636d0ffcdaaf88850b2922ee7c141ae426a55da160d70d0c366db0d843a1f"
+  }
 }

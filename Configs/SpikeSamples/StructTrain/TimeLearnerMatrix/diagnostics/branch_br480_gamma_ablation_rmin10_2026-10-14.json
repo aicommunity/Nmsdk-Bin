@@ -22,8 +22,18 @@
     ],
     "matrix_input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
     "shared_auto_cold_reset_state": {
-      "dendrite_length": [1, 1, 1, 1],
-      "tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000],
+      "dendrite_length": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "tip_resistance_ohm": [
+        86000000,
+        86000000,
+        86000000,
+        86000000
+      ],
       "attenuation_gamma": -1,
       "per_input_gamma": [
         -1,
@@ -50,7 +60,12 @@
       "reset_audit": {
         "auto_estimate_gamma": true,
         "use_per_input_gamma": false,
-        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+        "initial_tip_resistance_ohm": [
+          86000000,
+          86000000,
+          86000000,
+          86000000
+        ]
       },
       "terminal": {
         "converged": false,
@@ -63,8 +78,18 @@
         "eol_amplitude": false,
         "active_vector_index": 1,
         "active_peak_valid": false,
-        "length_after": [1, 65, 89, 1],
-        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "length_after": [
+          1,
+          65,
+          89,
+          1
+        ],
+        "tip_resistance_after_ohm": [
+          86000000,
+          2880071.5552629363,
+          2880071.5552629363,
+          86000000
+        ],
         "max_length": 100,
         "classification_gate": "not_run_training_incomplete"
       },
@@ -98,7 +123,12 @@
       "reset_audit": {
         "auto_estimate_gamma": true,
         "use_per_input_gamma": true,
-        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+        "initial_tip_resistance_ohm": [
+          86000000,
+          86000000,
+          86000000,
+          86000000
+        ]
       },
       "terminal": {
         "converged": false,
@@ -111,14 +141,24 @@
         "eol_amplitude": false,
         "active_vector_index": 1,
         "active_peak_valid": false,
-        "length_after": [1, 65, 89, 1],
-        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "length_after": [
+          1,
+          65,
+          89,
+          1
+        ],
+        "tip_resistance_after_ohm": [
+          86000000,
+          2880071.5552629363,
+          2880071.5552629363,
+          86000000
+        ],
         "max_length": 100,
         "classification_gate": "not_run_training_incomplete"
       },
       "gamma_and_rs_observation": {
         "vector_index_1_initial_gamma_fallback": 0.05,
-        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.959064983,
+        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.95906498,
         "vector_index_1_first_rmin_length": 65,
         "vector_index_2_first_rmin_length": 25
       },
@@ -142,7 +182,12 @@
         "auto_estimate_gamma": false,
         "use_per_input_gamma": false,
         "attenuation_gamma": 0.05,
-        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+        "initial_tip_resistance_ohm": [
+          86000000,
+          86000000,
+          86000000,
+          86000000
+        ]
       },
       "terminal": {
         "converged": false,
@@ -155,15 +200,25 @@
         "eol_amplitude": false,
         "active_vector_index": 1,
         "active_peak_valid": false,
-        "length_after": [1, 73, 89, 1],
-        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "length_after": [
+          1,
+          73,
+          89,
+          1
+        ],
+        "tip_resistance_after_ohm": [
+          86000000,
+          2880071.5552629363,
+          2880071.5552629363,
+          86000000
+        ],
         "max_length": 100,
         "classification_gate": "not_run_training_incomplete"
       },
       "gamma_and_rs_observation": {
         "shared_gamma": 0.05,
         "resistance_multiplier_per_8_segment_growth": 0.6703200460356393,
-        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.959064983,
+        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.95906498,
         "vector_index_1_first_rmin_length": 73,
         "vector_index_2_first_rmin_length": 73
       },
@@ -195,10 +250,12 @@
     "soma_sum_max": 0.12049605846207956,
     "soma_shutdown_threshold_configured_in_analyzer": null,
     "non_finite_examples": 0,
-    "local_explicit_step_gain_max": 0.1802051002306427,
+    "local_explicit_step_gain_max": 0.6494775629827197,
     "samples_local_step_gain_over_1": 0,
     "samples_local_step_gain_over_2": 0,
-    "assessment": "No numerical divergence indicators were observed in this trace; this is not a global stability proof."
+    "assessment": "No numerical divergence indicators were observed in this trace; this is not a global stability proof.",
+    "corrected_analyzer_summary_sha256": "6ac9e183776e25a53794039fe68b0b0333ecd97b6b1b130b887b2a55df99ba08",
+    "synaptic_conductance_source": "sum of the serialized SynapticInputs vector; SumSynapticInput state was not a current G aggregate"
   },
   "classification": {
     "training": "cpp_refusal_invalid_peak_no_recovery_need_remains_1",
@@ -210,5 +267,20 @@
       "global numerical stability or instability across other configurations",
       "classification quality after convergence"
     ]
+  },
+  "analysis_correction": {
+    "issue": "Earlier analyzer reconstructed G from SumSynapticInput state, which is not updated as an aggregate by NPulseChannel::ACalculate2 and was zero in this trace.",
+    "fix": "Analyzer now sums SynapticInputs, the vector consumed by ACalculate2.",
+    "impact": "The prior Kmax=0.180205 is superseded by Kmax=0.649478. Output ranges, sign/envelope counts, training refusal, and quality fields did not change."
+  },
+  "dynamics_summary": {
+    "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/branch_br480_shared_auto_rmin10_corrected.json",
+    "sha256": "6ac9e183776e25a53794039fe68b0b0333ecd97b6b1b130b887b2a55df99ba08",
+    "method": "recomputed from the archived raw dynamics log using summed SynapticInputs"
+  },
+  "corrected_step_gain_reanalysis": {
+    "remote_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/manifest.json",
+    "remote_manifest_sha256": "bfb666ce415abffb5baee8268e6769c45588053315015dc70a57e0b7",
+    "analyzer_source_sha256": "b1f636d0ffcdaaf88850b2922ee7c141ae426a55da160d70d0c366db0d843a1f"
   }
 }

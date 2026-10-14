@@ -87,7 +87,7 @@
         "samples_outside_signed_envelope": 0,
         "samples_outside_abs_rest": 0,
         "channel_nonfinite": 0,
-        "max_local_explicit_step_gain": 0.07417096297996743,
+        "max_local_explicit_step_gain": 0.110026634987514,
         "channels_gain_over_1": 0,
         "channels_gain_over_2": 0,
         "soma_min": -0.0024776028583277654,
@@ -95,7 +95,10 @@
         "soma_nonfinite": 0,
         "membrane_sum_min": -0.0024776028583277654,
         "membrane_sum_max": 0.11164656051283661,
-        "nonfinite_examples": []
+        "nonfinite_examples": [],
+        "summary_sha256": "49ccf0604acf79ed571dfc9335f37c6946ab4f2bda5f038e6a8abaca33561d3e",
+        "step_gain_conductance_source": "sum of serialized SynapticInputs vector",
+        "step_gain_analyzer_summary_sha256": "49ccf0604acf79ed571dfc9335f37c6946ab4f2bda5f038e6a8abaca33561d3e"
       },
       "restoration_verification": null,
       "audit_sha256": "2eae9c9975eedfc1f759a358c69dd52a71739763e63302d9e9dbca1fda0b30c9",
@@ -255,7 +258,7 @@
         "samples_outside_signed_envelope": 0,
         "samples_outside_abs_rest": 0,
         "channel_nonfinite": 0,
-        "max_local_explicit_step_gain": 0.08750000055244338,
+        "max_local_explicit_step_gain": 0.1531250019335518,
         "channels_gain_over_1": 0,
         "channels_gain_over_2": 0,
         "soma_min": 0.0,
@@ -263,7 +266,10 @@
         "soma_nonfinite": 0,
         "membrane_sum_min": 0.0,
         "membrane_sum_max": 0.22989530167401573,
-        "nonfinite_examples": []
+        "nonfinite_examples": [],
+        "summary_sha256": "500a27be4af48fdc196bc8f97c95bc546ef08f2e87fb89287ff4a03c5c71a571",
+        "step_gain_conductance_source": "sum of serialized SynapticInputs vector",
+        "step_gain_analyzer_summary_sha256": "500a27be4af48fdc196bc8f97c95bc546ef08f2e87fb89287ff4a03c5c71a571"
       },
       "restoration_verification": null,
       "audit_sha256": "1232f506fa394e01251c16a1fa5f71009289ea15a8f887da056376763b1b1211",
@@ -423,7 +429,7 @@
         "samples_outside_signed_envelope": 0,
         "samples_outside_abs_rest": 0,
         "channel_nonfinite": 0,
-        "max_local_explicit_step_gain": 0.1802051002306427,
+        "max_local_explicit_step_gain": 0.6494775629827197,
         "channels_gain_over_1": 0,
         "channels_gain_over_2": 0,
         "soma_min": 0.0,
@@ -431,7 +437,10 @@
         "soma_nonfinite": 0,
         "membrane_sum_min": 0.0,
         "membrane_sum_max": 0.6562465001328381,
-        "nonfinite_examples": []
+        "nonfinite_examples": [],
+        "summary_sha256": "5e54faa48bfaf908f1a0ec5275d23120ecb96eebdbfee03708915b12dbdc0997",
+        "step_gain_conductance_source": "sum of serialized SynapticInputs vector",
+        "step_gain_analyzer_summary_sha256": "5e54faa48bfaf908f1a0ec5275d23120ecb96eebdbfee03708915b12dbdc0997"
       },
       "restoration_verification": "queue_exit=1\nrestore_build_rc=0\nrestored_header=49fe725798a56e2b001483dcc85dd4f6d4f4eace55c2a528f72160802b299fed\nrestored_console=721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
       "audit_sha256": "5225d99492c0053a138fc1528c94e0ef5775594e040d14e3dee6d301d92375ed",
@@ -523,9 +532,21 @@
     }
   ],
   "conclusions": [
-    "A high diagnostic floor removes the extreme low-Rs regime in which the previous W04 floor-off run had explicit-step runaway, but it does not guarantee convergence: BR480 still refused on invalid_peak_no_recovery.",
-    "In BR25 the Rs/Rm>=1 floor did not bind; it converged and the evaluator reported 8/8, target detected, zero false alarms. The matrix harness marked this diagnostic row as tipr_mismatch because the expected canonical TipR profile was intentionally not the diagnostic outcome.",
-    "Lowering the measurable-peak threshold to 1e-8 did not rescue BR480; the final target peak remained about 1.095e-9 and training refused.",
-    "A sign crossing is evidence of a violated channel-sign invariant only when the channel input/equilibrium is expected to retain that sign; the membrane aggregate is a sum over signed channels and may be negative without any individual channel crossing."
-  ]
+    "A high diagnostic floor removes the low-Rs regime in which the prior W04 floor-off run had explicit-step runaway; corrected analysis of floor-off gives Kmax=28200.05, with 119448 non-finite channel samples and 51734 sign crossings. This protection is conditional on the conductance bound used by the C++ floor.",
+    "In BR25 the Rs/Rm>=1 floor did not bind; it converged and the evaluator reported 8/8, target detected, zero false alarms. The matrix harness marked this diagnostic row tipr_mismatch because the expected canonical TipR profile was intentionally not the diagnostic outcome.",
+    "In BR480, Rs/Rm>=1 kept corrected Kmax at 0.15313 with no sign/envelope violations, but C++ still refused on invalid_peak_no_recovery. Peak threshold 1e-8 also did not rescue BR480; that run has corrected Kmax=0.64948 and the final target peak remained about 1.095e-9.",
+    "In the Rs/Rm=0.1 ablation, corrected Kmax=3.6125; a fixed-sign input and the exact C++ update reproduce the observed channel sign flips and overshoot. This is direct evidence of explicit-Euler instability in that tested condition.",
+    "A membrane aggregate can be negative while its individual signed channels preserve Type; the BR25 aggregate minimum does not imply a channel crossing."
+  ],
+  "diagnostic_method_correction": {
+    "issue": "The previous analyzer read SumSynapticInput state as conductance. In the serialized trainer snapshot this state can remain zero while the SynapticInputs vector used by NPulseChannel::ACalculate2 is nonzero.",
+    "fix": "Parse and sum SynapticInputs from the C++ snapshot; retain SumSynapticInput only as a fallback for older telemetry without the vector.",
+    "impact": "The prior explicit-step K estimates in this artifact were understated and are replaced by the corrected values above. Channel outputs, sign/envelope counts, training outcomes, and quality metrics are unchanged.",
+    "regression_test": "test_step_gain_uses_synaptic_input_vector_when_sum_state_is_stale; test_high_synaptic_conductance_reports_unstable_explicit_step"
+  },
+  "corrected_step_gain_reanalysis": {
+    "remote_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/manifest.json",
+    "remote_manifest_sha256": "bfb666ce415abffb5baee8268e6769c45588053315015dc70a57e0b7",
+    "analyzer_source_sha256": "b1f636d0ffcdaaf88850b2922ee7c141ae426a55da160d70d0c366db0d843a1f"
+  }
 }
