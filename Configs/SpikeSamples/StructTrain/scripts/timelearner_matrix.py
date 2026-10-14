@@ -472,26 +472,27 @@ def make_runtime_input_overlay(
                 },
             })
     if branch_segment_rm_profile is not None:
-        path = overlay / "Train" / "Model_00.xml"
-        if not path.is_file():
-            raise FileNotFoundError(path)
-        original = path.read_text(encoding="utf-8")
-        updated = apply_branch_segment_rm_profile(original, branch_segment_rm_profile)
-        path.write_text(updated, encoding="utf-8", newline="")
-        changed.append({
-            "side": "Train",
-            "file": "Train/Model_00.xml",
-            "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
-            "sha256_after": sha256(path),
-            "parameters": {
-                "BranchSegmentMembraneResistanceProfile": {
-                    str(segment): format(resistance, ".17g")
-                    for segment, resistance in sorted(branch_segment_rm_profile.items())
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = apply_branch_segment_rm_profile(original, branch_segment_rm_profile)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "BranchSegmentMembraneResistanceProfile": {
+                        str(segment): format(resistance, ".17g")
+                        for segment, resistance in sorted(branch_segment_rm_profile.items())
+                    },
+                    "fields": ["Resistance", "FBResistance", "RestingResistance"],
+                    "channels": ["ExcChannel", "InhChannel"],
                 },
-                "fields": ["Resistance", "FBResistance", "RestingResistance"],
-                "channels": ["ExcChannel", "InhChannel"],
-            },
-        })
+            })
     if branch_initial_lengths is not None:
         length_text = " ".join(str(int(length)) for length in branch_initial_lengths)
         for filename in ("Model_00.xml", "Parameters_00.xml"):

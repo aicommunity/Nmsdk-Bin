@@ -165,7 +165,7 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 '</Parameters></InhChannel></Components></Dendrite1_65></Neuron></Root>'
             )
             (source / "Train" / "Model_00.xml").write_text(xml, encoding="utf-8")
-            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}</Parameters>", encoding="utf-8")
+            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}{xml}</Parameters>", encoding="utf-8")
             (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
             attempt = base / "runs" / "r5" / "W04" / "case" / "attempt-0001"
             attempt.mkdir(parents=True)
@@ -198,12 +198,13 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             self.assertIn("<IsNeedToTrain Type=\"b\">1</IsNeedToTrain>", trained)
             parameters = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")
             self.assertIn("<DendriteLength Type=\"simplevector\">1 65 1 1</DendriteLength>", parameters)
+            self.assertIn("<Resistance>5000000</Resistance>", parameters)
             self.assertRegex(parameters, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
             self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
             self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), xml)
             self.assertEqual(record["branch_segment_rm_profile"], {65: 5000000.0})
             self.assertEqual(record["branch_initial_lengths"], [1, 65, 1, 1])
-            self.assertEqual(len(record["overrides"]), 3)
+            self.assertEqual(len(record["overrides"]), 4)
 
     def test_segment_rm_profile_requires_prebuilt_lengths(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -241,7 +242,7 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 '</Parameters></InhChannel></Components></Dendrite1_1></Neuron></Root>'
             )
             (source / "Train" / "Model_00.xml").write_text(model, encoding="utf-8")
-            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}</Parameters>", encoding="utf-8")
+            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}{model}</Parameters>", encoding="utf-8")
             (source / "Test" / "Model_00.xml").write_text(model, encoding="utf-8")
             attempt = base / "runs" / "r7" / "W04" / "case" / "attempt-0001"
             attempt.mkdir(parents=True)
@@ -263,6 +264,8 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 '<TipSynapseResistance Type="simplevector">20000000 30000000 40000000 86000000</TipSynapseResistance>',
                 trained,
             )
+            parameters = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")
+            self.assertIn("<Resistance>5000000</Resistance>", parameters)
             self.assertIsNone(record["branch_initial_lengths"])
             self.assertEqual(record["branch_segment_rm_profile"], {1: 5000000.0})
             self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), model)
