@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "purpose": "Derive how a lower Rs/Rm bound interacts with the explicit NPulseChannel update and inventory the time-scale range in current TimeLearnerMatrix Train inputs.",
+  "source": {
+    "root_branch": "codex/historical_view",
+    "root_commit_before_this_record": "6b795daab2c707d8ed0c35dbb03d28f99cbbb758",
+    "pulselib_branch": "codex/historical_view",
+    "pulselib_commit": "7f97ae74b98a17b0b9cad5f48386a58224587e8b",
+    "bin_branch": "codex/historical_view",
+    "bin_commit_before_this_record": "56fed1f725c7c2f27814513b760552805b0974fc",
+    "NPulseChannel_cpp_sha256": "45b40fe78666587900a445411a4c278874c0ae6bd207f762676cea5e96894468",
+    "br480_run_record": "branch_br480_clean_release_invalid_peak_refusal_2026-10-14.json"
+  },
+  "derivation": {
+    "source_equations": [
+      "Ti = C / (G + 1/R)",
+      "y[n+1] = y[n] + (x - y[n] * (1 + G*R)) / (Ti*f)"
+    ],
+    "dimensionless_values": {
+      "Q": "C*R*f",
+      "rho": "Rs/R",
+      "K": "(1 + G*R)^2 / Q",
+      "old_state_multiplier": "1 - K"
+    },
+    "assumptions": [
+      "One synapse contributes at most 1/Rs conductance (normalized presynaptic output is at most 1).",
+      "For N simultaneously connected equivalent synapses, the maximum G*R is N/rho.",
+      "R is the channel resistance selected by NPulseChannel::ACalculate2 for that update; the BR480 evidence uses R=RestingResistance=Resistance=10 Mohm.",
+      "K<=1 prevents crossing the instantaneous equilibrium in one update; 1<K<=2 changes the sign of the deviation from equilibrium; K>2 is linearly unstable for constant input."
+    ],
+    "one_synapse_thresholds": {
+      "no_equilibrium_crossing": "rho >= 1/(sqrt(Q)-1), only finite when Q>1",
+      "linear_stability_only": "rho >= 1/(sqrt(2*Q)-1), only finite when Q>0.5"
+    }
+  },
+  "br480_observation": {
+    "C_farads": 1e-9,
+    "R_ohms": 10000000,
+    "frequency_hz": 2000,
+    "Q": 20,
+    "configured_runtime_Rmin_ohms": 100000,
+    "configured_Rmin_over_R": 0.01,
+    "no_crossing_Rs_over_R_threshold": 0.288,
+    "linear_stability_Rs_over_R_threshold": 0.188,
+    "observed_conductance_range_siemens": [5e-6, 7.5e-6],
+    "observed_K_range": [130.05, 288.8],
+    "observed_old_state_multiplier_range": [-129.05, -287.8],
+    "interpretation": "The observed active-synapse updates are far outside the stability range. This is consistent with alternating-sign runaway in the saved channel trace; the ratio floor is a plausible targeted guard, but no training result has yet validated a candidate floor."
+  },
+  "matrix_input_inventory": {
+    "root": "Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix",
+    "train_parameter_directories_scanned": 312,
+    "scope_note": "This recursive inventory includes historical and control inputs; 312 is not asserted to be the count of rows in the primary experiment manifest.",
+    "Q_counts": {
+      "2": 4,
+      "2.5": 7,
+      "5": 2,
+      "10": 3,
+      "20": 99,
+      "100": 1,
+      "200": 196
+    },
+    "one_synapse_no_crossing_ratio_thresholds_by_Q": {
+      "2": 2.4142,
+      "2.5": 1.7208,
+      "5": 0.809,
+      "10": 0.4625,
+      "20": 0.288,
+      "100": 0.1111,
+      "200": 0.0769
+    }
+  },
+  "historical_config_outlier": {
+    "example": "SelectivityLtzCalibrate/AsymRmLtzCalBranch/EXP_branch_span100_packA_gen/Train",
+    "C_farads": 2.5e-11,
+    "R_ohms": 10000000,
+    "frequency_hz": 2000,
+    "Q": 0.5,
+    "interpretation": "At Q=0.5, zero synaptic conductance is already at the explicit scheme's K=2 boundary; any positive G makes K>2. No finite Rs/Rm can ensure strict linear stability for this configured time step."
+  },
+  "status": {
+    "production_code_changed": false,
+    "training_runs_started": false,
+    "next_validation": [
+      "Verify the maximum normalized synaptic conductance and effective synapse count on the target channel for PSI on/off.",
+      "Run a Release-only BR480 diagnostic on .17 with a candidate lower Rs/Rm floor around the derived threshold, then inspect Need, peak validity, channel potential extrema, and quality separately.",
+      "Check the minimum-Q case in the planned matrix; investigate Q=0.5 legacy inputs as a time-step/integration issue that an Rs floor cannot repair."
+    ]
+  }
+}
