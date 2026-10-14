@@ -5,15 +5,30 @@ set -euo pipefail
 
 ROOT=/home/user/Nmsdk
 ST="$ROOT/Bin/Configs/SpikeSamples/StructTrain"
-RUNS="$ST/_repro/TimeLearnerMatrixRuns"
+RUNS="${TIMELEARNER_MATRIX_RUNS_ROOT:-$ST/_repro/TimeLearnerMatrixRuns}"
+REMOTE_RUNS="${TIMELEARNER_MATRIX_REMOTE_RUNS_ROOT:-/media/user/Data/NmsdkRuntime/TimeLearnerMatrixRuns}"
 LOCK="$ST/_repro/.matrix_commit.lock"
 UPDATER="$ST/scripts/update_timelearner_matrix_report.py"
 QUEUE="$ST/scripts/run_timelearner_matrix_queue.py"
 SSH_HOST="${TIMELEARNER_MATRIX_SSH:-user@10.245.1.17}"
-ARCHIVE_17=/media/user/Data/NmsdkStructTrainArchive/matrix_runs
 STATE="$ROOT/Docs/Audit/TimeLearner-2026-09-26-review/evidence/metrics/matrix_campaign_state.json"
 LOG="$ROOT/Docs/Audit/TimeLearner-2026-09-26-review/evidence/metrics/matrix_campaign.log"
 JOBS="${JOBS:-8}"
+
+# Keep large run data on the chosen data disk rather than the checkout partition.
+if [[ ! "$REMOTE_RUNS" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
+  echo "TIMELEARNER_MATRIX_REMOTE_RUNS_ROOT must be an absolute path without shell metacharacters" >&2
+  exit 2
+fi
+if [[ "$REMOTE_RUNS" != /media/user/Data/* || "$REMOTE_RUNS" == *"/../"* || "$REMOTE_RUNS" == */.. ]]; then
+  echo "TIMELEARNER_MATRIX_REMOTE_RUNS_ROOT must stay under /media/user/Data" >&2
+  exit 2
+fi
+if [[ "$RUNS" != /* ]]; then
+  echo "TIMELEARNER_MATRIX_RUNS_ROOT must be absolute" >&2
+  exit 2
+fi
+export TIMELEARNER_MATRIX_RUNS_ROOT="$RUNS"
 
 WAVES_17=(W04 W06 W07 W46 W47 W10 W12 W13 W15 W17 W19 W45 W21 W23 W25 W26 W28 W30 W32 W34 W35 W36 W38 W40 W41 W42 W43 W44)
 WAVES_LOCAL=(W02 W03 W05 W08 W09 W11 W14 W16 W18 W20 W22 W24 W27 W29 W31 W33 W37 W39)
@@ -86,9 +101,9 @@ ingest_17() {
     return 2
   fi
   mkdir "$RUNS/$run_id"
-  rsync_from_17 "$SSH_HOST:$ST/_repro/TimeLearnerMatrixRuns/$run_id/" "$RUNS/$run_id/"
+  rsync_from_17 "$SSH_HOST:$REMOTE_RUNS/$run_id/" "$RUNS/$run_id/"
   commit_wave_from_run "$wave" "$run_id" " (host=17)"
-  ssh17 "mkdir -p $ARCHIVE_17 && rsync -a $ST/_repro/TimeLearnerMatrixRuns/$run_id/ $ARCHIVE_17/$run_id/"
+  log "Raw run retained on .17 at $REMOTE_RUNS/$run_id"
   log "INGEST done $wave"
 }
 
@@ -98,29 +113,34 @@ start_remote_wave() {
   remote_wave=$wave
   log "START remote $wave RUN_ID=$remote_run"
   ssh17 "set -e
+mountpoint -q /media/user/Data
+resolved_runs=\$(realpath -m -- '$REMOTE_RUNS')
+case \"\$resolved_runs\" in /media/user/Data/*) ;; *) echo 'remote run root resolves outside Data mount' >&2; exit 2;; esac
+mkdir -p '$REMOTE_RUNS'
 cd $ST
-test ! -e $RUNS/$remote_run
+test ! -e '$REMOTE_RUNS/$remote_run'
 nohup bash -c '
-  export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$remote_run
+  export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$remote_run TIMELEARNER_MATRIX_RUNS_ROOT=$REMOTE_RUNS
   cd $ST
   python3 -u scripts/run_timelearner_matrix_queue.py --run-id $remote_run --waves $wave --jobs $JOBS --no-commit
   rc=\$?
-  printf \"%s\\n\" \"\$rc\" > $RUNS/$remote_run.launch.exit
-  printf \"%s\\n\" \"\$rc\" > $RUNS/$remote_run/queue.exit
-' > $RUNS/$remote_run.launch.log 2>&1 &
-echo \$! > $RUNS/$remote_run.launch.pid
+  printf \"%s\\n\" \"\$rc\" > $REMOTE_RUNS/$remote_run.launch.exit
+  printf \"%s\\n\" \"\$rc\" > $REMOTE_RUNS/$remote_run/queue.exit
+' > '$REMOTE_RUNS/$remote_run.launch.log' 2>&1 &
+echo \$! > '$REMOTE_RUNS/$remote_run.launch.pid'
 "
 }
 
 remote_finished() {
   [[ -n "${remote_run:-}" ]] || return 1
-  ssh17 "test -f $RUNS/$remote_run.launch.exit" >/dev/null 2>&1
+  ssh17 "test -f '$REMOTE_RUNS/$remote_run.launch.exit'" >/dev/null 2>&1
 }
 
 commit_wave_from_run() {
   local wave=$1 run_id=$2 host_tag=$3
   acquire_lock
   export TIMELEARNER_MATRIX_RUN_ID=$run_id
+  export TIMELEARNER_MATRIX_RUNS_ROOT="$RUNS"
   (
     cd "$ST"
     python3 "$UPDATER" "$wave"
@@ -157,7 +177,7 @@ run_local_wave() {
   set +e
   (
     cd "$ST"
-    export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$run_id
+    export PYTHONUNBUFFERED=1 TIMELEARNER_MATRIX_RUN_ID=$run_id TIMELEARNER_MATRIX_RUNS_ROOT="$RUNS"
     python3 -u "$QUEUE" --run-id "$run_id" --waves "$wave" --jobs "$JOBS" --no-commit \
       > "$RUNS/$run_id.launch.log" 2>&1
     rc=$?
@@ -212,7 +232,7 @@ log "W01 already recorded; remaining .17=${#WAVES_17[@]} local=${#WAVES_LOCAL[@]
 if [[ -n "${remote_run:-}" ]]; then
   if remote_finished; then
     log "Resume: remote $remote_wave $remote_run already finished — will ingest"
-  elif ssh17 "test -d $RUNS/$remote_run"; then
+  elif ssh17 "test -d '$REMOTE_RUNS/$remote_run'"; then
     log "Resume: attach to in-flight remote $remote_wave $remote_run"
   else
     log "Resume: stale remote_run $remote_run missing — clear"
@@ -259,9 +279,9 @@ while (( ri < ${#WAVES_17[@]} || li < ${#WAVES_LOCAL[@]} )); do
         sleep 60
       fi
     done
-    ssh17 "if [ -d $RUNS/$remote_run ]; then mv -n $RUNS/$remote_run.launch.log $RUNS/$remote_run/queue.log; fi" || true
-    rc_remote=$(ssh17 "cat $RUNS/$remote_run/queue.exit")
-    status=$(ssh17 "python3 -c \"import json;print(json.load(open('$RUNS/$remote_run/queue_status.json')).get('status',''))\"" || true)
+    ssh17 "if [ -d '$REMOTE_RUNS/$remote_run' ]; then mv -n '$REMOTE_RUNS/$remote_run.launch.log' '$REMOTE_RUNS/$remote_run/queue.log'; fi" || true
+    rc_remote=$(ssh17 "cat '$REMOTE_RUNS/$remote_run/queue.exit'")
+    status=$(ssh17 "python3 -c \"import json;print(json.load(open('$REMOTE_RUNS/$remote_run/queue_status.json')).get('status',''))\"" || true)
     log "REMOTE EXIT $remote_wave rc=$rc_remote status=$status"
     if [[ -z "$status" || "$status" == *infrastructure* || "$status" == *incomplete* ]]; then
       log "INFRA on remote — stop"; save_state "remote_infra_fail"; exit 2
