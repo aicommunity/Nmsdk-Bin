@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "case": "W04_BR480_N1_PSIoff",
+  "host": "10.245.1.17",
+  "build": "Linux Release",
+  "run_id": "tl-br480-ratio1000-nofeedforward-20261014",
+  "attempt": "attempt-0001",
+  "run_fingerprint": "03d5f88f8e5f3ead0294c1932d627824a2508ffa467dab070e48c1925225d044",
+  "experiment_fingerprint": "9e1ed0c14418f9acf5f4c8b0807c38b1e4101a76a8077d697e30b01cff163046",
+  "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+  "source": {
+    "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+    "pulselib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+    "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+    "temporary_source_patch": "In FeedforwardResistanceOnLengthGrow, replace EffectiveAttenuationGamma(dendrite_index0) with 0.0; no Rs feedforward update on length growth. AmpNorm and all other C++ rules remain enabled.",
+    "branch_cpp_sha256_before": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "branch_cpp_sha256_temporary": "7f7b4bab65b4c9a04dae92fc1950c869bb5736f236f76e86e300e7d84441d6ce",
+    "temporary_console_sha256": "36de46356038494ec53cc4c363546702d75ac0373a2c4467d4714afeed5a9a71",
+    "canonical_console_sha256_after_restore": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+    "restored_source_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "provenance_source_unchanged_during_run": true,
+    "provenance_binary_unchanged_during_run": true
+  },
+  "conditions": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "pattern_duration_ms": 480,
+    "normalization_mode": 1,
+    "psi": false,
+    "w3": false,
+    "gamma_mode_config": "shared-fixed-005",
+    "stored_gamma": 0.05,
+    "feedforward_on_length_grow": false,
+    "MaxSynapseToMembraneResistanceRatio": 1000,
+    "training_time_limit_s": 900,
+    "initial_Rs_after_cpp_reset_ohm": [
+      86000000,
+      86000000,
+      86000000,
+      86000000
+    ],
+    "Rm_ohm": 10000000,
+    "computed_rmin_by_input_ohm": [
+      2880071.5552629363,
+      2880071.5552629363,
+      2880071.5552629363
+    ],
+    "computed_rs_rm_min_by_input": [
+      0.28800715552629363,
+      0.28800715552629363,
+      0.28800715552629363
+    ],
+    "computed_rmax_by_input_ohm": [
+      10000000000,
+      10000000000,
+      10000000000
+    ]
+  },
+  "training": {
+    "status": "cpp_training_failure_3",
+    "convergence": "cpp_training_refusal",
+    "phase": 5,
+    "reason": 3,
+    "need": "1",
+    "iterations": 30,
+    "final_lengths": [
+      1,
+      57,
+      89,
+      1
+    ],
+    "final_tip_r_ohm": [
+      86000000,
+      86000000,
+      2880071.5552629363,
+      86000000
+    ],
+    "active_input_index_at_refusal": 1,
+    "invalid_peak_no_action_count_at_refusal": 3,
+    "active_peak_amplitude_at_refusal": 9.41628026218666e-07,
+    "active_peak_valid_at_refusal": 0,
+    "active_timing_error_s_at_refusal": 0.28250662800000653,
+    "quality": "not evaluated; C++ refused before evaluator"
+  },
+  "amplitude_feedback_observation": {
+    "input_index_zero_based": 2,
+    "initial_target_peak": 0.01578146659931945,
+    "length_at_first_ampnorm_step": 89,
+    "timing_error_before_step_s": 0.02343804,
+    "timing_error_when_ampnorm_started_s": 0.000331844,
+    "Rs_steps": [
+      {
+        "iteration": 13,
+        "from_ohm": 86000000.0,
+        "to_ohm": 51605287.24613857,
+        "peak_amp_at_step": 2.425595881927478e-06,
+        "timing_error_s": 0.0003318440000086853
+      },
+      {
+        "iteration": 14,
+        "from_ohm": 51605287.24613857,
+        "to_ohm": 30968523.146574207,
+        "peak_amp_at_step": 4.090833443881614e-06,
+        "timing_error_s": 0.0003318440000087408
+      },
+      {
+        "iteration": 15,
+        "from_ohm": 30968523.146574207,
+        "to_ohm": 18586553.647176787,
+        "peak_amp_at_step": 6.930212511746525e-06,
+        "timing_error_s": 0.0003318440000087408
+      },
+      {
+        "iteration": 16,
+        "from_ohm": 18586553.647176787,
+        "to_ohm": 11157475.707807694,
+        "peak_amp_at_step": 1.1767225586600816e-05,
+        "timing_error_s": 0.0003318440000087408
+      },
+      {
+        "iteration": 17,
+        "from_ohm": 11157475.707807694,
+        "to_ohm": 6700091.896795784,
+        "peak_amp_at_step": 1.982490365193268e-05,
+        "timing_error_s": 0.0003318440000087408
+      },
+      {
+        "iteration": 18,
+        "from_ohm": 6700091.896795784,
+        "to_ohm": 4025530.334632964,
+        "peak_amp_at_step": 3.2240838221397894e-05,
+        "timing_error_s": 0.0003318440000087408
+      },
+      {
+        "iteration": 19,
+        "from_ohm": 4025530.334632964,
+        "to_ohm": 2880071.5552629363,
+        "peak_amp_at_step": 4.807178023935599e-05,
+        "timing_error_s": 0.0003318440000087408
+      }
+    ],
+    "interpretation": "With length feedforward disabled, Rs stays at 86 MOhm throughout length growth. Once timing error falls inside 20 ms, AmpNorm alone lowers Rs to the derived stable floor 2.880 MOhm over seven steps. Peak rises, but remains far below the stored target; the next input then hits invalid-peak/no-action refusal before reaching its own timing target."
+  },
+  "dynamics": {
+    "source_path_on_server": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/W04_BR480_N1_PSIoff_20261014T131948Z_3658900_26f6af81_work/Train/TimeLearnerTrainingDynamics.log",
+    "bytes": 818402721,
+    "sha256": "9e738c2db633311b81be4136ccacba51f2ae727b0ea2bcd9e3fa13e961a6ae45",
+    "records": 32671,
+    "soma_potential": {
+      "count": 32671,
+      "min": 0.0,
+      "min_at_model_time": 8.1745,
+      "max": 0.015828572406203167,
+      "max_at_model_time": 40.925,
+      "max_abs": 0.015828572406203167,
+      "non_finite": 0,
+      "samples_at_or_above_abs_limit": null
+    },
+    "membrane_sum_potential_min": 0.0,
+    "membrane_sum_potential_max": 0.5264091569942643,
+    "membrane_non_finite": 0,
+    "channel_count": 180,
+    "channel_output_max_abs": 1.0,
+    "channel_output_non_finite": 0,
+    "channel_expected_sign_crossings": 0,
+    "channel_outside_signed_envelope": 0,
+    "synapse_resistance_min_ohm": 2880071.5552629363,
+    "synapse_resistance_max_ohm": 86000000.0,
+    "synapse_resistance_non_finite": 0,
+    "interpretation_limit": "These checks cover recorded soma, membrane sums, channel outputs and synapse resistances in this run; they do not establish global stability for other inputs or parameter regions."
+  },
+  "artifacts": {
+    "audit_server_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/tl-br480-ratio1000-nofeedforward-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+    "audit_sha256": "bb1542851f94ef674b652ce8c83b1696dbd558bf60cb359232e6907913d3d717",
+    "audit_bytes": 1439946,
+    "dynamics_summary_remote_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/W04_BR480_N1_PSIoff_20261014T131948Z_3658900_26f6af81_work/Train/TimeLearnerTrainingDynamics.log",
+    "raw_dynamics_kept_on_server": true
+  },
+  "classification": "C++ training refusal on this tested trajectory; not mathematical impossibility and not a classification-quality result."
+}

@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "case": "W04_BR480_N1_PSIoff",
+  "host": "10.245.1.17",
+  "build": "Linux Release",
+  "run_id": "tl-br480-ratio1000-feedforward-fixed005-20261014",
+  "attempt": "attempt-0001",
+  "run_fingerprint": "e73697f1f9552dd060f93db45c7ebf2d6f6df06ae7a204cf5699fde5f916981b",
+  "experiment_fingerprint": "e080acf914883cc5e417c3b8b082787817fd093be5f9f431db549404d26a732c",
+  "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+  "source": {
+    "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+    "pulselib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+    "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+    "branch_cpp_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+    "temporary_cpp_patch": null,
+    "canonical_production_source_and_console": true,
+    "source_changed_during_run": false,
+    "binary_changed_during_run": false
+  },
+  "conditions": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "pattern_duration_ms": 480,
+    "normalization_mode": 1,
+    "psi": false,
+    "w3": false,
+    "gamma_mode": "shared-fixed-005",
+    "stored_gamma": 0.05,
+    "feedforward_on_length_grow": true,
+    "MaxSynapseToMembraneResistanceRatio": 1000,
+    "training_time_limit_s": 900,
+    "initial_Rs_after_cpp_reset_ohm": [
+      86000000,
+      86000000,
+      86000000,
+      86000000
+    ],
+    "Rm_ohm": 10000000,
+    "rmin_by_input_ohm": [
+      2880071.5552629363,
+      2880071.5552629363,
+      2880071.5552629363
+    ],
+    "rs_rm_min_by_input": [
+      0.28800715552629363,
+      0.28800715552629363,
+      0.28800715552629363
+    ],
+    "rmax_by_input_ohm": [
+      10000000000,
+      10000000000,
+      10000000000
+    ]
+  },
+  "training": {
+    "status": "cpp_training_failure_3",
+    "convergence": "cpp_training_refusal",
+    "phase": 5,
+    "reason": 3,
+    "need": "1",
+    "iteration_records": 26,
+    "final_lengths": [
+      1,
+      73,
+      89,
+      1
+    ],
+    "final_tip_r_ohm": [
+      86000000,
+      2880071.5552629363,
+      2880071.5552629363,
+      86000000
+    ],
+    "active_input_index_at_refusal": 1,
+    "invalid_peak_no_action_count_by_input": [
+      0,
+      3,
+      0,
+      0
+    ],
+    "active_peak_amplitude_by_input": [
+      0,
+      6.480535252872954e-08,
+      0.008866841931931657,
+      0.006576875508472413
+    ],
+    "active_peak_valid_by_input": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "timing_error_by_input_s": [
+      1.5,
+      0.23729823600001052,
+      0.0036978440000129398,
+      0
+    ],
+    "quality": "not evaluated; C++ refused before evaluator"
+  },
+  "third_input_trajectory": {
+    "input_index_zero_based": 2,
+    "initial_target_peak": 0.01578146659931945,
+    "rmin_first_reached": {
+      "iteration": 10,
+      "length": 73,
+      "rs_ohm": 2880071.5552629363
+    },
+    "Rs_steps": [
+      {
+        "iteration": 1,
+        "length": 9,
+        "from_ohm": 86000000.0,
+        "to_ohm": 57647523.95906498,
+        "peak_amp_at_step": 0.01578146659931945,
+        "timing_error_s": 0.24000000000000005
+      },
+      {
+        "iteration": 3,
+        "length": 17,
+        "from_ohm": 57647523.95906498,
+        "to_ohm": 38642290.91408106,
+        "peak_amp_at_step": 0.001456839649124908,
+        "timing_error_s": 0.2145
+      },
+      {
+        "iteration": 4,
+        "length": 25,
+        "from_ohm": 38642290.91408106,
+        "to_ohm": 25902702.22444938,
+        "peak_amp_at_step": 0.012253830169476565,
+        "timing_error_s": 0.18319999999999997
+      },
+      {
+        "iteration": 5,
+        "length": 33,
+        "from_ohm": 25902702.22444938,
+        "to_ohm": 17363100.547540367,
+        "peak_amp_at_step": 0.018797004729731115,
+        "timing_error_s": 0.15146499999999996
+      },
+      {
+        "iteration": 6,
+        "length": 41,
+        "from_ohm": 17363100.547540367,
+        "to_ohm": 11638834.358348694,
+        "peak_amp_at_step": 0.02646945184986682,
+        "timing_error_s": 0.12950000000000178
+      },
+      {
+        "iteration": 7,
+        "length": 49,
+        "from_ohm": 11638834.358348694,
+        "to_ohm": 7801743.982889477,
+        "peak_amp_at_step": 0.037061732295838645,
+        "timing_error_s": 0.10408550000000272
+      },
+      {
+        "iteration": 8,
+        "length": 57,
+        "from_ohm": 7801743.982889477,
+        "to_ohm": 5229665.385768746,
+        "peak_amp_at_step": 0.04501542257400393,
+        "timing_error_s": 0.08240572000000398
+      },
+      {
+        "iteration": 9,
+        "length": 65,
+        "from_ohm": 5229665.385768746,
+        "to_ohm": 3505549.5421394953,
+        "peak_amp_at_step": 0.03237439541980058,
+        "timing_error_s": 0.0684288000000059
+      },
+      {
+        "iteration": 10,
+        "length": 73,
+        "from_ohm": 3505549.5421394953,
+        "to_ohm": 2880071.5552629363,
+        "peak_amp_at_step": 0.00806118798387434,
+        "timing_error_s": 0.07209843200000932
+      }
+    ]
+  },
+  "dynamics": {
+    "source_path_on_server": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/W04_BR480_N1_PSIoff_20261014T133711Z_3670330_ac771f02_work/Train/TimeLearnerTrainingDynamics.log",
+    "bytes": 664832502,
+    "sha256": "17307225c103767d5fb2fc6b40b479d3e25c68eec25cd0b4ab645586ebf3a0a0",
+    "records": 28170,
+    "soma_max_abs": 0.06125167478826665,
+    "soma_non_finite": 0,
+    "membrane_sum_min": 0.0,
+    "membrane_sum_max": 0.6562465001328381,
+    "membrane_non_finite": 0,
+    "channel_count": 180,
+    "channel_output_max_abs": 1.0,
+    "channel_output_non_finite": 0,
+    "channel_expected_sign_crossings": 0,
+    "channel_outside_signed_envelope": 0,
+    "synapse_resistance_min_ohm": 2880071.5552629363,
+    "synapse_resistance_max_ohm": 86000000.0,
+    "synapse_resistance_non_finite": 0,
+    "interpretation_limit": "Observed safety ranges apply only to this run and do not prove global model stability."
+  },
+  "artifacts": {
+    "raw_audit_server_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/tl-br480-ratio1000-feedforward-fixed005-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+    "raw_audit_sha256": "f32572bd32e68ac53fa576245c7af6160c1d4b76a4cc9e8aa007331cf007e02c",
+    "raw_audit_bytes": 1202374,
+    "raw_dynamics_server_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-ratio1000-amp-only/runs/W04_BR480_N1_PSIoff_20261014T133711Z_3670330_ac771f02_work/Train/TimeLearnerTrainingDynamics.log",
+    "raw_dynamics_preserved_on_server": true
+  },
+  "classification": "C++ training refusal in tested conditions; no classification result and no evidence of mathematical impossibility."
+}
