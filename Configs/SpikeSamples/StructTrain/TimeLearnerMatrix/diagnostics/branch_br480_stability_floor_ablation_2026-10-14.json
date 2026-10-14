@@ -1,0 +1,520 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "kind": "controlled_cpp_stability_floor_ablation",
+  "case": "W04_BR480_N1_PSIoff",
+  "host": "10.245.1.17",
+  "build": "Linux Release",
+  "parallel_training_processes": 1,
+  "common_conditions": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "pattern_duration_ms": 480,
+    "normalization": "parametric N1",
+    "psi": false,
+    "w3": false,
+    "branch_gamma_mode": "per-input-auto",
+    "MaxSynapseToMembraneResistanceRatio": 1000,
+    "Rm_ohm": 10000000,
+    "initial_Rs_after_cpp_reset_ohm": [
+      86000000,
+      86000000,
+      86000000,
+      86000000
+    ],
+    "input_pattern_seconds": [
+      0.01,
+      0.08,
+      0.16,
+      0.24
+    ],
+    "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+    "C++_time_limit_s": 900
+  },
+  "source": {
+    "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+    "pulselib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+    "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+    "canonical_branch_cpp_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "canonical_console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+    "floor_off_temporary_branch_cpp_sha256": "1fd466239312936b28d0f5e3ba440d06959e1e22631152fe007e2aac4c9a9e14",
+    "floor_off_temporary_console_sha256": "495969044ecf118fc6c503f02c5fb6797183166b40d6e360494a5f6c0fc89517",
+    "temporary_change": "Only omit input_stability_floor = max(input_stability_floor, floor.minimumResistance) inside Branch UpdateResistanceBoundsFromMembranes; reciprocal ratio bound and all other code unchanged. Temporary source restored and canonical Release binary rebuilt.",
+    "restoration_verification": "build_rc=0\nsource_sha=c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708\nconsole_sha=721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+    "integration_test": "Release target Test_PulseLib_StorageComponents built; CTest PulseLib_StorageComponents passed 1/1 after restoration."
+  },
+  "runs": [
+    {
+      "condition": "floor_off",
+      "run_id": "diag-br480-flooroff-rsrm1000-perinput-current-20261014-01",
+      "run_fingerprint": "9d8e9dd2a9b32b9dc03475187fa18d1c1c6111346340fa76f441d558b08bda03",
+      "case_fingerprint": "b0c2e45d9fea7887a450d0dd25c55078381c05561d2b40235a28d468a3966c63",
+      "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+      "git": {
+        "root": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+        "pulselib": "d690aed54aaeae71332e0de378e95017d73a6f16",
+        "bin": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7"
+      },
+      "source_cpp_sha256_at_run": "1fd466239312936b28d0f5e3ba440d06959e1e22631152fe007e2aac4c9a9e14",
+      "console_sha256_at_run": "495969044ecf118fc6c503f02c5fb6797183166b40d6e360494a5f6c0fc89517",
+      "source_unchanged_during_run": true,
+      "binary_unchanged_during_run": true,
+      "runtime_configs_sha256": {
+        "Train/Parameters_00.xml": "fb316eaa2114cbd3553896410a90c15da55f8679a80a6c9b159203868c10eefb",
+        "Train/Model_00.xml": "e6938aa44713487f27232ab65838a73aafd25bdc994b1d9fc9f39804a8477437",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "cold_reset_contract": {
+        "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+        "mode": "soft",
+        "softcold_fix": "2026-09-27_sbm2_strip_tip1",
+        "neuron_class": "NSPNeuronGen",
+        "is_branch": true,
+        "xml_before_nm": {
+          "DendriteLength": "1 1 1 1",
+          "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+          "IsNeedToTrain": "1",
+          "AutoCalibrateFixedLTZThreshold": "0",
+          "ResetToUntrainedState": "1",
+          "FixedLTZThreshold": "1",
+          "StructureBuildMode_all": [
+            "2",
+            "2"
+          ],
+          "NumDendriteMembraneParts": "",
+          "NumDendriteMembranePartsVec": "1 1 1 1"
+        },
+        "model_topology": {
+          "max_seg": 1,
+          "tip_indices": [
+            1
+          ],
+          "StructureBuildMode_all": [
+            "2",
+            "2"
+          ],
+          "expect_max_seg_le": 1,
+          "DelayLenOf_at_L1": 0.0,
+          "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1"
+        },
+        "expected_runtime_after_reset": {
+          "DendriteLength": "1 1 1 1",
+          "reference_dendrite_index": 3,
+          "IsNeedToTrain": "1",
+          "StructureBuildMode": "2",
+          "note": "last dendrite is the Branch reference anchor; ResetToUntrained sets it to 0 before BuildStructure clamps runtime length to 1"
+        },
+        "model_exists": true,
+        "project_autosave_model_time_interval": "10"
+      },
+      "bounds_after_cpp_reset": {
+        "rmin_by_input": [
+          10000,
+          10000,
+          10000
+        ],
+        "rmax_by_input": [
+          10000000000,
+          10000000000,
+          10000000000
+        ],
+        "rs_rm_min_by_input": [
+          0.001,
+          0.001,
+          0.001
+        ],
+        "initial_tip_r_ohm": [
+          86000000,
+          86000000,
+          86000000,
+          86000000
+        ]
+      },
+      "training": {
+        "status": "cpp_training_failure_3",
+        "convergence": "cpp_training_refusal",
+        "phase": 5,
+        "reason": 3,
+        "need": "1",
+        "classification_quality": "not_evaluated_training_incomplete",
+        "detection_quality": "not_evaluated_training_incomplete",
+        "quality_gate_evaluated": false,
+        "last_iteration": "9",
+        "last_audit_phase": "5",
+        "last_audit_reason": "3",
+        "last_audit_need": "1",
+        "final_audit_lengths": [
+          1,
+          1,
+          41,
+          1
+        ],
+        "final_audit_tip_r_ohm": [
+          86000000,
+          86000000,
+          10000,
+          86000000
+        ]
+      },
+      "key_iterations": [
+        {
+          "iter": "5",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[10000,10000,10000]",
+          "rs_rm_min_by_input": "[0.001,0.001,0.001]",
+          "tip_r": "[86000000,86000000,45349.639068027398,86000000]",
+          "length_before": "[1,1,25,1]",
+          "length_after": "[1,1,33,1]",
+          "peak_amp": "[0,0,0.55273695946827062,0.395737563295536]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.15381399999999998,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "6",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[10000,10000,10000]",
+          "rs_rm_min_by_input": "[0.001,0.001,0.001]",
+          "tip_r": "[86000000,86000000,10000,86000000]",
+          "length_before": "[1,1,33,1]",
+          "length_after": "[1,1,41,1]",
+          "peak_amp": "[0,0,8.1504910264866308e+141,9.7331799435811982e+159]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.12307080000000001,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "7",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[10000,10000,10000]",
+          "rs_rm_min_by_input": "[0.001,0.001,0.001]",
+          "tip_r": "[86000000,86000000,10000,86000000]",
+          "length_before": "[1,1,41,1]",
+          "length_after": "[1,1,41,1]",
+          "peak_amp": "[0,0,0,0]",
+          "peak_valid": "[0,0,0,0]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.090213500000000002,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "8",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[10000,10000,10000]",
+          "rs_rm_min_by_input": "[0.001,0.001,0.001]",
+          "tip_r": "[86000000,86000000,10000,86000000]",
+          "length_before": "[1,1,41,1]",
+          "length_after": "[1,1,41,1]",
+          "peak_amp": "[0,0,0,0]",
+          "peak_valid": "[0,0,0,0]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.090213500000000002,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "9",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "5",
+          "need": "1",
+          "rmin_by_input": "[10000,10000,10000]",
+          "rs_rm_min_by_input": "[0.001,0.001,0.001]",
+          "tip_r": "[86000000,86000000,10000,86000000]",
+          "length_before": "[1,1,41,1]",
+          "length_after": "[1,1,41,1]",
+          "peak_amp": "[0,0,0,0]",
+          "peak_valid": "[0,0,0,0]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.090213500000000002,1.5009999999999999]",
+          "failure_reason": "3"
+        }
+      ],
+      "training_audit": {
+        "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-flooroff/diag-br480-flooroff-rsrm1000-perinput-current-20261014-01/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 221767,
+        "sha256": "36d211f390b4cf1a566b463004aa614a731b8d61e4f4a95c53c5b3ccc46cb4fb",
+        "iteration_records": 10
+      },
+      "dynamics": {
+        "source_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-flooroff/W04_BR480_N1_PSIoff_20261014T140336Z_3687390_c7e2648d_work/Train/TimeLearnerTrainingDynamics.log",
+        "bytes": 115594418,
+        "sha256": "1b318ad307f06d720260d9a5f0831e95877d0074fcd125910ab9ba282dedbb11",
+        "records": 11813,
+        "ignored_lines": 0,
+        "model_time_start": 0.0105,
+        "model_time_end": 19.1095,
+        "soma": {
+          "min": -2.896120825474336e+251,
+          "max": 1.0153989550187342e+253,
+          "max_abs": 1.0153989550187342e+253,
+          "non_finite": 2844
+        },
+        "membrane": {
+          "channel_count": 42,
+          "max_abs": 6.014063422363937e+306,
+          "non_finite_total": 119448
+        },
+        "channels": {
+          "count": 84,
+          "output_min": -1.4035303179295996e+305,
+          "output_max": 6.014063422363937e+306,
+          "output_max_abs": 6.014063422363937e+306,
+          "output_non_finite_total": 119448,
+          "expected_sign_crossings": 51734,
+          "outside_signed_envelope": 102148,
+          "outside_rest_bound": 100650
+        },
+        "synapse_resistances": {
+          "count": 84,
+          "min_ohm": 10000.0,
+          "max_ohm": 86000000.0,
+          "non_finite_total": 0
+        },
+        "non_finite_examples": [
+          {
+            "line": 7944,
+            "channel": "s.c0"
+          },
+          {
+            "line": 7944,
+            "channel": "d1.c0"
+          },
+          {
+            "line": 7944,
+            "channel": "d2.c0"
+          },
+          {
+            "line": 7944,
+            "channel": "d3.c0"
+          },
+          {
+            "line": 7944,
+            "channel": "d4.c0"
+          }
+        ]
+      }
+    },
+    {
+      "condition": "floor_on",
+      "run_id": "diag-br480-flooron-rsrm1000-perinput-current-20261014-01",
+      "run_fingerprint": "0925d38341061c7e10524b58b9f986ce98d162c03b0349bd067622e4d0bed443",
+      "case_fingerprint": "cf53caf9c7ad9f1c2c385c58de912756c26bac523bb4b6e7bec557810419dade",
+      "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+      "git": {
+        "root": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+        "pulselib": "d690aed54aaeae71332e0de378e95017d73a6f16",
+        "bin": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7"
+      },
+      "source_cpp_sha256_at_run": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+      "console_sha256_at_run": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+      "source_unchanged_during_run": true,
+      "binary_unchanged_during_run": true,
+      "runtime_configs_sha256": {
+        "Train/Parameters_00.xml": "fb316eaa2114cbd3553896410a90c15da55f8679a80a6c9b159203868c10eefb",
+        "Train/Model_00.xml": "e6938aa44713487f27232ab65838a73aafd25bdc994b1d9fc9f39804a8477437",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "cold_reset_contract": {
+        "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+        "mode": "soft",
+        "softcold_fix": "2026-09-27_sbm2_strip_tip1",
+        "neuron_class": "NSPNeuronGen",
+        "is_branch": true,
+        "xml_before_nm": {
+          "DendriteLength": "1 1 1 1",
+          "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+          "IsNeedToTrain": "1",
+          "AutoCalibrateFixedLTZThreshold": "0",
+          "ResetToUntrainedState": "1",
+          "FixedLTZThreshold": "1",
+          "StructureBuildMode_all": [
+            "2",
+            "2"
+          ],
+          "NumDendriteMembraneParts": "",
+          "NumDendriteMembranePartsVec": "1 1 1 1"
+        },
+        "model_topology": {
+          "max_seg": 1,
+          "tip_indices": [
+            1
+          ],
+          "StructureBuildMode_all": [
+            "2",
+            "2"
+          ],
+          "expect_max_seg_le": 1,
+          "DelayLenOf_at_L1": 0.0,
+          "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1"
+        },
+        "expected_runtime_after_reset": {
+          "DendriteLength": "1 1 1 1",
+          "reference_dendrite_index": 3,
+          "IsNeedToTrain": "1",
+          "StructureBuildMode": "2",
+          "note": "last dendrite is the Branch reference anchor; ResetToUntrained sets it to 0 before BuildStructure clamps runtime length to 1"
+        },
+        "model_exists": true,
+        "project_autosave_model_time_interval": "10"
+      },
+      "bounds_after_cpp_reset": {
+        "rmin_by_input": [
+          2880071.5552629363,
+          2880071.5552629363,
+          2880071.5552629363
+        ],
+        "rmax_by_input": [
+          10000000000,
+          10000000000,
+          10000000000
+        ],
+        "rs_rm_min_by_input": [
+          0.28800715552629363,
+          0.28800715552629363,
+          0.28800715552629363
+        ],
+        "initial_tip_r_ohm": [
+          86000000,
+          86000000,
+          86000000,
+          86000000
+        ]
+      },
+      "training": {
+        "status": "cpp_training_failure_3",
+        "convergence": "cpp_training_refusal",
+        "phase": 5,
+        "reason": 3,
+        "need": "1",
+        "classification_quality": "not_evaluated_training_incomplete",
+        "detection_quality": "not_evaluated_training_incomplete",
+        "quality_gate_evaluated": false,
+        "last_iteration": "24",
+        "last_audit_phase": "5",
+        "last_audit_reason": "3",
+        "last_audit_need": "1",
+        "final_audit_lengths": [
+          1,
+          65,
+          89,
+          1
+        ],
+        "final_audit_tip_r_ohm": [
+          86000000,
+          2880071.5552629363,
+          2880071.5552629363,
+          86000000
+        ]
+      },
+      "key_iterations": [
+        {
+          "iter": "11",
+          "active_dendrite": "2",
+          "active_pulse": "2",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[2880071.5552629363,2880071.5552629363,2880071.5552629363]",
+          "rs_rm_min_by_input": "[0.28800715552629363,0.28800715552629363,0.28800715552629363]",
+          "tip_r": "[86000000,86000000,2880071.5552629363,86000000]",
+          "length_before": "[1,1,73,1]",
+          "length_after": "[1,1,81,1]",
+          "peak_amp": "[0,0,0.0014539315594662705,0.0065768755084724129]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.4945,0.41449999999999998,0.057560236000010812,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "18",
+          "active_dendrite": "1",
+          "active_pulse": "1",
+          "phase": "0",
+          "need": "1",
+          "rmin_by_input": "[2880071.5552629363,2880071.5552629363,2880071.5552629363]",
+          "rs_rm_min_by_input": "[0.28800715552629363,0.28800715552629363,0.28800715552629363]",
+          "tip_r": "[86000000,12320804.698799456,2880071.5552629363,86000000]",
+          "length_before": "[1,33,89,1]",
+          "length_after": "[1,41,89,1]",
+          "peak_amp": "[0,0.003572441003963478,0.020334265547653052,0.017891728047720434]",
+          "peak_valid": "[0,1,1,1]",
+          "last_abs_dt": "[0.51749999999999896,0.34997121600000375,0.013795844000013213,1.5009999999999999]",
+          "failure_reason": "0"
+        },
+        {
+          "iter": "24",
+          "active_dendrite": "1",
+          "active_pulse": "1",
+          "phase": "5",
+          "need": "1",
+          "rmin_by_input": "[2880071.5552629363,2880071.5552629363,2880071.5552629363]",
+          "rs_rm_min_by_input": "[0.28800715552629363,0.28800715552629363,0.28800715552629363]",
+          "tip_r": "[86000000,2880071.5552629363,2880071.5552629363,86000000]",
+          "length_before": "[1,65,89,1]",
+          "length_after": "[1,65,89,1]",
+          "peak_amp": "[0,6.3326870014535075e-07,0.034169276029235252,0.033876637902386264]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.51749999999999896,0.26244243200000855,0.013795844000013213,1.5009999999999999]",
+          "failure_reason": "3"
+        }
+      ],
+      "training_audit": {
+        "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-flooron/diag-br480-flooron-rsrm1000-perinput-current-20261014-01/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 1138288,
+        "sha256": "1f6c8a6f30539d3db803dd61ac5c25212da8fe8b0e4fd5b2f9ad2d2ecbc4ffa3",
+        "iteration_records": 25
+      },
+      "dynamics": {
+        "source_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-flooron/W04_BR480_N1_PSIoff_20261014T140635Z_3689793_2a48a5f1_work/Train/TimeLearnerTrainingDynamics.log",
+        "bytes": 621163287,
+        "sha256": "d74c2e3237e4d06bb814a603b0b892517da4eb8fd24b5b9def95c3cffc1ec8dd",
+        "records": 26917,
+        "ignored_lines": 0,
+        "model_time_start": 0.0105,
+        "model_time_end": 49.5355,
+        "soma": {
+          "min": 0.0,
+          "max": 0.12049605846207956,
+          "max_abs": 0.12049605846207956,
+          "non_finite": 0
+        },
+        "membrane": {
+          "channel_count": 90,
+          "max_abs": 0.6562465001328381,
+          "non_finite_total": 0
+        },
+        "channels": {
+          "count": 180,
+          "output_min": -1.0,
+          "output_max": 1.0,
+          "output_max_abs": 1.0,
+          "output_non_finite_total": 0,
+          "expected_sign_crossings": 0,
+          "outside_signed_envelope": 0,
+          "outside_rest_bound": 0
+        },
+        "synapse_resistances": {
+          "count": 180,
+          "min_ohm": 2880071.5552629363,
+          "max_ohm": 86000000.0,
+          "non_finite_total": 0
+        },
+        "non_finite_examples": []
+      }
+    }
+  ],
+  "interpretation": {
+    "floor_off": "At Rs/Rm=0.001, current C++ run reproduces catastrophic explicit-step instability: iteration 6 records finite peaks around 8.15e141 and 9.73e159, marked valid; later the dynamics log contains extreme magnitudes and non-finite values, sign/envelope violations. Training refuses with Need=1 before any evaluator.",
+    "floor_on": "With the production stability floor Rs/Rm=0.288007 (2.8800716 MOhm), no non-finite values, sign crossings, or envelope violations occur in the matching run; channel outputs remain [-1,1]. It still refuses with Need=1 on a later invalid peak before evaluation.",
+    "conclusion": "The derived floor is supported as a necessary numerical-stability guard for this tested W04 condition, and lower Rs caused the physical-state pathology under the exact matched M=1000/per-input-auto condition. This does not establish global sufficiency or mathematical impossibility of training. The floor prevents numerical divergence here; it does not fix the independent convergence refusal."
+  },
+  "classification_quality": "not evaluated in either run: C++ training refused before evaluator."
+}
