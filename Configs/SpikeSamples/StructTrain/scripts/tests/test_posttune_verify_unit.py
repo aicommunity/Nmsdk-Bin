@@ -196,6 +196,56 @@ class TestTiprNan(unittest.TestCase):
 
 
 class TestAcceptRun(unittest.TestCase):
+    def test_structural_training_without_posttrain_skips_parametric_tipr_target(self):
+        row = {
+            "normalization_mode": 0,
+            "enable_posttrain_tuning": "0",
+            "tipr_expectation_applicable": False,
+            "train_status": "done",
+            "after": {
+                "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+                "IsNeedToTrain": "0",
+            },
+            "fires": "10000000",
+            "tipr_class": "flat",
+            "gate_evaluated": True,
+            "gate_ok": True,
+        }
+        ok, reasons = pv.accept_run(
+            row,
+            expect_fires="10000000",
+            expect_tipr="not_applicable",
+            mode="cold",
+            need="0",
+        )
+        self.assertTrue(ok, reasons)
+        self.assertNotIn("tipr_class=flat expect=not_applicable", reasons)
+
+    def test_structural_posttrain_keeps_its_explicit_tipr_target(self):
+        row = {
+            "normalization_mode": 0,
+            "enable_posttrain_tuning": "1",
+            "tipr_expectation_applicable": True,
+            "train_status": "done",
+            "after": {
+                "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+                "IsNeedToTrain": "0",
+            },
+            "fires": "10000000",
+            "tipr_class": "flat",
+            "gate_evaluated": True,
+            "gate_ok": True,
+        }
+        ok, reasons = pv.accept_run(
+            row,
+            expect_fires="10000000",
+            expect_tipr="canon",
+            mode="cold",
+            need="0",
+        )
+        self.assertFalse(ok)
+        self.assertIn("tipr_class=flat expect=canon", reasons)
+
     def test_search_diff_after_revert_fails(self):
         row = {
             "train_status": "done_search_diff",

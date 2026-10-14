@@ -690,6 +690,21 @@ def compare_run_inputs(
     }
 
 
+def should_check_tipr_expectation(row: dict[str, Any]) -> bool:
+    """Whether this run is expected to change/produce a configured TipR shape.
+
+    Structural training with PostTrain disabled must preserve the configured
+    synapse resistance; a parametric/post-train TipR target is inapplicable.
+    """
+    try:
+        normalization_mode = int(row.get("normalization_mode"))
+    except (TypeError, ValueError):
+        return True  # Preserve strict legacy validation when mode is unknown.
+    posttrain = str(row.get("enable_posttrain_tuning", "1")).strip().lower()
+    posttrain_enabled = posttrain not in ("0", "false", "no", "off")
+    return not (normalization_mode == 0 and not posttrain_enabled)
+
+
 def accept_run(
     row: dict[str, Any],
     *,
@@ -772,7 +787,12 @@ def accept_run(
     if row.get("gate_evaluated", True) and not row.get("gate_ok", True):
         reasons.append(str(row.get("fail_notes") or row.get("gate_fail") or "gate_fail"))
     got_class = row.get("tipr_class") or ""
-    if expect_tipr and tipr and not tipr_matches_expect(got_class, expect_tipr):
+    if (
+        expect_tipr
+        and row.get("tipr_expectation_applicable", should_check_tipr_expectation(row))
+        and tipr
+        and not tipr_matches_expect(got_class, expect_tipr)
+    ):
         reasons.append(f"tipr_class={got_class} expect={expect_tipr}")
     mid_src = row.get("mid_source") or ""
     if mode in ("search",) or row.get("require_cpp_mid"):
@@ -2130,7 +2150,13 @@ def run_case(
         )
     if tipr_final:
         (run_dir / "Train" / "tipr_final.txt").write_text(tipr_final + "\n", encoding="utf-8")
-    expect_tipr = case["expect_tipr"]
+    expect_tipr_applicable = should_check_tipr_expectation(
+        {
+            "normalization_mode": case.get("normalization_mode"),
+            "enable_posttrain_tuning": enable if not skip_train else None,
+        }
+    )
+    expect_tipr = case["expect_tipr"] if expect_tipr_applicable else "not_applicable"
     got_tipr_class = tipr_class(tipr_final, expect_tipr)
     provenance = provenance_at_launch or build_provenance(
         root,
@@ -2268,6 +2294,7 @@ def run_case(
         "fires": fires,
         "metrics": metrics_line,
         "expect_tipr": expect_tipr,
+        "tipr_expectation_applicable": expect_tipr_applicable,
         "expect_fires": expect_fires,
         "mid_source": mid_src,
         "tipr_vs_snapshot": tipr_vs,
