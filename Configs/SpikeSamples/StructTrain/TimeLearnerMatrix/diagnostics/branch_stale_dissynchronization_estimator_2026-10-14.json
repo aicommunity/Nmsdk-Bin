@@ -177,12 +177,69 @@
     "ctest_exit_code": 8,
     "process_exit": "SIGSEGV after all assertions in UAppCore destructor / UApplication::UnInit / UEngineControl::PauseChannel"
   },
-  "positive_control_in_progress": {
+  "positive_control": {
     "run_id": "diag-br50gen-estimator-fix-control-20261014-09",
     "input_bundle": "W10_HIST_br50_gen",
     "source_commit": "6a7ef63adb1b10ff468d7910424fc2ab75e0ad3d",
     "manifest_expected_hashes_verified_after_crlf_normalization": true,
-    "training_configuration": "historical Train/Test copied to a separate RUN_ID workspace; C++ training plus configured PostTrain; no quality result yet",
+    "console_sha256": "b1bb240104930a0fd03e62737b571023989b53fe199dace58e41e36d9b4b7a11",
+    "training_configuration": "Historical W10 Train/Test in a unique workspace; Release C++ training, configured PostTrain, train_t=320 s, max_polls=20, runtime Rs/Rm max override=1e10",
+    "training_outcome": {
+      "convergence": "Need=0 at poll 9; posttune_complete.flag present; terminal C++ training state",
+      "final_lengths": [15, 12, 6, 1],
+      "final_tip_resistance": [20000000, 20000000, 20000000, 86000000],
+      "train_posttune_flag": {
+        "result": 2,
+        "landscape_ok": false,
+        "inference": false,
+        "mid": 1,
+        "gap": -3.77434e-05,
+        "metrics": [0.0497069, 0.04872, 0.0497446, 0.0494495, 0.0495735, 0.048208, 0.0493166, 0.0468227],
+        "classification": "nonseparable"
+      }
+    },
+    "training_artifacts": {
+      "audit_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/attempt/Train/TimeLearnerTrainingAudit.log",
+      "audit_bytes": 434411,
+      "audit_sha256": "ce68f50a0512a1c2549d5b6870191d519a673fca27bd1d9f1cf21e1238a333a5",
+      "dynamics_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/workdirs/br50_gen_20261014T004233Z_3168142_9d85affb_work/Train/TimeLearnerTrainingDynamics.log",
+      "dynamics_bytes": 437213822,
+      "dynamics_sha256": "77aa7aa7c9759797dfbe3627820a845b72ebfb9f9873ab03b450d5721a854bd5"
+    },
+    "quality_only_retry": {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-12",
+      "training_repeated": false,
+      "gate_rc": 0,
+      "training_state": "skip_train; reused finalized Train state from -09 in a separate Test workspace",
+      "test_stage_cpp_mid": 0.0549386,
+      "gold_threshold_for_comparison": 0.06440315,
+      "test_posttune_flag": {
+        "result": 1,
+        "landscape_ok": true,
+        "inference": true,
+        "mid": 0.0549386,
+        "gap": 0.000344049,
+        "metrics": [0.0551107, 0.0538105, 0.0547666, 0.0545888, 0.0539437, 0.0528919, 0.0538252, 0.0518069]
+      },
+      "quality": {
+        "classification": "pass under the configured Test-stage C++ inference-mid calibration",
+        "n": 8,
+        "accuracy": "8/8",
+        "target_detected": true,
+        "fires": "10000000",
+        "matches": "11111111",
+        "false_alarms": 0,
+        "late_false_positives": 0,
+        "late_false_negatives": 0,
+        "response_quality": "ok_single"
+      },
+      "results_path": "runs/diag-br50gen-estimator-fix-quality-retry-20261014-12/attempt/Test/results.csv",
+      "results_bytes": 1425,
+      "results_sha256": "4f89eafd087331abcfce352903d02a01123171d30a231037e20ed31fc66589e0",
+      "quality_flag_sha256": "7d6d86bbbdfa4dd0387a8856c46a8db7d358f8fb9e0da6a7b2a2e2e076ac704f",
+      "remote_path": "runs/diag-br50gen-estimator-fix-quality-retry-20261014-12/"
+    },
+    "interpretation": "Training convergence, Train-side PostTrain landscape result, and Test classification are separate outcomes. The Train flag remained nonseparable; the Test gate passed after deriving a different threshold on the Test stage (0.0549386 vs gold 0.06440315). Record the 8/8 as this configured protocol result, not as evidence that the Train-side landscape flag was positive or that a fixed untouched threshold also gives 8/8.",
     "remote_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/"
   },
   "setup_attempts": [
@@ -192,6 +249,20 @@
       "launcher_exit_code": 1,
       "cause": "FileExistsError: launch shell created the log directory before the runner required the run root to be absent",
       "effect": "no training process launched and no experiment input modified; preserved as a setup-only attempt; new unique ID -09 used"
+    },
+    {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-10",
+      "console_started": false,
+      "launcher_exit_code": 0,
+      "cause": "copied helper shell script retained Windows CRLF; /usr/bin/env could not resolve bash\\r",
+      "effect": "quality gate setup failed before Console; no training repeated"
+    },
+    {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-11",
+      "console_started": false,
+      "launcher_exit_code": 0,
+      "cause": "captured source mirror lacked the AsymRm span50 Test/Parameters_00.xml template required by the Branch gate helper",
+      "effect": "quality gate setup failed before Console; no training repeated"
     }
   ]
 }
