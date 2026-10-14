@@ -142,6 +142,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
         "branch_initial_lengths": args.branch_initial_lengths,
+        "skip_softcold_reset": args.branch_initial_lengths is not None,
         "branch_segment_rm_profile_application": (
             "after_softcold_skip_cpp_reset_and_build"
             if args.branch_segment_rm_profile is not None and args.branch_initial_lengths is None
