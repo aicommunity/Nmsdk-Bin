@@ -31,14 +31,38 @@
       "log_sha256": "7bf08c72aa69f82b5830110e1e54a12b30e112da4a9e5c05c4aa3dc5f68cbbcc"
     },
     "full_target": {
-      "test_assertions_passed": 33,
-      "test_assertions_failed": 0,
+      "test_cases_passed": 33,
+      "test_cases_failed": 0,
       "exit_code": 139,
       "termination": "SIGSEGV after Google Test reported all 33 tests passed",
       "observed_stack": "UAppCore destructor -> UApplication::UnInit -> UEngineControl::PauseChannel -> URdkCoreManager::GetNumChannels",
       "interpretation": "The test host failed during static application teardown. Its root cause remains unclassified; the process exit is not clean and the full target cannot yet be reported as passing.",
       "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/all-pulselib-storagecomponents-20261014.log",
       "log_sha256": "7a593a19759da6facce5afe4b2da9c5a17dfd033a3276abbba506efe99b01889"
+    },
+    "full_target_followup": {
+      "purpose": "Check whether explicitly calling UApplication::UnInit before static destruction makes the full integration binary exit cleanly.",
+      "temporary_change": "Test_PulseLib_Main called ShutdownEngineForPulseLibTests after RUN_ALL_TESTS; that helper called UApplication::UnInit and cleared global UEPtr references. This test-only change was reverted after it failed to produce a reliable full run.",
+      "first_release_build": {
+        "exit_code": 2,
+        "failure": "Compilation rejected assignment of empty braced temporaries to legacy UEPtr because its operator= takes non-const lvalue references; no binary was run.",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/release-testhost-clean-shutdown-build-20261014.log",
+        "log_sha256": "9b28868c1b9a29f3d872a8d6fefee58a191967e8c5b8d562403a7a6ad27f5dc9"
+      },
+      "second_release_build": {
+        "exit_code": 0,
+        "test_binary_sha256": "425f3754d6288494e6950890ff823a00d9b8ebd720f1ee7fcab74a5623ccd632",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/release-testhost-clean-shutdown-v2-build-20261014.log",
+        "log_sha256": "c63dfb21be3a0f91c6c5ef883dbde012cf9fe478880cb27e25823382451a6504"
+      },
+      "followup_run": {
+        "exit_code": 139,
+        "termination": "SIGSEGV during BranchSegmentOrderTransitionTest.GrowsSyncedActivePulseWhenOrderIsBroken, before DecideLength",
+        "observed_stack": "std::vector::_M_fill_assign -> BranchSegmentOrderHarness::SetOrderState -> GrowsSyncedActivePulseWhenOrderIsBroken",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/all-pulselib-storagecomponents-clean-shutdown-20261014.log",
+        "log_sha256": "05ad7fb591b9e384e11b605e4b4dc71ce97f4088a2d46a12dcc221740152ee14"
+      },
+      "interpretation": "The explicit-shutdown experiment did not resolve the test target. The changed binary failed in a different place; this does not establish that the lifecycle change caused the crash. Current full-target instability may involve test-harness memory corruption or environment sensitivity and remains unclassified. The temporary lifecycle patch was reverted; no more full-target runs were started."
     }
   },
   "run": {
@@ -99,6 +123,6 @@
     "confirmed": "The four C++ tests pass, including timing-within-tolerance, three-cycle refusal and W3 Rmax exception contracts.",
     "not_confirmed_by_training_run": "The capped W04 run did not reproduce repeated invalid-peak/no-action behavior, reach Rmin, or converge. It therefore does not validate the runtime refusal path.",
     "separate_observation": "A finite active peak up to 5.69e8 was marked valid by the current lower-bound-only peak predicate; the model-based upper-validity criterion remains open.",
-    "scope_limit": "The full integration executable's static teardown crash remains a separate test-harness issue. No further runs were started after it was observed."
+    "scope_limit": "The four target Branch regression tests exit cleanly, but the full integration executable has two non-clean runs with different SIGSEGV stacks. The test-host/memory issue remains unclassified and no further runs were started after the second crash."
   }
 }
