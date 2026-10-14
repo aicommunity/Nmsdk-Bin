@@ -27,6 +27,7 @@
       "One synapse contributes at most 1/Rs conductance (normalized presynaptic output is at most 1).",
       "For N simultaneously connected equivalent synapses, the maximum G*R is N/rho.",
       "R is the channel resistance selected by NPulseChannel::ACalculate2 for that update; the BR480 evidence uses R=RestingResistance=Resistance=10 Mohm.",
+      "When abs(membrane Feedback)>=1e-3, the same update switches to FBResistance; any general bound must calculate that branch separately. BR480 TimeConstant values match the ordinary R=10 Mohm branch, so its observed runaway did not use FBResistance.",
       "K<=1 prevents crossing the instantaneous equilibrium in one update; 1<K<=2 changes the sign of the deviation from equilibrium; K>2 is linearly unstable for constant input."
     ],
     "one_synapse_thresholds": {
