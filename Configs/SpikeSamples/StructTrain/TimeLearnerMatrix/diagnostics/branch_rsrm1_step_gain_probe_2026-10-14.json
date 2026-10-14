@@ -1,0 +1,531 @@
+{
+  "schema": 1,
+  "title": "Branch Rs/Rm floor and stability invariant diagnostic probes",
+  "date": "2026-10-14",
+  "scope": "Selective diagnostics on remote .17; no production code change retained and no integration-step change.",
+  "equations": {
+    "implemented_update": "V_next = V + (u - V*(1+G*R))/(tau*f)",
+    "effective_time_constant": "tau_eff = tau/(1+G*R) = C*R/(1+G*R)^2",
+    "explicit_step_gain": "K = (1+G*R)/(tau*f) = dt/tau_eff",
+    "interpretation": "For fixed same-sign equilibrium and 0<=K<=1, update is a convex combination and preserves the interval; K>1 permits overshoot; K>=2 is linearly unstable for fixed coefficients."
+  },
+  "remote_environment": {
+    "host": ".17",
+    "worktree": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff",
+    "archive": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/rsrm1-evidence-20261014.tar.gz",
+    "archive_sha256": "26f30e2f4f1ddb79b3fdb0b3cb89a2d02dd23d8d915002d0e57e1179e23e22d8",
+    "canonical_source_restored": true,
+    "canonical_branch_cpp_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "canonical_console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c"
+  },
+  "runs": [
+    {
+      "evidence_folder": "BR25",
+      "case": "W03_BR25_N1_PSIoff",
+      "run_id": "diag-br25-rsrm1-perinput-20261014-01",
+      "input_manifest_sha256": "f5c69968c9546078552ad83f81acf770f141f0280c9e5226328fdf9ad882db73",
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "pulse_lib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+      "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+      "console_sha256": "979b82da475534f4600754fa545648396c391da1f4ebf6005abcfe5ec30ba4fc",
+      "temporary_branch_cpp_sha256": "afe5f35d17d4d6c20c8796230e3e3bc8ea566fa7c42db30b724f5f6b7d33bb83",
+      "source_changed_during_run": false,
+      "diagnostic_override": "computed Rs floor was raised to max(Rstable,Rm), i.e. Rs/Rm>=1",
+      "training": {
+        "result": "converged_need0",
+        "failure_phase": null,
+        "failure_reason": null,
+        "after_need": "0",
+        "final_lengths": "7 6 4 1",
+        "final_tip_resistance": "47943084.335358866 70715251.292365029 213411253.20521957 391398416.25791138",
+        "iteration_records": 24,
+        "last_iteration": 0,
+        "minimum_observed_tip_resistance_by_input": [
+          22546119.725781582,
+          14748058.317318883,
+          42021095.39575676,
+          86000000.0
+        ],
+        "last_audit_state": {
+          "iter": "0",
+          "phase": "2",
+          "need": "0",
+          "failure_reason": "0",
+          "active_dendrite": "-1",
+          "eol_sync": "1",
+          "eol_amp": "1",
+          "tip_r": "[47943084.335358866,70715251.292365029,213411253.20521957,391398416.25791138]",
+          "length_after": "[7,6,4,1]",
+          "peak_amp": "[0.0092412375252794998,0.0086910423344926935,0.0086910423344926935,0.0086910423344926935]",
+          "peak_valid": "[1,1,1,1]",
+          "last_abs_dt": "[0.00011666666666851344,0.00010000000000201861,0.00019999999999771589,1.5009999999999999]",
+          "invalid_peak_no_action_count": "[0,0,0,0]"
+        },
+        "diagnostic_floor_ratio": 1.0,
+        "diagnostic_floor_bound_any_input": false
+      },
+      "classification": {
+        "status": "pass",
+        "detection": "detected",
+        "acc": 8,
+        "n": 8,
+        "target_hit": 1,
+        "false_alarms": 0,
+        "fires": "10000000",
+        "runner_row_failure_class": "tipr_mismatch",
+        "runner_fail_notes": [
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "dynamics": {
+        "records": 40026,
+        "dynamics_log_sha256": "8f9588764adaffe2451bea77246025c42da4195d481be90c6642142b1057250a",
+        "channels": 16,
+        "channel_output_min": -1.0,
+        "channel_output_max": 1.0,
+        "samples_expected_sign_crossing": 0,
+        "samples_outside_signed_envelope": 0,
+        "samples_outside_abs_rest": 0,
+        "channel_nonfinite": 0,
+        "max_local_explicit_step_gain": 0.07417096297996743,
+        "channels_gain_over_1": 0,
+        "channels_gain_over_2": 0,
+        "soma_min": -0.0024776028583277654,
+        "soma_max": 0.049121737605511084,
+        "soma_nonfinite": 0,
+        "membrane_sum_min": -0.0024776028583277654,
+        "membrane_sum_max": 0.11164656051283661,
+        "nonfinite_examples": []
+      },
+      "restoration_verification": null,
+      "audit_sha256": "2eae9c9975eedfc1f759a358c69dd52a71739763e63302d9e9dbca1fda0b30c9",
+      "run_fingerprint": "304afedea33e456eeea660813da8c89a9d1ba2bb3dcf78497dd8b0394eb28ae3",
+      "case_fingerprint": "d9f29878e5ee0f7e3575709873661b865286f5726aa8db4986675619cc74b92d",
+      "input_manifest_path": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W03/inputs/W03_BR25_N1_PSIoff/matrix_input_manifest.json",
+      "configuration_sha256_before": {
+        "Train/Parameters_00.xml": "9f8fa352284f8cb0024cd9c6717218b94d4316414ad2ad1f2be035b141a59c8e",
+        "Train/Model_00.xml": "c07be14adf7fa4bae7a13107bf4755d22f98edfda2c2e035a66cb21d62411495",
+        "Test/Parameters_00.xml": "fb30072ec42c22a26edf20e1580a445482c4c55f7001ecff670c15ce39ef7222",
+        "Test/Model_00.xml": "ca170140e138154d569df279ff769c45c5d3c251c641a31d85cb530572cccec5"
+      },
+      "configuration_sha256_after": {
+        "Train/Parameters_00.xml": "1e04f4f3566e14c39aaad8219088f75e7d8b308f969dff16799bf10b821dd980",
+        "Train/Model_00.xml": "59bd1ea702d011672a4243bed86777bf3e1f9aa059d25c310dee405ced5337fd",
+        "Test/Parameters_00.xml": "d26bed908226a9398e5fc420f233b84a6c6cc9f750eca6f8ebcfb977d73eef88",
+        "Test/Model_00.xml": "222eb8cb9630922562db4a6db8b17806ec228fae6036e2bbe42f68e16cfef2fd"
+      },
+      "runtime_input_overrides": {
+        "mode": "runtime_input_overlay",
+        "source_input": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W03/inputs/W03_BR25_N1_PSIoff",
+        "source_matrix_manifest_sha256": "f5c69968c9546078552ad83f81acf770f141f0280c9e5226328fdf9ad882db73",
+        "quiet_debug_logs": false,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "overrides": [
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "97c0f4c5a21134afb4162b6c08a921fc3a75d3fb183689f8a2b99fbb94520d4a",
+            "sha256_after": "dc31c9a228efe916c9b268eebb6c8d28b5515ce4fc1e8830c7986c1c3ffb9bfb",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "17164273ff9c3263d43a12d81bb8642d35cac4ed2f796ccb9b883352cf201c6a",
+            "sha256_after": "ce05cd02c648ec76f65a988c52f0b7105af098c34c894760b36dfe5820ccc05d",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "dc31c9a228efe916c9b268eebb6c8d28b5515ce4fc1e8830c7986c1c3ffb9bfb",
+            "sha256_after": "a94d6f6b6322208a408695150af4926c3975f1eea3b2d6c9fac5e0161a81f86a",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "ce05cd02c648ec76f65a988c52f0b7105af098c34c894760b36dfe5820ccc05d",
+            "sha256_after": "f6921a51bfced575d6dca53e6264cc10a15200a762ccbb9787fe973bf80e0769",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          }
+        ],
+        "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
+      },
+      "runtime_execution_options": {
+        "quiet_debug_logs": false,
+        "disable_train_statistic_logs": true,
+        "max_polls": null,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "skip_softcold_reset": false,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "train_time_limit_override_seconds": null
+      }
+    },
+    {
+      "evidence_folder": "BR480",
+      "case": "W04_BR480_N1_PSIoff",
+      "run_id": "diag-br480-rsrm1-perinput-20261014-01",
+      "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "pulse_lib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+      "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+      "console_sha256": "979b82da475534f4600754fa545648396c391da1f4ebf6005abcfe5ec30ba4fc",
+      "temporary_branch_cpp_sha256": "afe5f35d17d4d6c20c8796230e3e3bc8ea566fa7c42db30b724f5f6b7d33bb83",
+      "source_changed_during_run": false,
+      "diagnostic_override": "computed Rs floor was raised to max(Rstable,Rm), i.e. Rs/Rm>=1",
+      "training": {
+        "result": "cpp_training_refusal",
+        "failure_phase": 5,
+        "failure_reason": 3,
+        "after_need": "1",
+        "final_lengths": "1 65 89 1",
+        "final_tip_resistance": "86000000 10000000 10000000 86000000",
+        "iteration_records": 25,
+        "last_iteration": 24,
+        "minimum_observed_tip_resistance_by_input": [
+          86000000.0,
+          10000000.0,
+          10000000.0,
+          86000000.0
+        ],
+        "last_audit_state": {
+          "iter": "24",
+          "phase": "5",
+          "need": "1",
+          "failure_reason": "3",
+          "active_dendrite": "1",
+          "eol_sync": "0",
+          "eol_amp": "0",
+          "tip_r": "[86000000,10000000,10000000,86000000]",
+          "length_after": "[1,65,89,1]",
+          "peak_amp": "[0,4.4029521695243545e-07,0.015898715774732786,0.013366349686693479]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.52249999999999974,0.26009843200000932,0.0036978440000132173,1.5009999999999999]",
+          "invalid_peak_no_action_count": "[0,3,0,0]"
+        },
+        "diagnostic_floor_ratio": 1.0,
+        "diagnostic_floor_bound_any_input": true
+      },
+      "classification": {
+        "status": "not_evaluated_training_incomplete",
+        "detection": "not_evaluated_training_incomplete",
+        "acc": null,
+        "n": null,
+        "target_hit": null,
+        "false_alarms": null,
+        "fires": null,
+        "runner_row_failure_class": "trainer_refused",
+        "runner_fail_notes": [
+          "cpp_training_refusal:3",
+          "Need=1",
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "dynamics": {
+        "records": 27067,
+        "dynamics_log_sha256": "ba6f55523023b3a8c6ebc5582f69fddd9ffb85653469af475ff555650662a496",
+        "channels": 180,
+        "channel_output_min": -1.0,
+        "channel_output_max": 1.0,
+        "samples_expected_sign_crossing": 0,
+        "samples_outside_signed_envelope": 0,
+        "samples_outside_abs_rest": 0,
+        "channel_nonfinite": 0,
+        "max_local_explicit_step_gain": 0.08750000055244338,
+        "channels_gain_over_1": 0,
+        "channels_gain_over_2": 0,
+        "soma_min": 0.0,
+        "soma_max": 0.05206031487024976,
+        "soma_nonfinite": 0,
+        "membrane_sum_min": 0.0,
+        "membrane_sum_max": 0.22989530167401573,
+        "nonfinite_examples": []
+      },
+      "restoration_verification": null,
+      "audit_sha256": "1232f506fa394e01251c16a1fa5f71009289ea15a8f887da056376763b1b1211",
+      "run_fingerprint": "caac02f6acf323db9a15fc152e02a9014d8af21e0fad903a89136f1d07b43b68",
+      "case_fingerprint": "5782e71366f6d96df38066f4ce5073423519b1db74ecb2dbfd7debc881359f53",
+      "input_manifest_path": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W04/inputs/W04_BR480_N1_PSIoff/matrix_input_manifest.json",
+      "configuration_sha256_before": {
+        "Train/Parameters_00.xml": "fb316eaa2114cbd3553896410a90c15da55f8679a80a6c9b159203868c10eefb",
+        "Train/Model_00.xml": "e6938aa44713487f27232ab65838a73aafd25bdc994b1d9fc9f39804a8477437",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "configuration_sha256_after": {
+        "Train/Parameters_00.xml": "f352b1c0be4a2a5e35a550078a06d119515e240f629c21e5fd60880c21a18e48",
+        "Train/Model_00.xml": "92df09574043d88f629960f62f8a20231b8bd45a3ff1658d61b7b0dbd4d3c442",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "runtime_input_overrides": {
+        "mode": "runtime_input_overlay",
+        "source_input": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W04/inputs/W04_BR480_N1_PSIoff",
+        "source_matrix_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+        "quiet_debug_logs": false,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "overrides": [
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "777646b0b79d28b16208d23a04bff24ed2d61ce1ed7727eb022216bfef5c06cd",
+            "sha256_after": "d388b109d5ec9fb8e9e0da0b031db1cf2b8d64c3981a41d7f9f32f4f1a9aa42e",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "0184fd335a8869fb34fb538057938fc0aa1cff66a1028d164f1e2e5210570ea1",
+            "sha256_after": "f288b8094bf7f35c36de6fcb4ef890b012045d7348111fdfc438db5100db9867",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "d388b109d5ec9fb8e9e0da0b031db1cf2b8d64c3981a41d7f9f32f4f1a9aa42e",
+            "sha256_after": "ab68599cc3da5a988b6ef16ffa660ba8d262f2d520f17ac6d28a2bdde5937837",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "f288b8094bf7f35c36de6fcb4ef890b012045d7348111fdfc438db5100db9867",
+            "sha256_after": "05834e1ff3f41043709eaf625749c668f53b42a0cddccaba0b942e0b1ca674c9",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          }
+        ],
+        "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
+      },
+      "runtime_execution_options": {
+        "quiet_debug_logs": false,
+        "disable_train_statistic_logs": true,
+        "max_polls": null,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "skip_softcold_reset": false,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "train_time_limit_override_seconds": null
+      }
+    },
+    {
+      "evidence_folder": "peak1e8",
+      "case": "W04_BR480_N1_PSIoff",
+      "run_id": "diag-br480-peak1e8-rsrm1000-perinput-current-20261014-01",
+      "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "pulse_lib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+      "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+      "console_sha256": "d40716921c584559200f41bf46e45bb79761104f15f39601f6ba7ca5f22d9531",
+      "temporary_branch_cpp_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+      "source_changed_during_run": false,
+      "diagnostic_override": "temporary kMinMeasurableSomaAmp changed from 1e-6 to 1e-8; no production change",
+      "training": {
+        "result": "cpp_training_refusal",
+        "failure_phase": 5,
+        "failure_reason": 3,
+        "after_need": "1",
+        "final_lengths": "1 81 89 1",
+        "final_tip_resistance": "86000000 2880071.5552629363 2880071.5552629363 86000000",
+        "iteration_records": 27,
+        "last_iteration": 26,
+        "minimum_observed_tip_resistance_by_input": [
+          86000000.0,
+          2880071.5552629363,
+          2880071.5552629363,
+          86000000.0
+        ],
+        "last_audit_state": {
+          "iter": "26",
+          "phase": "5",
+          "need": "1",
+          "failure_reason": "3",
+          "active_dendrite": "1",
+          "eol_sync": "0",
+          "eol_amp": "0",
+          "tip_r": "[86000000,2880071.5552629363,2880071.5552629363,86000000]",
+          "length_after": "[1,81,89,1]",
+          "peak_amp": "[0,1.0947325268517716e-09,0.00061578582626475864,0.00060276550766569237]",
+          "peak_valid": "[0,0,1,1]",
+          "last_abs_dt": "[0.51749999999999896,0.21867804000001095,0.013795844000013213,1.5009999999999999]",
+          "invalid_peak_no_action_count": "[0,3,0,0]"
+        },
+        "diagnostic_floor_ratio": null,
+        "diagnostic_floor_bound_any_input": null
+      },
+      "classification": {
+        "status": "not_evaluated_training_incomplete",
+        "detection": "not_evaluated_training_incomplete",
+        "acc": null,
+        "n": null,
+        "target_hit": null,
+        "false_alarms": null,
+        "fires": null,
+        "runner_row_failure_class": "trainer_refused",
+        "runner_fail_notes": [
+          "cpp_training_refusal:3",
+          "Need=1",
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "dynamics": {
+        "records": 29083,
+        "dynamics_log_sha256": "0815f52b27b91b3b6ac6c195a6d81c5118954dfb52c4f0ec6a844d22416c3bc0",
+        "channels": 180,
+        "channel_output_min": -1.0,
+        "channel_output_max": 1.0,
+        "samples_expected_sign_crossing": 0,
+        "samples_outside_signed_envelope": 0,
+        "samples_outside_abs_rest": 0,
+        "channel_nonfinite": 0,
+        "max_local_explicit_step_gain": 0.1802051002306427,
+        "channels_gain_over_1": 0,
+        "channels_gain_over_2": 0,
+        "soma_min": 0.0,
+        "soma_max": 0.12049605846207956,
+        "soma_nonfinite": 0,
+        "membrane_sum_min": 0.0,
+        "membrane_sum_max": 0.6562465001328381,
+        "nonfinite_examples": []
+      },
+      "restoration_verification": "queue_exit=1\nrestore_build_rc=0\nrestored_header=49fe725798a56e2b001483dcc85dd4f6d4f4eace55c2a528f72160802b299fed\nrestored_console=721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+      "audit_sha256": "5225d99492c0053a138fc1528c94e0ef5775594e040d14e3dee6d301d92375ed",
+      "run_fingerprint": "3acaf91c5234e67ab093bf59af3b0003efe2781dce2ec431596d40b60094aaef",
+      "case_fingerprint": "3561a3a33e1ab94b155a76b74451ee3248181e4389f7cd32dccd3dc709e33fb5",
+      "input_manifest_path": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W04/inputs/W04_BR480_N1_PSIoff/matrix_input_manifest.json",
+      "configuration_sha256_before": {
+        "Train/Parameters_00.xml": "fb316eaa2114cbd3553896410a90c15da55f8679a80a6c9b159203868c10eefb",
+        "Train/Model_00.xml": "e6938aa44713487f27232ab65838a73aafd25bdc994b1d9fc9f39804a8477437",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "configuration_sha256_after": {
+        "Train/Parameters_00.xml": "dbeb07bf5cc72bfb83bbfbab081a979108548166d6a46331479a1e9b4ce8d749",
+        "Train/Model_00.xml": "9cf1bdf71f187ec145170f169a89b9923221a895513be90b03e9c3d83c33f1a3",
+        "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+        "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+      },
+      "runtime_input_overrides": {
+        "mode": "runtime_input_overlay",
+        "source_input": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W04/inputs/W04_BR480_N1_PSIoff",
+        "source_matrix_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+        "quiet_debug_logs": false,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "overrides": [
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "777646b0b79d28b16208d23a04bff24ed2d61ce1ed7727eb022216bfef5c06cd",
+            "sha256_after": "d388b109d5ec9fb8e9e0da0b031db1cf2b8d64c3981a41d7f9f32f4f1a9aa42e",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "0184fd335a8869fb34fb538057938fc0aa1cff66a1028d164f1e2e5210570ea1",
+            "sha256_after": "f288b8094bf7f35c36de6fcb4ef890b012045d7348111fdfc438db5100db9867",
+            "parameters": {
+              "AttenuationGamma": "0.05",
+              "AutoEstimateAttenuationGamma": "1",
+              "UsePerInputAttenuationGamma": "1"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": "d388b109d5ec9fb8e9e0da0b031db1cf2b8d64c3981a41d7f9f32f4f1a9aa42e",
+            "sha256_after": "ab68599cc3da5a988b6ef16ffa660ba8d262f2d520f17ac6d28a2bdde5937837",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          },
+          {
+            "side": "Train",
+            "file": "Train/Parameters_00.xml",
+            "sha256_before": "f288b8094bf7f35c36de6fcb4ef890b012045d7348111fdfc438db5100db9867",
+            "sha256_after": "05834e1ff3f41043709eaf625749c668f53b42a0cddccaba0b942e0b1ca674c9",
+            "parameters": {
+              "MaxSynapseToMembraneResistanceRatio": "1000"
+            }
+          }
+        ],
+        "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
+      },
+      "runtime_execution_options": {
+        "quiet_debug_logs": false,
+        "disable_train_statistic_logs": true,
+        "max_polls": null,
+        "branch_gamma_mode": "per-input-auto",
+        "branch_rs_rm_limit": 1000.0,
+        "branch_segment_rm_profile": null,
+        "branch_initial_lengths": null,
+        "skip_softcold_reset": false,
+        "branch_segment_rm_profile_application": null,
+        "skip_cpp_reset_to_untrained": false,
+        "skip_cpp_structure_rebuild": false,
+        "train_time_limit_override_seconds": null
+      }
+    }
+  ],
+  "conclusions": [
+    "A high diagnostic floor removes the extreme low-Rs regime in which the previous W04 floor-off run had explicit-step runaway, but it does not guarantee convergence: BR480 still refused on invalid_peak_no_recovery.",
+    "In BR25 the Rs/Rm>=1 floor did not bind; it converged and the evaluator reported 8/8, target detected, zero false alarms. The matrix harness marked this diagnostic row as tipr_mismatch because the expected canonical TipR profile was intentionally not the diagnostic outcome.",
+    "Lowering the measurable-peak threshold to 1e-8 did not rescue BR480; the final target peak remained about 1.095e-9 and training refused.",
+    "A sign crossing is evidence of a violated channel-sign invariant only when the channel input/equilibrium is expected to retain that sign; the membrane aggregate is a sum over signed channels and may be negative without any individual channel crossing."
+  ]
+}
