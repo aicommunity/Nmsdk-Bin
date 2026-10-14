@@ -100,9 +100,17 @@
       "An incomplete final record does not hide the preceding complete refusal."
     ]
   },
+  "remote_replay": {
+    "result": [5, 3],
+    "meaning": "phase=5, failure_reason=3 (invalid_peak_no_recovery)",
+    "script_sha256": "9792f8f8ce9183f8b55064d968070852d3e125d5a5dc0aef1166234ed5f2d413",
+    "isolated_data_directory": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/parser-validation-20261014",
+    "source_audit": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-ratio100-current-clean-release-20261014-02/attempt/Train/TimeLearnerTrainingAudit.log",
+    "note": "The committed parser and its import dependencies were copied to an isolated Data-disk folder and run against the exact remote audit. /home/user/Nmsdk was not modified; no training was run."
+  },
   "limitations": [
     "The C++ terminal refusal is confirmed by the append-only audit; the wrapper summary itself recorded only an external stop because SIGTERM was sent before its next poll.",
-    "The patched Python monitor was unit-tested locally but was not replayed against the remote file in place.",
+    "The parser was replayed successfully against the remote audit in an isolated folder; deployment into the selected runner checkout remains pending.",
     "No quality gate ran because training refused before Need=0.",
     "The full C++ integration target is not a clean pass: 34 test bodies passed, then the test process crashed during static teardown."
   ]
