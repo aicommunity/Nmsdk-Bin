@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from posttune_verify import compare_run_inputs
-from repro_cold_lib import resolve_console
+from repro_cold_lib import apply_branch_segment_rm_profile_to_train, resolve_console
 
 
 SCRIPT = Path(__file__).with_name("timelearner_matrix.py")
@@ -269,6 +269,29 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             self.assertIsNone(record["branch_initial_lengths"])
             self.assertEqual(record["branch_segment_rm_profile"], {1: 5000000.0})
             self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), model)
+
+    def test_post_softcold_rm_profile_updates_both_train_xmls(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            train = Path(temporary) / "Train"
+            train.mkdir()
+            segment = (
+                '<Dendrite1_1 Class="Membrane"><ExcChannel><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</ExcChannel><InhChannel><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</InhChannel></Dendrite1_1>'
+            )
+            for name in ("Model_00.xml", "Parameters_00.xml"):
+                (train / name).write_text(f"<Root>{segment}</Root>", encoding="utf-8")
+
+            updated = apply_branch_segment_rm_profile_to_train(train, {1: 5000000.0})
+
+            self.assertEqual(updated, ["Model_00.xml", "Parameters_00.xml"])
+            for name in ("Model_00.xml", "Parameters_00.xml"):
+                text = (train / name).read_text(encoding="utf-8")
+                self.assertEqual(text.count("<Resistance>5000000</Resistance>"), 2)
+                self.assertEqual(text.count("<FBResistance>5000000</FBResistance>"), 2)
+                self.assertEqual(text.count("<RestingResistance>5000000</RestingResistance>"), 2)
 
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):

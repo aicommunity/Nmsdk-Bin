@@ -62,6 +62,7 @@ from repro_cold_lib import (  # noqa: E402
     DEFAULT_AUTOSAVE_MODEL_S,
     NM,
     TIPR_COLD,
+    apply_branch_segment_rm_profile_to_train,
     assert_disk_for_train,
     free_gib,
     get_tag,
@@ -1755,6 +1756,17 @@ def run_case(
             )
         else:
             soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
+            profile = case.get("branch_segment_rm_profile")
+            if profile and case.get("branch_initial_lengths") is None:
+                if {int(segment) for segment in profile} != {1}:
+                    raise ValueError(
+                        "only a segment-1 Rm profile can be reapplied after standard SoftCold reset"
+                    )
+                updated = apply_branch_segment_rm_profile_to_train(train, profile)
+                print(
+                    "Applied Branch segment-1 Rm profile after SoftCold reset to "
+                    + ", ".join(updated)
+                )
         from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
 
         statistic_components_updated = 0

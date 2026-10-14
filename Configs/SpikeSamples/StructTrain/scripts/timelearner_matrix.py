@@ -317,43 +317,12 @@ def parse_branch_initial_lengths(raw: str | None) -> list[int] | None:
 
 
 def apply_branch_segment_rm_profile(text: str, profile: dict[int, float]) -> str:
-    """Set all three membrane resistance parameters on selected Train segments."""
-    for segment, resistance in profile.items():
-        segment_name = f"Dendrite1_{segment}"
-        segment_pattern = re.compile(
-            rf"(<{re.escape(segment_name)}\b[^>]*>)(.*?)(</{re.escape(segment_name)}\s*>)",
-            re.S,
-        )
-        matches = list(segment_pattern.finditer(text))
-        if len(matches) != 1:
-            raise ValueError(
-                f"expected exactly one {segment_name} component in Train/Model_00.xml; found {len(matches)}"
-            )
-        segment_match = matches[0]
-        segment_block = segment_match.group(0)
-        for channel_name in ("ExcChannel", "InhChannel"):
-            channel_pattern = re.compile(
-                rf"(<{channel_name}\b[^>]*>)(.*?)(</{channel_name}\s*>)", re.S
-            )
-            channels = list(channel_pattern.finditer(segment_block))
-            if len(channels) != 1:
-                raise ValueError(
-                    f"expected exactly one {channel_name} in {segment_name}; found {len(channels)}"
-                )
-            channel_match = channels[0]
-            channel_block = channel_match.group(0)
-            for field in ("Resistance", "FBResistance", "RestingResistance"):
-                if len(tag_values(channel_block, field)) != 1:
-                    raise ValueError(f"expected one {field} in {segment_name}.{channel_name}")
-                channel_block = set_all_tags(channel_block, field, format(resistance, ".17g"))
-            segment_block = (
-                segment_block[:channel_match.start()]
-                + channel_block
-                + segment_block[channel_match.end():]
-            )
-        text = text[:segment_match.start()] + segment_block + text[segment_match.end():]
-    ET.fromstring(text)
-    return text
+    """Use the shared XML editor for the same Rm profile in both Train files."""
+    from repro_cold_lib import apply_branch_segment_rm_profile as apply_profile
+
+    updated = apply_profile(text, profile)
+    ET.fromstring(updated)
+    return updated
 
 
 def make_runtime_input_overlay(
@@ -533,8 +502,21 @@ def make_runtime_input_overlay(
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
+        "branch_segment_rm_profile_application": (
+            "after_softcold_reset" if branch_segment_rm_profile and branch_initial_lengths is None
+            else "prebuilt_input_before_launch" if branch_segment_rm_profile else None
+        ),
         "overrides": changed,
-        "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged.",
+        "note": (
+            "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
+            + (
+                "A segment-1 profile is reapplied to both Train XMLs after standard SoftCold reset."
+                if branch_segment_rm_profile and branch_initial_lengths is None
+                else "A prebuilt-state profile is applied to both Train XMLs before launch."
+                if branch_segment_rm_profile
+                else ""
+            )
+        ),
     }
     (overlay / "runtime_input_overrides.json").write_text(
         json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -1101,6 +1083,10 @@ def worker(
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,
+        "branch_segment_rm_profile_application": (
+            "after_softcold_reset" if branch_segment_rm_profile and branch_initial_lengths is None
+            else "prebuilt_input_before_launch" if branch_segment_rm_profile else None
+        ),
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
@@ -1200,6 +1186,9 @@ def run_wave(
         "branch_segment_rm_profile": run_manifest.get("runtime", {}).get("branch_segment_rm_profile"),
         "branch_initial_lengths": run_manifest.get("runtime", {}).get("branch_initial_lengths"),
         "skip_softcold_reset": run_manifest.get("runtime", {}).get("branch_initial_lengths") is not None,
+        "branch_segment_rm_profile_application": run_manifest.get("runtime", {}).get(
+            "branch_segment_rm_profile_application"
+        ),
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),

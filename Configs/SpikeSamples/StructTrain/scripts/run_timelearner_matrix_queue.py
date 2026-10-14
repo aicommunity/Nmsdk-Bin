@@ -142,6 +142,13 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
         "branch_initial_lengths": args.branch_initial_lengths,
+        "branch_segment_rm_profile_application": (
+            "after_softcold_reset"
+            if args.branch_segment_rm_profile is not None and args.branch_initial_lengths is None
+            else "prebuilt_input_before_launch"
+            if args.branch_segment_rm_profile is not None
+            else None
+        ),
         "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
     }
     case_fingerprints = {}
@@ -195,6 +202,9 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
             "branch_initial_lengths": args.branch_initial_lengths,
+            "branch_segment_rm_profile_application": condition_runtime[
+                "branch_segment_rm_profile_application"
+            ],
             "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
             "no_commit": bool(args.no_commit),
         },
@@ -282,6 +292,9 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
                         "branch_initial_lengths": (result.get("runtime_execution_options") or {}).get("branch_initial_lengths"),
                         "skip_softcold_reset": (result.get("runtime_execution_options") or {}).get("skip_softcold_reset"),
+                        "branch_segment_rm_profile_application": (result.get("runtime_execution_options") or {}).get(
+                            "branch_segment_rm_profile_application"
+                        ),
                         "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
                             "train_time_limit_override_seconds"
                         ),

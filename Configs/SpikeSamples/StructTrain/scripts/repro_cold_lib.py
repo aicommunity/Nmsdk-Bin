@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import os
 import re
 import shutil
@@ -334,6 +335,79 @@ def rewrite_links_to_tip1(model_text: str) -> str:
         r"\1_1\2",
         model_text,
     )
+
+
+def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) -> str:
+    """Set all three membrane resistance fields on selected Branch segments."""
+    for raw_segment, raw_resistance in profile.items():
+        segment = int(raw_segment)
+        resistance = float(raw_resistance)
+        if segment < 1 or not math.isfinite(resistance) or resistance <= 0.0:
+            raise ValueError("Branch Rm profiles require positive segment IDs and finite positive values")
+        segment_name = f"Dendrite1_{segment}"
+        segment_pattern = re.compile(
+            rf"(<{re.escape(segment_name)}\b[^>]*>)(.*?)(</{re.escape(segment_name)}\s*>)",
+            re.S,
+        )
+        matches = list(segment_pattern.finditer(model_text))
+        if len(matches) != 1:
+            raise ValueError(
+                f"expected exactly one {segment_name} component; found {len(matches)}"
+            )
+        segment_match = matches[0]
+        segment_block = segment_match.group(0)
+        for channel_name in ("ExcChannel", "InhChannel"):
+            channel_pattern = re.compile(
+                rf"(<{channel_name}\b[^>]*>)(.*?)(</{channel_name}\s*>)", re.S
+            )
+            channels = list(channel_pattern.finditer(segment_block))
+            if len(channels) != 1:
+                raise ValueError(
+                    f"expected exactly one {channel_name} in {segment_name}; found {len(channels)}"
+                )
+            channel_match = channels[0]
+            channel_block = channel_match.group(0)
+            for field in ("Resistance", "FBResistance", "RestingResistance"):
+                if len(re.findall(rf"<{field}\b", channel_block)) != 1:
+                    raise ValueError(f"expected one {field} in {segment_name}.{channel_name}")
+                channel_block = re.sub(
+                    rf"(<{field}\b[^>]*>).*?(</{field}>)",
+                    lambda match, value=format(resistance, ".17g"):
+                        match.group(1) + value + match.group(2),
+                    channel_block,
+                    count=1,
+                    flags=re.S,
+                )
+            segment_block = (
+                segment_block[:channel_match.start()]
+                + channel_block
+                + segment_block[channel_match.end():]
+            )
+        model_text = (
+            model_text[:segment_match.start()]
+            + segment_block
+            + model_text[segment_match.end():]
+        )
+    return model_text
+
+
+def apply_branch_segment_rm_profile_to_train(
+    train: Path, profile: dict[int, float]
+) -> list[str]:
+    """Apply a Branch Rm profile to both project XMLs before launching C++."""
+    updated_files: list[str] = []
+    for filename in ("Model_00.xml", "Parameters_00.xml"):
+        path = train / filename
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            apply_branch_segment_rm_profile(text, profile),
+            encoding="utf-8",
+            newline="",
+        )
+        updated_files.append(filename)
+    return updated_files
 
 
 def dendrite_tips_above_one(model_text: str) -> list[str]:
