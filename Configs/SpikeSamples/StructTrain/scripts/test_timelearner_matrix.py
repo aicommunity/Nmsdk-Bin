@@ -148,8 +148,11 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
             state = (
                 '<DendriteLength Type="simplevector">1 1 1 1</DendriteLength>'
-                '<InitialSomaPotential Type="simplevector">0 0 0 0</InitialSomaPotential>'
-                '<TipSynapseResistance Type="simplevector">86000000 86000000 86000000 86000000</TipSynapseResistance>'
+                '<InitialSomaPotential Type="simplevector">0.1 0.2 0.3 0.4</InitialSomaPotential>'
+                '<TipSynapseResistance Type="simplevector">20000000 30000000 40000000 86000000</TipSynapseResistance>'
+                '<LTZThreshold Type="d">0.11358</LTZThreshold>'
+                '<FixedLTZThreshold Type="d">0.11358</FixedLTZThreshold>'
+                '<UseFixedLTZThreshold Type="b">1</UseFixedLTZThreshold>'
                 '<IsNeedToTrain Type="b">1</IsNeedToTrain>'
                 '<StructureBuildMode Type="i">2</StructureBuildMode>'
             )
@@ -180,6 +183,17 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             self.assertIn("<FBResistance>5000000</FBResistance>", trained)
             self.assertIn("<RestingResistance>5000000</RestingResistance>", trained)
             self.assertIn("<DendriteLength Type=\"simplevector\">1 65 1 1</DendriteLength>", trained)
+            self.assertIn(
+                '<InitialSomaPotential Type="simplevector">0.1 0.2 0.3 0.4</InitialSomaPotential>',
+                trained,
+            )
+            self.assertIn(
+                '<TipSynapseResistance Type="simplevector">20000000 30000000 40000000 86000000</TipSynapseResistance>',
+                trained,
+            )
+            self.assertIn('<LTZThreshold Type="d">0.11358</LTZThreshold>', trained)
+            self.assertIn('<FixedLTZThreshold Type="d">0.11358</FixedLTZThreshold>', trained)
+            self.assertIn('<UseFixedLTZThreshold Type="b">1</UseFixedLTZThreshold>', trained)
             self.assertRegex(trained, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
             self.assertIn("<IsNeedToTrain Type=\"b\">1</IsNeedToTrain>", trained)
             parameters = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")

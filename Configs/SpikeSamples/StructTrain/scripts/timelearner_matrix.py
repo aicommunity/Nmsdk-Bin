@@ -495,19 +495,11 @@ def make_runtime_input_overlay(
                 raise FileNotFoundError(path)
             original = path.read_text(encoding="utf-8")
             updated = set_all_tags(original, "DendriteLength", length_text)
-            zero_vector = " ".join(["0"] * len(branch_initial_lengths))
-            cold_tip_vector = " ".join(["86000000"] * len(branch_initial_lengths))
-            updated = set_all_tags(updated, "InitialSomaPotential", zero_vector)
-            updated = set_all_tags(updated, "TipSynapseResistance", cold_tip_vector)
             updated = set_all_tags(updated, "IsNeedToTrain", "1")
             updated = _set_or_insert_runtime_tag(
                 updated, "ResetToUntrainedState", "0", "IsNeedToTrain", value_type="b"
             )
             updated = set_all_tags(updated, "StructureBuildMode", "2")
-            updated = set_all_tags(updated, "UseFixedLTZThreshold", "0", required=False)
-            updated = set_all_tags(updated, "AutoCalibrateFixedLTZThreshold", "0", required=False)
-            updated = set_all_tags(updated, "FixedLTZThreshold", "1", required=False)
-            updated = set_all_tags(updated, "LTZThreshold", "1", required=False)
             ET.fromstring(updated)
             path.write_text(updated, encoding="utf-8", newline="")
             changed.append({
@@ -517,12 +509,13 @@ def make_runtime_input_overlay(
                 "sha256_after": sha256(path),
                 "parameters": {
                     "DendriteLength": branch_initial_lengths,
-                    "InitialSomaPotential": [0.0] * len(branch_initial_lengths),
-                    "TipSynapseResistance": [86000000.0] * len(branch_initial_lengths),
+                    "InitialSomaPotential": "preserved from source configuration",
+                    "TipSynapseResistance": "preserved from source configuration",
+                    "LTZ threshold settings": "preserved from source configuration",
                     "IsNeedToTrain": 1,
                     "ResetToUntrainedState": 0,
                     "StructureBuildMode": 2,
-                    "SoftColdReset": "skipped to preserve the explicitly prebuilt diagnostic topology",
+                    "SoftColdReset": "skipped to preserve the prebuilt diagnostic state",
                 },
             })
     record = {
