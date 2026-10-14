@@ -296,7 +296,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
 
 
 def find_related_result(wave: str, specs: list[dict], fingerprint: dict) -> dict | None:
-    """Find same inputs/trainer/binary where launcher provenance is incomplete or differs."""
+    """Find related published or archived results that warrant an explicit repeat."""
     for case in specs:
         case_id = case["id"]
         paths = [MATRIX / wave / "results.json", *sorted((MATRIX / wave / "run_results").glob("*.json"))]
@@ -331,6 +331,53 @@ def find_related_result(wave: str, specs: list[dict], fingerprint: dict) -> dict
                         "run_id": result.get("matrix_run_id") or document.get("run_id"),
                         "report": str(path),
                     }
+
+    # Full-matrix audits are compact historical ledgers and do not carry enough
+    # per-run provenance to establish an exact duplicate. They still identify
+    # same-condition prior work, which must be surfaced before a deliberate rerun.
+    factor_keys = (
+        "template",
+        "trainer",
+        "duration_ms",
+        "pattern_family",
+        "normalization_mode",
+        "presynaptic_inhibition",
+        "presynaptic_coefficient",
+        "branch_nextseg",
+        "posttrain_tuning",
+        "tipr_mode",
+        "train_t",
+    )
+    diagnostics = MATRIX / "diagnostics"
+    for path in sorted(diagnostics.glob("full_matrix_followup_audit_*.json")):
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        for item in document.get("cases", []):
+            if item.get("wave") != wave:
+                continue
+            case_id = item.get("id")
+            case = next((candidate for candidate in specs if candidate["id"] == case_id), None)
+            if case is None:
+                continue
+            historical_factors = item.get("factors") or {}
+            if not all(
+                key in case
+                and key in historical_factors
+                and case[key] == historical_factors[key]
+                for key in factor_keys
+            ):
+                continue
+            provenance = item.get("provenance") or {}
+            return {
+                "case": case_id,
+                "run_id": provenance.get("matrix_run_id"),
+                "report": str(path),
+                "reason": "archived_matrix_history_related",
+                "training_convergence": (item.get("outcome") or {}).get("training_convergence"),
+                "separation_quality": (item.get("outcome") or {}).get("separation_quality"),
+            }
     return None
 
 

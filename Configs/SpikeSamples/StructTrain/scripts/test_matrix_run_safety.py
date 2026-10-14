@@ -230,6 +230,56 @@ class RunNamespaceSafetyTests(unittest.TestCase):
             finally:
                 QUEUE.MATRIX = old_matrix
 
+    def test_archived_full_matrix_row_is_reported_as_related_not_exact(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            matrix = Path(temporary)
+            diagnostics = matrix / "diagnostics"
+            diagnostics.mkdir()
+            factors = {
+                "template": "historical_branch",
+                "trainer": "NNeuronTimeLearnerBranch",
+                "duration_ms": 50,
+                "pattern_family": "Branch historical",
+                "normalization_mode": 1,
+                "presynaptic_inhibition": False,
+                "presynaptic_coefficient": 0.0,
+                "branch_nextseg": False,
+                "posttrain_tuning": True,
+                "tipr_mode": 1,
+                "train_t": 320,
+            }
+            (diagnostics / "full_matrix_followup_audit_fixture.json").write_text(
+                json.dumps({"cases": [{
+                    "id": "W10_HIST_br50_gen",
+                    "wave": "W10",
+                    "factors": factors,
+                    "outcome": {
+                        "training_convergence": "converged_posttune_finalized",
+                        "separation_quality": "pass",
+                    },
+                    "provenance": {"matrix_run_id": "historical-run"},
+                }]}),
+                encoding="utf-8",
+            )
+            expected = {"id": "W10_HIST_br50_gen", "wave": "W10", **factors}
+            fingerprint = {}
+            old_matrix = QUEUE.MATRIX
+            try:
+                QUEUE.MATRIX = matrix
+                related = QUEUE.find_related_result("W10", [expected], fingerprint)
+                mismatched = {**expected, "presynaptic_inhibition": True}
+                unrelated = QUEUE.find_related_result("W10", [mismatched], fingerprint)
+                wrong_wave = QUEUE.find_related_result("W11", [expected], fingerprint)
+                exact = QUEUE.find_duplicate_result("W10", [expected], fingerprint)
+            finally:
+                QUEUE.MATRIX = old_matrix
+
+            self.assertEqual(related["reason"], "archived_matrix_history_related")
+            self.assertEqual(related["run_id"], "historical-run")
+            self.assertIsNone(unrelated)
+            self.assertIsNone(wrong_wave)
+            self.assertIsNone(exact)
+
 
 class CompletedAttemptProvenanceTests(unittest.TestCase):
     def test_prepared_input_hashes_are_enforced(self):
