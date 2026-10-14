@@ -1101,17 +1101,59 @@ def runtime_resistance_max_from_audit(train: Path) -> float | None:
     return None
 
 
+def _training_audit_lines_reverse(audit: Path, chunk_size: int = 65536):
+    """Yield complete audit lines newest-first without truncating long records."""
+    with audit.open("rb") as stream:
+        stream.seek(0, 2)
+        end = stream.tell()
+        if end == 0:
+            return
+
+        # Ignore a record that is still being appended. The C++ audit writes
+        # complete records with a newline; a partial tail must not mask the
+        # last complete record while the trainer is running.
+        stream.seek(end - 1)
+        if stream.read(1) != b"\n":
+            position = end
+            while position > 0:
+                start = max(0, position - chunk_size)
+                stream.seek(start)
+                block = stream.read(position - start)
+                newline = block.rfind(b"\n")
+                if newline >= 0:
+                    end = start + newline + 1
+                    break
+                position = start
+            else:
+                return
+
+        position = end
+        carry = b""
+        while position > 0:
+            start = max(0, position - chunk_size)
+            stream.seek(start)
+            data = stream.read(position - start) + carry
+            parts = data.split(b"\n")
+            complete_lines = parts[1:]
+            if start == 0:
+                if parts[0]:
+                    complete_lines.append(parts[0])
+                carry = b""
+            else:
+                carry = parts[0]
+            for raw_line in reversed(complete_lines):
+                if raw_line:
+                    yield raw_line.decode("utf-8", errors="replace").rstrip("\r")
+            position = start
+
+
 def runtime_training_failure_from_audit(train: Path) -> tuple[int, int] | None:
     """Read the latest C++ terminal failure from its append-only audit."""
     audit = train / "TimeLearnerTrainingAudit.log"
     if not audit.is_file():
         return None
     try:
-        size = audit.stat().st_size
-        with audit.open("r", encoding="utf-8", errors="replace") as stream:
-            stream.seek(max(0, size - 65536))
-            lines = stream.readlines()
-        for line in reversed(lines):
+        for line in _training_audit_lines_reverse(audit):
             if "kind=iteration" not in line:
                 continue
             fields = dict(

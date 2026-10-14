@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "purpose": "Validate the Branch invalid-peak refusal on a forced clean Release rebuild and diagnose why the runtime monitor did not report it.",
+  "host": "10.245.1.17 via SSH tunnel through 10.245.1.12",
+  "storage_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01",
+  "source": {
+    "local_root_branch": "codex/historical_view",
+    "local_root_commit": "370d378199d702f11240e6edac615e6958da2fbd",
+    "local_pulselib_commit": "7f97ae74b98a17b0b9cad5f48386a58224587e8b",
+    "server_root_commit": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "server_pulselib_gitlink": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "branch_source_sha256": "2a1e4e4bf194c5a1af9d8d008485c73d3e26e06ab0529f90baaca48107c1c38d",
+    "branch_header_sha256": "19df9e32d6f2cb1e706b64f2577f4cb49687dd0b585f8cc27fb8d05570c50512",
+    "note": "The isolated server checkout had an older root and PulseLib gitlink; selected current local Branch source files were overlaid before the Release rebuild. This is not a complete build from the current root commit."
+  },
+  "build_and_tests": {
+    "build_type": "Release",
+    "console_sha256": "7e95191eedff26d09405a6d61d1e51cf021a7d65484398e5d3c1a0e60d5ac85a",
+    "forced_full_pulselib_rebuild_log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/forced-branch-release-rebuild.log",
+    "forced_full_pulselib_rebuild_log_sha256": "f58c0da26859e6e4c28040e596a0e31fc2fc4080a37dfe90b92f96ee2489ccbc",
+    "focused_cpp_tests": {
+      "filter": "BranchSegmentOrderTransitionTest.*:BranchInvalidPeakNoRecoveryTest.*:ClassicDelayRoundoffTest.*",
+      "passed": 12,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/current-release-focused-timelearner-tests.log",
+      "log_sha256": "32c65014aea658184bf40b280006110dced4fb89d4db1fd535d4ec3e52651eaf"
+    },
+    "full_cpp_target": {
+      "test_bodies_passed": 34,
+      "test_bodies_failed": 0,
+      "exit_code": 139,
+      "termination": "SIGSEGV after the test bodies, during UAppCore/UApplication static teardown",
+      "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/current-release-full-integration-tests.log",
+      "log_sha256": "d73f503fe8271e973240ae5515c19209b76405cd0c43fb4eac63bf42782528a0"
+    }
+  },
+  "run": {
+    "run_id": "diag-br480-rmin-ratio100-current-clean-release-20261014-02",
+    "case": "W04_BR480_N1_PSIoff",
+    "train_case_alias": "phase6_480",
+    "input_archive": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/inputs/branch-perinput-gamma/W04_BR480_N1_PSIoff",
+    "conditions": {
+      "Rm_ohm": 10000000,
+      "MaxSynapseToMembraneResistanceRatio": 100,
+      "runtime_Rmin_ohm": 100000,
+      "runtime_Rmax_ohm": 1000000000,
+      "MaxDendriteLength": 100,
+      "normalization_mode": "parametric",
+      "W3": false,
+      "PSI": false,
+      "EnablePostTrainTuning": false,
+      "max_model_time_seconds": 1200,
+      "monitor_poll_count": 12,
+      "monitor_poll_interval_seconds": 30
+    },
+    "status": {
+      "wrapper_exit_code": 0,
+      "child_exit_code": -15,
+      "stop_reason": "After reading the raw C++ audit and seeing the terminal refusal, the investigator sent SIGTERM before the next monitor poll. The wrapper therefore recorded an external stop.",
+      "cpp_training_convergence": "cpp_training_refusal",
+      "Need": 1,
+      "quality_gate": "not_run",
+      "classification_metrics": "not_evaluated"
+    },
+    "terminal_cpp_record": {
+      "audit_record_kind": "iteration",
+      "iteration": 17,
+      "phase": 5,
+      "failure_reason": 3,
+      "failure_reason_name": "invalid_peak_no_recovery",
+      "active_dendrite": 2,
+      "active_pulse": 2,
+      "tip_r_active_ohm": 114999.99999999999,
+      "runtime_Rmin_ohm": 100000,
+      "runtime_Rmax_ohm": 1000000000,
+      "length_before": [1, 1, 81, 1],
+      "length_after": [1, 1, 81, 1],
+      "peak_amp": [0, 0, 0, 0],
+      "peak_valid": [0, 0, 0, 0],
+      "invalid_peak_no_action_count": [0, 0, 3, 0],
+      "eol_sync": 0,
+      "eol_amp": 0
+    },
+    "audit": {
+      "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-ratio100-current-clean-release-20261014-02/attempt/Train/TimeLearnerTrainingAudit.log",
+      "bytes": 692092,
+      "sha256": "d949641211dec4ba1badd2430bf660b7fe1bbc10d1e346ea377218aaaba096ea",
+      "terminal_record_bytes": 67865
+    }
+  },
+  "monitor_parser_defect": {
+    "old_read_window_bytes": 65536,
+    "old_window_contained_kind_iteration": false,
+    "cause": "The final C++ audit row is 67,865 bytes. Reading only the final 65,536 bytes began inside that row, so the parser never saw kind=iteration or its leading failure fields and returned None.",
+    "fix": "Read complete audit records backwards in binary chunks, extending across chunk boundaries; ignore an incomplete unterminated tail while the log is being appended.",
+    "regression_tests": [
+      "A 100,000-byte iteration record reports (phase=5, failure_reason=3).",
+      "An incomplete final record does not hide the preceding complete refusal."
+    ]
+  },
+  "limitations": [
+    "The C++ terminal refusal is confirmed by the append-only audit; the wrapper summary itself recorded only an external stop because SIGTERM was sent before its next poll.",
+    "The patched Python monitor was unit-tested locally but was not replayed against the remote file in place.",
+    "No quality gate ran because training refused before Need=0.",
+    "The full C++ integration target is not a clean pass: 34 test bodies passed, then the test process crashed during static teardown."
+  ]
+}

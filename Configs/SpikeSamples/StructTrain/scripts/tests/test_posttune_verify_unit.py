@@ -358,6 +358,34 @@ class TestSlog(unittest.TestCase):
         self.assertEqual(pv.classify_slog_gib(17.0), "abort")
 
 
+class TestRuntimeTrainingFailureAudit(unittest.TestCase):
+    def test_failure_is_found_when_iteration_record_exceeds_tail_window(self):
+        with tempfile.TemporaryDirectory() as td:
+            train = Path(td) / "Train"
+            train.mkdir()
+            audit = train / "TimeLearnerTrainingAudit.log"
+            audit.write_text(
+                "schema=1;kind=reset;phase=0;failure_reason=0\n"
+                "schema=1;kind=iteration;phase=5;failure_reason=3;"
+                "component_state=" + "x" * 100_000 + "\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(pv.runtime_training_failure_from_audit(train), (5, 3))
+
+    def test_incomplete_trailing_record_does_not_mask_last_complete_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            train = Path(td) / "Train"
+            train.mkdir()
+            (train / "TimeLearnerTrainingAudit.log").write_text(
+                "schema=1;kind=iteration;phase=5;failure_reason=3\n"
+                "schema=1;kind=iteration;phase=0;failure_reason=0",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(pv.runtime_training_failure_from_audit(train), (5, 3))
+
+
 class TestVerdict(unittest.TestCase):
     def test_verdict_exit(self):
         ok_row = {"row_fail": False, "train_status": "done"}
