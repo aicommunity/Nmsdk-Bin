@@ -21,9 +21,14 @@ import repro_cold_lib as cold  # noqa: E402
 class TestConsoleResolution(unittest.TestCase):
     def test_console_defaults_to_the_current_checkout(self):
         root = Path("/isolated/nmsdk")
+        platform_console = (
+            "Bin/Platform/Win/NeuroModelerConsole.exe"
+            if os.name == "nt"
+            else "Bin/Platform/Linux/NeuroModelerConsole"
+        )
         self.assertEqual(
             cold.resolve_console(root, {}),
-            root / "Bin/Platform/Linux/NeuroModelerConsole",
+            root / platform_console,
         )
 
     def test_console_can_be_overridden_for_a_host(self):
@@ -498,8 +503,9 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
         self.assertFalse(pv.should_run_quality_gate(convergence))
         self.assertEqual(
             pv.classify_detection_quality(
+                gate_evaluated=False,
                 gate_ok=None,
-                gate_fail="not_evaluated_training_incomplete",
+                target_detected=None,
                 training_convergence=convergence,
             ),
             "not_evaluated_training_incomplete",
@@ -541,8 +547,9 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
         )
         self.assertEqual(
             pv.classify_detection_quality(
+                gate_evaluated=False,
                 gate_ok=False,
-                gate_fail="fires_missing",
+                target_detected=None,
                 training_convergence="not_converged_at_stop",
             ),
             "not_evaluated_training_incomplete",
@@ -551,16 +558,18 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
     def test_detection_gate_is_reported_independently(self):
         self.assertEqual(
             pv.classify_detection_quality(
+                gate_evaluated=True,
                 gate_ok=True,
-                gate_fail="",
+                target_detected=True,
                 training_convergence="converged_posttune_finalized",
             ),
-            "pass",
+            "detected",
         )
         self.assertEqual(
             pv.classify_detection_quality(
-                gate_ok=False,
-                gate_fail="fires_missing",
+                gate_evaluated=True,
+                gate_ok=True,
+                target_detected=False,
                 training_convergence="converged_posttune_finalized",
             ),
             "target_not_detected",
