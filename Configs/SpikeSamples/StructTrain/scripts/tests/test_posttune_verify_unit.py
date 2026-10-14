@@ -187,6 +187,110 @@ class TestMidSource(unittest.TestCase):
         meta = {"inference": "1", "mid": "-inf", "landscape_ok": "1"}
         self.assertEqual(pv.mid_source_of(meta, "-inf"), "invalid_nonfinite")
 
+    def test_nonseparable_inference_flag_is_a_cpp_result_not_a_missing_mid(self):
+        meta = {
+            "inference": "1",
+            "mid": "1",
+            "gap": "-0.00238999",
+            "landscape_ok": "0",
+            "result": "2",
+        }
+        self.assertEqual(pv.mid_source_of(meta, "1"), "cpp_nonseparable")
+        self.assertEqual(pv.test_mid_quality_of(meta), "nonseparable")
+        self.assertEqual(
+            pv.test_mid_quality_of({"inference": "0", "result": "2"}),
+            "not_available",
+        )
+
+
+class TestNonseparableTestMidGate(unittest.TestCase):
+    def test_gate_rc_from_silent_nonseparable_mid_is_not_an_evaluator_error(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            test = root / "Test"
+            test.mkdir()
+
+            def run_gate_stub(_cmd, stdout=None, stderr=None):
+                stdout.write("inference mid still silent: 1\n")
+                stdout.flush()
+                (test / "posttune_complete.flag").write_text(
+                    "mid=1 gap=-0.00238999 landscape_ok=0 inference=1 result=2 FixedLTZ=1\n"
+                    "metrics=0.0197805,0.0144822,0.0221704\n",
+                    encoding="utf-8",
+                )
+                return 1
+
+            with patch.object(pv.subprocess, "call", side_effect=run_gate_stub):
+                result = pv.run_gate(
+                    {
+                        "root": root,
+                        "kind": "asym",
+                        "span_ms": 480,
+                        "skip_tipr_mid": True,
+                    }
+                )
+
+        self.assertTrue(result.evaluated)
+        self.assertIsNone(result.ok)
+        self.assertEqual(result.fail_reason, "test_mid_nonseparable")
+        self.assertEqual(result.test_mid_quality, "nonseparable")
+        self.assertEqual(result.test_mid_result, "2")
+        self.assertEqual(result.test_mid_gap, "-0.00238999")
+        self.assertFalse(result.external_classifier_evaluated)
+        self.assertEqual(
+            pv.classifier_evaluation_status(result),
+            "not_run_nonseparable_test_mid",
+        )
+        self.assertEqual(result.metrics_line, "not_run_nonseparable_test_mid")
+
+    def test_quality_labels_keep_mid_quality_separate_from_classifier_detection(self):
+        convergence = "converged_posttune_finalized"
+        self.assertEqual(
+            pv.classify_separation_quality(
+                gate_evaluated=True,
+                gate_ok=None,
+                quality_ok=None,
+                training_convergence=convergence,
+                test_mid_quality="nonseparable",
+            ),
+            "nonseparable_test_mid",
+        )
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_evaluated=True,
+                gate_ok=None,
+                target_detected=None,
+                training_convergence=convergence,
+                test_mid_quality="nonseparable",
+            ),
+            "not_evaluated_nonseparable_test_mid",
+        )
+
+    def test_accept_run_does_not_demand_fires_when_classifier_never_ran(self):
+        row = {
+            "train_status": "done_test_mid_nonseparable",
+            "gate_evaluated": True,
+            "gate_ok": None,
+            "external_classifier_evaluated": False,
+            "test_mid_quality": "nonseparable",
+            "after": {"IsNeedToTrain": "0"},
+        }
+        ok, reasons = pv.accept_run(
+            row,
+            expect_fires="10000000",
+            expect_tipr="",
+            mode="cold",
+            need="0",
+        )
+        self.assertFalse(ok)
+        self.assertNotIn("fires_missing", reasons)
+        self.assertNotIn("gate_fail", reasons)
+        self.assertIn("test_mid_nonseparable", reasons)
+        self.assertEqual(
+            pv.classify_failure_class(["test_mid_nonseparable"], row),
+            "quality_fail",
+        )
+
 
 class TestTiprNan(unittest.TestCase):
     def test_tipr_close_rejects_nan(self):
@@ -686,6 +790,8 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
                 "train_status": "done_gate_FAIL_gate_rc=1",
                 "training_convergence": "converged_posttune_finalized",
                 "posttune_quality": "nonseparable",
+                "test_mid_quality": "nonseparable",
+                "classifier_evaluation": "not_run_nonseparable_test_mid",
                 "detection_quality": "target_not_detected",
                 "after": {"IsNeedToTrain": "0"},
                 "tipr_class": "canon",
@@ -700,8 +806,14 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
             with patch.object(pv, "OUT", out):
                 pv.append_result([row])
             report = out.read_text(encoding="utf-8")
-            self.assertIn("| training convergence | PostTune separability | test target detection |", report)
-            self.assertIn("| converged_posttune_finalized | nonseparable | target_not_detected |", report)
+            self.assertIn(
+                "| training convergence | Train PostTune | Test mid | external classifier | target detection |",
+                report,
+            )
+            self.assertIn(
+                "| converged_posttune_finalized | nonseparable | nonseparable | not_run_nonseparable_test_mid |",
+                report,
+            )
 
 
 class TestRmaxStallTick(unittest.TestCase):

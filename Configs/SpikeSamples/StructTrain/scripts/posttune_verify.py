@@ -261,6 +261,10 @@ class GateResult:
     quality_ok: bool | None = None
     target_detected: bool | None = None
     quality_metrics: dict[str, Any] = field(default_factory=dict)
+    external_classifier_evaluated: bool = True
+    test_mid_quality: str = "not_available"
+    test_mid_gap: str = ""
+    test_mid_result: str = ""
 
 
 @dataclass
@@ -767,7 +771,9 @@ def accept_run(
     if mid_s and not math.isfinite(mid_f):
         reasons.append("mid_nonfinite")
     fires = row.get("fires") or ""
-    if expect_fires and row.get("gate_evaluated", True):
+    if expect_fires and row.get(
+        "external_classifier_evaluated", row.get("gate_evaluated", True)
+    ):
         if not fires:
             reasons.append("fires_missing")
         elif fires != expect_fires:
@@ -776,7 +782,7 @@ def accept_run(
     if mode == "search":
         if tipr_vs not in ("applied_best", "same_reverted"):
             reasons.append(f"search_tipr:{tipr_vs or 'unknown'}")
-        if row.get("mid_source") != "cpp":
+        if row.get("mid_source") not in ("cpp", "cpp_nonseparable"):
             reasons.append(f"search_mid:{row.get('mid_source')}")
     if mode == "keep":
         own = row.get("own_keep_snapshot") or ""
@@ -784,8 +790,10 @@ def accept_run(
             own_vec = parse_tipr_vec(own)
             if own_vec is None or not tipr_close(tipr_vec, own_vec):
                 reasons.append("keep_tipr_mismatch")
-    if row.get("gate_evaluated", True) and not row.get("gate_ok", True):
+    if row.get("gate_evaluated", True) and row.get("gate_ok") is False:
         reasons.append(str(row.get("fail_notes") or row.get("gate_fail") or "gate_fail"))
+    if row.get("test_mid_quality") == "nonseparable":
+        reasons.append("test_mid_nonseparable")
     got_class = row.get("tipr_class") or ""
     if (
         expect_tipr
@@ -796,7 +804,7 @@ def accept_run(
         reasons.append(f"tipr_class={got_class} expect={expect_tipr}")
     mid_src = row.get("mid_source") or ""
     if mode in ("search",) or row.get("require_cpp_mid"):
-        if mid_src != "cpp":
+        if mid_src not in ("cpp", "cpp_nonseparable"):
             reasons.append(f"mid_source={mid_src}")
     return (len(reasons) == 0, reasons)
 
@@ -811,6 +819,8 @@ def classify_failure_class(
     row = row or {}
     if any(r.startswith("cpp_training_refusal:") for r in reasons):
         return "trainer_refused"
+    if "test_mid_nonseparable" in reasons:
+        return "quality_fail"
     if any(
         r.startswith("train_incomplete:")
         or r.startswith("Need=")
@@ -829,7 +839,7 @@ def classify_failure_class(
         ):
             return "tipr_mismatch"
     if any("gate_rc=" in r or "stale_csv" in r or "missing_csv" in r or "metrics_evaluation" in r for r in reasons) or (
-        row.get("gate_evaluated") and not row.get("gate_ok", True)
+        row.get("gate_evaluated") and row.get("gate_ok") is False
     ):
         return "gate_fail"
     if any(
@@ -888,6 +898,7 @@ def classify_detection_quality(
     gate_ok: bool | None,
     target_detected: bool | None,
     training_convergence: str,
+    test_mid_quality: str = "",
 ) -> str:
     """Summarize target detection independently of evaluator execution/quality."""
     if training_convergence in (
@@ -898,6 +909,8 @@ def classify_detection_quality(
         return "not_evaluated_training_incomplete"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
+    if test_mid_quality == "nonseparable":
+        return "not_evaluated_nonseparable_test_mid"
     if gate_ok is False:
         return "evaluation_error"
     if target_detected is True:
@@ -909,7 +922,7 @@ def classify_detection_quality(
 
 def classify_separation_quality(
     *, gate_evaluated: bool, gate_ok: bool | None, quality_ok: bool | None,
-    training_convergence: str,
+    training_convergence: str, test_mid_quality: str = "",
 ) -> str:
     """Metric outcome is separate from evaluator process success."""
     if training_convergence in (
@@ -918,6 +931,8 @@ def classify_separation_quality(
         return "not_evaluated_training_incomplete"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
+    if test_mid_quality == "nonseparable":
+        return "nonseparable_test_mid"
     if gate_ok is False:
         return "evaluation_error"
     if quality_ok is True:
@@ -1515,6 +1530,8 @@ def mid_source_of(
         return "invalid_nonfinite"
     landscape_ok = flag_meta.get("landscape_ok", "1") == "1"
     result = flag_meta.get("result", "")
+    if result == "2":
+        return "cpp_nonseparable"
     if result and result not in ("", "0", "1"):
         if flag_meta.get("inference") == "1" and mid_f < 0.9:
             return "invalid_result"
@@ -1525,6 +1542,30 @@ def mid_source_of(
     if mid_f < 0.9 and flag_meta.get("mid"):
         return "cpp_train"
     return "missing"
+
+
+def test_mid_quality_of(flag_meta: dict[str, str]) -> str:
+    """Map Test-side C++ inference-mid outcome independently of classifier metrics."""
+    if flag_meta.get("inference") != "1":
+        return "not_available"
+    return {
+        "1": "separable",
+        "2": "nonseparable",
+        "3": "posttune_setup_failure",
+        "4": "posttune_timeout",
+        "5": "invalid_posttune_metrics",
+    }.get(flag_meta.get("result", ""), "not_recorded")
+
+
+def classifier_evaluation_status(gate: GateResult) -> str:
+    """Describe whether external classification ran, independently of Test mid."""
+    if gate.external_classifier_evaluated:
+        return "evaluated" if gate.ok else "evaluation_error"
+    if gate.test_mid_quality == "nonseparable":
+        return "not_run_nonseparable_test_mid"
+    if not gate.evaluated:
+        return "not_run_training_incomplete"
+    return "not_run"
 
 
 def fires_from_csv(csv_path: Path) -> tuple[str, str]:
@@ -1589,10 +1630,53 @@ def run_gate(case: dict) -> GateResult:
     log = test / "run_posttune_gate.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     print("GATE", " ".join(cmd))
-    rc = subprocess.call(cmd, stdout=log.open("w"), stderr=subprocess.STDOUT)
+    with log.open("w") as gate_log:
+        rc = subprocess.call(cmd, stdout=gate_log, stderr=subprocess.STDOUT)
     print("gate rc", rc)
+    gate_output = log.read_text(encoding="utf-8", errors="replace")
     csv_mtime = csv_path.stat().st_mtime if csv_path.exists() else None
     fires, metrics_line = fires_from_csv(csv_path)
+    test_flag = test / "posttune_complete.flag"
+    test_meta = parse_flag_file(test_flag)
+    test_flag_fresh = test_flag.exists() and test_flag.stat().st_mtime >= gate_started
+    test_mid_quality = (
+        test_mid_quality_of(test_meta) if test_flag_fresh else "not_available"
+    )
+    test_mid_gap = test_meta.get("gap", "") if test_flag_fresh else ""
+    test_mid_result = test_meta.get("result", "") if test_flag_fresh else ""
+    try:
+        test_mid_value = float((test_meta.get("mid") or "1").replace(",", "."))
+    except ValueError:
+        test_mid_value = float("nan")
+    # The C++ Test inference-mid may correctly conclude that no threshold
+    # separates the target from its foils. The phase gate then exits before it
+    # runs the external classifier; this is a quality result, not an evaluator
+    # crash or a missing result.
+    if (
+        rc != 0
+        and "inference mid still silent:" in gate_output
+        and test_flag_fresh
+        and test_meta.get("inference") == "1"
+        and test_mid_quality == "nonseparable"
+        and math.isfinite(test_mid_value)
+        and test_mid_value >= 0.9
+    ):
+        return GateResult(
+            fires="",
+            metrics_line="not_run_nonseparable_test_mid",
+            rc=rc,
+            csv_mtime=csv_mtime,
+            gate_started=gate_started,
+            ok=None,
+            fail_reason="test_mid_nonseparable",
+            evaluated=True,
+            quality_ok=None,
+            target_detected=None,
+            external_classifier_evaluated=False,
+            test_mid_quality=test_mid_quality,
+            test_mid_gap=test_mid_gap,
+            test_mid_result=test_mid_result,
+        )
     ok = rc == 0
     fail_reason = ""
     if rc != 0:
@@ -1631,6 +1715,10 @@ def run_gate(case: dict) -> GateResult:
         quality_ok=quality_ok,
         target_detected=target_detected,
         quality_metrics=quality_metrics,
+        external_classifier_evaluated=True,
+        test_mid_quality=test_mid_quality,
+        test_mid_gap=test_mid_gap,
+        test_mid_result=test_mid_result,
     )
 
 
@@ -2056,6 +2144,7 @@ def run_case(
             ok=None,
             fail_reason="not_evaluated_training_incomplete",
             evaluated=False,
+            external_classifier_evaluated=False,
         )
         print(
             f"  SKIP_GATE training_convergence={training_convergence}; "
@@ -2080,12 +2169,14 @@ def run_case(
         gate_ok=gate.ok,
         target_detected=gate.target_detected,
         training_convergence=training_convergence,
+        test_mid_quality=gate.test_mid_quality,
     )
     separation_quality = classify_separation_quality(
         gate_evaluated=gate.evaluated,
         gate_ok=gate.ok,
         quality_ok=gate.quality_ok,
         training_convergence=training_convergence,
+        test_mid_quality=gate.test_mid_quality,
     )
     search_reverted = phase.search_reverted
     mode4_n = count_events_mode4(train) + count_events_mode4(root / "Test")
@@ -2128,13 +2219,15 @@ def run_case(
         own_keep_snapshot = tipr_final
         tipr_vs = tipr_vs_snapshot(tipr_final, tipr_final, search_reverted=False)
 
-    if gate.evaluated and not gate.ok:
+    if gate.evaluated and gate.fail_reason == "test_mid_nonseparable":
+        status = f"{status}_test_mid_nonseparable"
+    elif gate.evaluated and not gate.ok:
         status = f"{status}_gate_FAIL_{gate.fail_reason}"
 
     fires = gate.fires if gate.evaluated and gate.ok else ""
     metrics_line = (
         gate.metrics_line
-        if gate.evaluated and gate.ok
+        if gate.evaluated and (gate.ok or gate.fail_reason == "test_mid_nonseparable")
         else gate.fail_reason or gate.metrics_line
     )
 
@@ -2309,6 +2402,11 @@ def run_case(
         "quality_gate_ok": gate.quality_ok,
         "target_detected": gate.target_detected,
         "quality_metrics": gate.quality_metrics,
+        "external_classifier_evaluated": gate.external_classifier_evaluated,
+        "classifier_evaluation": classifier_evaluation_status(gate),
+        "test_mid_quality": gate.test_mid_quality,
+        "test_mid_gap": gate.test_mid_gap,
+        "test_mid_result": gate.test_mid_result,
         "own_keep_snapshot": own_keep_snapshot,
         "require_cpp_mid": name in ("asym50", "phase6_480", "br100_search"),
         "child_rc": child_rc,
@@ -2388,22 +2486,22 @@ def append_result(rows: list[dict]) -> None:
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         f"Console: `{NM}`",
         "",
-        "| case | training convergence | PostTune separability | test target detection | Need | TipR class | mid_source | tipr_vs_snapshot | search_reverted | fires | metrics |",
-        "|------|-----------------------|------------------------|-----------------------|------|------------|------------|------------------|-----------------|-------|---------|",
+        "| case | training convergence | Train PostTune | Test mid | external classifier | target detection | Need | TipR class | mid_source | fires | metrics |",
+        "|------|-----------------------|----------------|----------|---------------------|------------------|------|------------|------------|-------|---------|",
     ]
     for r in rows:
         a = r["after"]
         lines.append(
-            "| {case} | {conv} | {post} | {detect} | {need} | {tc} | {ms} | {tv} | {sr} | `{fires}` | {met} |".format(
+            "| {case} | {conv} | {post} | {test_mid} | {classifier} | {detect} | {need} | {tc} | {ms} | `{fires}` | {met} |".format(
                 case=r["case"],
                 conv=r.get("training_convergence", "insufficient_data"),
                 post=r.get("posttune_quality", "not_reached_or_unknown"),
+                test_mid=r.get("test_mid_quality", "not_available"),
+                classifier=r.get("classifier_evaluation", "not_run"),
                 detect=r.get("detection_quality", "insufficient_data"),
                 need=a.get("IsNeedToTrain", ""),
                 tc=r["tipr_class"],
                 ms=r.get("mid_source", ""),
-                tv=r.get("tipr_vs_snapshot", "") or "—",
-                sr=r.get("search_reverted", ""),
                 fires=r["fires"],
                 met=(r["metrics"] or "")[:80].replace("|", "/"),
             )
