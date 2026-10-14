@@ -1739,7 +1739,22 @@ def run_case(
     }.get(name, "cold")
     polls_used: int | None = None
     if not skip_train:
-        soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
+        if case.get("skip_softcold_reset"):
+            if (
+                case.get("kind") != "branch"
+                or not case.get("branch_segment_rm_profile")
+                or not case.get("branch_initial_lengths")
+            ):
+                raise ValueError(
+                    "SoftCold reset may only be skipped for an explicit prebuilt Branch Rm diagnostic state"
+                )
+            print(
+                "prebuilt Branch Rm diagnostic state: SoftCold reset skipped; "
+                f"lengths={case['branch_initial_lengths']} "
+                f"profile={case['branch_segment_rm_profile']}"
+            )
+        else:
+            soft_cold_reset_train(train, autosave_model_s=autosave_model_s)
         from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
 
         statistic_components_updated = 0

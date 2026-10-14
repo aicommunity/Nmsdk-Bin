@@ -22,7 +22,11 @@ from matrix_run_safety import (
     verify_run_manifest,
     resolve_runs_base,
 )
-from timelearner_matrix import case_attempt_result, parse_branch_segment_rm_profile
+from timelearner_matrix import (
+    case_attempt_result,
+    parse_branch_initial_lengths,
+    parse_branch_segment_rm_profile,
+)
 
 BASE = Path(__file__).resolve().parents[1]
 BIN_ROOT = BASE.parents[2]
@@ -137,6 +141,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "branch_gamma_mode": args.branch_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
+        "branch_initial_lengths": args.branch_initial_lengths,
         "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
     }
     case_fingerprints = {}
@@ -189,6 +194,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "branch_gamma_mode": args.branch_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
+            "branch_initial_lengths": args.branch_initial_lengths,
             "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
             "no_commit": bool(args.no_commit),
         },
@@ -274,6 +280,8 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
                         "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
+                        "branch_initial_lengths": (result.get("runtime_execution_options") or {}).get("branch_initial_lengths"),
+                        "skip_softcold_reset": (result.get("runtime_execution_options") or {}).get("skip_softcold_reset"),
                         "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
                             "train_time_limit_override_seconds"
                         ),
@@ -508,6 +516,12 @@ def main() -> int:
         metavar="SEGMENT=OHMS,...",
         help="diagnostic per-segment membrane resistance profile applied to an attempt-local Branch Train Model_00.xml",
     )
+    parser.add_argument(
+        "--branch-initial-lengths",
+        type=parse_branch_initial_lengths,
+        metavar="L1,L2,...",
+        help="prebuilt Branch attachment lengths; required with --branch-segment-rm-profile and skips SoftCold reset for this diagnostic state",
+    )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
         "--train-time-limit-override-seconds",
@@ -577,6 +591,18 @@ def main() -> int:
         for case in specs
     ):
         raise SystemExit("--branch-segment-rm-profile requires parametric Branch-only cases")
+    if (args.branch_segment_rm_profile is None) != (args.branch_initial_lengths is None):
+        raise SystemExit("--branch-segment-rm-profile and --branch-initial-lengths must be used together")
+    if args.branch_initial_lengths is not None and any(
+        case.get("trainer") != "NNeuronTimeLearnerBranch"
+        or int(case.get("normalization_mode", 0)) != 1
+        for case in specs
+    ):
+        raise SystemExit("--branch-initial-lengths requires parametric Branch-only cases")
+    if args.branch_segment_rm_profile is not None and not set(args.branch_segment_rm_profile).issubset(
+        set(args.branch_initial_lengths or [])
+    ):
+        raise SystemExit("each --branch-segment-rm-profile segment must appear in --branch-initial-lengths")
     selected_ids = [case["id"] for case in specs]
     if args.resume:
         # Explicit, exact-resume is checked after preparation so the input hashes are fresh.

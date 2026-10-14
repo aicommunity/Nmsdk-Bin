@@ -146,8 +146,15 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             for side in ("Train", "Test"):
                 (source / side).mkdir(parents=True)
             (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            state = (
+                '<DendriteLength Type="simplevector">1 1 1 1</DendriteLength>'
+                '<InitialSomaPotential Type="simplevector">0 0 0 0</InitialSomaPotential>'
+                '<TipSynapseResistance Type="simplevector">86000000 86000000 86000000 86000000</TipSynapseResistance>'
+                '<IsNeedToTrain Type="b">1</IsNeedToTrain>'
+                '<StructureBuildMode Type="i">2</StructureBuildMode>'
+            )
             xml = (
-                '<Root><Neuron><Dendrite1_65 Class="Membrane"><Components>'
+                f'<Root>{state}<Neuron><Dendrite1_65 Class="Membrane"><Components>'
                 '<ExcChannel><Parameters><Resistance>10000000</Resistance>'
                 '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
                 '</Parameters></ExcChannel><InhChannel><Parameters><Resistance>10000000</Resistance>'
@@ -155,7 +162,7 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 '</Parameters></InhChannel></Components></Dendrite1_65></Neuron></Root>'
             )
             (source / "Train" / "Model_00.xml").write_text(xml, encoding="utf-8")
-            (source / "Train" / "Parameters_00.xml").write_text("<Parameters />", encoding="utf-8")
+            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}</Parameters>", encoding="utf-8")
             (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
             attempt = base / "runs" / "r5" / "W04" / "case" / "attempt-0001"
             attempt.mkdir(parents=True)
@@ -165,22 +172,47 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 source, attempt, "W04", "case",
                 quiet_debug_logs=False, branch_gamma_mode=None,
                 branch_segment_rm_profile=profile,
+                branch_initial_lengths=MODULE.parse_branch_initial_lengths("1,65,1,1"),
             )
 
             trained = (overlay / "Train" / "Model_00.xml").read_text(encoding="utf-8")
             self.assertIn("<Resistance>5000000</Resistance>", trained)
             self.assertIn("<FBResistance>5000000</FBResistance>", trained)
             self.assertIn("<RestingResistance>5000000</RestingResistance>", trained)
-            self.assertEqual((overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8"), "<Parameters />")
+            self.assertIn("<DendriteLength Type=\"simplevector\">1 65 1 1</DendriteLength>", trained)
+            self.assertRegex(trained, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
+            self.assertIn("<IsNeedToTrain Type=\"b\">1</IsNeedToTrain>", trained)
+            parameters = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")
+            self.assertIn("<DendriteLength Type=\"simplevector\">1 65 1 1</DendriteLength>", parameters)
+            self.assertRegex(parameters, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
             self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
             self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), xml)
             self.assertEqual(record["branch_segment_rm_profile"], {65: 5000000.0})
-            self.assertEqual(len(record["overrides"]), 1)
+            self.assertEqual(record["branch_initial_lengths"], [1, 65, 1, 1])
+            self.assertEqual(len(record["overrides"]), 3)
+
+    def test_segment_rm_profile_requires_prebuilt_lengths(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            source.mkdir()
+            attempt = base / "runs" / "r6" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+            with self.assertRaisesRegex(ValueError, "prebuilt initial lengths"):
+                MODULE.make_runtime_input_overlay(
+                    source, attempt, "W04", "case",
+                    quiet_debug_logs=False, branch_gamma_mode=None,
+                    branch_segment_rm_profile={65: 5000000.0},
+                )
+            self.assertFalse((attempt / "runtime-input-overrides").exists())
 
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):
             with self.subTest(raw=raw), self.assertRaises(ValueError):
                 MODULE.parse_branch_segment_rm_profile(raw)
+        for raw in ("", "0,1", "1,x", "1,-2"):
+            with self.subTest(lengths=raw), self.assertRaises(ValueError):
+                MODULE.parse_branch_initial_lengths(raw)
 
     def test_rs_rm_limit_overlay_is_isolated_and_train_only(self):
         with tempfile.TemporaryDirectory() as temporary:

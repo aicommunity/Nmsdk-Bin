@@ -253,6 +253,7 @@ def make_quiet_debug_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
         branch_rs_rm_limit=None, branch_segment_rm_profile=None,
+        branch_initial_lengths=None,
     )
 
 
@@ -300,6 +301,19 @@ def parse_branch_segment_rm_profile(raw: str | None) -> dict[int, float] | None:
     if not profile:
         raise ValueError("Branch Rm profile must contain at least one segment=ohms pair")
     return dict(sorted(profile.items()))
+
+
+def parse_branch_initial_lengths(raw: str | None) -> list[int] | None:
+    """Parse the explicit prebuilt Branch attachment lengths used by the Rm probe."""
+    if raw is None:
+        return None
+    try:
+        lengths = [int(item.strip()) for item in raw.split(",")]
+    except ValueError as exc:
+        raise ValueError("Branch initial lengths must be comma-separated positive integers") from exc
+    if len(lengths) < 2 or any(length < 1 for length in lengths):
+        raise ValueError("Branch initial lengths must contain at least two positive integers")
+    return lengths
 
 
 def apply_branch_segment_rm_profile(text: str, profile: dict[int, float]) -> str:
@@ -352,6 +366,7 @@ def make_runtime_input_overlay(
     branch_gamma_mode: str | None,
     branch_rs_rm_limit: float | None = None,
     branch_segment_rm_profile: dict[int, float] | None = None,
+    branch_initial_lengths: list[int] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Create an attempt-local input copy with recorded diagnostic overrides."""
     if branch_rs_rm_limit is not None and (
@@ -361,11 +376,22 @@ def make_runtime_input_overlay(
     if branch_segment_rm_profile is not None:
         if not branch_segment_rm_profile:
             raise ValueError("Branch segment Rm profile must not be empty")
+        branch_segment_rm_profile = {
+            int(segment): float(resistance)
+            for segment, resistance in branch_segment_rm_profile.items()
+        }
         if any(
             int(segment) < 1 or not math.isfinite(float(resistance)) or float(resistance) <= 0.0
             for segment, resistance in branch_segment_rm_profile.items()
         ):
             raise ValueError("Branch segment Rm profile must use positive segment IDs and finite positive resistances")
+    if (branch_segment_rm_profile is None) != (branch_initial_lengths is None):
+        raise ValueError("Branch segment Rm profiles require explicit prebuilt initial lengths")
+    if branch_initial_lengths is not None:
+        if len(branch_initial_lengths) < 2 or any(int(length) < 1 for length in branch_initial_lengths):
+            raise ValueError("Branch prebuilt initial lengths must contain at least two positive lengths")
+        if not set(branch_segment_rm_profile or {}).issubset(set(branch_initial_lengths)):
+            raise ValueError("each profiled Branch segment must be an input's prebuilt initial attachment")
     overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
@@ -461,6 +487,44 @@ def make_runtime_input_overlay(
                 "channels": ["ExcChannel", "InhChannel"],
             },
         })
+    if branch_initial_lengths is not None:
+        length_text = " ".join(str(int(length)) for length in branch_initial_lengths)
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = set_all_tags(original, "DendriteLength", length_text)
+            zero_vector = " ".join(["0"] * len(branch_initial_lengths))
+            cold_tip_vector = " ".join(["86000000"] * len(branch_initial_lengths))
+            updated = set_all_tags(updated, "InitialSomaPotential", zero_vector)
+            updated = set_all_tags(updated, "TipSynapseResistance", cold_tip_vector)
+            updated = set_all_tags(updated, "IsNeedToTrain", "1")
+            updated = _set_or_insert_runtime_tag(
+                updated, "ResetToUntrainedState", "0", "IsNeedToTrain", value_type="b"
+            )
+            updated = set_all_tags(updated, "StructureBuildMode", "2")
+            updated = set_all_tags(updated, "UseFixedLTZThreshold", "0", required=False)
+            updated = set_all_tags(updated, "AutoCalibrateFixedLTZThreshold", "0", required=False)
+            updated = set_all_tags(updated, "FixedLTZThreshold", "1", required=False)
+            updated = set_all_tags(updated, "LTZThreshold", "1", required=False)
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "DendriteLength": branch_initial_lengths,
+                    "InitialSomaPotential": [0.0] * len(branch_initial_lengths),
+                    "TipSynapseResistance": [86000000.0] * len(branch_initial_lengths),
+                    "IsNeedToTrain": 1,
+                    "ResetToUntrainedState": 0,
+                    "StructureBuildMode": 2,
+                    "SoftColdReset": "skipped to preserve the explicitly prebuilt diagnostic topology",
+                },
+            })
     record = {
         "mode": "runtime_input_overlay",
         "source_input": str(input_root),
@@ -469,6 +533,7 @@ def make_runtime_input_overlay(
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "branch_segment_rm_profile": branch_segment_rm_profile,
+        "branch_initial_lengths": branch_initial_lengths,
         "overrides": changed,
         "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged.",
     }
@@ -950,6 +1015,7 @@ def worker(
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
     branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
+    branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
         raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
     if branch_rs_rm_limit is not None and (
@@ -962,9 +1028,15 @@ def worker(
         or int(spec.get("normalization_mode", 0)) != 1
     ):
         raise ValueError("Branch segment Rm profiles require parametric Branch cases")
+    if branch_initial_lengths is not None and (
+        spec.get("trainer") != "NNeuronTimeLearnerBranch"
+        or int(spec.get("normalization_mode", 0)) != 1
+        or branch_segment_rm_profile is None
+    ):
+        raise ValueError("Branch prebuilt initial lengths require a parametric Branch segment Rm profile")
     if (
         quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None
-        or branch_segment_rm_profile is not None
+        or branch_segment_rm_profile is not None or branch_initial_lengths is not None
     ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
             input_root, attempt_dir, wave, case_id,
@@ -972,6 +1044,7 @@ def worker(
             branch_gamma_mode=branch_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
             branch_segment_rm_profile=branch_segment_rm_profile,
+            branch_initial_lengths=branch_initial_lengths,
         )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
@@ -992,6 +1065,9 @@ def worker(
         "enable_posttrain_tuning": "1" if spec.get("posttrain_tuning", False) else "0",
         "posttrain_tip_resistance_mode": str(spec.get("tipr_mode", 1)),
         "disable_train_statistic_logs": True,
+        "branch_segment_rm_profile": branch_segment_rm_profile,
+        "branch_initial_lengths": branch_initial_lengths,
+        "skip_softcold_reset": branch_initial_lengths is not None,
     }
     if internal_id in pv.CASES:
         pv.CASES[internal_id] = {**pv.CASES[internal_id], **worker_config}
@@ -1024,6 +1100,8 @@ def worker(
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "branch_segment_rm_profile": branch_segment_rm_profile,
+        "branch_initial_lengths": branch_initial_lengths,
+        "skip_softcold_reset": branch_initial_lengths is not None,
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
@@ -1121,6 +1199,8 @@ def run_wave(
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
         "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
         "branch_segment_rm_profile": run_manifest.get("runtime", {}).get("branch_segment_rm_profile"),
+        "branch_initial_lengths": run_manifest.get("runtime", {}).get("branch_initial_lengths"),
+        "skip_softcold_reset": run_manifest.get("runtime", {}).get("branch_initial_lengths") is not None,
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
