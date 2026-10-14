@@ -514,13 +514,13 @@ def main() -> int:
         "--branch-segment-rm-profile",
         type=parse_branch_segment_rm_profile,
         metavar="SEGMENT=OHMS,...",
-        help="diagnostic per-segment membrane resistance profile applied to an attempt-local Branch Train Model_00.xml",
+        help="diagnostic Branch Train membrane Rm profile; segment 1 may use standard SoftCold reset, other segments require prebuilt lengths",
     )
     parser.add_argument(
         "--branch-initial-lengths",
         type=parse_branch_initial_lengths,
         metavar="L1,L2,...",
-        help="prebuilt Branch attachment lengths; required with --branch-segment-rm-profile and skips SoftCold reset for this diagnostic state",
+        help="prebuilt Branch attachment lengths for segment Rm profiles beyond segment 1; skips SoftCold reset for this diagnostic state",
     )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
@@ -591,18 +591,27 @@ def main() -> int:
         for case in specs
     ):
         raise SystemExit("--branch-segment-rm-profile requires parametric Branch-only cases")
-    if (args.branch_segment_rm_profile is None) != (args.branch_initial_lengths is None):
-        raise SystemExit("--branch-segment-rm-profile and --branch-initial-lengths must be used together")
+    if args.branch_initial_lengths is not None and args.branch_segment_rm_profile is None:
+        raise SystemExit("--branch-initial-lengths requires --branch-segment-rm-profile")
     if args.branch_initial_lengths is not None and any(
         case.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(case.get("normalization_mode", 0)) != 1
         for case in specs
     ):
         raise SystemExit("--branch-initial-lengths requires parametric Branch-only cases")
-    if args.branch_segment_rm_profile is not None and not set(args.branch_segment_rm_profile).issubset(
-        set(args.branch_initial_lengths or [])
+    if args.branch_initial_lengths is not None and not set(args.branch_segment_rm_profile or {}).issubset(
+        set(args.branch_initial_lengths)
     ):
         raise SystemExit("each --branch-segment-rm-profile segment must appear in --branch-initial-lengths")
+    if (
+        args.branch_segment_rm_profile is not None
+        and args.branch_initial_lengths is None
+        and set(args.branch_segment_rm_profile) != {1}
+    ):
+        raise SystemExit(
+            "without --branch-initial-lengths, --branch-segment-rm-profile may only target segment 1 "
+            "so the standard SoftCold reset preserves the diagnostic Rm"
+        )
     selected_ids = [case["id"] for case in specs]
     if args.resume:
         # Explicit, exact-resume is checked after preparation so the input hashes are fresh.

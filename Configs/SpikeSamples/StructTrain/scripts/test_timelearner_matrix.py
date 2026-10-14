@@ -220,6 +220,53 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 )
             self.assertFalse((attempt / "runtime-input-overrides").exists())
 
+    def test_segment_one_rm_profile_keeps_standard_softcold_reset_available(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            state = (
+                '<DendriteLength Type="simplevector">97 50 25 1</DendriteLength>'
+                '<InitialSomaPotential Type="simplevector">0.1 0.2 0.3 0.4</InitialSomaPotential>'
+                '<TipSynapseResistance Type="simplevector">20000000 30000000 40000000 86000000</TipSynapseResistance>'
+            )
+            model = (
+                f'<Root>{state}<Neuron><Dendrite1_1 Class="Membrane"><Components>'
+                '<ExcChannel><Parameters><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</Parameters></ExcChannel><InhChannel><Parameters><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</Parameters></InhChannel></Components></Dendrite1_1></Neuron></Root>'
+            )
+            (source / "Train" / "Model_00.xml").write_text(model, encoding="utf-8")
+            (source / "Train" / "Parameters_00.xml").write_text(f"<Parameters>{state}</Parameters>", encoding="utf-8")
+            (source / "Test" / "Model_00.xml").write_text(model, encoding="utf-8")
+            attempt = base / "runs" / "r7" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W04", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                branch_segment_rm_profile={1: 5000000.0},
+            )
+
+            trained = (overlay / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+            self.assertIn("<Resistance>5000000</Resistance>", trained)
+            self.assertIn("<DendriteLength Type=\"simplevector\">97 50 25 1</DendriteLength>", trained)
+            self.assertIn(
+                '<InitialSomaPotential Type="simplevector">0.1 0.2 0.3 0.4</InitialSomaPotential>',
+                trained,
+            )
+            self.assertIn(
+                '<TipSynapseResistance Type="simplevector">20000000 30000000 40000000 86000000</TipSynapseResistance>',
+                trained,
+            )
+            self.assertIsNone(record["branch_initial_lengths"])
+            self.assertEqual(record["branch_segment_rm_profile"], {1: 5000000.0})
+            self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), model)
+
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):
             with self.subTest(raw=raw), self.assertRaises(ValueError):

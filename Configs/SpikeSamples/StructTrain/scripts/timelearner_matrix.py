@@ -385,13 +385,18 @@ def make_runtime_input_overlay(
             for segment, resistance in branch_segment_rm_profile.items()
         ):
             raise ValueError("Branch segment Rm profile must use positive segment IDs and finite positive resistances")
-    if (branch_segment_rm_profile is None) != (branch_initial_lengths is None):
-        raise ValueError("Branch segment Rm profiles require explicit prebuilt initial lengths")
+    if branch_initial_lengths is not None and branch_segment_rm_profile is None:
+        raise ValueError("Branch prebuilt initial lengths require a segment Rm profile")
     if branch_initial_lengths is not None:
         if len(branch_initial_lengths) < 2 or any(int(length) < 1 for length in branch_initial_lengths):
             raise ValueError("Branch prebuilt initial lengths must contain at least two positive lengths")
         if not set(branch_segment_rm_profile or {}).issubset(set(branch_initial_lengths)):
             raise ValueError("each profiled Branch segment must be an input's prebuilt initial attachment")
+    elif branch_segment_rm_profile is not None and set(branch_segment_rm_profile) != {1}:
+        raise ValueError(
+            "a Branch segment Rm profile without prebuilt initial lengths may only target segment 1, "
+            "which survives the standard SoftCold reset"
+        )
     overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
