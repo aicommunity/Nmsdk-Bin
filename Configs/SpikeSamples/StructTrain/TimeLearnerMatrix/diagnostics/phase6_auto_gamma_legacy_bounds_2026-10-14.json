@@ -1,0 +1,85 @@
+{
+  "run_id": "diag-phase6-auto-legacy-bounds-t120-20261014-01",
+  "date": "2026-10-14",
+  "status": "cpp_refusal_before_time_cap",
+  "question": "Does restoring the historical configured Rs range prevent PHASE6 failure when shared online gamma estimation remains enabled?",
+  "condition": {
+    "trainer": "NNeuronTimeLearner",
+    "pattern": "PHASE6, 480 ms, PSI on, four inputs",
+    "mode": "parametric normalization",
+    "post_train": "enabled, not reached",
+    "auto_estimate_attenuation_gamma": true,
+    "initial_attenuation_gamma": "reset fallback 0.05; then estimated online",
+    "legacy_configured_resistance_bounds_ohm": {
+      "min": 20000000,
+      "max": 100000000000
+    },
+    "model_time_cap_s": 120
+  },
+  "provenance": {
+    "remote_host": "10.245.1.17",
+    "root_head": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "bin_head": "86435676e46a5eb4be33fb065f5d0bad47f3d1cf",
+    "pulselib_head_before_temporary_overlay": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "release_build_exit": 0,
+    "executed_console_sha256": "1f0f86460111659f0eed1dbee2531454cc9422acf362ef8a8a05bf76abec2304",
+    "temporary_cpp_overlay": "legacy-bounds-overlay.patch; UpdateResistanceBoundsFromMembranes used max(derived, configured) for both bounds",
+    "temporary_patch_sha256": "be2898d3d59876ae54a27b6a8ea9de31b52e5714591285c60ccb0d1c3d98ab6b",
+    "historical_input_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/phase6-gamma-source-audit-20261014-01/inputs/base/input_manifest.json",
+    "run_archive": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/phase6-gamma-source-audit-20261014-01/runs/diag-phase6-auto-legacy-bounds-t120-20261014-01",
+    "raw_rdk_debug_jsonl_sha256": "341f4631ed0a029a576347bc6ff143c278ab1b95de1cd6ce1bb5a1d487abc132",
+    "run_manifest_sha256": "0cb32e037d3f29a0ccc0428ab0bfa6ff7b068745210fcf03ef19f0ad3b906dfc"
+  },
+  "inputs_sha256": {
+    "before": {
+      "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69",
+      "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+      "Model_00.xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+      "Parameters_00.xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9"
+    },
+    "after_training_state_was_persisted": {
+      "Project.ini": "d24f0308b7d1178f3c6b34c97700de153d571f23ab3e879a004df0233d7b02dc",
+      "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+      "Model_00.xml": "ec37f321eb94ad87dd7f4ca7cd1b8bb9acce1da4e2278e7db102d45db0c4855f",
+      "Parameters_00.xml": "8adaa0a3ece34afdad66ad6c8397d441adaa196565be19253b6db779512aba37"
+    }
+  },
+  "result": {
+    "console_exit": 0,
+    "iterations": 36,
+    "last_iteration": 35,
+    "model_time_s": 71.924,
+    "need": 1,
+    "eol_sync": true,
+    "eol_normalized": false,
+    "phase": "training",
+    "lengths": [97, 81, 49, 1],
+    "tip_rs_ohm": [23000000, 411169000, 100000000000, 86000000],
+    "peak_valid": [true, true, true, true],
+    "shared_gamma_values_seen_by_feedforward": [0.05, 0.0741867, 0.0617947, 0.124788, 0.137126, 0.18177],
+    "cpp_refusal": "unresolved amplitude overshoot at ResistanceMax; dendrite=2; tip_R=1e11; Rmax=1e11; amp_dt=-0.0484374; length=49; W3=0",
+    "classification_quality": "not evaluated"
+  },
+  "comparison": {
+    "fixed_saved_gamma_0_001399": "A separate exact-input Release diagnostic with AutoEstimateAttenuationGamma=false reached the main C++ EOL and entered PostTune at model time about 112.246 s; its PostTune landscape result was negative and external Test classification was not run. This was a fixed-gamma ablation, not a verified replay of the historical binary.",
+    "fixed_fallback_gamma_0_05": "A separate 120 s model-time capped run remained Need=1 without trainer refusal; peaks remained valid, while two inputs reached the reciprocal-range Rmax=10 GOhm.",
+    "auto_gamma_reciprocal_bounds": "A separate 120 s model-time capped run remained Need=1, had invalid peaks, and ended with lengths [41,41,33,1] and sub-megaohm Rs on the first three inputs."
+  },
+  "restoration": {
+    "classic_source_sha256_after_restore": "5bdd4175791a470f3d2bbfaceaa39d6cfd0ea324bf69a5f720b792922b995580",
+    "classic_source_matches_saved_baseline": true,
+    "console_sha256_after_restore": "b1bb240104930a0fd03e62737b571023989b53fe199dace58e41e36d9b4b7a11",
+    "console_matches_saved_baseline": true,
+    "temporary_release_build_was_not_committed": true,
+    "active_training_process_after_completion": false,
+    "tmux_session_after_completion": false,
+    "screen_available_on_remote_host": false
+  },
+  "interpretation": [
+    "Restoring the old 20 MOhm minimum avoided the sub-megaohm state seen with reciprocal bounds, and all peaks were valid at the refusal point.",
+    "The old bounds did not restore convergence: the current trainer explicitly refused at the 100 GOhm maximum with unresolved amplitude error.",
+    "The PHASE6 result is highly sensitive to online gamma policy in these controlled comparisons. The fixed 0.001399 ablation reached the synchronization and normalization gate; the auto-estimated variants did not.",
+    "This does not establish mathematical impossibility or prove a universal regression in historical runs. The reported September 8/8 result lacks an exact original executable hash, and reconstructed historical-source replays recorded elsewhere also plateaued at Rmax.",
+    "The current Classic estimator has a shared scalar gamma and updates it from observed amp/initial at length greater than one without checking SomaPeakValid or settled-length readiness. This is a concrete implementation risk to test with an isolated C++ ablation; it is not yet a complete fix proposal."
+  ]
+}
