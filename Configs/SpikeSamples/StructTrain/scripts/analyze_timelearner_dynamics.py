@@ -324,7 +324,7 @@ def analyze_file(path: Path, *, rest_bound: float = 1.0,
         "model_time_end": last_model_time,
         "assumptions": {
             "rest_bound": rest_bound,
-            "signed_channel_envelope": "first nonzero observed output sign; provisional orientation, not serialized NPulseChannel.Type",
+            "signed_channel_envelope": "serialized NPulseChannel.Type when available; otherwise the first nonzero observed output sign is used as a provisional fallback orientation",
             "time_step_hz": time_step_hz,
             "step_gain": "estimated from C, observed TimeConstant and summed synaptic conductance; fixed-input local step only",
             "soma_abs_limit": soma_abs_limit,

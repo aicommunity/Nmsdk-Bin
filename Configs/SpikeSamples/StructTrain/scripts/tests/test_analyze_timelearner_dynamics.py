@@ -56,6 +56,17 @@ class AnalyzeTimeLearnerDynamicsTest(unittest.TestCase):
         assert parsed is not None
         self.assertIsNone(parsed["components"][0]["channels"][0]["type"])
 
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "legacy-dynamics.log"
+            path.write_text(old_record, encoding="utf-8")
+            result = analyze_file(path)
+
+        legacy_channel = result["channels"]["s.c0"]
+        self.assertIsNone(legacy_channel["declared_channel_type"])
+        self.assertEqual(legacy_channel["fallback_first_nonzero_output_sign"], -1)
+        self.assertIn("serialized NPulseChannel.Type when available",
+                      result["assumptions"]["signed_channel_envelope"])
+
     def test_stream_summary_flags_sign_and_soma_excursions_and_estimates_gain(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "TimeLearnerTrainingDynamics.log"

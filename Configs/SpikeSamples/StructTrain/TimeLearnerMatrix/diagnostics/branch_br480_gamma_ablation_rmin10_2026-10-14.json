@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "study": "Branch W04 BR480 N1 PSI-off gamma mode ablation",
+  "matrix_case": "W04_BR480_N1_PSIoff",
+  "condition": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "normalization_mode": 1,
+    "presynaptic_inhibition": false,
+    "w3": false,
+    "train_time_limit_seconds": 900,
+    "max_synapse_to_membrane_resistance_ratio": 10,
+    "rm_ohm": 10000000,
+    "rmin_by_input_ohm": [
+      2880071.5552629363,
+      2880071.5552629363,
+      2880071.5552629363
+    ],
+    "rmax_by_input_ohm": [
+      100000000,
+      100000000,
+      100000000
+    ],
+    "matrix_input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+    "shared_auto_cold_reset_state": {
+      "dendrite_length": [1, 1, 1, 1],
+      "tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000],
+      "attenuation_gamma": -1,
+      "per_input_gamma": [
+        -1,
+        -1,
+        -1,
+        -1
+      ]
+    }
+  },
+  "build": {
+    "host": "10.245.1.17",
+    "configuration": "Linux Release",
+    "root_commit": "a48e2bd2e2c0e5be659ffb0464625d1678144173",
+    "pulse_lib_commit": "38fc7d478963857da3cdad1eda12ab85ff3c975d",
+    "bin_commit": "4a1d219f5e6a310492efaf48eb0883bc7e8b0499",
+    "rdk_commit": "b3b2472dc347899af266cd46e64bca2a6ea16fea",
+    "console_sha256": "7cf0e83f398b56074da03f14fe22e6bbed3cf830504bab04eb8e14895e08b00d"
+  },
+  "attempts": [
+    {
+      "run_id": "a48e2bd-br480-rmin10-20261014",
+      "run_fingerprint": "1137688cfcfa84e42760866977eeaeab309a2992fda8ad6cd65475c3891555bc",
+      "gamma_mode": "shared-auto",
+      "reset_audit": {
+        "auto_estimate_gamma": true,
+        "use_per_input_gamma": false,
+        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+      },
+      "terminal": {
+        "converged": false,
+        "need": 1,
+        "iteration": 24,
+        "phase": 5,
+        "failure_reason": 3,
+        "failure_name": "invalid_peak_no_recovery",
+        "eol_sync": false,
+        "eol_amplitude": false,
+        "active_vector_index": 1,
+        "active_peak_valid": false,
+        "length_after": [1, 65, 89, 1],
+        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "max_length": 100,
+        "classification_gate": "not_run_training_incomplete"
+      },
+      "gamma_and_rs_observation": {
+        "active_vector_index_2_gamma_at_iteration_2": 0.2978208482297845,
+        "vector_index_1_length_1_to_9_tip_resistance_ohm": 35565223.222090945,
+        "vector_index_1_first_rmin_length": 49,
+        "vector_index_2_first_rmin_length": 25
+      },
+      "training_audit": {
+        "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-rsfloor/runs/a48e2bd-br480-rmin10-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 1105275,
+        "sha256": "f7e618d081ce5d7de860e09675374546f0b0dc3f998018133cb60bbb5746173a"
+      },
+      "full_dynamics": {
+        "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-rsfloor/runs/W04_BR480_N1_PSIoff_20261014T100001Z_3529714_0a0e9180_work/Train/TimeLearnerTrainingDynamics.log",
+        "bytes": 621143063,
+        "sha256": "6016daf3b171a58a9ef5b5ead5af73e4f2c94f1ef2f4f8d4b469f50800c0e0c4",
+        "records": 26917
+      },
+      "dynamics_summary": {
+        "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-rsfloor/runs/a48e2bd-br480-rmin10-20261014/diagnostics/dynamics_summary_corrected.json",
+        "bytes": 437442,
+        "sha256": "c4490111e4fabd5e7dde7d9d4e2aece9ca9fb1f8b4e2b51fe8f48ecae23bebe2"
+      }
+    },
+    {
+      "run_id": "a48e2bd-br480-rmin10-perinputgamma-20261014",
+      "run_fingerprint": "7f50dd3071c4b2b6eb2290fcff657c786a75f4601ac80af167a7cc5a88ec8113",
+      "gamma_mode": "per-input-auto",
+      "reset_audit": {
+        "auto_estimate_gamma": true,
+        "use_per_input_gamma": true,
+        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+      },
+      "terminal": {
+        "converged": false,
+        "need": 1,
+        "iteration": 24,
+        "phase": 5,
+        "failure_reason": 3,
+        "failure_name": "invalid_peak_no_recovery",
+        "eol_sync": false,
+        "eol_amplitude": false,
+        "active_vector_index": 1,
+        "active_peak_valid": false,
+        "length_after": [1, 65, 89, 1],
+        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "max_length": 100,
+        "classification_gate": "not_run_training_incomplete"
+      },
+      "gamma_and_rs_observation": {
+        "vector_index_1_initial_gamma_fallback": 0.05,
+        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.959064983,
+        "vector_index_1_first_rmin_length": 65,
+        "vector_index_2_first_rmin_length": 25
+      },
+      "provenance": {
+        "source_changed_during_run": false,
+        "binary_changed_during_run": false,
+        "training_config_autosaved": true,
+        "test_configuration_changed": false
+      },
+      "training_audit": {
+        "path": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/a48e2bd-br480-rmin10-perinputgamma-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 1105356,
+        "sha256": "fcfbc672b6fdc336e97c25e165838d07df527bb46c08ea2a75243f164cfac508"
+      }
+    },
+    {
+      "run_id": "a48e2bd-br480-rmin10-sharedfixed005-20261014",
+      "run_fingerprint": "30fac97bb85469f5286210df1af3f8aa675026c57b19ad90298ff90ea3cc4c8e",
+      "gamma_mode": "shared-fixed-005",
+      "reset_audit": {
+        "auto_estimate_gamma": false,
+        "use_per_input_gamma": false,
+        "attenuation_gamma": 0.05,
+        "initial_tip_resistance_ohm": [86000000, 86000000, 86000000, 86000000]
+      },
+      "terminal": {
+        "converged": false,
+        "need": 1,
+        "iteration": 25,
+        "phase": 5,
+        "failure_reason": 3,
+        "failure_name": "invalid_peak_no_recovery",
+        "eol_sync": false,
+        "eol_amplitude": false,
+        "active_vector_index": 1,
+        "active_peak_valid": false,
+        "length_after": [1, 73, 89, 1],
+        "tip_resistance_after_ohm": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+        "max_length": 100,
+        "classification_gate": "not_run_training_incomplete"
+      },
+      "gamma_and_rs_observation": {
+        "shared_gamma": 0.05,
+        "resistance_multiplier_per_8_segment_growth": 0.6703200460356393,
+        "vector_index_1_length_1_to_9_tip_resistance_ohm": 57647523.959064983,
+        "vector_index_1_first_rmin_length": 73,
+        "vector_index_2_first_rmin_length": 73
+      },
+      "provenance": {
+        "source_changed_during_run": false,
+        "binary_changed_during_run": false,
+        "training_config_autosaved": true,
+        "test_configuration_changed": false
+      },
+      "training_audit": {
+        "path": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/a48e2bd-br480-rmin10-sharedfixed005-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 1168543,
+        "sha256": "31d3b2a03d664b26e3d9da3bc6a705cf1940778a975f0a65206b746a948f2b2d"
+      }
+    }
+  ],
+  "physical_telemetry_shared_auto": {
+    "sample_records": 26917,
+    "channels": 180,
+    "declared_channel_type_missing": 0,
+    "channel_output_min": -1,
+    "channel_output_max": 1,
+    "samples_crossing_expected_sign": 0,
+    "samples_outside_signed_envelope": 0,
+    "samples_outside_absolute_unit_interval": 0,
+    "membrane_sum_min": 0,
+    "membrane_sum_max": 0.6562465001328381,
+    "soma_sum_min": 0,
+    "soma_sum_max": 0.12049605846207956,
+    "soma_shutdown_threshold_configured_in_analyzer": null,
+    "non_finite_examples": 0,
+    "local_explicit_step_gain_max": 0.1802051002306427,
+    "samples_local_step_gain_over_1": 0,
+    "samples_local_step_gain_over_2": 0,
+    "assessment": "No numerical divergence indicators were observed in this trace; this is not a global stability proof."
+  },
+  "classification": {
+    "training": "cpp_refusal_invalid_peak_no_recovery_need_remains_1",
+    "classification_quality": "not_evaluated_training_incomplete",
+    "cause": "Shared auto gamma measurably accelerates the feedforward Rs decrease of a later input; per-input mode delays reaching Rmin, and fixed gamma delays it further, but all three checked trajectories still reach the derived floor and fail to recover a valid peak before EOL.",
+    "category": "limitation_of_checked_training_trajectory; root cause of invalid peak not fully isolated",
+    "not_proven": [
+      "mathematical impossibility of training",
+      "global numerical stability or instability across other configurations",
+      "classification quality after convergence"
+    ]
+  }
+}
