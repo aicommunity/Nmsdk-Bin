@@ -139,6 +139,49 @@ class RuntimeBranchGammaOverlayTests(unittest.TestCase):
 
 
 class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
+    def test_segment_rm_profile_changes_only_selected_train_membrane_channels(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            xml = (
+                '<Root><Neuron><Dendrite1_65 Class="Membrane"><Components>'
+                '<ExcChannel><Parameters><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</Parameters></ExcChannel><InhChannel><Parameters><Resistance>10000000</Resistance>'
+                '<FBResistance>10000000</FBResistance><RestingResistance>10000000</RestingResistance>'
+                '</Parameters></InhChannel></Components></Dendrite1_65></Neuron></Root>'
+            )
+            (source / "Train" / "Model_00.xml").write_text(xml, encoding="utf-8")
+            (source / "Train" / "Parameters_00.xml").write_text("<Parameters />", encoding="utf-8")
+            (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
+            attempt = base / "runs" / "r5" / "W04" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            profile = MODULE.parse_branch_segment_rm_profile("65=5000000")
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W04", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                branch_segment_rm_profile=profile,
+            )
+
+            trained = (overlay / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+            self.assertIn("<Resistance>5000000</Resistance>", trained)
+            self.assertIn("<FBResistance>5000000</FBResistance>", trained)
+            self.assertIn("<RestingResistance>5000000</RestingResistance>", trained)
+            self.assertEqual((overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8"), "<Parameters />")
+            self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual((source / "Train" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["branch_segment_rm_profile"], {65: 5000000.0})
+            self.assertEqual(len(record["overrides"]), 1)
+
+    def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
+        for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                MODULE.parse_branch_segment_rm_profile(raw)
+
     def test_rs_rm_limit_overlay_is_isolated_and_train_only(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

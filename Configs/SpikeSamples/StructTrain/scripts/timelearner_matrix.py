@@ -252,7 +252,7 @@ def make_quiet_debug_input_overlay(
     return make_runtime_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
-        branch_rs_rm_limit=None,
+        branch_rs_rm_limit=None, branch_segment_rm_profile=None,
     )
 
 
@@ -276,6 +276,72 @@ def _set_or_insert_runtime_tag(
     return set_all_tags(text, tag, value)
 
 
+def parse_branch_segment_rm_profile(raw: str | None) -> dict[int, float] | None:
+    """Parse diagnostic ``segment=ohms,...`` pairs for attempt-local Branch inputs."""
+    if raw is None:
+        return None
+    profile: dict[int, float] = {}
+    for item in raw.split(","):
+        segment_text, separator, resistance_text = item.partition("=")
+        if not separator:
+            raise ValueError("Branch Rm profile entries must use segment=ohms")
+        try:
+            segment = int(segment_text.strip())
+            resistance = float(resistance_text.strip())
+        except ValueError as exc:
+            raise ValueError(f"invalid Branch Rm profile entry: {item!r}") from exc
+        if segment < 1:
+            raise ValueError("Branch Rm profile segment indices must be positive")
+        if not math.isfinite(resistance) or resistance <= 0.0:
+            raise ValueError("Branch Rm profile resistances must be finite and positive")
+        if segment in profile:
+            raise ValueError(f"duplicate Branch Rm profile segment: {segment}")
+        profile[segment] = resistance
+    if not profile:
+        raise ValueError("Branch Rm profile must contain at least one segment=ohms pair")
+    return dict(sorted(profile.items()))
+
+
+def apply_branch_segment_rm_profile(text: str, profile: dict[int, float]) -> str:
+    """Set all three membrane resistance parameters on selected Train segments."""
+    for segment, resistance in profile.items():
+        segment_name = f"Dendrite1_{segment}"
+        segment_pattern = re.compile(
+            rf"(<{re.escape(segment_name)}\b[^>]*>)(.*?)(</{re.escape(segment_name)}\s*>)",
+            re.S,
+        )
+        matches = list(segment_pattern.finditer(text))
+        if len(matches) != 1:
+            raise ValueError(
+                f"expected exactly one {segment_name} component in Train/Model_00.xml; found {len(matches)}"
+            )
+        segment_match = matches[0]
+        segment_block = segment_match.group(0)
+        for channel_name in ("ExcChannel", "InhChannel"):
+            channel_pattern = re.compile(
+                rf"(<{channel_name}\b[^>]*>)(.*?)(</{channel_name}\s*>)", re.S
+            )
+            channels = list(channel_pattern.finditer(segment_block))
+            if len(channels) != 1:
+                raise ValueError(
+                    f"expected exactly one {channel_name} in {segment_name}; found {len(channels)}"
+                )
+            channel_match = channels[0]
+            channel_block = channel_match.group(0)
+            for field in ("Resistance", "FBResistance", "RestingResistance"):
+                if len(tag_values(channel_block, field)) != 1:
+                    raise ValueError(f"expected one {field} in {segment_name}.{channel_name}")
+                channel_block = set_all_tags(channel_block, field, format(resistance, ".17g"))
+            segment_block = (
+                segment_block[:channel_match.start()]
+                + channel_block
+                + segment_block[channel_match.end():]
+            )
+        text = text[:segment_match.start()] + segment_block + text[segment_match.end():]
+    ET.fromstring(text)
+    return text
+
+
 def make_runtime_input_overlay(
     input_root: Path,
     attempt_dir: Path,
@@ -285,12 +351,21 @@ def make_runtime_input_overlay(
     quiet_debug_logs: bool,
     branch_gamma_mode: str | None,
     branch_rs_rm_limit: float | None = None,
+    branch_segment_rm_profile: dict[int, float] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Create an attempt-local input copy with recorded diagnostic overrides."""
     if branch_rs_rm_limit is not None and (
         not math.isfinite(branch_rs_rm_limit) or branch_rs_rm_limit < 1.0
     ):
         raise ValueError("Branch Rs/Rm limit must be finite and >= 1")
+    if branch_segment_rm_profile is not None:
+        if not branch_segment_rm_profile:
+            raise ValueError("Branch segment Rm profile must not be empty")
+        if any(
+            int(segment) < 1 or not math.isfinite(float(resistance)) or float(resistance) <= 0.0
+            for segment, resistance in branch_segment_rm_profile.items()
+        ):
+            raise ValueError("Branch segment Rm profile must use positive segment IDs and finite positive resistances")
     overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
@@ -365,6 +440,27 @@ def make_runtime_input_overlay(
                     "MaxSynapseToMembraneResistanceRatio": format(branch_rs_rm_limit, ".17g"),
                 },
             })
+    if branch_segment_rm_profile is not None:
+        path = overlay / "Train" / "Model_00.xml"
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        original = path.read_text(encoding="utf-8")
+        updated = apply_branch_segment_rm_profile(original, branch_segment_rm_profile)
+        path.write_text(updated, encoding="utf-8", newline="")
+        changed.append({
+            "side": "Train",
+            "file": "Train/Model_00.xml",
+            "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+            "sha256_after": sha256(path),
+            "parameters": {
+                "BranchSegmentMembraneResistanceProfile": {
+                    str(segment): format(resistance, ".17g")
+                    for segment, resistance in sorted(branch_segment_rm_profile.items())
+                },
+                "fields": ["Resistance", "FBResistance", "RestingResistance"],
+                "channels": ["ExcChannel", "InhChannel"],
+            },
+        })
     record = {
         "mode": "runtime_input_overlay",
         "source_input": str(input_root),
@@ -372,6 +468,7 @@ def make_runtime_input_overlay(
         "quiet_debug_logs": quiet_debug_logs,
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "branch_segment_rm_profile": branch_segment_rm_profile,
         "overrides": changed,
         "note": "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged.",
     }
@@ -852,6 +949,7 @@ def worker(
     runtime_input_overrides = None
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
+    branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
         raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
     if branch_rs_rm_limit is not None and (
@@ -859,12 +957,21 @@ def worker(
         or int(spec.get("normalization_mode", 0)) != 1
     ):
         raise ValueError("Branch Rs/Rm diagnostic limits require parametric Branch cases")
-    if quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None:
+    if branch_segment_rm_profile is not None and (
+        spec.get("trainer") != "NNeuronTimeLearnerBranch"
+        or int(spec.get("normalization_mode", 0)) != 1
+    ):
+        raise ValueError("Branch segment Rm profiles require parametric Branch cases")
+    if (
+        quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None
+        or branch_segment_rm_profile is not None
+    ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
             input_root, attempt_dir, wave, case_id,
             quiet_debug_logs=quiet_debug_logs,
             branch_gamma_mode=branch_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
+            branch_segment_rm_profile=branch_segment_rm_profile,
         )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
@@ -916,6 +1023,7 @@ def worker(
         "max_polls": max_polls,
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "branch_segment_rm_profile": branch_segment_rm_profile,
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
@@ -1012,6 +1120,7 @@ def run_wave(
         "max_polls": max_polls,
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
         "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
+        "branch_segment_rm_profile": run_manifest.get("runtime", {}).get("branch_segment_rm_profile"),
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
