@@ -394,13 +394,16 @@ def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) 
 def apply_branch_segment_rm_profile_to_train(
     train: Path, profile: dict[int, float]
 ) -> list[str]:
-    """Apply a Branch Rm profile to both project XMLs before launching C++."""
+    """Apply Rm after SoftCold and prevent C++ cold rebuild from discarding it."""
     updated_files: list[str] = []
     for filename in ("Model_00.xml", "Parameters_00.xml"):
         path = train / filename
         if not path.is_file():
             raise FileNotFoundError(path)
         text = path.read_text(encoding="utf-8")
+        if get_tag(text, "ResetToUntrainedState") is None:
+            raise ValueError(f"ResetToUntrainedState missing after SoftCold reset in {path}")
+        text = set_tag_all(text, "ResetToUntrainedState", "0")
         path.write_text(
             apply_branch_segment_rm_profile(text, profile),
             encoding="utf-8",

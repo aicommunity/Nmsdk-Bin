@@ -282,7 +282,10 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 '</InhChannel></Dendrite1_1>'
             )
             for name in ("Model_00.xml", "Parameters_00.xml"):
-                (train / name).write_text(f"<Root>{segment}</Root>", encoding="utf-8")
+                (train / name).write_text(
+                    f'<Root><ResetToUntrainedState Type="b">1</ResetToUntrainedState>{segment}</Root>',
+                    encoding="utf-8",
+                )
 
             updated = apply_branch_segment_rm_profile_to_train(train, {1: 5000000.0})
 
@@ -292,6 +295,7 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                 self.assertEqual(text.count("<Resistance>5000000</Resistance>"), 2)
                 self.assertEqual(text.count("<FBResistance>5000000</FBResistance>"), 2)
                 self.assertEqual(text.count("<RestingResistance>5000000</RestingResistance>"), 2)
+                self.assertRegex(text, r'<ResetToUntrainedState\b[^>]*>0</ResetToUntrainedState>')
 
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):

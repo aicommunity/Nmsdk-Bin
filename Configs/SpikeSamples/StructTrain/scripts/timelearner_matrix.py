@@ -503,16 +503,20 @@ def make_runtime_input_overlay(
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "branch_segment_rm_profile_application": (
-            "after_softcold_reset" if branch_segment_rm_profile and branch_initial_lengths is None
-            else "prebuilt_input_before_launch" if branch_segment_rm_profile else None
+            "after_softcold_skip_cpp_reset"
+            if branch_segment_rm_profile and branch_initial_lengths is None
+            else "prebuilt_input_skip_cpp_reset" if branch_segment_rm_profile else None
         ),
+        "skip_cpp_reset_to_untrained": branch_segment_rm_profile is not None,
         "overrides": changed,
         "note": (
             "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
             + (
-                "A segment-1 profile is reapplied to both Train XMLs after standard SoftCold reset."
+                "A segment-1 profile is reapplied after standard SoftCold reset, then C++ "
+                "ResetToUntrainedState is disabled to preserve the profile."
                 if branch_segment_rm_profile and branch_initial_lengths is None
-                else "A prebuilt-state profile is applied to both Train XMLs before launch."
+                else "A prebuilt-state profile is applied before launch and C++ "
+                "ResetToUntrainedState is disabled to preserve it."
                 if branch_segment_rm_profile
                 else ""
             )
@@ -1084,9 +1088,11 @@ def worker(
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,
         "branch_segment_rm_profile_application": (
-            "after_softcold_reset" if branch_segment_rm_profile and branch_initial_lengths is None
-            else "prebuilt_input_before_launch" if branch_segment_rm_profile else None
+            "after_softcold_skip_cpp_reset"
+            if branch_segment_rm_profile and branch_initial_lengths is None
+            else "prebuilt_input_skip_cpp_reset" if branch_segment_rm_profile else None
         ),
+        "skip_cpp_reset_to_untrained": branch_segment_rm_profile is not None,
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
@@ -1188,6 +1194,9 @@ def run_wave(
         "skip_softcold_reset": run_manifest.get("runtime", {}).get("branch_initial_lengths") is not None,
         "branch_segment_rm_profile_application": run_manifest.get("runtime", {}).get(
             "branch_segment_rm_profile_application"
+        ),
+        "skip_cpp_reset_to_untrained": run_manifest.get("runtime", {}).get(
+            "skip_cpp_reset_to_untrained"
         ),
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
