@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from posttune_verify import compare_run_inputs
+from posttune_verify import compare_run_inputs, snapshot_prelaunch_train_configs
 from repro_cold_lib import apply_branch_segment_rm_profile_to_train, resolve_console
 
 
@@ -303,6 +303,34 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
                     re.findall(r'<StructureBuildMode\b[^>]*>(.*?)</StructureBuildMode>', text),
                     ["2", "2"],
                 )
+
+    def test_prelaunch_snapshot_validates_live_profile_and_preserves_xml(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            train = base / "Train"
+            train.mkdir()
+            channel = (
+                '<ExcChannel><Resistance>5000000</Resistance><FBResistance>5000000</FBResistance>'
+                '<RestingResistance>5000000</RestingResistance></ExcChannel>'
+                '<InhChannel><Resistance>5000000</Resistance><FBResistance>5000000</FBResistance>'
+                '<RestingResistance>5000000</RestingResistance></InhChannel>'
+            )
+            xml = (
+                '<Root><ResetToUntrainedState Type="b">0</ResetToUntrainedState>'
+                '<StructureBuildMode Type="i">2</StructureBuildMode>'
+                f'<Neuron><StructureBuildMode Type="i">2</StructureBuildMode>'
+                f'<Dendrite1_1>{channel}</Dendrite1_1></Neuron></Root>'
+            )
+            for name in ("Model_00.xml", "Parameters_00.xml"):
+                (train / name).write_text(xml, encoding="utf-8")
+
+            snapshot = snapshot_prelaunch_train_configs(train, base / "attempt", {1: 5_000_000.0})
+
+            self.assertEqual(snapshot["files"]["Model_00.xml"]["profile_values"]["1"]["ExcChannel"]["RestingResistance"], 5_000_000.0)
+            self.assertEqual(
+                (base / "attempt" / "prelaunch-inputs" / "Train" / "Model_00.xml").read_text(encoding="utf-8"),
+                xml,
+            )
 
     def test_segment_rm_profile_rejects_invalid_or_duplicate_entries(self):
         for raw in ("", "0=1000000", "1=0", "1=nan", "1=1000000,1=2000000", "one=1000000"):

@@ -394,7 +394,7 @@ def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) 
 def apply_branch_segment_rm_profile_to_train(
     train: Path, profile: dict[int, float]
 ) -> list[str]:
-    """Apply Rm after SoftCold and preserve the prepared neuron through C++ build/reset."""
+    """Apply Rm after SoftCold and suppress the known trainer reset/build paths."""
     updated_files: list[str] = []
     for filename in ("Model_00.xml", "Parameters_00.xml"):
         path = train / filename
@@ -406,9 +406,9 @@ def apply_branch_segment_rm_profile_to_train(
         if get_tag(text, "StructureBuildMode") is None:
             raise ValueError(f"StructureBuildMode missing after SoftCold reset in {path}")
         text = set_tag_all(text, "ResetToUntrainedState", "0")
-        # The top-level trainer otherwise calls BuildStructure() in ABuild,
-        # replaces the loaded neuron with a class instance, and discards this
-        # diagnostic channel profile before the first learning iteration.
+        # The top-level trainer otherwise calls BuildStructure() in ABuild and
+        # replaces the loaded neuron. These flags suppress that known overwrite
+        # path; the live channel values still need confirmation in C++ audit.
         text = set_tag_all(text, "StructureBuildMode", "2")
         path.write_text(
             apply_branch_segment_rm_profile(text, profile),

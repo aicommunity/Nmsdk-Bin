@@ -514,7 +514,8 @@ def make_runtime_input_overlay(
             "Overrides exist only in this attempt-local copy; canonical matrix inputs remain unchanged. "
             + (
                 "A segment-1 profile is reapplied after standard SoftCold reset; "
-                "ResetToUntrainedState=0 and StructureBuildMode=2 preserve it through C++ startup."
+                "ResetToUntrainedState=0 and StructureBuildMode=2 suppress the known trainer reset/build paths. "
+                "Confirm live channel values from the C++ audit."
                 if branch_segment_rm_profile and branch_initial_lengths is None
                 else "A prebuilt-state profile is applied before launch and C++ "
                 "ResetToUntrainedState is disabled to preserve it."

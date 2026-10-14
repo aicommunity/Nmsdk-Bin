@@ -1675,6 +1675,90 @@ def copy_training_audit(train: Path, run_dir: Path, provenance: dict[str, Any], 
     return audit_records
 
 
+def snapshot_prelaunch_train_configs(
+    train: Path, run_dir: Path, branch_rm_profile: dict | None
+) -> dict[str, Any]:
+    """Preserve and validate the final Train XML immediately before Console starts."""
+    snapshot_dir = run_dir / "prelaunch-inputs" / "Train"
+    snapshot_dir.mkdir(parents=True, exist_ok=True)
+    files: dict[str, Any] = {}
+    profile = {
+        int(segment): float(resistance)
+        for segment, resistance in (branch_rm_profile or {}).items()
+    }
+    for filename in ("Model_00.xml", "Parameters_00.xml"):
+        source = train / filename
+        if not source.is_file():
+            raise FileNotFoundError(source)
+        text = source.read_text(encoding="utf-8")
+        modes = [value.strip() for value in re.findall(
+            r"<StructureBuildMode\b[^>]*>(.*?)</StructureBuildMode>", text, re.S
+        )]
+        reset_values = [value.strip() for value in re.findall(
+            r"<ResetToUntrainedState\b[^>]*>(.*?)</ResetToUntrainedState>", text, re.S
+        )]
+        if profile and (not modes or any(value != "2" for value in modes)):
+            raise ValueError(
+                f"Branch Rm profile must skip all StructureBuildMode rebuilds in {source}: {modes}"
+            )
+        if profile and (not reset_values or any(value != "0" for value in reset_values)):
+            raise ValueError(
+                f"Branch Rm profile must skip ResetToUntrainedState in {source}: {reset_values}"
+            )
+        profile_values: dict[str, Any] = {}
+        for segment, expected in sorted(profile.items()):
+            segment_name = f"Dendrite1_{segment}"
+            segment_match = re.search(
+                rf"(<{re.escape(segment_name)}\b[^>]*>.*?</{re.escape(segment_name)}\s*>)",
+                text,
+                re.S,
+            )
+            if not segment_match:
+                raise ValueError(f"{source} has no {segment_name} for requested Rm profile")
+            channel_values: dict[str, Any] = {}
+            for channel_name in ("ExcChannel", "InhChannel"):
+                channel_match = re.search(
+                    rf"<{re.escape(channel_name)}\b[^>]*>.*?</{re.escape(channel_name)}\s*>",
+                    segment_match.group(1),
+                    re.S,
+                )
+                if not channel_match:
+                    raise ValueError(f"{source} has no {segment_name}.{channel_name}")
+                values: dict[str, float] = {}
+                for field_name in ("Resistance", "FBResistance", "RestingResistance"):
+                    matches = re.findall(
+                        rf"<{field_name}\b[^>]*>(.*?)</{field_name}>",
+                        channel_match.group(0),
+                        re.S,
+                    )
+                    if len(matches) != 1:
+                        raise ValueError(
+                            f"{source} expected one {field_name} in {segment_name}.{channel_name}"
+                        )
+                    actual = float(matches[0].strip())
+                    if not math.isclose(actual, expected, rel_tol=1e-12, abs_tol=1e-9):
+                        raise ValueError(
+                            f"{source} {segment_name}.{channel_name}.{field_name}={actual}; "
+                            f"requested {expected}"
+                        )
+                    values[field_name] = actual
+                channel_values[channel_name] = values
+            profile_values[str(segment)] = channel_values
+        destination = snapshot_dir / filename
+        shutil.copy2(source, destination)
+        files[filename] = {
+            "sha256": sha256_file(destination),
+            "structure_build_mode": modes,
+            "reset_to_untrained_state": reset_values,
+            "profile_values": profile_values,
+        }
+    manifest = {"files": files, "snapshot_dir": str(snapshot_dir)}
+    (run_dir / "prelaunch_train_configs.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return manifest
+
+
 def run_case(
     name: str,
     *,
@@ -1725,6 +1809,7 @@ def run_case(
     training_failure: tuple[int, int] | None = None
     params_source = "nm_save"
     provenance_at_launch: dict[str, Any] | None = None
+    prepared_train_config_snapshot: dict[str, Any] | None = None
     tip_mode = str(case.get("posttrain_tip_resistance_mode", {
         "br25_on": "1",
         "br25_off": "0",
@@ -1766,7 +1851,7 @@ def run_case(
                 print(
                     "Applied Branch segment-1 Rm profile after SoftCold reset to "
                     + ", ".join(updated)
-                    + "; ResetToUntrainedState=0 and StructureBuildMode=2 preserve it through C++ startup"
+                    + "; ResetToUntrainedState=0 and StructureBuildMode=2 suppress trainer reset/build paths; verify live Rm in C++ audit"
                 )
         from repro_cold_lib import ensure_tag_after, sync_estdelay_from_gold
 
@@ -1855,6 +1940,12 @@ def run_case(
             "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
         }
         config_sha256 = config_sha_before["Train/Parameters_00.xml"]
+        if case.get("branch_segment_rm_profile"):
+            prepared_train_config_snapshot = snapshot_prelaunch_train_configs(
+                train,
+                run_dir,
+                case.get("branch_segment_rm_profile"),
+            )
         # Capture executable, source, gitlinks, and effective XML immediately
         # before launching C++. Computing these only after the run would hide
         # source or binary changes that happened during a long experiment.
@@ -1865,6 +1956,10 @@ def run_case(
             config_sha_before=config_sha_before,
             params_source=params_source,
         )
+        if prepared_train_config_snapshot is not None:
+            provenance_at_launch["prelaunch_train_config_snapshot"] = (
+                prepared_train_config_snapshot
+            )
         polls = (
             int(max_polls)
             if max_polls is not None
