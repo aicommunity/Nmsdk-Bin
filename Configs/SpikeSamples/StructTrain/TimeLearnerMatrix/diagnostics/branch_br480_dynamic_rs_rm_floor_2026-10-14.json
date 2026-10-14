@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "question": "Does a lower Rs/Rm floor derived from explicit-channel no-crossing stability prevent Branch BR480 invalid-peak refusal?",
+  "classification": "diagnostic_result_not_a_convergence_fix",
+  "remote": {
+    "host": "10.245.1.17 via 10.245.1.12 SSH tunnel",
+    "source_tree": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/rs-ratio-bound-20261014-02/src",
+    "run_archive": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/rs-ratio-bound-20261014-02/runs/diag_rsratio_br480_20261014T070040Z_3412788_785f2c00",
+    "work_directory": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/rs-ratio-bound-20261014-02/runs/diag_rsratio_br480_20261014T070040Z_3412788_f16f478a_work",
+    "tmux_session": "tl_rs_ratio_br480_20261014",
+    "build_type": "Release",
+    "console_sha256": "3ccf7cabc1f9a8466cfbd393d5db67cbb18d77bb926cc41b2bfff8dc631de408",
+    "posttune_verify_sha256": "9792f8f8ce9183f8b55064d968070852d3e125d5a5dc0aef1166234ed5f2d413",
+    "root_git_at_launch": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "effective_pulselib_content": "7f97ae74b98a17b0b9cad5f48386a58224587e8b plus the then-current local C++ worktree overlay",
+    "note": "Console was built before the later correction to combine heterogeneous per-channel floors by absolute Rs and before UseAverageSynapsis was accounted for in the effective conductance count. BR480 has identical channel Rm values and one non-averaged connection, so those later corrections do not change this run's calculated 2.8800716 MOhm floor."
+  },
+  "input": {
+    "matrix_case": "W04_BR480_N1_PSIoff",
+    "train_parameters_sha256": "0184fd335a8869fb34fb538057938fc0aa1cff66a1028d164f1e2e5210570ea1",
+    "train_model_sha256": "777646b0b79d28b16208d23a04bff24ed2d61ce1ed7727eb022216bfef5c06cd",
+    "test_parameters_sha256": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+    "test_model_sha256": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+  },
+  "overrides": {
+    "normalization_mode": 1,
+    "max_synapse_to_membrane_resistance_ratio": 10,
+    "w3_length_escape": false,
+    "train_time_limit_seconds": 900,
+    "max_polls": 25,
+    "poll_interval_seconds": 30,
+    "autosave_model_seconds": 1,
+    "keep_statistic_logs": true,
+    "statistic_log_abort_gib": 8
+  },
+  "derived_reset_bounds": {
+    "capacity_farads": 1e-9,
+    "membrane_resistance_ohms": 1e7,
+    "update_frequency_hz": 2000,
+    "effective_synapse_count": 1,
+    "dimensionless_time_scale_q": 20,
+    "resistance_min_ohms": 2880071.5552629363,
+    "resistance_min_ratio_rs_over_rm": 0.28800715552629363,
+    "resistance_max_ohms": 1e8
+  },
+  "outcome": {
+    "runner_exit_code": 0,
+    "console_child_exit_code": -15,
+    "console_child_exit_note": "runner terminated the remaining event loop after observing a terminal C++ training failure",
+    "training_convergence": "cpp_training_refusal",
+    "need": 1,
+    "training_phase": 5,
+    "training_failure_reason": 3,
+    "training_failure_name": "invalid_peak_no_recovery",
+    "iterations": 24,
+    "quality_gate_evaluated": false,
+    "classification_metrics": "not_evaluated_training_incomplete",
+    "final_lengths": [1, 65, 89, 1],
+    "final_tip_resistance_ohms": [86000000, 2880071.5552629363, 2880071.5552629363, 86000000],
+    "affected_input": {
+      "index": 1,
+      "initial_amplitude": 0.015828572406203167,
+      "last_measured_peak": 6.3326870014535075e-7,
+      "last_peak_valid": false,
+      "amp_difference": 0.015827939137503022,
+      "consecutive_invalid_peak_no_action_count": 3
+    },
+    "trajectory": [
+      {"iteration": 14, "length": 9, "tip_resistance_ohms": 35565223.222090945, "peak": 0.015828572406203167, "peak_valid": true},
+      {"iteration": 16, "length": 25, "tip_resistance_ohms": 10182724.029639924, "peak": 0.024021590012663685, "peak_valid": true},
+      {"iteration": 19, "length": 49, "tip_resistance_ohms": 2880071.5552629363, "peak": 0.0018852245977968307, "peak_valid": true},
+      {"iteration": 20, "length": 57, "tip_resistance_ohms": 2880071.5552629363, "peak": 0.00018093916905870255, "peak_valid": true},
+      {"iteration": 21, "length": 65, "tip_resistance_ohms": 2880071.5552629363, "peak": 0.000011890835772021546, "peak_valid": true},
+      {"iteration": 22, "length": 65, "tip_resistance_ohms": 2880071.5552629363, "peak": 6.3326870014535075e-7, "peak_valid": false}
+    ]
+  },
+  "interpretation": [
+    "The computed floor held Rs at about 0.288 Rm, but did not prevent the amplitude from collapsing as the branch length increased.",
+    "Rs and length changed in the same training trajectory, so the run does not isolate Rs as the cause of invalid peaks.",
+    "The result neither validates nor disproves the local explicit-step bound as a safeguard; it shows that the safeguard alone is insufficient to ensure convergence.",
+    "No recognition-quality conclusion can be drawn because the C++ trainer refused before the quality gate."
+  ],
+  "verification": {
+    "release_build_exit_code": 0,
+    "focused_resistance_tests": "5/5 assertions passed before a known static-teardown SIGSEGV (process exit 139)",
+    "latest_global_bound_and_average_synapse_edits": "not yet rebuilt or tested",
+    "full_per_tick_potential_extrema_analysis": "pending retrieval and parsing of remote dynamics log",
+    "ssh_status_at_documentation": "tunnel through .12 timed out; .12 and .17 unavailable"
+  },
+  "large_logs": "retained on .17 Data disk under the work_directory above; not committed"
+}
