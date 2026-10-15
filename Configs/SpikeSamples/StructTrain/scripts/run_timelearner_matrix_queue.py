@@ -140,6 +140,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "max_polls": args.max_polls,
         "branch_gamma_mode": args.branch_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
+        "synapse_resistance_step": args.synapse_resistance_step,
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
         "branch_initial_lengths": args.branch_initial_lengths,
         "skip_softcold_reset": args.branch_initial_lengths is not None,
@@ -203,6 +204,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "max_polls": args.max_polls,
             "branch_gamma_mode": args.branch_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
+            "synapse_resistance_step": args.synapse_resistance_step,
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
             "branch_initial_lengths": args.branch_initial_lengths,
             "branch_segment_rm_profile_application": condition_runtime[
@@ -298,6 +300,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "max_polls": (result.get("runtime_execution_options") or {}).get("max_polls"),
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
                         "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
+                        "synapse_resistance_step": (result.get("runtime_execution_options") or {}).get("synapse_resistance_step"),
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
                         "branch_initial_lengths": (result.get("runtime_execution_options") or {}).get("branch_initial_lengths"),
                         "skip_softcold_reset": (result.get("runtime_execution_options") or {}).get("skip_softcold_reset"),
@@ -539,6 +542,11 @@ def main() -> int:
         help="diagnostic Branch parametric-training Rs/Rm limit; derives bounds from membrane R on an attempt-local input overlay",
     )
     parser.add_argument(
+        "--synapse-resistance-step",
+        type=float,
+        help="diagnostic structural N0 override for additional-synapse Rs; applied to attempt-local Train XML only",
+    )
+    parser.add_argument(
         "--branch-segment-rm-profile",
         type=parse_branch_segment_rm_profile,
         metavar="SEGMENT=OHMS,...",
@@ -581,6 +589,10 @@ def main() -> int:
         not math.isfinite(args.branch_rs_rm_limit) or args.branch_rs_rm_limit < 1.0
     ):
         raise SystemExit("--branch-rs-rm-limit must be finite and >= 1")
+    if args.synapse_resistance_step is not None and (
+        not math.isfinite(args.synapse_resistance_step) or args.synapse_resistance_step <= 0.0
+    ):
+        raise SystemExit("--synapse-resistance-step must be finite and positive")
     if args.resume and not args.run_id:
         raise SystemExit("--resume requires an explicit --run-id")
     if args.resume and args.allow_repeat:
@@ -613,6 +625,10 @@ def main() -> int:
         for case in specs
     ):
         raise SystemExit("--branch-rs-rm-limit requires parametric Branch-only cases")
+    if args.synapse_resistance_step is not None and any(
+        int(case.get("normalization_mode", 0)) != 0 for case in specs
+    ):
+        raise SystemExit("--synapse-resistance-step requires structural N0-only cases")
     if args.branch_segment_rm_profile is not None and any(
         case.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(case.get("normalization_mode", 0)) != 1

@@ -252,7 +252,8 @@ def make_quiet_debug_input_overlay(
     return make_runtime_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
-        branch_rs_rm_limit=None, branch_segment_rm_profile=None,
+        branch_rs_rm_limit=None, synapse_resistance_step=None,
+        branch_segment_rm_profile=None,
         branch_initial_lengths=None,
     )
 
@@ -334,6 +335,7 @@ def make_runtime_input_overlay(
     quiet_debug_logs: bool,
     branch_gamma_mode: str | None,
     branch_rs_rm_limit: float | None = None,
+    synapse_resistance_step: float | None = None,
     branch_segment_rm_profile: dict[int, float] | None = None,
     branch_initial_lengths: list[int] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
@@ -342,6 +344,10 @@ def make_runtime_input_overlay(
         not math.isfinite(branch_rs_rm_limit) or branch_rs_rm_limit < 1.0
     ):
         raise ValueError("Branch Rs/Rm limit must be finite and >= 1")
+    if synapse_resistance_step is not None and (
+        not math.isfinite(synapse_resistance_step) or synapse_resistance_step <= 0.0
+    ):
+        raise ValueError("SynapseResistanceStep must be finite and positive")
     if branch_segment_rm_profile is not None:
         if not branch_segment_rm_profile:
             raise ValueError("Branch segment Rm profile must not be empty")
@@ -440,6 +446,25 @@ def make_runtime_input_overlay(
                     "MaxSynapseToMembraneResistanceRatio": format(branch_rs_rm_limit, ".17g"),
                 },
             })
+    if synapse_resistance_step is not None:
+        value = format(synapse_resistance_step, ".17g")
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            if not tag_values(original, "SynapseResistanceStep"):
+                raise ValueError(f"{path} has no SynapseResistanceStep parameter")
+            updated = set_all_tags(original, "SynapseResistanceStep", value)
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {"SynapseResistanceStep": value},
+            })
     if branch_segment_rm_profile is not None:
         for filename in ("Model_00.xml", "Parameters_00.xml"):
             path = overlay / "Train" / filename
@@ -500,6 +525,7 @@ def make_runtime_input_overlay(
         "quiet_debug_logs": quiet_debug_logs,
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "synapse_resistance_step": synapse_resistance_step,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "branch_segment_rm_profile_application": (
@@ -1001,6 +1027,7 @@ def worker(
     runtime_input_overrides = None
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
+    synapse_resistance_step = run_manifest.get("runtime", {}).get("synapse_resistance_step")
     branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
     branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
@@ -1010,6 +1037,8 @@ def worker(
         or int(spec.get("normalization_mode", 0)) != 1
     ):
         raise ValueError("Branch Rs/Rm diagnostic limits require parametric Branch cases")
+    if synapse_resistance_step is not None and int(spec.get("normalization_mode", 0)) != 0:
+        raise ValueError("SynapseResistanceStep diagnostic overrides require structural N0 cases")
     if branch_segment_rm_profile is not None and (
         spec.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(spec.get("normalization_mode", 0)) != 1
@@ -1023,6 +1052,7 @@ def worker(
         raise ValueError("Branch prebuilt initial lengths require a parametric Branch segment Rm profile")
     if (
         quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None
+        or synapse_resistance_step is not None
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
     ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
@@ -1030,6 +1060,7 @@ def worker(
             quiet_debug_logs=quiet_debug_logs,
             branch_gamma_mode=branch_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
+            synapse_resistance_step=synapse_resistance_step,
             branch_segment_rm_profile=branch_segment_rm_profile,
             branch_initial_lengths=branch_initial_lengths,
         )
@@ -1086,6 +1117,7 @@ def worker(
         "max_polls": max_polls,
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "synapse_resistance_step": synapse_resistance_step,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,

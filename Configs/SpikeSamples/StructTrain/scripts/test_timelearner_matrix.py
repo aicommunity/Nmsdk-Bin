@@ -396,6 +396,56 @@ class RuntimeBranchRsRmOverlayTests(unittest.TestCase):
             self.assertFalse((attempt / "runtime-input-overrides").exists())
 
 
+class RuntimeStructuralSynapseStepOverlayTests(unittest.TestCase):
+    def test_step_override_changes_only_attempt_local_train_inputs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            xml = (
+                '<Params><NormalizationMode Type="i">0</NormalizationMode>'
+                '<SynapseResistanceStep Type="d">1000000000</SynapseResistanceStep></Params>'
+            )
+            for side in ("Train", "Test"):
+                for filename in ("Model_00.xml", "Parameters_00.xml"):
+                    (source / side / filename).write_text(xml, encoding="utf-8")
+            attempt = base / "runs" / "r8" / "W01" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W01", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                synapse_resistance_step=86000000.0,
+            )
+
+            updated = '<SynapseResistanceStep Type="d">86000000</SynapseResistanceStep>'
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                self.assertIn(updated, (overlay / "Train" / filename).read_text(encoding="utf-8"))
+                self.assertEqual((overlay / "Test" / filename).read_text(encoding="utf-8"), xml)
+                self.assertEqual((source / "Train" / filename).read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["synapse_resistance_step"], 86000000.0)
+            self.assertEqual(len(record["overrides"]), 2)
+
+    def test_invalid_step_is_rejected_before_overlay_creation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            attempt = base / "runs" / "r9" / "W01" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+            for value in (0.0, -1.0, float("inf"), float("nan")):
+                with self.subTest(value=value), self.assertRaises(ValueError):
+                    MODULE.make_runtime_input_overlay(
+                        source, attempt, "W01", "case",
+                        quiet_debug_logs=False, branch_gamma_mode=None,
+                        synapse_resistance_step=value,
+                    )
+            self.assertFalse((attempt / "runtime-input-overrides").exists())
+
+
 class RunProvenanceTests(unittest.TestCase):
     def test_console_resolution_uses_host_platform_and_respects_override(self):
         root = Path("/repo")
