@@ -1884,6 +1884,7 @@ def run_case(
     stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
     max_rs_rm: float | None = None,
     synapse_resistance_step_ohm: float | None = None,
+    tip_synapse_resistance_ohm: float | None = None,
     disable_train_statistic_logs: bool = False,
 ) -> dict:
     case = dict(CASES[name])
@@ -1895,6 +1896,13 @@ def run_case(
         if case.get("normalization_mode") != 0:
             raise ValueError(
                 "SynapseResistanceStep override is only valid for structural NormalizationMode=0"
+            )
+    if tip_synapse_resistance_ohm is not None:
+        if not math.isfinite(tip_synapse_resistance_ohm) or tip_synapse_resistance_ohm <= 0.0:
+            raise ValueError("tip_synapse_resistance_ohm must be a finite positive number")
+        if case.get("normalization_mode") != 1:
+            raise ValueError(
+                "TipSynapseResistance override is only valid for parametric NormalizationMode=1"
             )
     if train_t is not None:
         case["train_t"] = float(train_t)
@@ -2002,6 +2010,15 @@ def run_case(
                     raise ValueError(f"SynapseResistanceStep is missing from {rel}")
                 step_text = format(synapse_resistance_step_ohm, ".17g")
                 t = set_tag(t, "SynapseResistanceStep", step_text)
+            if tip_synapse_resistance_ohm is not None:
+                tip_tag = get_tag(t, "TipSynapseResistance")
+                if tip_tag is None:
+                    raise ValueError(f"TipSynapseResistance is missing from {rel}")
+                tip_count = len(tip_tag.replace(",", " ").split())
+                if tip_count < 1:
+                    raise ValueError(f"TipSynapseResistance is empty in {rel}")
+                tip_value = format(tip_synapse_resistance_ohm, ".17g")
+                t = set_tag(t, "TipSynapseResistance", " ".join([tip_value] * tip_count))
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -2053,6 +2070,11 @@ def run_case(
                 print(
                     f"  structural SynapseResistanceStep override {rel}: "
                     f"{format(synapse_resistance_step_ohm, '.17g')} Ohm"
+                )
+            if tip_synapse_resistance_ohm is not None:
+                print(
+                    f"  parametric TipSynapseResistance override {rel}: "
+                    f"{format(tip_synapse_resistance_ohm, '.17g')} Ohm for each tip"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
