@@ -695,8 +695,9 @@ def main() -> int:
                 )
             if related_result and not duplicate_result and not args.allow_repeat:
                 raise SystemExit(
-                    "a published result has matching inputs, trainer, Console, and algorithm gitlinks, "
-                    "but its launcher/runtime provenance is incomplete or differs: "
+                    "a historical audit contains a row with matching matrix factors, "
+                    "but it does not establish an exact duplicate for the current inputs and code; "
+                    "inspect its provenance before repeating: "
                     f"{related_result}; inspect it and pass --allow-repeat with a new RUN_ID to repeat"
                 )
             if duplicate and not args.allow_repeat:
