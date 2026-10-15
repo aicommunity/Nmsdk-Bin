@@ -69,6 +69,7 @@ from repro_cold_lib import (  # noqa: E402
     set_tag,
     soft_cold_reset_train,
     tipr_looks_posttuned,
+    write_cold_reset_contract,
 )
 
 PHASE8 = ROOT / "SelectivityBranch" / "scripts" / "phase8_tiprmin_gate.py"
@@ -2019,6 +2020,15 @@ def run_case(
                     raise ValueError(f"TipSynapseResistance is empty in {rel}")
                 tip_value = format(tip_synapse_resistance_ohm, ".17g")
                 t = set_tag(t, "TipSynapseResistance", " ".join([tip_value] * tip_count))
+                # ResetToUntrained seeds the cold tip vector from its saved
+                # untrained snapshot, or from SynapseResistanceBase when no
+                # snapshot exists. Setting only TipSynapseResistance in XML
+                # is therefore overwritten by the C++ reset path. Keep the
+                # reference resistance and tip vector aligned for explicit
+                # cold-start diagnostics; training logic remains in C++.
+                if get_tag(t, "SynapseResistanceBase") is None:
+                    raise ValueError(f"SynapseResistanceBase is missing from {rel}")
+                t = set_tag(t, "SynapseResistanceBase", tip_value)
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -2073,8 +2083,9 @@ def run_case(
                 )
             if tip_synapse_resistance_ohm is not None:
                 print(
-                    f"  parametric TipSynapseResistance override {rel}: "
-                    f"{format(tip_synapse_resistance_ohm, '.17g')} Ohm for each tip"
+                    f"  parametric cold-start Rs override {rel}: "
+                    f"SynapseResistanceBase and every TipSynapseResistance="
+                    f"{format(tip_synapse_resistance_ohm, '.17g')} Ohm"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
@@ -2082,6 +2093,9 @@ def run_case(
                 f"auto_gap="
                 f"{get_tag(p.read_text(encoding='utf-8'), 'AutoScaleIterationGap')}"
             )
+        # SoftCold emits this contract before experiment-only overrides.
+        # Refresh it now so it describes the exact XML that C++ will load.
+        write_cold_reset_contract(train, mode="soft")
         config_sha_before = {
             "Train/Parameters_00.xml": sha256_file(train / "Parameters_00.xml"),
             "Train/Model_00.xml": sha256_file(train / "Model_00.xml"),

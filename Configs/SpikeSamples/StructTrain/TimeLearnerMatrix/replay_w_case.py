@@ -61,7 +61,11 @@ def main() -> int:
     parser.add_argument(
         "--tip-synapse-resistance-ohm",
         type=float,
-        help="set every parametric tip Rs in the isolated Train copy to this value",
+        help=(
+            "set the parametric cold-start Rs in the isolated Train copy; updates "
+            "SynapseResistanceBase and every TipSynapseResistance so C++ "
+            "ResetToUntrained preserves the requested diagnostic start"
+        ),
     )
     parser.add_argument("--autosave-model-s", type=int, default=1)
     parser.add_argument(
