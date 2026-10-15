@@ -57,6 +57,37 @@ class TestConsoleResolution(unittest.TestCase):
                     self.assertEqual(module.ROOT, repo_root / "Bin/Configs/SpikeSamples/StructTrain")
                     self.assertEqual(module.NM, Path("/tmp/audit-console"))
 
+    def test_phase8_manual_recipe_disables_default_cpp_posttrain(self):
+        script = (
+            cold.NMSDK_ROOT
+            / "Bin/Configs/SpikeSamples/StructTrain/SelectivityBranch/scripts/phase8_tiprmin_gate.py"
+        )
+        spec = importlib.util.spec_from_file_location("phase8_manual_mode", script)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        absent = (
+            '<Root><NeuronTimeLearnerBranch Class="NNeuronTimeLearnerBranch">'
+            "<IsNeedToTrain>0</IsNeedToTrain>"
+            "</NeuronTimeLearnerBranch></Root>"
+        )
+        for tag in ("EnablePostTrainTuning", "EnablePostTrainMidThreshold"):
+            with self.subTest(tag=tag):
+                updated = module.set_learner_tag(absent, tag, "0")
+                self.assertEqual(module.get_tag(updated, tag), "0")
+                self.assertEqual(updated.count(f"<{tag} "), 1)
+
+        existing = (
+            '<Root><NeuronTimeLearnerBranch Class="NNeuronTimeLearnerBranch">'
+            '<EnablePostTrainTuning Type="b">1</EnablePostTrainTuning>'
+            "</NeuronTimeLearnerBranch></Root>"
+        )
+        updated = module.set_learner_tag(existing, "EnablePostTrainTuning", "0")
+        self.assertEqual(module.get_tag(updated, "EnablePostTrainTuning"), "0")
+        self.assertEqual(updated.count("<EnablePostTrainTuning "), 1)
+
 
 class TestColdResetContract(unittest.TestCase):
     def _write_contract(self, train: Path, trainer: str) -> dict:

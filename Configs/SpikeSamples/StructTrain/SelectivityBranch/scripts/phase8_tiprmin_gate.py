@@ -44,6 +44,31 @@ def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
     )
 
 
+def set_learner_tag(text: str, tag: str, value: str) -> str:
+    """Set a learner property, inserting it when C++ would otherwise use Default()."""
+    if re.search(rf"<{tag}\b", text):
+        return set_tag(text, tag, value, count=1)
+
+    learner = re.search(
+        r"<(NeuronTimeLearnerBranch|NeuronTimeLearner)\b[^>]*>.*?</\1>",
+        text,
+        re.S,
+    )
+    if not learner:
+        raise SystemExit(f"cannot set {tag}: no TimeLearner component found")
+
+    block = learner.group(0)
+    close = f"</{learner.group(1)}>"
+    pos = block.rfind(close)
+    if pos < 0:
+        raise SystemExit(f"cannot set {tag}: malformed TimeLearner component")
+    prop = (
+        f'\n\t<{tag} Type="b" PType="257" IoType="17">'
+        f"{value}</{tag}>\n"
+    )
+    return text[: learner.start()] + block[:pos] + prop + block[pos:] + text[learner.end() :]
+
+
 def get_tag(text: str, tag: str) -> str | None:
     m = re.search(rf"<{tag}\b[^>]*>([^<]*)</{tag}>", text)
     return m.group(1).strip() if m else None
@@ -368,6 +393,12 @@ def prepare_test(
                 )
             else:
                 t = set_tag(t, "AutoScaleIterationGap", "1")
+        else:
+            # PHASE8's external silent-probe/threshold recipe must not silently
+            # run the C++ PostTrain mid-calibrator as well. Default() enables it
+            # when these tags are absent, so explicitly disable it in Test.
+            t = set_learner_tag(t, "EnablePostTrainTuning", "0")
+            t = set_learner_tag(t, "EnablePostTrainMidThreshold", "0")
         if rel.startswith("Parameters"):
             t = set_tag(t, "StructureBuildMode", "0")
         else:
