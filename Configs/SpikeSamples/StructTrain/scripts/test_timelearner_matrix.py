@@ -1,3 +1,4 @@
+import concurrent.futures
 import importlib.util
 import json
 import os
@@ -10,6 +11,13 @@ from unittest.mock import patch
 
 from posttune_verify import compare_run_inputs, snapshot_prelaunch_train_configs
 from repro_cold_lib import apply_branch_segment_rm_profile_to_train, resolve_console
+from matrix_run_safety import (
+    allocate_case_attempt,
+    atomic_write_json,
+    exclusive_file_lock,
+    reserve_run_root,
+    verify_run_manifest,
+)
 
 
 SCRIPT = Path(__file__).with_name("timelearner_matrix.py")
@@ -600,6 +608,80 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                     os.environ.pop("TIMELEARNER_MATRIX_RUN_ID", None)
                 else:
                     os.environ["TIMELEARNER_MATRIX_RUN_ID"] = old_run_id
+
+
+class RunNamespaceSafetyTests(unittest.TestCase):
+    def test_duplicate_run_id_is_rejected_without_clobbering_existing_artifacts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runs = Path(temporary)
+            reserved = reserve_run_root(runs, "same-run")
+            sentinel = reserved / "partial-result.json"
+            sentinel.write_text('{"preserve": true}\n', encoding="utf-8")
+
+            with self.assertRaises(FileExistsError):
+                reserve_run_root(runs, "same-run")
+
+            self.assertEqual(sentinel.read_text(encoding="utf-8"), '{"preserve": true}\n')
+
+    def test_parallel_run_ids_and_case_attempts_get_disjoint_directories(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runs = root / "runs"
+            attempts = root / "case-attempts"
+            barrier = Barrier(8)
+
+            def reserve_pair(index: int) -> tuple[Path, Path]:
+                barrier.wait(timeout=5)
+                run_root = reserve_run_root(runs, f"run-{index}")
+                _, attempt_root = allocate_case_attempt(attempts)
+                (run_root / "owner.txt").write_text(str(index), encoding="utf-8")
+                (attempt_root / "owner.txt").write_text(str(index), encoding="utf-8")
+                return run_root, attempt_root
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+                allocated = list(pool.map(reserve_pair, range(8)))
+
+            run_roots = [pair[0] for pair in allocated]
+            attempt_roots = [pair[1] for pair in allocated]
+            self.assertEqual(len(set(run_roots)), 8)
+            self.assertEqual(len(set(attempt_roots)), 8)
+            self.assertEqual(
+                {path.name for path in attempt_roots},
+                {f"attempt-{index:04d}" for index in range(1, 9)},
+            )
+            run_owners = sorted(
+                path.joinpath("owner.txt").read_text(encoding="utf-8")
+                for path in run_roots
+            )
+            attempt_owners = sorted(
+                path.joinpath("owner.txt").read_text(encoding="utf-8")
+                for path in attempt_roots
+            )
+            self.assertEqual(run_owners, [str(i) for i in range(8)])
+            self.assertEqual(attempt_owners, [str(i) for i in range(8)])
+
+    def test_resume_requires_exact_fingerprint_and_lock_is_exclusive(self):
+        manifest = {"run_id": "run-a", "run_fingerprint": "fingerprint-a"}
+        verify_run_manifest(manifest, {"run_fingerprint": "fingerprint-a"}, "run-a")
+        with self.assertRaisesRegex(RuntimeError, "resume refused"):
+            verify_run_manifest(manifest, {"run_fingerprint": "fingerprint-b"}, "run-a")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            lock_path = Path(temporary) / "queue.lock"
+            with exclusive_file_lock(lock_path, purpose="test"):
+                self.assertTrue(lock_path.is_file())
+                with self.assertRaisesRegex(RuntimeError, "another matrix launch"):
+                    with exclusive_file_lock(lock_path, purpose="second writer"):
+                        self.fail("the second owner must not acquire an active lock")
+            self.assertFalse(lock_path.exists())
+
+    def test_atomic_no_replace_preserves_existing_result(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            result = Path(temporary) / "result.json"
+            atomic_write_json(result, {"attempt": 1}, replace=False)
+            with self.assertRaises(FileExistsError):
+                atomic_write_json(result, {"attempt": 2}, replace=False)
+            self.assertEqual(json.loads(result.read_text(encoding="utf-8")), {"attempt": 1})
 
 
 class PostTuneRunsRootTests(unittest.TestCase):
