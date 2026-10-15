@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
 import os
 import re
 import shutil
@@ -214,6 +215,17 @@ def main() -> None:
         help="Skip silent mid; keep Train TipR/FixedLTZ (C++ PostTune); gate only",
     )
     ap.add_argument(
+        "--diagnostic-threshold",
+        type=float,
+        default=None,
+        help="Evaluate all Test patterns at a Train-derived threshold, without Test recalibration",
+    )
+    ap.add_argument(
+        "--force-test-cpp-mid",
+        action="store_true",
+        help="Run the C++ inference-mid calibration on Test even when Train already has a threshold",
+    )
+    ap.add_argument(
         "--span-ms",
         type=int,
         default=None,
@@ -228,6 +240,44 @@ def main() -> None:
 
     if args.skip_tipr_mid:
         thr = overlay_train_params(train, test)
+        if args.force_test_cpp_mid:
+            for p in (test / "Parameters_00.xml", test / "Model_00.xml"):
+                set_fixed_thr(p, SILENT_THR)
+        if args.diagnostic_threshold is not None:
+            if not math.isfinite(args.diagnostic_threshold) or not (
+                0.0 <= args.diagnostic_threshold <= 1.0
+            ):
+                raise SystemExit("diagnostic threshold must be finite and in [0, 1]")
+            threshold = format(args.diagnostic_threshold, ".17g")
+            for p in (test / "Parameters_00.xml", test / "Model_00.xml"):
+                t = p.read_text(encoding="utf-8")
+                t = set_tag(t, "IsNeedToTrain", "0", 1)
+                t = set_tag(t, "EnablePostTrainTuning", "0", 1)
+                if get_tag(t, "EnablePostTrainMidThreshold") is None:
+                    t = ensure_tag_after(
+                        t, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "0",
+                        attrs=' Type="b" PType="257" IoType="17"',
+                    )
+                else:
+                    t = set_tag(t, "EnablePostTrainMidThreshold", "0", 1)
+                p.write_text(t, encoding="utf-8")
+                set_fixed_thr(p, threshold)
+            if csv_path.exists():
+                csv_path.unlink()
+            flag = test / "posttune_complete.flag"
+            if flag.exists():
+                flag.unlink()
+            rc = run_nm(
+                test / "Project.ini",
+                args.test_t,
+                test / "run_train_candidate_gate.log",
+                span_ms=span_ms,
+            )
+            if not csv_path.exists():
+                raise SystemExit(f"diagnostic threshold run produced no results.csv (rc={rc})")
+            subprocess.check_call([sys.executable, str(METRICS), "-v", str(csv_path)])
+            print(f"train-candidate-threshold={threshold} gate_rc={rc}")
+            return
         try:
             mid_v = float((thr or "1").replace(",", "."))
         except ValueError:
@@ -290,11 +340,24 @@ def main() -> None:
             except ValueError:
                 mid_f = 1.0
             if mid_f >= 0.9:
-                raise SystemExit(f"inference mid still silent: {mid_s2}")
+                print(
+                    f"C++ Test threshold calibration: NonSeparable/silent mid={mid_s2}; "
+                    "recording full Test response at the trainer's silent threshold"
+                )
             for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
                 if p.exists():
                     set_fixed_thr(p, mid_s2)
-            print(f"inference mid={mid_s2}; gate pass")
+                    t = p.read_text(encoding="utf-8")
+                    t = set_tag(t, "EnablePostTrainTuning", "0", 1)
+                    if get_tag(t, "EnablePostTrainMidThreshold") is None:
+                        t = ensure_tag_after(
+                            t, "EnablePostTrainTuning", "EnablePostTrainMidThreshold", "0",
+                            attrs=' Type="b" PType="257" IoType="17"',
+                        )
+                    else:
+                        t = set_tag(t, "EnablePostTrainMidThreshold", "0", 1)
+                    p.write_text(t, encoding="utf-8")
+            print(f"inference mid={mid_s2}; run full Test gate")
             if csv_path.exists():
                 csv_path.unlink()
             if slog.is_dir():

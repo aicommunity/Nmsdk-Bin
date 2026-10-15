@@ -16,6 +16,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -266,6 +267,7 @@ class GateResult:
     test_mid_quality: str = "not_available"
     test_mid_gap: str = ""
     test_mid_result: str = ""
+    diagnostic_evaluations: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -900,6 +902,7 @@ def classify_detection_quality(
     target_detected: bool | None,
     training_convergence: str,
     test_mid_quality: str = "",
+    external_classifier_evaluated: bool = False,
 ) -> str:
     """Summarize target detection independently of evaluator execution/quality."""
     if training_convergence in (
@@ -910,7 +913,7 @@ def classify_detection_quality(
         return "not_evaluated_training_incomplete"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
-    if test_mid_quality == "nonseparable":
+    if test_mid_quality == "nonseparable" and not external_classifier_evaluated:
         return "not_evaluated_nonseparable_test_mid"
     if gate_ok is False:
         return "evaluation_error"
@@ -924,6 +927,7 @@ def classify_detection_quality(
 def classify_separation_quality(
     *, gate_evaluated: bool, gate_ok: bool | None, quality_ok: bool | None,
     training_convergence: str, test_mid_quality: str = "",
+    external_classifier_evaluated: bool = False,
 ) -> str:
     """Metric outcome is separate from evaluator process success."""
     if training_convergence in (
@@ -932,7 +936,7 @@ def classify_separation_quality(
         return "not_evaluated_training_incomplete"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
-    if test_mid_quality == "nonseparable":
+    if test_mid_quality == "nonseparable" and not external_classifier_evaluated:
         return "nonseparable_test_mid"
     if gate_ok is False:
         return "evaluation_error"
@@ -1591,7 +1595,12 @@ def fires_from_csv(csv_path: Path) -> tuple[str, str]:
         return fires, e.output[-200:] if e.output else "metrics_fail"
 
 
-def run_gate(case: dict) -> GateResult:
+def _run_gate_once(
+    case: dict,
+    *,
+    variant: str = "standard",
+    candidate_mid: float | None = None,
+) -> GateResult:
     root: Path = case["root"]
     test = root / "Test"
     span = int(case.get("span_ms", 25))
@@ -1609,7 +1618,7 @@ def run_gate(case: dict) -> GateResult:
             "--test-t",
             "40",
         ]
-        if case["skip_tipr_mid"]:
+        if variant in ("train_candidate", "test_cpp_mid") or case["skip_tipr_mid"]:
             cmd.append("--skip-tipr-mid")
         else:
             cmd.append("--force-python-hygiene")
@@ -1626,8 +1635,14 @@ def run_gate(case: dict) -> GateResult:
             "--metric",
             "ltz_potential_max",
         ]
-        if case["skip_tipr_mid"]:
+        if variant in ("train_candidate", "test_cpp_mid") or case["skip_tipr_mid"]:
             cmd.append("--skip-tipr-mid")
+    if variant == "train_candidate":
+        if candidate_mid is None or not math.isfinite(candidate_mid):
+            raise ValueError("train_candidate gate requires a finite C++ candidate_mid")
+        cmd.extend(("--diagnostic-threshold", format(candidate_mid, ".17g")))
+    elif variant == "test_cpp_mid":
+        cmd.append("--force-test-cpp-mid")
     log = test / "run_posttune_gate.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     print("GATE", " ".join(cmd))
@@ -1716,11 +1731,191 @@ def run_gate(case: dict) -> GateResult:
         quality_ok=quality_ok,
         target_detected=target_detected,
         quality_metrics=quality_metrics,
-        external_classifier_evaluated=True,
+        external_classifier_evaluated=bool(quality_metrics),
         test_mid_quality=test_mid_quality,
         test_mid_gap=test_mid_gap,
         test_mid_result=test_mid_result,
     )
+
+
+def _evaluation_detail(
+    gate: GateResult,
+    csv_path: Path,
+    artifact_dir: Path,
+    *,
+    threshold_source: str,
+    threshold: str = "",
+    flag_meta: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Persist one full Test response and a compact threshold-specific summary."""
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    archived_csv = artifact_dir / "results.csv"
+    rows: list[dict[str, str]] = []
+    if csv_path.exists():
+        shutil.copy2(csv_path, archived_csv)
+        with csv_path.open(encoding="utf-8", newline="") as f:
+            rows = list(csv.DictReader(f))
+    responses = []
+    for index, row in enumerate(rows[:8]):
+        responses.append({
+            "trial": row.get("trial", str(index)),
+            "target_class": row.get("target_class", ""),
+            "neuron_fired": row.get("neuron_fired", ""),
+            "late_fired": row.get("late_fired", ""),
+            "ltz_potential_max": row.get("ltz_potential_max", ""),
+            "soma_amp_sum": row.get("soma_amp_sum", ""),
+            "neuron_spike_count": row.get("neuron_spike_count", ""),
+            "error_class": row.get("error_class", ""),
+        })
+    fires = "".join(
+        "1" if (row.get("neuron_fired") or "0") not in ("0", "0.0", "") else "0"
+        for row in rows[:8]
+    )
+    foil_fires = sum(
+        1 for row in rows[1:8]
+        if (row.get("neuron_fired") or "0") not in ("0", "0.0", "")
+    )
+    summary = {
+        "threshold_source": threshold_source,
+        "threshold": threshold,
+        "threshold_selection_result": (flag_meta or {}).get("result", ""),
+        "threshold_selection_quality": test_mid_quality_of(flag_meta or {}),
+        "threshold_selection_gap": (flag_meta or {}).get("gap", ""),
+        "gate_rc": gate.rc,
+        "gate_evaluated": gate.external_classifier_evaluated,
+        "evaluation_error": gate.fail_reason if not gate.external_classifier_evaluated else "",
+        "test_rows": len(rows),
+        "fires": fires,
+        "target_active": bool(fires[:1] == "1"),
+        "foil_false_positives": foil_fires,
+        "quality_ok": gate.quality_ok,
+        "target_detected": gate.target_detected,
+        "quality_metrics": gate.quality_metrics,
+        "responses": responses,
+        "csv_path": str(archived_csv),
+        "csv_sha256": sha256_file(archived_csv) if archived_csv.exists() else "",
+    }
+    return summary
+
+
+def run_gate(case: dict, *, run_dir: Path | None = None) -> GateResult:
+    """Run normal gate, plus paired threshold diagnostics after Train NonSeparable.
+
+    The paired diagnostics evaluate the same Test inputs two ways: at the
+    candidate threshold computed from Train probes, and after the C++ trainer
+    performs its inference-mid calibration on Test. Each CSV and C++ flag is
+    archived separately; strict C++ Train/Test NonSeparable labels are kept.
+    """
+    train_flag = case["root"] / "Train" / "posttune_complete.flag"
+    train_meta = parse_flag_file(train_flag)
+    if train_meta.get("result") not in ("1", "2"):
+        return _run_gate_once(case)
+
+    run_dir = run_dir or case["root"] / "diagnostics"
+    candidate_text = train_meta.get("candidate_mid", "")
+    try:
+        candidate_mid = float(candidate_text.replace(",", "."))
+    except (AttributeError, ValueError):
+        candidate_mid = float("nan")
+    try:
+        applied_train_mid = float(train_meta.get("mid", "nan").replace(",", "."))
+    except (AttributeError, ValueError):
+        applied_train_mid = float("nan")
+    candidate_available = math.isfinite(candidate_mid) and 0.0 <= candidate_mid < 1.0
+    if candidate_available:
+        train_eval_threshold = candidate_mid
+        train_eval_source = "C++_Train_candidate_mid"
+    elif math.isfinite(applied_train_mid) and 0.0 <= applied_train_mid <= 1.0:
+        train_eval_threshold = applied_train_mid
+        train_eval_source = "C++_Train_applied_mid"
+    else:
+        train_eval_threshold = float("nan")
+        train_eval_source = "unavailable"
+
+    test = case["root"] / "Test"
+    diagnostics: dict[str, Any] = {
+        "train_result": "separable" if train_meta.get("result") == "1" else "nonseparable",
+        "train_candidate_mid": candidate_text,
+        "train_candidate_available": candidate_available,
+        "train_evaluation_threshold": (
+            format(train_eval_threshold, ".17g")
+            if math.isfinite(train_eval_threshold) else ""
+        ),
+        "train_evaluation_threshold_source": train_eval_source,
+        "test_threshold_comparison": "train_threshold_vs_cpp_test_calibration",
+    }
+
+    with tempfile.TemporaryDirectory(prefix="timelearner-nonseparable-") as tmp:
+        baseline_test = Path(tmp) / "Test"
+        shutil.copytree(test, baseline_test)
+
+        candidate_gate: GateResult | None = None
+        if math.isfinite(train_eval_threshold):
+            shutil.rmtree(test)
+            shutil.copytree(baseline_test, test)
+            candidate_case = dict(case)
+            candidate_case["skip_tipr_mid"] = True
+            candidate_gate = _run_gate_once(
+                candidate_case,
+                variant="train_candidate",
+                candidate_mid=train_eval_threshold,
+            )
+            candidate_flag = parse_flag_file(test / "posttune_complete.flag")
+            candidate_detail = _evaluation_detail(
+                candidate_gate,
+                test / "SelectivityLog" / "results.csv",
+                run_dir / "Test" / "diagnostics" / "train_candidate",
+                threshold_source=train_eval_source,
+                threshold=format(train_eval_threshold, ".17g"),
+                flag_meta=candidate_flag,
+            )
+            _copy_if_exists(
+                test / "run_posttune_gate.log",
+                run_dir / "Test" / "diagnostics" / "train_candidate" / "gate.log",
+            )
+            diagnostics["train_threshold_test"] = candidate_detail
+        else:
+            diagnostics["train_threshold_test"] = {
+                "threshold_source": "unavailable",
+                "threshold": "",
+                "gate_evaluated": False,
+                "evaluation_error": "train_candidate_and_applied_mid_missing_or_out_of_range",
+                "responses": [],
+            }
+
+        shutil.rmtree(test)
+        shutil.copytree(baseline_test, test)
+        cpp_case = dict(case)
+        cpp_case["skip_tipr_mid"] = True
+        cpp_gate = _run_gate_once(cpp_case, variant="test_cpp_mid")
+        cpp_flag_meta = parse_flag_file(test / "posttune_complete.flag")
+        try:
+            cpp_threshold = format(float(cpp_flag_meta.get("mid", "1")), ".17g")
+        except ValueError:
+            cpp_threshold = ""
+        cpp_detail = _evaluation_detail(
+            cpp_gate,
+            test / "SelectivityLog" / "results.csv",
+            run_dir / "Test" / "diagnostics" / "cpp_test_threshold",
+            threshold_source="C++_Test_inference_mid",
+            threshold=cpp_threshold,
+            flag_meta=cpp_flag_meta,
+        )
+        _copy_if_exists(
+            test / "posttune_complete.flag",
+            run_dir / "Test" / "diagnostics" / "cpp_test_threshold" / "posttune_complete.flag",
+        )
+        _copy_if_exists(
+            test / "run_infer_mid.log",
+            run_dir / "Test" / "diagnostics" / "cpp_test_threshold" / "infer_mid.log",
+        )
+        _copy_if_exists(
+            test / "run_posttune_gate.log",
+            run_dir / "Test" / "diagnostics" / "cpp_test_threshold" / "gate.log",
+        )
+        diagnostics["cpp_test_threshold"] = cpp_detail
+        cpp_gate.diagnostic_evaluations = diagnostics
+        return cpp_gate
 
 
 def tipr_class(tipr: str, expect: str = "") -> str:
@@ -2188,7 +2383,7 @@ def run_case(
         cpp_failure=training_failure,
     )
     if should_run_quality_gate(training_convergence):
-        gate = run_gate(case)
+        gate = run_gate(case, run_dir=run_dir)
     else:
         gate = GateResult(
             fires="",
@@ -2225,6 +2420,7 @@ def run_case(
         target_detected=gate.target_detected,
         training_convergence=training_convergence,
         test_mid_quality=gate.test_mid_quality,
+        external_classifier_evaluated=gate.external_classifier_evaluated,
     )
     separation_quality = classify_separation_quality(
         gate_evaluated=gate.evaluated,
@@ -2232,6 +2428,7 @@ def run_case(
         quality_ok=gate.quality_ok,
         training_convergence=training_convergence,
         test_mid_quality=gate.test_mid_quality,
+        external_classifier_evaluated=gate.external_classifier_evaluated,
     )
     search_reverted = phase.search_reverted
     mode4_n = count_events_mode4(train) + count_events_mode4(root / "Test")
@@ -2352,6 +2549,8 @@ def run_case(
             "posttune_quality": posttune_quality,
             "detection_quality": detection_quality,
             "posttune_result": phase.train.get("result", ""),
+            "train_candidate_mid": phase.train.get("candidate_mid", ""),
+            "diagnostic_test_evaluations": gate.diagnostic_evaluations,
             "child_rc": child_rc,
             "train_t_effective": float(case["train_t"]),
             "max_polls": polls_used,
@@ -2433,6 +2632,8 @@ def run_case(
             training_failure[1] if training_failure is not None else None
         ),
         "posttune_quality": posttune_quality,
+        "train_candidate_mid": phase.train.get("candidate_mid", ""),
+        "diagnostic_test_evaluations": gate.diagnostic_evaluations,
         "separation_quality": separation_quality,
         "detection_quality": detection_quality,
         "after": after,
@@ -2541,13 +2742,37 @@ def append_result(rows: list[dict]) -> None:
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         f"Console: `{NM}`",
         "",
-        "| case | training convergence | Train PostTune | Test mid | external classifier | target detection | Need | TipR class | mid_source | fires | metrics |",
-        "|------|-----------------------|----------------|----------|---------------------|------------------|------|------------|------------|-------|---------|",
+        "For terminal C++ Train PostTune results, Test diagnostics report both the frozen Train-derived threshold and the threshold selected by the C++ inference calibration on Test. These are separate measurements; neither changes Train convergence or the strict C++ `NonSeparable` result. Full per-pattern responses, metrics, CSV paths, and hashes are stored in each run's `provenance.json` and diagnostic artifacts.",
+        "",
+        "| case | training convergence | Train PostTune | Test mid | external classifier | target detection | Need | TipR class | mid_source | fires | Test threshold diagnostics | metrics |",
+        "|------|-----------------------|----------------|----------|---------------------|------------------|------|------------|------------|-------|----------------------------|---------|",
     ]
     for r in rows:
         a = r["after"]
+        diagnostic = r.get("diagnostic_test_evaluations") or {}
+        diagnostic_parts = []
+        for key, label in (
+            ("train_threshold_test", "Train-frozen"),
+            ("cpp_test_threshold", "C++-Test"),
+        ):
+            detail = diagnostic.get(key) or {}
+            if not detail:
+                continue
+            if detail.get("threshold_source") == "unavailable":
+                diagnostic_parts.append(f"{label}: unavailable")
+                continue
+            target = detail.get("target_active")
+            target_text = "yes" if target is True else "no" if target is False else "n/a"
+            quality = detail.get("quality_ok")
+            quality_text = "PASS" if quality is True else "FAIL" if quality is False else "n/a"
+            diagnostic_parts.append(
+                f"{label} thr={detail.get('threshold', '')}; fires={detail.get('fires', '')}; "
+                f"target={target_text}; foilFP={detail.get('foil_false_positives', 'n/a')}; "
+                f"quality={quality_text}"
+            )
+        diagnostic_text = " / ".join(diagnostic_parts) or "not_run"
         lines.append(
-            "| {case} | {conv} | {post} | {test_mid} | {classifier} | {detect} | {need} | {tc} | {ms} | `{fires}` | {met} |".format(
+            "| {case} | {conv} | {post} | {test_mid} | {classifier} | {detect} | {need} | {tc} | {ms} | `{fires}` | {test_diagnostics} | {met} |".format(
                 case=r["case"],
                 conv=r.get("training_convergence", "insufficient_data"),
                 post=r.get("posttune_quality", "not_reached_or_unknown"),
@@ -2558,6 +2783,7 @@ def append_result(rows: list[dict]) -> None:
                 tc=r["tipr_class"],
                 ms=r.get("mid_source", ""),
                 fires=r["fires"],
+                test_diagnostics=diagnostic_text.replace("|", "/"),
                 met=(r["metrics"] or "")[:80].replace("|", "/"),
             )
         )

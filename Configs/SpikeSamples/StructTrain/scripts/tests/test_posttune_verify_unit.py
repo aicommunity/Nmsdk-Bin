@@ -297,6 +297,70 @@ class TestNonseparableTestMidGate(unittest.TestCase):
             "not_evaluated_nonseparable_test_mid",
         )
 
+    def test_full_classifier_result_is_not_hidden_by_cpp_nonseparable_label(self):
+        convergence = "converged_posttune_finalized"
+        self.assertEqual(
+            pv.classify_separation_quality(
+                gate_evaluated=True,
+                gate_ok=True,
+                quality_ok=False,
+                training_convergence=convergence,
+                test_mid_quality="nonseparable",
+                external_classifier_evaluated=True,
+            ),
+            "fail",
+        )
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_evaluated=True,
+                gate_ok=True,
+                target_detected=True,
+                training_convergence=convergence,
+                test_mid_quality="nonseparable",
+                external_classifier_evaluated=True,
+            ),
+            "detected",
+        )
+
+    def test_candidate_threshold_test_summary_preserves_each_probe_response(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            csv_path = root / "results.csv"
+            csv_path.write_text(
+                "trial,target_class,neuron_fired,late_fired,ltz_potential_max,soma_amp_sum,neuron_spike_count,error_class\n"
+                + "\n".join(
+                    f"{i},{1 if i == 0 else 0},{1 if i in (0, 2) else 0},0,{0.08-i*0.001},{0.1-i*0.001},{1 if i in (0, 2) else 0},ok"
+                    for i in range(8)
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            gate = pv.GateResult(
+                fires="10100000",
+                metrics_line="fixture",
+                rc=0,
+                csv_mtime=1.0,
+                gate_started=1.0,
+                ok=True,
+                quality_ok=False,
+                target_detected=True,
+                quality_metrics={"ok_audit": 0, "target_hit_strict": 1},
+                external_classifier_evaluated=True,
+            )
+            summary = pv._evaluation_detail(
+                gate,
+                csv_path,
+                root / "archived",
+                threshold_source="C++_Train_candidate",
+                threshold="0.05",
+            )
+        self.assertEqual(summary["threshold_source"], "C++_Train_candidate")
+        self.assertEqual(summary["fires"], "10100000")
+        self.assertTrue(summary["target_active"])
+        self.assertEqual(summary["foil_false_positives"], 1)
+        self.assertEqual(len(summary["responses"]), 8)
+        self.assertTrue(summary["csv_sha256"])
+
     def test_accept_run_does_not_demand_fires_when_classifier_never_ran(self):
         row = {
             "train_status": "done_test_mid_nonseparable",
@@ -828,6 +892,24 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
                 "tipr_class": "canon",
                 "fires": "",
                 "metrics": "fires_missing",
+                "diagnostic_test_evaluations": {
+                    "train_threshold_test": {
+                        "threshold_source": "C++_Train_candidate_mid",
+                        "threshold": "0.047",
+                        "fires": "10001000",
+                        "target_active": True,
+                        "foil_false_positives": 2,
+                        "quality_ok": False,
+                    },
+                    "cpp_test_threshold": {
+                        "threshold_source": "C++_Test_inference_mid",
+                        "threshold": "1",
+                        "fires": "00000000",
+                        "target_active": False,
+                        "foil_false_positives": 0,
+                        "quality_ok": False,
+                    },
+                },
                 "mid_source": "missing",
                 "tipr_vs_snapshot": "",
                 "search_reverted": 0,
@@ -845,6 +927,8 @@ class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
                 "| converged_posttune_finalized | nonseparable | nonseparable | not_run_nonseparable_test_mid |",
                 report,
             )
+            self.assertIn("Train-frozen thr=0.047; fires=10001000; target=yes; foilFP=2; quality=FAIL", report)
+            self.assertIn("C++-Test thr=1; fires=00000000; target=no; foilFP=0; quality=FAIL", report)
 
 
 class TestRmaxStallTick(unittest.TestCase):

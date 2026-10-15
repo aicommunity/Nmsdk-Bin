@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
 import os
 import re
 import shutil
@@ -459,6 +460,17 @@ def main() -> None:
         help="Skip TipR@Rmin + silent mid; keep Train TipR/FixedLTZ (C++ PostTune); still overlay/links/gate",
     )
     ap.add_argument(
+        "--diagnostic-threshold",
+        type=float,
+        default=None,
+        help="Evaluate all Test patterns at a Train-derived threshold, without Test recalibration",
+    )
+    ap.add_argument(
+        "--force-test-cpp-mid",
+        action="store_true",
+        help="Run the C++ inference-mid calibration on Test even when Train already has a threshold",
+    )
+    ap.add_argument(
         "--force-python-hygiene",
         action="store_true",
         help="Ignore --skip-tipr-mid (debug: always Python tiprmin+silent mid)",
@@ -488,6 +500,43 @@ def main() -> None:
         apply_asym_matrix(test / "Parameters_00.xml", args.span_ms, pack=args.pack)
         # Model Parameters often mirror Matrix — keep Params as gate source of foils
         print(f"matrix overlay pack{args.pack.upper()}")
+
+    if args.force_test_cpp_mid:
+        for rel in ("Parameters_00.xml", "Model_00.xml"):
+            p = test / rel
+            set_fixed_thr(p, SILENT_THR)
+
+    if args.diagnostic_threshold is not None:
+        if not math.isfinite(args.diagnostic_threshold) or not (
+            0.0 <= args.diagnostic_threshold <= 1.0
+        ):
+            raise SystemExit("diagnostic threshold must be finite and in [0, 1]")
+        threshold = format(args.diagnostic_threshold, ".17g")
+        for rel in ("Parameters_00.xml", "Model_00.xml"):
+            p = test / rel
+            t = p.read_text(encoding="utf-8")
+            t = set_learner_tag(t, "EnablePostTrainTuning", "0")
+            t = set_learner_tag(t, "EnablePostTrainMidThreshold", "0")
+            t = set_tag(t, "IsNeedToTrain", "0")
+            p.write_text(t, encoding="utf-8")
+            set_fixed_thr(p, threshold)
+        stale_csv = test / "SelectivityLog" / "results.csv"
+        if stale_csv.exists():
+            stale_csv.unlink()
+        stale_flag = test / "posttune_complete.flag"
+        if stale_flag.exists():
+            stale_flag.unlink()
+        rc = run_nm(
+            test / "Project.ini",
+            args.test_t,
+            test / "run_train_candidate_gate.log",
+            span_ms=args.span_ms,
+        )
+        if not stale_csv.exists():
+            raise SystemExit(f"diagnostic threshold run produced no results.csv (rc={rc})")
+        subprocess.check_call([sys.executable, str(METRICS), "-v", str(stale_csv)])
+        print(f"train-candidate-threshold={threshold} gate_rc={rc}")
+        return
 
     if skip_tipr_mid:
         # Keep Train TipR + C++ FixedLTZ; overlay/links/gate only (no Python tiprmin/mid).
@@ -544,11 +593,18 @@ def main() -> None:
             except ValueError:
                 mid_f = 1.0
             if mid_f >= 0.9:
-                raise SystemExit(f"inference mid still silent: {mid_s2}")
+                print(
+                    f"C++ Test threshold calibration: NonSeparable/silent mid={mid_s2}; "
+                    "recording full Test response at the trainer's silent threshold"
+                )
             for p in [test / "Parameters_00.xml", test / "Model_00.xml"]:
                 if p.exists():
                     set_fixed_thr(p, mid_s2)
-            print(f"inference mid={mid_s2}; gate pass")
+                    t = p.read_text(encoding="utf-8")
+                    t = set_learner_tag(t, "EnablePostTrainTuning", "0")
+                    t = set_learner_tag(t, "EnablePostTrainMidThreshold", "0")
+                    p.write_text(t, encoding="utf-8")
+            print(f"inference mid={mid_s2}; run full Test gate")
             if csv_stale.exists():
                 csv_stale.unlink()
             glog = test / "run_gate.log"
