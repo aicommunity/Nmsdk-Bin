@@ -53,6 +53,11 @@ def main() -> int:
     parser.add_argument("--console", type=Path, default=REPO_ROOT / "Bin/Platform/Win/NeuroModelerConsole.exe")
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--max-polls", type=int, default=401)
+    parser.add_argument(
+        "--synapse-resistance-step-ohm",
+        type=float,
+        help="override structural SynapseResistanceStep in the isolated Train copy",
+    )
     parser.add_argument("--autosave-model-s", type=int, default=1)
     parser.add_argument(
         "--keep-train-statistic-logs",
@@ -115,6 +120,8 @@ def main() -> int:
             "enable_posttrain_tuning": "0",
         }
     )
+    if args.synapse_resistance_step_ohm is not None:
+        config["synapse_resistance_step_ohm"] = args.synapse_resistance_step_ohm
     pv.CASES[args.case] = config
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -140,6 +147,7 @@ def main() -> int:
         autosave_model_s=args.autosave_model_s,
         stall_autosave_n=args.stall_autosave_n,
         slog_abort_gib=args.slog_abort_gib,
+        synapse_resistance_step_ohm=args.synapse_resistance_step_ohm,
         disable_train_statistic_logs=not args.keep_train_statistic_logs,
     )
     hashes_after = tree_hashes(source)
@@ -163,6 +171,7 @@ def main() -> int:
         "console": str(pv.NM),
         "console_sha256": console_sha256_at_start,
         "max_polls": args.max_polls,
+        "synapse_resistance_step_ohm": args.synapse_resistance_step_ohm,
         "autosave_model_seconds": args.autosave_model_s,
         "train_statistic_logs_disabled": not args.keep_train_statistic_logs,
         "stall_autosave_n": args.stall_autosave_n,
@@ -178,6 +187,7 @@ def main() -> int:
                 "train_status": result.get("train_status"),
                 "need": result.get("after", {}).get("IsNeedToTrain"),
                 "source_inputs_unchanged": record["source_inputs_unchanged"],
+                "synapse_resistance_step_ohm": args.synapse_resistance_step_ohm,
                 "run_dir": str(run_dir),
             },
             ensure_ascii=False,

@@ -1883,11 +1883,19 @@ def run_case(
     autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S,
     stall_autosave_n: int = DEFAULT_STALL_AUTOSAVE_N,
     max_rs_rm: float | None = None,
+    synapse_resistance_step_ohm: float | None = None,
     disable_train_statistic_logs: bool = False,
 ) -> dict:
     case = dict(CASES[name])
     if max_rs_rm is not None and (not math.isfinite(max_rs_rm) or max_rs_rm <= 0.0):
         raise ValueError("max_rs_rm must be a finite positive number")
+    if synapse_resistance_step_ohm is not None:
+        if not math.isfinite(synapse_resistance_step_ohm) or synapse_resistance_step_ohm <= 0.0:
+            raise ValueError("synapse_resistance_step_ohm must be a finite positive number")
+        if case.get("normalization_mode") != 0:
+            raise ValueError(
+                "SynapseResistanceStep override is only valid for structural NormalizationMode=0"
+            )
     if train_t is not None:
         case["train_t"] = float(train_t)
     archive_root: Path = case["root"]
@@ -1988,6 +1996,12 @@ def run_case(
             requested_normalization_mode = case.get("normalization_mode")
             if requested_normalization_mode is not None:
                 t = set_tag(t, "NormalizationMode", str(int(requested_normalization_mode)), 1)
+            if synapse_resistance_step_ohm is not None:
+                step_tag = get_tag(t, "SynapseResistanceStep")
+                if step_tag is None:
+                    raise ValueError(f"SynapseResistanceStep is missing from {rel}")
+                step_text = format(synapse_resistance_step_ohm, ".17g")
+                t = set_tag(t, "SynapseResistanceStep", step_text)
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -2034,6 +2048,11 @@ def run_case(
             if max_rs_rm is not None:
                 print(
                     f"  Rs/Rm max override {rel}: max={max_rs_rm}"
+                )
+            if synapse_resistance_step_ohm is not None:
+                print(
+                    f"  structural SynapseResistanceStep override {rel}: "
+                    f"{format(synapse_resistance_step_ohm, '.17g')} Ohm"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="
