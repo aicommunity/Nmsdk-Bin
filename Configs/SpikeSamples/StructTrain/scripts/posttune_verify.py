@@ -816,12 +816,18 @@ def classify_failure_class(
     reasons: list[str],
     row: dict[str, Any] | None = None,
 ) -> str:
-    """Machine-readable failure bucket (TL-04). Prefer train_incomplete over gate."""
-    if not reasons:
-        return "ok"
+    """Machine-readable failure bucket (TL-04)."""
     row = row or {}
+    if not reasons:
+        return "execution_error" if row.get("training_convergence") == "execution_error" else "ok"
     if any(r.startswith("cpp_training_refusal:") for r in reasons):
         return "trainer_refused"
+    try:
+        child_rc = int(row.get("child_rc"))
+    except (TypeError, ValueError):
+        child_rc = None
+    if row.get("training_convergence") == "execution_error" or child_rc in (126, 127):
+        return "execution_error"
     if "test_mid_nonseparable" in reasons:
         return "quality_fail"
     if any(
@@ -861,6 +867,7 @@ def classify_training_convergence(
     *,
     skipped: bool = False,
     cpp_failure: tuple[int, int] | None = None,
+    child_rc: int | None = None,
 ) -> str:
     """Report trainer completion independently from post-train quality.
 
@@ -873,6 +880,14 @@ def classify_training_convergence(
         return "not_run"
     if cpp_failure is not None:
         return "cpp_training_refusal"
+    # Bash uses 126/127 when a command cannot be executed or found. The
+    # trainer did not reach a state that can be judged for convergence.
+    try:
+        execution_rc = int(child_rc)
+    except (TypeError, ValueError):
+        execution_rc = None
+    if execution_rc in (126, 127):
+        return "execution_error"
     meta = train_meta or {}
     if meta.get("result") not in (None, "", "0"):
         return "converged_posttune_finalized"
@@ -911,6 +926,8 @@ def classify_detection_quality(
         "cpp_training_refusal",
     ):
         return "not_evaluated_training_incomplete"
+    if training_convergence == "execution_error":
+        return "not_evaluated_execution_error"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
     if test_mid_quality == "nonseparable" and not external_classifier_evaluated:
@@ -934,6 +951,8 @@ def classify_separation_quality(
         "not_converged_at_stop", "insufficient_data", "cpp_training_refusal"
     ):
         return "not_evaluated_training_incomplete"
+    if training_convergence == "execution_error":
+        return "not_evaluated_execution_error"
     if not gate_evaluated:
         return "not_evaluated_training_incomplete"
     if test_mid_quality == "nonseparable" and not external_classifier_evaluated:
@@ -953,6 +972,7 @@ def should_run_quality_gate(training_convergence: str) -> bool:
         "not_converged_at_stop",
         "insufficient_data",
         "cpp_training_refusal",
+        "execution_error",
     )
 
 
@@ -2381,18 +2401,24 @@ def run_case(
         phase.train,
         skipped=(status == "skip_train"),
         cpp_failure=training_failure,
+        child_rc=child_rc,
     )
     if should_run_quality_gate(training_convergence):
         gate = run_gate(case, run_dir=run_dir)
     else:
+        skip_gate_reason = (
+            "not_evaluated_execution_error"
+            if training_convergence == "execution_error"
+            else "not_evaluated_training_incomplete"
+        )
         gate = GateResult(
             fires="",
-            metrics_line="not_evaluated_training_incomplete",
+            metrics_line=skip_gate_reason,
             rc=None,
             csv_mtime=None,
             gate_started=time.time(),
             ok=None,
-            fail_reason="not_evaluated_training_incomplete",
+            fail_reason=skip_gate_reason,
             evaluated=False,
             external_classifier_evaluated=False,
         )

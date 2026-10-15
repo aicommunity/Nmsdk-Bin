@@ -784,6 +784,34 @@ class TestFailureClass(unittest.TestCase):
         self.assertFalse(ok)
         self.assertEqual(pv.classify_failure_class(reasons, row), "train_incomplete")
 
+    def test_unlaunchable_console_is_execution_error_not_nonconvergence(self):
+        row = {
+            "train_status": "exited",
+            "training_convergence": "execution_error",
+            "child_rc": 127,
+            "gate_evaluated": False,
+        }
+        self.assertEqual(
+            pv.classify_training_convergence("1", {}, child_rc=127),
+            "execution_error",
+        )
+        self.assertFalse(pv.should_run_quality_gate("execution_error"))
+        self.assertEqual(
+            pv.classify_detection_quality(
+                gate_evaluated=False,
+                gate_ok=None,
+                target_detected=None,
+                training_convergence="execution_error",
+            ),
+            "not_evaluated_execution_error",
+        )
+        self.assertEqual(
+            pv.classify_failure_class(
+                ["child_rc=127", "train_incomplete:exited", "Need=1"], row
+            ),
+            "execution_error",
+        )
+
 
 class TestSeparateTrainingAndQualityOutcomes(unittest.TestCase):
     def test_cpp_refusal_is_separate_and_skips_quality_gate(self):

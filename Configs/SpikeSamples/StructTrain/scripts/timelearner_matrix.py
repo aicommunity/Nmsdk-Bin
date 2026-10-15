@@ -1408,6 +1408,7 @@ def run_wave(
         for spec in specs
     )
     training_stops = 0
+    execution_errors = 0
     evaluation_errors = 0
     quality_failures = 0
     if all_results:
@@ -1430,7 +1431,9 @@ def run_wave(
                 break
             convergence = str(result.get("training_convergence") or "")
             training_complete = convergence.startswith("converged")
-            if not training_complete:
+            if convergence == "execution_error":
+                execution_errors += 1
+            elif not training_complete:
                 training_stops += 1
             elif (
                 result.get("gate_evaluated") is False
@@ -1451,20 +1454,27 @@ def run_wave(
                 # Weak separation/detection is a research result, not a reason
                 # to suppress later matrix cells.
                 quality_failures += 1
-    status["case_data_failures"] = training_stops + evaluation_errors + quality_failures
+    status["case_data_failures"] = (
+        training_stops + execution_errors + evaluation_errors + quality_failures
+    )
     status["process_limit"] = max_total
     status["requested_jobs"] = jobs
     status["existing_console_count_at_start"] = len(baseline_console_pids)
     status["cpu_percent_samples"] = cpu_samples
     status["cpu_throttle_applied"] = any(value > 85.0 for value in cpu_samples)
     status["training_stop_cases"] = training_stops
+    status["execution_error_cases"] = execution_errors
     status["evaluation_error_cases"] = evaluation_errors
     status["quality_failure_cases"] = quality_failures
     status["run_complete"] = all_results
-    status["stop_before_next_wave"] = bool(rc == 2 or training_stops or evaluation_errors)
+    status["stop_before_next_wave"] = bool(
+        rc == 2 or training_stops or execution_errors or evaluation_errors
+    )
     atomic_write_json(status_path, status)
     if rc == 2 or not all_results:
         return 2
+    if execution_errors:
+        return 4
     if evaluation_errors:
         return 3
     return 1 if training_stops else 0

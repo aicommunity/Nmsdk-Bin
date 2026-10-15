@@ -321,6 +321,8 @@ def category(row: dict[str, Any]) -> str:
         return f"обучение сошлось; качество={quality}; цель={detection}"
     if conv in ("not_started", "not_run"):
         return "обучение не запускалось"
+    if conv == "execution_error":
+        return "ошибка запуска/окружения; сходимость не оценена"
     if conv in ("not_converged_at_stop", "cpp_training_refusal"):
         return "обучение не сошлось"
     if "incomplete" in conv or "fail" in conv:

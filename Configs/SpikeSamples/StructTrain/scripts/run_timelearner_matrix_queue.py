@@ -772,6 +772,7 @@ def main() -> int:
             for case in specs
         )
         training_stops = int(wave_status.get("training_stop_cases", 0))
+        execution_errors = int(wave_status.get("execution_error_cases", 0))
         evaluation_errors = int(wave_status.get("evaluation_error_cases", 0))
         quality_failures = int(wave_status.get("quality_failure_cases", 0))
         if args.no_commit:
@@ -791,26 +792,32 @@ def main() -> int:
             overall["waves"][wave] = {
                 "status": (
                     "completed_checkpoint_required"
-                    if training_stops or evaluation_errors
+                    if training_stops or execution_errors or evaluation_errors
                     else "completed_awaiting_local_commit"
                 ),
                 "runner_exit": run_result.returncode,
                 "training_stop_cases": training_stops,
+                "execution_error_cases": execution_errors,
                 "evaluation_error_cases": evaluation_errors,
                 "quality_failure_cases": quality_failures,
                 "updated_utc": datetime.now(timezone.utc).isoformat(),
             }
             save_queue_status(runs, status_path, overall)
-            if run_result.returncode != 0 or training_stops or evaluation_errors:
+            if run_result.returncode != 0 or training_stops or execution_errors or evaluation_errors:
+                if execution_errors:
+                    pause_detail = "execution/launcher error; training was not evaluated"
+                    overall["status"] = "paused_after_execution_error"
+                else:
+                    pause_detail = "training non-convergence/refusal or evaluation error"
+                    overall["status"] = "paused_after_training_or_evaluation_issue"
                 print(
-                    f"PAUSED after {wave}: training non-convergence/refusal or evaluation error "
+                    f"PAUSED after {wave}: {pause_detail} "
                     f"(--no-commit; rsync RUN_ID then updater+commit on local)",
                     flush=True,
                 )
-                overall["status"] = "paused_after_training_or_evaluation_issue"
                 overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
                 save_queue_status(runs, status_path, overall)
-                return run_result.returncode or 1
+                return run_result.returncode or (4 if execution_errors else 1)
             print(
                 f"WAVE RUN COMPLETE {wave}; quality failures={quality_failures}; "
                 f"--no-commit: rsync {runs} then update+commit on local",
@@ -850,9 +857,10 @@ def main() -> int:
         run([sys.executable, str(UPDATER), wave], BASE)
         git_add_commit(wave, run_id)
         overall["waves"][wave] = {
-            "status": "completed_and_committed_checkpoint_required" if training_stops or evaluation_errors else "completed_and_committed",
+            "status": "completed_and_committed_checkpoint_required" if training_stops or execution_errors or evaluation_errors else "completed_and_committed",
             "runner_exit": run_result.returncode,
             "training_stop_cases": training_stops,
+            "execution_error_cases": execution_errors,
             "evaluation_error_cases": evaluation_errors,
             "quality_failure_cases": quality_failures,
             "updated_utc": datetime.now(timezone.utc).isoformat(),
@@ -860,9 +868,13 @@ def main() -> int:
             "root_head": git_text(ROOT, "rev-parse", "HEAD"),
         }
         save_queue_status(runs, status_path, overall)
-        if run_result.returncode != 0 or training_stops or evaluation_errors:
-            print(f"PAUSED after {wave}: training non-convergence/refusal or evaluation error; wave was reported and committed", flush=True)
-            overall["status"] = "paused_after_training_or_evaluation_issue"
+        if run_result.returncode != 0 or training_stops or execution_errors or evaluation_errors:
+            if execution_errors:
+                print(f"PAUSED after {wave}: execution/launcher error; training was not evaluated; wave was reported and committed", flush=True)
+                overall["status"] = "paused_after_execution_error"
+            else:
+                print(f"PAUSED after {wave}: training non-convergence/refusal or evaluation error; wave was reported and committed", flush=True)
+                overall["status"] = "paused_after_training_or_evaluation_issue"
             overall["finished_utc"] = datetime.now(timezone.utc).isoformat()
             save_queue_status(runs, status_path, overall)
             return run_result.returncode or 1
