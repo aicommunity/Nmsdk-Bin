@@ -253,6 +253,7 @@ def make_quiet_debug_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
         branch_rs_rm_limit=None, synapse_resistance_step=None,
+        accept_quantized_amp_under_target=False,
         branch_segment_rm_profile=None,
         branch_initial_lengths=None,
     )
@@ -336,6 +337,7 @@ def make_runtime_input_overlay(
     branch_gamma_mode: str | None,
     branch_rs_rm_limit: float | None = None,
     synapse_resistance_step: float | None = None,
+    accept_quantized_amp_under_target: bool = False,
     branch_segment_rm_profile: dict[int, float] | None = None,
     branch_initial_lengths: list[int] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
@@ -465,6 +467,27 @@ def make_runtime_input_overlay(
                 "sha256_after": sha256(path),
                 "parameters": {"SynapseResistanceStep": value},
             })
+    if accept_quantized_amp_under_target:
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = _set_or_insert_runtime_tag(
+                original,
+                "AcceptQuantizedAmpUnderTarget",
+                "1",
+                "NormalizationMode",
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {"AcceptQuantizedAmpUnderTarget": "1"},
+            })
     if branch_segment_rm_profile is not None:
         for filename in ("Model_00.xml", "Parameters_00.xml"):
             path = overlay / "Train" / filename
@@ -526,6 +549,7 @@ def make_runtime_input_overlay(
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
+        "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "branch_segment_rm_profile_application": (
@@ -1028,6 +1052,9 @@ def worker(
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
     synapse_resistance_step = run_manifest.get("runtime", {}).get("synapse_resistance_step")
+    accept_quantized_amp_under_target = bool(
+        run_manifest.get("runtime", {}).get("accept_quantized_amp_under_target", False)
+    )
     branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
     branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
@@ -1039,6 +1066,8 @@ def worker(
         raise ValueError("Branch Rs/Rm diagnostic limits require parametric Branch cases")
     if synapse_resistance_step is not None and int(spec.get("normalization_mode", 0)) != 0:
         raise ValueError("SynapseResistanceStep diagnostic overrides require structural N0 cases")
+    if accept_quantized_amp_under_target and int(spec.get("normalization_mode", 0)) != 0:
+        raise ValueError("quantized structural amplitude acceptance requires structural N0 cases")
     if branch_segment_rm_profile is not None and (
         spec.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(spec.get("normalization_mode", 0)) != 1
@@ -1053,6 +1082,7 @@ def worker(
     if (
         quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None
         or synapse_resistance_step is not None
+        or accept_quantized_amp_under_target
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
     ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
@@ -1061,6 +1091,7 @@ def worker(
             branch_gamma_mode=branch_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
             synapse_resistance_step=synapse_resistance_step,
+            accept_quantized_amp_under_target=accept_quantized_amp_under_target,
             branch_segment_rm_profile=branch_segment_rm_profile,
             branch_initial_lengths=branch_initial_lengths,
         )
@@ -1118,6 +1149,7 @@ def worker(
         "branch_gamma_mode": branch_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
+        "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,

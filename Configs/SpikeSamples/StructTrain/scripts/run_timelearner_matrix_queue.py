@@ -141,6 +141,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "branch_gamma_mode": args.branch_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "synapse_resistance_step": args.synapse_resistance_step,
+        "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
         "branch_initial_lengths": args.branch_initial_lengths,
         "skip_softcold_reset": args.branch_initial_lengths is not None,
@@ -205,6 +206,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "branch_gamma_mode": args.branch_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
             "synapse_resistance_step": args.synapse_resistance_step,
+            "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
             "branch_initial_lengths": args.branch_initial_lengths,
             "branch_segment_rm_profile_application": condition_runtime[
@@ -301,6 +303,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
                         "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
                         "synapse_resistance_step": (result.get("runtime_execution_options") or {}).get("synapse_resistance_step"),
+                        "accept_quantized_amp_under_target": (result.get("runtime_execution_options") or {}).get("accept_quantized_amp_under_target"),
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
                         "branch_initial_lengths": (result.get("runtime_execution_options") or {}).get("branch_initial_lengths"),
                         "skip_softcold_reset": (result.get("runtime_execution_options") or {}).get("skip_softcold_reset"),
@@ -547,6 +550,11 @@ def main() -> int:
         help="diagnostic structural N0 override for additional-synapse Rs; applied to attempt-local Train XML only",
     )
     parser.add_argument(
+        "--accept-quantized-amp-under-target",
+        action="store_true",
+        help="diagnostic structural N0 option: accept a repeatedly verified lower member of a quantized amp bracket",
+    )
+    parser.add_argument(
         "--branch-segment-rm-profile",
         type=parse_branch_segment_rm_profile,
         metavar="SEGMENT=OHMS,...",
@@ -629,6 +637,10 @@ def main() -> int:
         int(case.get("normalization_mode", 0)) != 0 for case in specs
     ):
         raise SystemExit("--synapse-resistance-step requires structural N0-only cases")
+    if args.accept_quantized_amp_under_target and any(
+        int(case.get("normalization_mode", 0)) != 0 for case in specs
+    ):
+        raise SystemExit("--accept-quantized-amp-under-target requires structural N0-only cases")
     if args.branch_segment_rm_profile is not None and any(
         case.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(case.get("normalization_mode", 0)) != 1
