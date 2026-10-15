@@ -36,7 +36,7 @@ Done: все `PulseSynced[0..N-2]` и amp в ε (или best-effort).
 
 ## Линковка Generator1 → ExcSynapse1
 
-- **Train (mute):** `RebuildGeneratorSynapseLinks` снимает все старые связи Generator→`Dendrite1_*.ExcSynapse1`, затем подключает **только** активный импульс → **ровно 1** link.
+- **Train (mute):** `RebuildGeneratorSynapseLinks` снимает старые связи Generator со всех ExcSynapse ветви и подключает только текущий активный сегмент. В структурном режиме подключаются все физические `ExcSynapse1..N` этого сегмента; в параметрическом режиме — один ExcSynapse.
 - **Done / recognition:** подключаются все N финальных tip-synapse → **ровно N** links на `{L0,…,L(N−1)}`.
 - При росте кабеля (шаг до `kMaxLengthStep=8`) старый сегмент явно отцепляется (`DetachBranchExcSynapseAtSegment`), иначе на `Generator1.Output` накапливаются stale links (например `1,9,17,25,33,41`).
 - Внешний tap `Generator1.Output → PatternResponseAnalyzer.StimulusInputs` при cleanup **не** удаляется.
