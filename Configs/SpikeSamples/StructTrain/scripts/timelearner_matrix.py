@@ -724,6 +724,60 @@ def apply_xml_factors(
     return text
 
 
+def initial_rs_override_from_input(
+    spec: dict[str, Any], input_root: Path
+) -> float | None:
+    """Return the requested initial Rs after validating the prepared Train pair.
+
+    SoftCold intentionally restores the historical 86 MOhm TipR in both XML
+    files. For matrix cases with an explicit initial Rs/Rm factor, run_case must
+    reapply that factor after SoftCold and before launching the C++ trainer.
+    """
+    ratio = spec.get("initial_rs_to_rm")
+    if ratio is None:
+        return None
+    if int(spec.get("normalization_mode", 0)) != 1:
+        raise ValueError("initial Rs/Rm overrides require parametric NormalizationMode=1")
+
+    observed: list[float] = []
+    for rel in XML_INPUTS:
+        path = input_root / "Train" / rel
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        text = path.read_text(encoding="utf-8")
+        bases = tag_values(text, "SynapseResistanceBase")
+        vectors = tag_values(text, "TipSynapseResistance")
+        if not bases or not vectors:
+            raise ValueError(f"initial Rs input is missing Base/TipR in {path}")
+
+        def parse_values(raw_values: list[str], tag: str) -> list[float]:
+            result: list[float] = []
+            for raw in raw_values:
+                for token in raw.replace(",", ".").split():
+                    value = float(token)
+                    if not math.isfinite(value) or value <= 0.0:
+                        raise ValueError(f"invalid {tag} value {token!r} in {path}")
+                    result.append(value)
+            return result
+
+        base_values = parse_values(bases, "SynapseResistanceBase")
+        tip_values = parse_values(vectors, "TipSynapseResistance")
+        values = base_values + tip_values
+        reference = values[0]
+        if any(not math.isclose(value, reference, rel_tol=1e-12, abs_tol=1e-12)
+               for value in values[1:]):
+            raise ValueError(
+                f"initial Rs/Rm input must set Base and every Train TipR equally: {path}"
+            )
+        observed.append(reference)
+
+    reference = observed[0]
+    if any(not math.isclose(value, reference, rel_tol=1e-12, abs_tol=1e-12)
+           for value in observed[1:]):
+        raise ValueError("Train Model and Parameters disagree on initial Rs")
+    return reference
+
+
 def copy_historical_git_source(source_rel: str, destination: Path, commit: str) -> list[Path]:
     """Copy only runnable Train/Test inputs from an immutable Bin git snapshot."""
     bin_root = BASE.parents[2]
@@ -1183,6 +1237,7 @@ def worker(
             branch_segment_rm_profile=branch_segment_rm_profile,
             branch_initial_lengths=branch_initial_lengths,
         )
+    initial_rs_override = initial_rs_override_from_input(spec, runtime_input_root)
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
         "source_config", template.get("paired_source", template["preinh_source"])
@@ -1217,6 +1272,7 @@ def worker(
         train_t=train_time_limit,
         max_polls=max_polls,
         max_rs_rm=spec.get("max_rs_rm"),
+        tip_synapse_resistance_ohm=initial_rs_override,
         disable_train_statistic_logs=True,
     )
     result["worker_case"] = internal_id
@@ -1240,6 +1296,7 @@ def worker(
         "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
+        "initial_rs_post_softcold_override_ohm": initial_rs_override,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,

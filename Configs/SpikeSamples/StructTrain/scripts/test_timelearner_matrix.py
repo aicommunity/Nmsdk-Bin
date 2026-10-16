@@ -80,6 +80,47 @@ class TrainingLimitOverrideTests(unittest.TestCase):
                 )
 
 
+class InitialRsOverrideTests(unittest.TestCase):
+    def test_validates_train_inputs_and_returns_value_to_reapply_after_softcold(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            train = Path(temporary) / "Train"
+            train.mkdir()
+            xml = (
+                "<Root><SynapseResistanceBase>10000000</SynapseResistanceBase>"
+                "<TipSynapseResistance>10000000 10000000 10000000 10000000"
+                "</TipSynapseResistance></Root>"
+            )
+            for name in ("Parameters_00.xml", "Model_00.xml"):
+                (train / name).write_text(xml, encoding="utf-8")
+
+            value = MODULE.initial_rs_override_from_input(
+                {"normalization_mode": 1, "initial_rs_to_rm": 1.0}, Path(temporary)
+            )
+
+        self.assertEqual(value, 10_000_000.0)
+
+    def test_rejects_model_parameters_mismatch(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            train = Path(temporary) / "Train"
+            train.mkdir()
+            consistent = (
+                "<Root><SynapseResistanceBase>10000000</SynapseResistanceBase>"
+                "<TipSynapseResistance>10000000 10000000 10000000 10000000"
+                "</TipSynapseResistance></Root>"
+            )
+            mismatched = consistent.replace("10000000", "86000000")
+            (train / "Parameters_00.xml").write_text(consistent, encoding="utf-8")
+            (train / "Model_00.xml").write_text(mismatched, encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "disagree on initial Rs"):
+                MODULE.initial_rs_override_from_input(
+                    {"normalization_mode": 1, "initial_rs_to_rm": 1.0}, Path(temporary)
+                )
+
+    def test_no_override_without_initial_rs_factor(self):
+        self.assertIsNone(MODULE.initial_rs_override_from_input({}, Path("missing")))
+
+
 class ReportPathTests(unittest.TestCase):
     def test_checkout_paths_are_relative_and_external_paths_are_absolute(self):
         with tempfile.TemporaryDirectory() as temporary:
