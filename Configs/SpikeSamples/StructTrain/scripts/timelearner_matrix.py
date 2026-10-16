@@ -253,7 +253,8 @@ def make_quiet_debug_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
         classic_gamma_mode=None,
-        branch_rs_rm_limit=None, synapse_resistance_step=None,
+        branch_rs_rm_limit=None, classic_rs_rm_limit=None,
+        synapse_resistance_step=None,
         accept_quantized_amp_under_target=False,
         branch_segment_rm_profile=None,
         branch_initial_lengths=None,
@@ -338,6 +339,7 @@ def make_runtime_input_overlay(
     branch_gamma_mode: str | None,
     classic_gamma_mode: str | None = None,
     branch_rs_rm_limit: float | None = None,
+    classic_rs_rm_limit: float | None = None,
     synapse_resistance_step: float | None = None,
     accept_quantized_amp_under_target: bool = False,
     branch_segment_rm_profile: dict[int, float] | None = None,
@@ -348,6 +350,12 @@ def make_runtime_input_overlay(
         not math.isfinite(branch_rs_rm_limit) or branch_rs_rm_limit < 1.0
     ):
         raise ValueError("Branch Rs/Rm limit must be finite and >= 1")
+    if classic_rs_rm_limit is not None and (
+        not math.isfinite(classic_rs_rm_limit) or classic_rs_rm_limit < 1.0
+    ):
+        raise ValueError("Classic Rs/Rm limit must be finite and >= 1")
+    if branch_rs_rm_limit is not None and classic_rs_rm_limit is not None:
+        raise ValueError("choose one trainer-specific Rs/Rm limit override")
     if synapse_resistance_step is not None and (
         not math.isfinite(synapse_resistance_step) or synapse_resistance_step <= 0.0
     ):
@@ -474,6 +482,30 @@ def make_runtime_input_overlay(
                     "MaxSynapseToMembraneResistanceRatio": format(branch_rs_rm_limit, ".17g"),
                 },
             })
+    if classic_rs_rm_limit is not None:
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = _set_or_insert_runtime_tag(
+                original,
+                "MaxSynapseToMembraneResistanceRatio",
+                format(classic_rs_rm_limit, ".17g"),
+                "ResistanceMax",
+                value_type="d",
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "MaxSynapseToMembraneResistanceRatio": format(classic_rs_rm_limit, ".17g"),
+                },
+            })
     if synapse_resistance_step is not None:
         value = format(synapse_resistance_step, ".17g")
         for filename in ("Model_00.xml", "Parameters_00.xml"):
@@ -575,6 +607,7 @@ def make_runtime_input_overlay(
         "branch_gamma_mode": branch_gamma_mode,
         "classic_gamma_mode": classic_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
         "branch_segment_rm_profile": branch_segment_rm_profile,
@@ -1079,6 +1112,7 @@ def worker(
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
     classic_gamma_mode = run_manifest.get("runtime", {}).get("classic_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
+    classic_rs_rm_limit = run_manifest.get("runtime", {}).get("classic_rs_rm_limit")
     synapse_resistance_step = run_manifest.get("runtime", {}).get("synapse_resistance_step")
     accept_quantized_amp_under_target = bool(
         run_manifest.get("runtime", {}).get("accept_quantized_amp_under_target", False)
@@ -1096,6 +1130,10 @@ def worker(
         or int(spec.get("normalization_mode", 0)) != 1
     ):
         raise ValueError("Branch Rs/Rm diagnostic limits require parametric Branch cases")
+    if classic_rs_rm_limit is not None and (
+        spec.get("trainer") != "NNeuronTimeLearner" or int(spec.get("normalization_mode", 0)) != 1
+    ):
+        raise ValueError("Classic Rs/Rm diagnostic limits require parametric Classic cases")
     if synapse_resistance_step is not None and int(spec.get("normalization_mode", 0)) != 0:
         raise ValueError("SynapseResistanceStep diagnostic overrides require structural N0 cases")
     if accept_quantized_amp_under_target and int(spec.get("normalization_mode", 0)) != 0:
@@ -1113,7 +1151,7 @@ def worker(
         raise ValueError("Branch prebuilt initial lengths require a parametric Branch segment Rm profile")
     if (
         quiet_debug_logs or branch_gamma_mode is not None or classic_gamma_mode is not None
-        or branch_rs_rm_limit is not None
+        or branch_rs_rm_limit is not None or classic_rs_rm_limit is not None
         or synapse_resistance_step is not None
         or accept_quantized_amp_under_target
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
@@ -1124,6 +1162,7 @@ def worker(
             branch_gamma_mode=branch_gamma_mode,
             classic_gamma_mode=classic_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
+            classic_rs_rm_limit=classic_rs_rm_limit,
             synapse_resistance_step=synapse_resistance_step,
             accept_quantized_amp_under_target=accept_quantized_amp_under_target,
             branch_segment_rm_profile=branch_segment_rm_profile,
@@ -1183,6 +1222,7 @@ def worker(
         "branch_gamma_mode": branch_gamma_mode,
         "classic_gamma_mode": classic_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
+        "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
         "branch_segment_rm_profile": branch_segment_rm_profile,
@@ -1293,6 +1333,7 @@ def run_wave(
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
         "classic_gamma_mode": run_manifest.get("runtime", {}).get("classic_gamma_mode"),
         "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
+        "classic_rs_rm_limit": run_manifest.get("runtime", {}).get("classic_rs_rm_limit"),
         "branch_segment_rm_profile": run_manifest.get("runtime", {}).get("branch_segment_rm_profile"),
         "branch_initial_lengths": run_manifest.get("runtime", {}).get("branch_initial_lengths"),
         "skip_softcold_reset": run_manifest.get("runtime", {}).get("branch_initial_lengths") is not None,

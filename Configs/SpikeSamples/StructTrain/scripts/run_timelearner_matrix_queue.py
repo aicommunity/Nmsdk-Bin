@@ -142,6 +142,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "branch_gamma_mode": args.branch_gamma_mode,
         "classic_gamma_mode": args.classic_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
+        "classic_rs_rm_limit": args.classic_rs_rm_limit,
         "synapse_resistance_step": args.synapse_resistance_step,
         "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
@@ -208,6 +209,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "branch_gamma_mode": args.branch_gamma_mode,
             "classic_gamma_mode": args.classic_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
+            "classic_rs_rm_limit": args.classic_rs_rm_limit,
             "synapse_resistance_step": args.synapse_resistance_step,
             "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
@@ -306,6 +308,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
                         "classic_gamma_mode": (result.get("runtime_execution_options") or {}).get("classic_gamma_mode"),
                         "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
+                        "classic_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("classic_rs_rm_limit"),
                         "synapse_resistance_step": (result.get("runtime_execution_options") or {}).get("synapse_resistance_step"),
                         "accept_quantized_amp_under_target": (result.get("runtime_execution_options") or {}).get("accept_quantized_amp_under_target"),
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
@@ -554,6 +557,11 @@ def main() -> int:
         help="diagnostic Branch parametric-training Rs/Rm limit; derives bounds from membrane R on an attempt-local input overlay",
     )
     parser.add_argument(
+        "--classic-rs-rm-limit",
+        type=float,
+        help="diagnostic Classic parametric-training Rs/Rm limit; derives bounds from membrane R on an attempt-local input overlay",
+    )
+    parser.add_argument(
         "--synapse-resistance-step",
         type=float,
         help="diagnostic structural N0 override for additional-synapse Rs; applied to attempt-local Train XML only",
@@ -607,6 +615,12 @@ def main() -> int:
         not math.isfinite(args.branch_rs_rm_limit) or args.branch_rs_rm_limit < 1.0
     ):
         raise SystemExit("--branch-rs-rm-limit must be finite and >= 1")
+    if args.classic_rs_rm_limit is not None and (
+        not math.isfinite(args.classic_rs_rm_limit) or args.classic_rs_rm_limit < 1.0
+    ):
+        raise SystemExit("--classic-rs-rm-limit must be finite and >= 1")
+    if args.branch_rs_rm_limit is not None and args.classic_rs_rm_limit is not None:
+        raise SystemExit("choose one trainer-specific Rs/Rm limit override")
     if args.synapse_resistance_step is not None and (
         not math.isfinite(args.synapse_resistance_step) or args.synapse_resistance_step <= 0.0
     ):
@@ -649,6 +663,12 @@ def main() -> int:
         for case in specs
     ):
         raise SystemExit("--branch-rs-rm-limit requires parametric Branch-only cases")
+    if args.classic_rs_rm_limit is not None and any(
+        case.get("trainer") != "NNeuronTimeLearner"
+        or int(case.get("normalization_mode", 0)) != 1
+        for case in specs
+    ):
+        raise SystemExit("--classic-rs-rm-limit requires parametric Classic-only cases")
     if args.synapse_resistance_step is not None and any(
         int(case.get("normalization_mode", 0)) != 0 for case in specs
     ):
