@@ -16,6 +16,7 @@ from pathlib import Path
 from matrix_run_safety import (
     atomic_write_json,
     exclusive_file_lock,
+    logical_cpu_count,
     reserve_run_root,
     sha256_file,
     sha256_json,
@@ -592,8 +593,9 @@ def main() -> int:
         return 0 if valid else 1
     if not args.waves:
         parser.error("--waves is required unless --check-completed is used")
-    if args.jobs < 1 or args.jobs > 8:
-        raise SystemExit("--jobs must be between 1 and 8; effective process count is capped at logical CPUs minus one")
+    host_cpu_limit = logical_cpu_count()
+    if args.jobs < 1 or args.jobs > host_cpu_limit:
+        raise SystemExit(f"--jobs must be between 1 and this host's logical CPU count ({host_cpu_limit})")
     if args.max_polls is not None and args.max_polls < 1:
         raise SystemExit("--max-polls must be positive")
     if args.train_time_limit_override_seconds is not None and (

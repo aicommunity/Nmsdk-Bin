@@ -1244,8 +1244,9 @@ def run_wave(
     max_polls: int | None = None,
     train_time_limit_override_seconds: float | None = None,
 ) -> int:
-    if jobs < 1 or jobs > 8:
-        raise ValueError("--jobs must be between 1 and 8 for this campaign")
+    host_cpu_limit = logical_cpu_count()
+    if jobs < 1 or jobs > host_cpu_limit:
+        raise ValueError(f"--jobs must be between 1 and this host's logical CPU count ({host_cpu_limit})")
     if train_time_limit_override_seconds is not None and (
         not math.isfinite(train_time_limit_override_seconds) or train_time_limit_override_seconds <= 0
     ):
@@ -1352,7 +1353,7 @@ def run_wave(
 
     rc = 0
     pending_specs = [spec for spec in specs if spec["id"] in attempt_dirs]
-    max_total = max(1, logical_cpu_count() - 1)
+    max_total = logical_cpu_count()
     worker_cap = max(1, min(jobs, len(pending_specs), max_total))
     baseline_console_pids = active_console_pids()
     cpu_sampler = CpuLoadSampler()

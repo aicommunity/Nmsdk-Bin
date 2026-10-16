@@ -660,7 +660,7 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                     patch.object(MODULE, "active_console_pids", return_value=set()),
                     patch.object(MODULE, "logical_cpu_count", return_value=3),
                 ):
-                    return MODULE.run_wave("W01", 2)
+                    return MODULE.run_wave("W01", 3)
 
             try:
                 first_rc = execute_once()
@@ -682,6 +682,7 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                 status = json.loads((run_root / "W01" / "wave_status.json").read_text(encoding="utf-8"))
                 self.assertTrue(status["cases"]["C2"]["resumed"])
                 self.assertEqual(status["cases"]["C1"]["attempt_id"], "attempt-0002")
+                self.assertEqual(status["process_limit"], 3)
             finally:
                 MODULE.BASE, MODULE.MANIFEST, MODULE.RUNS_BASE = old_base, old_manifest, old_runs
                 if old_run_id is None:
