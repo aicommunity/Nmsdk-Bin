@@ -121,6 +121,36 @@ class RuntimeBranchGammaOverlayTests(unittest.TestCase):
             self.assertEqual(record["branch_gamma_mode"], "per-input-auto")
             self.assertEqual(len(record["overrides"]), 2)
 
+
+class RuntimeClassicGammaOverlayTests(unittest.TestCase):
+    def test_fixed_shared_gamma_overlay_is_train_only_and_recorded(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source = base / "source"
+            for side in ("Train", "Test"):
+                (source / side).mkdir(parents=True)
+            (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+            xml = '<Params><AttenuationGamma Type="d">0.141</AttenuationGamma></Params>'
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                (source / "Train" / filename).write_text(xml, encoding="utf-8")
+            (source / "Test" / "Model_00.xml").write_text(xml, encoding="utf-8")
+            attempt = base / "runs" / "r1" / "W01" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W01", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                classic_gamma_mode="shared-fixed-005",
+            )
+
+            train_xml = (overlay / "Train" / "Parameters_00.xml").read_text(encoding="utf-8")
+            self.assertIn(">0.05</AttenuationGamma>", train_xml)
+            self.assertIn(">0</AutoEstimateAttenuationGamma>", train_xml)
+            self.assertEqual((overlay / "Test" / "Model_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual((source / "Train" / "Parameters_00.xml").read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["classic_gamma_mode"], "shared-fixed-005")
+            self.assertEqual(len(record["overrides"]), 2)
+
     def test_fixed_gamma_overlay_disables_auto_and_per_input_modes(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

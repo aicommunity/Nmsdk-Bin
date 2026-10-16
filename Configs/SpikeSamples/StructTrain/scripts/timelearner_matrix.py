@@ -252,6 +252,7 @@ def make_quiet_debug_input_overlay(
     return make_runtime_input_overlay(
         input_root, attempt_dir, wave, case_id,
         quiet_debug_logs=True, branch_gamma_mode=None,
+        classic_gamma_mode=None,
         branch_rs_rm_limit=None, synapse_resistance_step=None,
         accept_quantized_amp_under_target=False,
         branch_segment_rm_profile=None,
@@ -335,6 +336,7 @@ def make_runtime_input_overlay(
     *,
     quiet_debug_logs: bool,
     branch_gamma_mode: str | None,
+    classic_gamma_mode: str | None = None,
     branch_rs_rm_limit: float | None = None,
     synapse_resistance_step: float | None = None,
     accept_quantized_amp_under_target: bool = False,
@@ -422,6 +424,30 @@ def make_runtime_input_overlay(
                     "AttenuationGamma": gamma,
                     "AutoEstimateAttenuationGamma": auto_estimate,
                     "UsePerInputAttenuationGamma": per_input,
+                },
+            })
+    if classic_gamma_mode is not None:
+        if classic_gamma_mode != "shared-fixed-005":
+            raise ValueError(f"unsupported Classic gamma diagnostic mode: {classic_gamma_mode}")
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = set_all_tags(original, "AttenuationGamma", "0.05")
+            updated = _set_or_insert_runtime_tag(
+                updated, "AutoEstimateAttenuationGamma", "0", "AttenuationGamma",
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "AttenuationGamma": 0.05,
+                    "AutoEstimateAttenuationGamma": False,
                 },
             })
     if branch_rs_rm_limit is not None:
@@ -547,6 +573,7 @@ def make_runtime_input_overlay(
         "source_matrix_manifest_sha256": sha256(input_root / "matrix_input_manifest.json"),
         "quiet_debug_logs": quiet_debug_logs,
         "branch_gamma_mode": branch_gamma_mode,
+        "classic_gamma_mode": classic_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
@@ -1050,6 +1077,7 @@ def worker(
     runtime_input_root = input_root
     runtime_input_overrides = None
     branch_gamma_mode = run_manifest.get("runtime", {}).get("branch_gamma_mode")
+    classic_gamma_mode = run_manifest.get("runtime", {}).get("classic_gamma_mode")
     branch_rs_rm_limit = run_manifest.get("runtime", {}).get("branch_rs_rm_limit")
     synapse_resistance_step = run_manifest.get("runtime", {}).get("synapse_resistance_step")
     accept_quantized_amp_under_target = bool(
@@ -1059,6 +1087,10 @@ def worker(
     branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
         raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
+    if classic_gamma_mode is not None and (
+        spec.get("trainer") != "NNeuronTimeLearner" or int(spec.get("normalization_mode", 0)) != 1
+    ):
+        raise ValueError("Classic gamma diagnostic modes require parametric Classic cases")
     if branch_rs_rm_limit is not None and (
         spec.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(spec.get("normalization_mode", 0)) != 1
@@ -1080,7 +1112,8 @@ def worker(
     ):
         raise ValueError("Branch prebuilt initial lengths require a parametric Branch segment Rm profile")
     if (
-        quiet_debug_logs or branch_gamma_mode is not None or branch_rs_rm_limit is not None
+        quiet_debug_logs or branch_gamma_mode is not None or classic_gamma_mode is not None
+        or branch_rs_rm_limit is not None
         or synapse_resistance_step is not None
         or accept_quantized_amp_under_target
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
@@ -1089,6 +1122,7 @@ def worker(
             input_root, attempt_dir, wave, case_id,
             quiet_debug_logs=quiet_debug_logs,
             branch_gamma_mode=branch_gamma_mode,
+            classic_gamma_mode=classic_gamma_mode,
             branch_rs_rm_limit=branch_rs_rm_limit,
             synapse_resistance_step=synapse_resistance_step,
             accept_quantized_amp_under_target=accept_quantized_amp_under_target,
@@ -1147,6 +1181,7 @@ def worker(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": branch_gamma_mode,
+        "classic_gamma_mode": classic_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
@@ -1255,6 +1290,7 @@ def run_wave(
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
+        "classic_gamma_mode": run_manifest.get("runtime", {}).get("classic_gamma_mode"),
         "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
         "branch_segment_rm_profile": run_manifest.get("runtime", {}).get("branch_segment_rm_profile"),
         "branch_initial_lengths": run_manifest.get("runtime", {}).get("branch_initial_lengths"),

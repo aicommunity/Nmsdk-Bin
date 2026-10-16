@@ -139,6 +139,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "quiet_debug_logs": bool(args.quiet_debug_logs),
         "max_polls": args.max_polls,
         "branch_gamma_mode": args.branch_gamma_mode,
+        "classic_gamma_mode": args.classic_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
         "synapse_resistance_step": args.synapse_resistance_step,
         "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
@@ -204,6 +205,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "quiet_debug_logs": bool(args.quiet_debug_logs),
             "max_polls": args.max_polls,
             "branch_gamma_mode": args.branch_gamma_mode,
+            "classic_gamma_mode": args.classic_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
             "synapse_resistance_step": args.synapse_resistance_step,
             "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
@@ -301,6 +303,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "quiet_debug_logs": (result.get("runtime_execution_options") or {}).get("quiet_debug_logs"),
                         "max_polls": (result.get("runtime_execution_options") or {}).get("max_polls"),
                         "branch_gamma_mode": (result.get("runtime_execution_options") or {}).get("branch_gamma_mode"),
+                        "classic_gamma_mode": (result.get("runtime_execution_options") or {}).get("classic_gamma_mode"),
                         "branch_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("branch_rs_rm_limit"),
                         "synapse_resistance_step": (result.get("runtime_execution_options") or {}).get("synapse_resistance_step"),
                         "accept_quantized_amp_under_target": (result.get("runtime_execution_options") or {}).get("accept_quantized_amp_under_target"),
@@ -540,6 +543,11 @@ def main() -> int:
         help="diagnostic Train-only Branch gamma mode applied to an attempt-local input overlay",
     )
     parser.add_argument(
+        "--classic-gamma-mode",
+        choices=("shared-fixed-005",),
+        help="diagnostic fixed shared gamma for parametric Classic cases; Train-only attempt-local overlay",
+    )
+    parser.add_argument(
         "--branch-rs-rm-limit",
         type=float,
         help="diagnostic Branch parametric-training Rs/Rm limit; derives bounds from membrane R on an attempt-local input overlay",
@@ -627,6 +635,12 @@ def main() -> int:
         case.get("trainer") != "NNeuronTimeLearnerBranch" for case in specs
     ):
         raise SystemExit("--branch-gamma-mode requires Branch-only case selection")
+    if args.classic_gamma_mode and any(
+        case.get("trainer") != "NNeuronTimeLearner"
+        or int(case.get("normalization_mode", 0)) != 1
+        for case in specs
+    ):
+        raise SystemExit("--classic-gamma-mode requires parametric Classic-only case selection")
     if args.branch_rs_rm_limit is not None and any(
         case.get("trainer") != "NNeuronTimeLearnerBranch"
         or int(case.get("normalization_mode", 0)) != 1
