@@ -4,6 +4,8 @@ Cold Train `NNeuronTimeLearnerBranch` на сжатых спанах (pack A gen
 
 **Историческая привязка:** span25 gen зафиксирован корневым коммитом [036006e2](https://github.com/aicommunity/Nmsdk/commit/036006e2a0906766e7c8f3896bd88f52ebca8980) (Bin=`b93e32439d62ef7006fd3010ff14f99628a36a74`, PulseLib=`780ffc7feec4c3561ec049598c896fdde56c8320)); span50/100 gen — корневым [f7ef51a1](https://github.com/aicommunity/Nmsdk/commit/f7ef51a19d6f66613eb3a8d71ecac4b0a8c0ddca) (Bin=`9ba33d8f`, тот же PulseLib). Сохранённые Train-снимки содержат `Need=0` и указанные длины. Пошаговые C++-логи этих исторических запусков в Git не сохранены. TipR@Rmin и ручной выбор тихого порога — операции после Train для оценки качества; они не являются доказательством сходимости и не должны смешиваться с `Need=0`.
 
+**Режим обучения:** scaffold-коммит Bin `be8b9fb3` для всех шести Pack A Train-конфигов уже задавал `NormalizationMode=1`, `Need=1`, `DendriteLength=1 1 1 1`, `InitialSomaPotential=0 0 0 0`, TipR=86 МОм, `ResistanceMin=20 МОм` и `ResistanceMax=100 ГОм`. Финальные Train-снимки PHASE8 сохранили `NormalizationMode=1` и `Need=0`. Значит, PHASE8 — исторический контроль параметрической сходимости Branch; TipR@Rmin/Done TipR и подбор порога относятся только к отдельной оценке качества. Поддержка этого режима есть в Branch уже в PulseLib-коммите `279116d` от 18 августа.
+
 Критерии кода **не** меняем — [`../SUCCESSFUL_EXPERIMENTS.md`](../SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
 Процедурная цель: **8/8** selective + last-pulse (`t_rel ≥ 0.8·pattern_end`) + `ok_single`.
 
