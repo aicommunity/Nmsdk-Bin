@@ -3,9 +3,9 @@
   "matrix_version": "2026-10-10-full312-history-nextseg-psi",
   "description": "312 cases on the current C++ trainer implementation. Eight cases add the requested NextSeg×PSI interaction; ten cases add missing historical FastResponse D×C and manual TipR@Rmin conditions. Full execution is not part of preparation.",
   "current_source_commits": {
-    "root": "ee4c26ecdcd4c92b62a5a7a00039fd4e6443ac55",
-    "Bin": "01a8a3cf12ce4a887eef0aca104df25c57f2f02c",
-    "PulseLib": "2bb72a3b6b28812c7b00382929f7461bc9faff30"
+    "root": "12052dcc560522c3d986b4b409e43f2e16624c38",
+    "Bin": "830f271384fa9cf326c314145a9de211a62737f8",
+    "PulseLib": "7c8f6f2fa2c347ca17c2285e2356a38f23cc2de2"
   },
   "historical_full49_source": {
     "root": "ae93cd7180164d9f25a19fff310ac764c2e5b06d",
@@ -207,10 +207,16 @@
     }
   },
   "templates": {
-    "branch100": {
-      "source": "SelectivityBranch/EXP_br_span100_packA_gen_C1e9",
-      "preinh_source": "SelectivityBranch/EXP_br_span100_packA_preinh_C1e9",
-      "kind": "branch",
+    "classic480": {
+      "source": "SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin",
+      "preinh_source": "SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin",
+      "kind": "phase6",
+      "train_t": 900
+    },
+    "classic100": {
+      "source": "SelectivityAsymRm/EXP_span100ms_packA_gen",
+      "preinh_source": "SelectivityAsymRm/EXP_span100ms_packA_preinh",
+      "kind": "asym",
       "train_t": 640
     },
     "branch50": {
@@ -219,11 +225,17 @@
       "kind": "branch",
       "train_t": 320
     },
-    "branch25": {
-      "source": "SelectivityBranch/EXP_br_span25_packA_gen_C1e9",
-      "preinh_source": "SelectivityBranch/EXP_br_span25_packA_preinh_C1e9",
+    "branch480": {
+      "source": "SelectivityBranch/EXP_br480_tiprmin",
+      "preinh_source": "SelectivityBranch/EXP_br480_preinh250_tiprmin",
       "kind": "branch",
-      "train_t": 320
+      "train_t": 900
+    },
+    "branch100": {
+      "source": "SelectivityBranch/EXP_br_span100_packA_gen_C1e9",
+      "preinh_source": "SelectivityBranch/EXP_br_span100_packA_preinh_C1e9",
+      "kind": "branch",
+      "train_t": 640
     },
     "classic50": {
       "source": "SelectivityAsymRm/EXP_span50ms_packA_gen",
@@ -231,29 +243,17 @@
       "kind": "asym",
       "train_t": 640
     },
-    "classic100": {
-      "source": "SelectivityAsymRm/EXP_span100ms_packA_gen",
-      "preinh_source": "SelectivityAsymRm/EXP_span100ms_packA_preinh",
-      "kind": "asym",
-      "train_t": 640
-    },
-    "classic480": {
-      "source": "SelectivityPhaseA/Phase6/EXP_480_gen_tiprmin",
-      "preinh_source": "SelectivityPhaseA/Phase6/EXP_480_preinh250_tiprmin",
-      "kind": "phase6",
-      "train_t": 900
+    "branch25": {
+      "source": "SelectivityBranch/EXP_br_span25_packA_gen_C1e9",
+      "preinh_source": "SelectivityBranch/EXP_br_span25_packA_preinh_C1e9",
+      "kind": "branch",
+      "train_t": 320
     },
     "classic25": {
       "source": "SelectivityAsymRm/EXP_span25ms_packA_gen",
       "preinh_source": "SelectivityAsymRm/EXP_span25ms_packA_preinh",
       "kind": "asym",
       "train_t": 160
-    },
-    "branch480": {
-      "source": "SelectivityBranch/EXP_br480_tiprmin",
-      "preinh_source": "SelectivityBranch/EXP_br480_preinh250_tiprmin",
-      "kind": "branch",
-      "train_t": 900
     },
     "branch25_nextseg": {
       "source": "SelectivityBranch/EXP_br_span25_packA_nextseginh_C1e9",
@@ -3681,7 +3681,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3698,7 +3698,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3715,7 +3715,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3732,7 +3732,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3749,7 +3749,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3766,7 +3766,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 640,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3783,7 +3783,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3800,7 +3800,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3817,7 +3817,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3834,7 +3834,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3851,7 +3851,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3868,7 +3868,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearner: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearner: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3885,7 +3885,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3902,7 +3902,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3919,7 +3919,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3936,7 +3936,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -3953,7 +3953,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -3970,7 +3970,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 320,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 50 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -3987,7 +3987,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -4004,7 +4004,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -4021,7 +4021,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI выключено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {
@@ -4038,7 +4038,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1.0
     },
     {
@@ -4055,7 +4055,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=10×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 10.0
     },
     {
@@ -4072,7 +4072,7 @@
       "posttrain_tuning": false,
       "tipr_mode": 1,
       "train_t": 900,
-      "description_ru": "NNeuronTimeLearnerBranch: стартовое SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
+      "description_ru": "NNeuronTimeLearnerBranch: начальные TipSynapseResistance и SynapseResistanceBase=1000×ExcMembraneResistance до C++ reset, 480 мс, PSI включено; NormalizationMode=1.",
       "initial_rs_to_rm": 1000.0
     },
     {

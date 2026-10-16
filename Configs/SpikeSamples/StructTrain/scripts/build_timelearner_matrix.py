@@ -427,7 +427,7 @@ def build_registry() -> tuple[dict[str, Any], dict[str, Any]]:
             for ratio in (1.0, 10.0, 1000.0):
                 cid = f"{wave}_{'CL' if trainer == 'NNeuronTimeLearner' else 'BR'}{duration}_PSI{'25' if psi else 'off'}_RS{int(ratio)}RM"
                 add(wave, cid, template_name,
-                    f"{trainer}: стартовое SynapseResistanceBase={ratio:g}×ExcMembraneResistance до C++ reset, {duration} мс, PSI {'включено' if psi else 'выключено'}; NormalizationMode=1.",
+                    f"{trainer}: начальные TipSynapseResistance и SynapseResistanceBase={ratio:g}×ExcMembraneResistance до C++ reset, {duration} мс, PSI {'включено' if psi else 'выключено'}; NormalizationMode=1.",
                     trainer=trainer, duration_ms=duration, normalization_mode=1,
                     presynaptic_inhibition=psi, presynaptic_coefficient=2.5 if psi else 0.0,
                     initial_rs_to_rm=ratio)

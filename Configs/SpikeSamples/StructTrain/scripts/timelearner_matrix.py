@@ -692,9 +692,24 @@ def apply_xml_factors(
     if spec.get("initial_rs_to_rm") is not None and side == "Train":
         if membrane_resistance is None or membrane_resistance <= 0:
             raise ValueError("initial Rs experiment requires a positive membrane resistance")
+        ratio = float(spec["initial_rs_to_rm"])
+        if not math.isfinite(ratio) or ratio <= 0.0:
+            raise ValueError("initial Rs/Rm ratio must be finite and positive")
+        rs_text = format(membrane_resistance * ratio, ".17g")
         if tag_values(text, "SynapseResistanceBase"):
-            rs = membrane_resistance * float(spec["initial_rs_to_rm"])
-            text = set_all_tags(text, "SynapseResistanceBase", format(rs, ".17g"))
+            text = set_all_tags(text, "SynapseResistanceBase", rs_text)
+        # Existing Train snapshots often contain an explicit per-input tip-R
+        # vector. Changing only SynapseResistanceBase would leave that vector in
+        # control after C++ Reset and make the advertised initial-Rs factor a
+        # no-op. Keep the vector shape and initialize each entry to the same
+        # requested Rs so the experiment actually varies the starting state.
+        tip_vectors = tag_values(text, "TipSynapseResistance")
+        if tip_vectors:
+            initialized = [
+                " ".join([rs_text] * len(values.split()))
+                for values in tip_vectors
+            ]
+            text = set_tag_values(text, "TipSynapseResistance", initialized)
     if spec.get("reverse_pattern_order"):
         matrix_re = re.compile(r'(<MatrixData\b[^>]*Rows="4"[^>]*>)(.*?)(</MatrixData\s*>)', re.S)
         found = 0
