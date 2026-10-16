@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "run_id": "w01-cl50-n0-step86m-quantlower-stepdown-fix-20261016-01",
+  "case": "W01_CL50_N0_PSIoff",
+  "started_utc": "2026-10-16T18:42:25.446035+00:00",
+  "finished_utc": "2026-10-16T19:44:56.563607+00:00",
+  "duration_seconds": 3751.117572,
+  "server": "10.245.1.17",
+  "remote_run_root": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261016/quantized-lower-stepdown-fix-20261016/runs/w01-cl50-n0-step86m-quantlower-stepdown-fix-20261016-01",
+  "source": {
+    "root_commit": "16d87dd90b49699fdf432e99348a8b9f5115f32a",
+    "pulselib_commit_at_launch": "56a59623d896e4ef7f2c3c1c2a545985a02855af",
+    "pulselib_fix_commit": "7c8f6f2",
+    "pulselib_patch_sha256": "557BA3BB07FB20F42215CA8B916C533D4A31CD66EE511A71FBB8D4A6709195D9",
+    "bin_commit": "cfc5bcf0151dd8f5582198432fa52b007ea6e147",
+    "rdk_commit": "b3b2472dc347899af266cd46e64bca2a6ea16fea",
+    "release_console_sha256": "59734e11e001231ae695dcb49bfe02ee08e4869f06d5c0162ffce8c1350c778c",
+    "source_changed_during_run": false,
+    "binary_changed_during_run": false
+  },
+  "inputs": {
+    "input_manifest_file_sha256": "8f330e68cb90eba99e836b6966508b20c1547fb1558f3e20896959982e4c88bf",
+    "input_files_match_previous_w01_n0_attempt": true,
+    "training_run_copy_was_mutated_by_cpp": true,
+    "input_mutation_note": "The runner provenance flags mutations because Train Parameters are updated by the C++ trainer; the eight input-copy hashes below identify the pre-run files.",
+    "sha256": {
+      "Train/Model_00.xml": "c90b9793ae4c208698e1c8ec06f19d6fb3ff0cfb2bf4f8340fb8acf04eba5fef",
+      "Train/Parameters_00.xml": "277698bbcbc11dadd408b54ff92754a2b1946891b754e59d58361516b0e81fb6",
+      "Train/Project.ini": "2d31a92640fa22c8c0c76660b42c41336ba73699da33e332f17a29c75faa528e",
+      "Train/Interface.xml": "d7a807014797929daaae5f59395ce9ea011357c6e82a9f4418e08795a8c7ec87",
+      "Test/Model_00.xml": "0a6c7fa2f8b772494ff210990c9c4bd70bb6030df1f68d2f01021671c8042276",
+      "Test/Parameters_00.xml": "ea2880613867c4d018d1005fcdc313f9b5d860a5d7807167cef332d9b83ed270",
+      "Test/Project.ini": "2f85bcd0ac42c05a5c48a72dc5b9562644fa291280d1f0c64758bb764cce5444",
+      "Test/Interface.xml": "d607a880f224f687853f921a365a8490e878cb7fb06a758793208ecb71e15c54"
+    }
+  },
+  "training": {
+    "normalization_mode": 0,
+    "synapse_resistance_step_ohm": 86000000,
+    "accept_quantized_amp_under_target": true,
+    "convergence": "converged_need0",
+    "saved_need": 0,
+    "failure_reason": 0,
+    "audit_iteration_138": {
+      "previous_synapse_count": [128, 128, 99, 1],
+      "eol_sync": 1,
+      "eol_amp": 0,
+      "synapse_count": [128, 128, 98, 1],
+      "synapse_status": [0, 0, -1, 0],
+      "accepted_lower_count": [null, null, 98, null],
+      "amp_quantized_under_target": [false, false, true, false]
+    },
+    "audit_iteration_139": {
+      "eol_sync": 1,
+      "eol_amp": 1,
+      "synapse_count": [128, 128, 98, 1]
+    },
+    "runner_training_stop_cases": 0,
+    "runner_execution_error_cases": 0,
+    "runner_evaluation_error_cases": 0
+  },
+  "classification": {
+    "midpoint": "NonSeparable",
+    "midpoint_gap": -0.00083590948501524598,
+    "landscape_ok": false,
+    "test_complete": true,
+    "test_mode": "silent",
+    "target_detected": false,
+    "fires": "00000000",
+    "matches": "01111111",
+    "accuracy": "7/8",
+    "false_positives": "0/7",
+    "separation_quality": "fail"
+  },
+  "runner": {
+    "wave_status": "completed_awaiting_local_commit",
+    "queue_status": "queue_completed_no_commit",
+    "test_gate_rc": 0,
+    "child_rc": -15,
+    "child_signal_note": "Console was stopped after C++ Need=0; not a training or evaluator failure",
+    "quality_failure_cases": 1
+  },
+  "remote_artifacts": {
+    "audit_path": "runs/W01_CL50_N0_PSIoff_20261016T184226Z_1498566_11911639_work/Train/TimeLearnerTrainingAudit.log",
+    "audit_bytes": 292768,
+    "audit_lines": 141,
+    "audit_sha256": "321cbca6ae5df83b5e0e53c16011a839ac153f91ad5bf2a9332d84dcc31f61f3",
+    "matrix_result_sha256": "55e95242ff15d69a61c950aa3cccbf0fc81f79ab3ef0b7bf41afafb795291d08",
+    "provenance_sha256": "a38d353bb49a9da6ddacd0f16ed2bd4d677d47c3bdd28f6c7bbc64cc4e798e73",
+    "input_manifest_sha256": "8f330e68cb90eba99e836b6966508b20c1547fb1558f3e20896959982e4c88bf",
+    "queue_status_sha256": "7b47f22ccc95f7dd50a252edf551473ff3ad8615d4775672c1d11fae80b334c0"
+  }
+}
