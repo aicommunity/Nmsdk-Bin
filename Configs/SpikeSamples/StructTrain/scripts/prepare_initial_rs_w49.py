@@ -43,8 +43,9 @@ def build_registry() -> dict[str, Any]:
                 case["description_ru"] = (
                     f"Диагностика W49: {case['trainer']}, паттерн 100 мс, "
                     f"параметрическая нормализация; начальный Rs/Rm={ratio} "
-                    f"только на трёх обучаемых входах, reference anchor и "
-                    f"SynapseResistanceBase сохранены на исторических 86 МОм; "
+                    f"только на трёх обучаемых входах; C++ cold reset явно "
+                    f"сохраняет этот вектор, reference anchor и "
+                    f"SynapseResistanceBase остаются на исторических 86 МОм; "
                     f"PSI {'2.5' if case['presynaptic_inhibition'] else 'выключено'}."
                 )
                 cases.append(case)
@@ -57,7 +58,9 @@ def build_registry() -> dict[str, Any]:
         "purpose_ru": (
             "Изолировать влияние стартового Rs трёх настраиваемых входов на "
             "синхронизацию и результат обучения; последний вход является "
-            "reference anchor и остаётся равен SynapseResistanceBase=86 МОм."
+            "reference anchor и остаётся равен SynapseResistanceBase=86 МОм. "
+            "Вектор применяется опциональным C++ reset-параметром, включаемым "
+            "только для этих per-input диагностик."
         ),
         "source_matrix_sha256": hashlib.sha256(
             (OFFICIAL_MATRIX / "matrix.json").read_bytes()

@@ -822,6 +822,10 @@ def classify_failure_class(
         return "execution_error" if row.get("training_convergence") == "execution_error" else "ok"
     if any(r.startswith("cpp_training_refusal:") for r in reasons):
         return "trainer_refused"
+    if row.get("training_convergence") == "initial_resistance_reset_mismatch" or (
+        "initial_tip_resistance_reset_mismatch" in reasons
+    ):
+        return "invalid_run_configuration"
     try:
         child_rc = int(row.get("child_rc"))
     except (TypeError, ValueError):
@@ -924,8 +928,13 @@ def classify_detection_quality(
         "not_converged_at_stop",
         "insufficient_data",
         "cpp_training_refusal",
+        "initial_resistance_reset_mismatch",
     ):
-        return "not_evaluated_training_incomplete"
+        return (
+            "not_evaluated_initial_resistance_reset_mismatch"
+            if training_convergence == "initial_resistance_reset_mismatch"
+            else "not_evaluated_training_incomplete"
+        )
     if training_convergence == "execution_error":
         return "not_evaluated_execution_error"
     if not gate_evaluated:
@@ -948,9 +957,14 @@ def classify_separation_quality(
 ) -> str:
     """Metric outcome is separate from evaluator process success."""
     if training_convergence in (
-        "not_converged_at_stop", "insufficient_data", "cpp_training_refusal"
+        "not_converged_at_stop", "insufficient_data", "cpp_training_refusal",
+        "initial_resistance_reset_mismatch",
     ):
-        return "not_evaluated_training_incomplete"
+        return (
+            "not_evaluated_initial_resistance_reset_mismatch"
+            if training_convergence == "initial_resistance_reset_mismatch"
+            else "not_evaluated_training_incomplete"
+        )
     if training_convergence == "execution_error":
         return "not_evaluated_execution_error"
     if not gate_evaluated:
@@ -973,6 +987,7 @@ def should_run_quality_gate(training_convergence: str) -> bool:
         "insufficient_data",
         "cpp_training_refusal",
         "execution_error",
+        "initial_resistance_reset_mismatch",
     )
 
 
@@ -1187,6 +1202,81 @@ def runtime_resistance_max_by_input_from_audit(train: Path) -> list[float] | Non
     except OSError:
         return None
     return None
+
+
+def runtime_loaded_tip_reset_check(train: Path) -> dict[str, Any]:
+    """Compare an explicit cold-reset TipR vector with the C++ reset audit."""
+    contract_path = train / "cold_reset_contract.json"
+    audit = train / "TimeLearnerTrainingAudit.log"
+    try:
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        expected_text = contract["expected_runtime_after_reset"].get("TipSynapseResistance")
+    except (OSError, ValueError, KeyError, TypeError):
+        return {"enabled": True, "passed": False, "reason": "cold_reset_contract_missing"}
+    if not expected_text:
+        return {"enabled": True, "passed": False, "reason": "expected_vector_missing"}
+
+    def parse_audit_vector(raw: str) -> list[float] | None:
+        value = raw.strip()
+        if value.startswith("[") and value.endswith("]"):
+            value = value[1:-1]
+        try:
+            parsed = [float(part) for part in value.replace(",", " ").split()]
+        except ValueError:
+            return None
+        return parsed if parsed and all(math.isfinite(item) for item in parsed) else None
+
+    expected_raw = parse_audit_vector(str(expected_text))
+    if expected_raw is None:
+        return {"enabled": True, "passed": False, "reason": "expected_vector_invalid"}
+    if not audit.is_file():
+        return {
+            "enabled": True,
+            "passed": False,
+            "reason": "training_audit_missing",
+            "expected_ohm": expected_raw,
+        }
+    try:
+        for line in _training_audit_lines_reverse(audit):
+            fields = dict(
+                item.split("=", 1) for item in line.split(";") if "=" in item
+            )
+            if fields.get("kind") != "reset_complete_untrained":
+                continue
+            actual = parse_audit_vector(fields.get("tip_r", ""))
+            minima = parse_audit_vector(fields.get("rmin_by_input", "") or "") or []
+            maxima = parse_audit_vector(fields.get("rmax_by_input", "") or "") or []
+            expected_effective = list(expected_raw)
+            for index in range(min(len(expected_effective), len(minima), len(maxima))):
+                if minima[index] > 0.0 and maxima[index] >= minima[index]:
+                    expected_effective[index] = max(
+                        minima[index], min(maxima[index], expected_effective[index])
+                    )
+            passed = (
+                actual is not None
+                and len(actual) == len(expected_effective)
+                and all(
+                    math.isclose(got, want, rel_tol=1e-9, abs_tol=1e-6)
+                    for got, want in zip(actual, expected_effective)
+                )
+            )
+            return {
+                "enabled": True,
+                "passed": passed,
+                "reason": "matched" if passed else "post_reset_vector_mismatch",
+                "audit_kind": fields.get("kind"),
+                "expected_ohm": expected_raw,
+                "expected_after_bounds_ohm": expected_effective,
+                "actual_ohm": actual,
+            }
+    except OSError:
+        pass
+    return {
+        "enabled": True,
+        "passed": False,
+        "reason": "reset_complete_untrained_audit_missing",
+        "expected_ohm": expected_raw,
+    }
 
 
 def _training_audit_lines_reverse(audit: Path, chunk_size: int = 65536):
@@ -2318,13 +2408,22 @@ def run_case(
                     )
                 # Preserve SynapseResistanceBase: this diagnostic intentionally
                 # varies only trainable input tips and holds the final reference
-                # anchor at its historical value. The C++ cold snapshot captures
-                # the loaded per-input vector before ResetToUntrained.
+                # anchor at its historical value. Opt in to the C++ cold-reset
+                # contract for this explicit vector; the default reset keeps its
+                # saved snapshot or scalar-base behavior.
                 t = set_tag(
                     t,
                     "TipSynapseResistance",
                     " ".join(format(value, ".17g") for value in values),
                 )
+                t = ensure_tag_after(
+                    t,
+                    "TipSynapseResistance",
+                    "UseLoadedTipResistanceOnUntrainedReset",
+                    "1",
+                    attrs=' Type="b" PType="257" IoType="17"',
+                )
+                t = set_tag(t, "UseLoadedTipResistanceOnUntrainedReset", "1", 1)
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -2468,6 +2567,16 @@ def run_case(
         config_sha256 = sha256_file(train / "Parameters_00.xml")
         config_sha_before = {"Train/Parameters_00.xml": config_sha256}
 
+    initial_tip_reset_check = None
+    if not skip_train and tip_synapse_resistance_values_ohm is not None:
+        initial_tip_reset_check = runtime_loaded_tip_reset_check(train)
+        if not initial_tip_reset_check.get("passed"):
+            status = "initial_tip_resistance_reset_mismatch"
+            print(
+                "  INVALID_INITIAL_TIPR_RESET "
+                + json.dumps(initial_tip_reset_check, ensure_ascii=False)
+            )
+
     after = snap_params(train / "Parameters_00.xml")
     train_flag = train / "posttune_complete.flag"
     test_flag = root / "Test" / "posttune_complete.flag"
@@ -2490,12 +2599,16 @@ def run_case(
         cpp_failure=training_failure,
         child_rc=child_rc,
     )
+    if initial_tip_reset_check is not None and not initial_tip_reset_check.get("passed"):
+        training_convergence = "initial_resistance_reset_mismatch"
     if should_run_quality_gate(training_convergence):
         gate = run_gate(case, run_dir=run_dir)
     else:
         skip_gate_reason = (
             "not_evaluated_execution_error"
             if training_convergence == "execution_error"
+            else "not_evaluated_initial_resistance_reset_mismatch"
+            if training_convergence == "initial_resistance_reset_mismatch"
             else "not_evaluated_training_incomplete"
         )
         gate = GateResult(
@@ -2744,6 +2857,7 @@ def run_case(
         "training_failure_reason": (
             training_failure[1] if training_failure is not None else None
         ),
+        "initial_tip_resistance_reset_check": initial_tip_reset_check,
         "posttune_quality": posttune_quality,
         "train_candidate_mid": phase.train.get("candidate_mid", ""),
         "diagnostic_test_evaluations": gate.diagnostic_evaluations,
@@ -2789,6 +2903,11 @@ def run_case(
         child_rc=child_rc,
         skip_train=skip_train,
     )
+    if initial_tip_reset_check is not None and not initial_tip_reset_check.get("passed"):
+        ok = False
+        note = "initial_tip_resistance_reset_mismatch"
+        if note not in fail_notes:
+            fail_notes.append(note)
     if gate.evaluated and not gate.ok and gate.fail_reason not in fail_notes:
         fail_notes.append(gate.fail_reason)
     if gate.evaluated and gate.ok and gate.quality_ok is False:

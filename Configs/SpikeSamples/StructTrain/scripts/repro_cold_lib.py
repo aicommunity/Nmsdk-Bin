@@ -485,6 +485,7 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
     L_xml = " ".join((get_tag(pt, "DendriteLength") or "").replace(",", " ").split())
     tipr_xml = " ".join((get_tag(pt, "TipSynapseResistance") or "").replace(",", " ").split())
     base_rs_xml = " ".join((get_tag(pt, "SynapseResistanceBase") or "").replace(",", " ").split())
+    preserve_loaded_tips = (get_tag(pt, "UseLoadedTipResistanceOnUntrainedReset") or "").strip() == "1"
     n = len(L_xml.split()) if L_xml else 4
     tips = tip_indices(mt) if mt else []
     max_seg = max(tips) if tips else 0
@@ -517,6 +518,9 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
                 get_tag(pt, "AutoCalibrateFixedLTZThreshold") or ""
             ).strip(),
             "ResetToUntrainedState": (get_tag(pt, "ResetToUntrainedState") or "").strip(),
+            "UseLoadedTipResistanceOnUntrainedReset": (
+                get_tag(pt, "UseLoadedTipResistanceOnUntrainedReset") or ""
+            ).strip(),
             "FixedLTZThreshold": (get_tag(pt, "FixedLTZThreshold") or "").strip(),
             "StructureBuildMode_all": sbm_params,
             "NumDendriteMembraneParts": (get_tag(pt, "NumDendriteMembraneParts") or "").strip(),
@@ -535,9 +539,12 @@ def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
         "expected_runtime_after_reset": {
             "DendriteLength": L_runtime,
             "TipSynapseResistance_source": (
-                "UntrainedTipSynapseResistance snapshot, or SynapseResistanceBase "
-                "when no untrained snapshot exists"
+                "loaded TipSynapseResistance vector (explicit opt-in)"
+                if preserve_loaded_tips
+                else "UntrainedTipSynapseResistance snapshot, or SynapseResistanceBase "
+                     "when no untrained snapshot exists"
             ),
+            "TipSynapseResistance": tipr_xml if preserve_loaded_tips else None,
             "SynapseResistanceBase": base_rs_xml,
             "reference_dendrite_index": (n - 1) if is_branch and n >= 1 else None,
             "IsNeedToTrain": "1",
