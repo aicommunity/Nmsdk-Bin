@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "diagnostic_only": true,
-  "purpose_ru": "Изолировать влияние стартового Rs трёх настраиваемых входов на синхронизацию и результат обучения; последний вход является reference anchor и остаётся равен SynapseResistanceBase=86 МОм.",
+  "purpose_ru": "Изолировать влияние стартового Rs трёх настраиваемых входов на синхронизацию и результат обучения; последний вход является reference anchor и остаётся равен SynapseResistanceBase=86 МОм. Вектор применяется опциональным C++ reset-параметром, включаемым только для этих per-input диагностик.",
   "source_matrix_sha256": "f94421eb752f20291c9beb1f1194973f2c0cc795c16f89929957fa24c6114647",
   "queue_order": [
     "W49"
@@ -41,7 +41,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_CL100_N1_PSI25_RS1RM",
@@ -58,7 +58,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_CL100_N1_PSIoff_RS10RM",
@@ -75,7 +75,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 10.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_CL100_N1_PSI25_RS10RM",
@@ -92,7 +92,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 10.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_CL100_N1_PSIoff_RS30RM",
@@ -109,7 +109,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 30.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_CL100_N1_PSI25_RS30RM",
@@ -126,7 +126,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 30.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_CL100_N1_PSIoff_RS100RM",
@@ -143,7 +143,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 100.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_CL100_N1_PSI25_RS100RM",
@@ -160,7 +160,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 100.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearner, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS1RM",
@@ -177,7 +177,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS1RM",
@@ -194,7 +194,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS10RM",
@@ -211,7 +211,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 10.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS10RM",
@@ -228,7 +228,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 10.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS30RM",
@@ -245,7 +245,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 30.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS30RM",
@@ -262,7 +262,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 30.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=30 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS100RM",
@@ -279,7 +279,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 100.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS100RM",
@@ -296,7 +296,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 100.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=100 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS300RM",
@@ -313,7 +313,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 300.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=300 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=300 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS300RM",
@@ -330,7 +330,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 300.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=300 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=300 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     },
     {
       "id": "W49_BR100_N1_PSIoff_RS1000RM",
@@ -347,7 +347,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1000.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1000 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI выключено."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1000 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI выключено."
     },
     {
       "id": "W49_BR100_N1_PSI25_RS1000RM",
@@ -364,7 +364,7 @@
       "tipr_mode": 1,
       "train_t": 640,
       "initial_rs_trainable_to_rm": 1000.0,
-      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1000 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+      "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=1000 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
     }
   ]
 }

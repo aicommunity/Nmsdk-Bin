@@ -14,7 +14,7 @@
     "tipr_mode": 1,
     "train_t": 640,
     "initial_rs_trainable_to_rm": 10.0,
-    "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах, reference anchor и SynapseResistanceBase сохранены на исторических 86 МОм; PSI 2.5."
+    "description_ru": "Диагностика W49: NNeuronTimeLearnerBranch, паттерн 100 мс, параметрическая нормализация; начальный Rs/Rm=10 только на трёх обучаемых входах; C++ cold reset явно сохраняет этот вектор, reference anchor и SynapseResistanceBase остаются на исторических 86 МОм; PSI 2.5."
   },
   "source": "SelectivityBranch\\EXP_br_span100_packA_preinh_C1e9",
   "legacy_noninhibited_template": "SelectivityBranch/EXP_br_span100_packA_gen_C1e9",
@@ -65,13 +65,13 @@
     }
   ],
   "source_commits": {
-    "root": "49598e4595c733f985a60fca9347545f395a5baa",
-    "Bin": "2c72819ced3c26f3b42be11b217417706122eda1",
-    "PulseLib": "97dd5211fb7d800523f9862cac281d909be27d46"
+    "root": "c843b2210c9436e23a8b9f85681d8e1861271e9d",
+    "Bin": "2cd819349becffdde41b6c757f1a52a6771b34ca",
+    "PulseLib": "f465f55529a9f89c5fefae786d95e921e34b16e3"
   },
   "console_sha256": null,
-  "matrix_definition_sha256": "0bf6daede98fb85a119c2af200f3f6b2c8b7f2f8fc7f5c900aa07c7112856e7b",
-  "matrix_definition_sha256_lf": "ea5ab90ae08eb0a7f46815bb029b7c6ebfc6435f1c10f43124686abdea3dcd5e",
-  "prepared_utc": "2026-10-17T01:45:45.682144+00:00",
+  "matrix_definition_sha256": "72e28e3cc9d58169cc25df533a6f09d1e651070b77d88a3df93dda3a1eea0422",
+  "matrix_definition_sha256_lf": "820975fe7121c1d0fb59effdba8e0ba344c7e556acf96ec54e35819447376f24",
+  "prepared_utc": "2026-10-17T02:15:49.723005+00:00",
   "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair. Console SHA is captured per execution in run_manifest.json; this input snapshot is independent of the preparation host binary."
 }
