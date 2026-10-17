@@ -617,9 +617,12 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
             }
             (run_root / "run_manifest.json").write_text(json.dumps(run_manifest), encoding="utf-8")
 
-            old_base, old_manifest, old_runs = MODULE.BASE, MODULE.MANIFEST, MODULE.RUNS_BASE
+            old_base, old_matrix, old_manifest, old_runs = (
+                MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST, MODULE.RUNS_BASE
+            )
             old_run_id = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
             MODULE.BASE = base
+            MODULE.MATRIX = matrix
             MODULE.MANIFEST = matrix_definition
             MODULE.RUNS_BASE = base / "_repro" / "TimeLearnerMatrixRuns"
             os.environ["TIMELEARNER_MATRIX_RUN_ID"] = run_id
@@ -628,7 +631,8 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
             parallel_barrier = Barrier(2)
 
             def stub_worker(command, *, cwd, env, log_path):
-                case_id = command[-1]
+                # Worker options follow the positional wave/case arguments.
+                case_id = command[command.index("--worker") + 2]
                 with calls_lock:
                     calls.append(case_id)
                     call_number = len(calls)
@@ -725,7 +729,9 @@ class IsolatedAttemptDispatchTests(unittest.TestCase):
                 self.assertEqual(status["cases"]["C1"]["attempt_id"], "attempt-0002")
                 self.assertEqual(status["process_limit"], 3)
             finally:
-                MODULE.BASE, MODULE.MANIFEST, MODULE.RUNS_BASE = old_base, old_manifest, old_runs
+                MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST, MODULE.RUNS_BASE = (
+                    old_base, old_matrix, old_manifest, old_runs
+                )
                 if old_run_id is None:
                     os.environ.pop("TIMELEARNER_MATRIX_RUN_ID", None)
                 else:

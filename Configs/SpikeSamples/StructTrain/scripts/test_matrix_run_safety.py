@@ -181,6 +181,7 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                         "classic_gamma_mode": None,
                         "accept_quantized_amp_under_target": False,
                         "branch_rs_rm_limit": None,
+                        "classic_rs_rm_limit": None,
                         "synapse_resistance_step": None,
                         "branch_segment_rm_profile": None,
                         "branch_initial_lengths": None,
@@ -209,6 +210,7 @@ class RunNamespaceSafetyTests(unittest.TestCase):
                                 "accept_quantized_amp_under_target": False,
                                 "train_time_limit_override_seconds": None,
                                 "branch_rs_rm_limit": None,
+                                "classic_rs_rm_limit": None,
                                 "synapse_resistance_step": None,
                                 "branch_segment_rm_profile": None,
                                 "branch_initial_lengths": None,
@@ -344,14 +346,15 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 "source_files": [],
             }
             (destination / "matrix_input_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
-            old_base, old_manifest = MODULE.BASE, MODULE.MANIFEST
+            old_base, old_matrix, old_manifest = MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST
             try:
                 MODULE.BASE = base
+                MODULE.MATRIX = base / "TimeLearnerMatrix"
                 MODULE.MANIFEST = matrix_definition
                 with self.assertRaisesRegex(RuntimeError, "matrix definition differs"):
                     MODULE.prepare_case(spec, {"T": {"preinh_source": "unused"}}, None)
             finally:
-                MODULE.BASE, MODULE.MANIFEST = old_base, old_manifest
+                MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST = old_base, old_matrix, old_manifest
 
     def test_existing_input_snapshot_accepts_only_line_ending_checkout_changes(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -384,9 +387,10 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 ],
             }
             (destination / "matrix_input_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
-            old_base, old_manifest = MODULE.BASE, MODULE.MANIFEST
+            old_base, old_matrix, old_manifest = MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST
             try:
                 MODULE.BASE = base
+                MODULE.MATRIX = base / "TimeLearnerMatrix"
                 MODULE.MANIFEST = matrix_definition
                 prepared = MODULE.prepare_case(
                     {"id": "C1", "wave": "W01", "template": "T", "duration_ms": 50},
@@ -395,7 +399,7 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 )
                 self.assertEqual(prepared["matrix_definition_sha256"], hashlib.sha256(matrix_crlf).hexdigest())
             finally:
-                MODULE.BASE, MODULE.MANIFEST = old_base, old_manifest
+                MODULE.BASE, MODULE.MATRIX, MODULE.MANIFEST = old_base, old_matrix, old_manifest
 
     def test_line_ending_compatibility_does_not_accept_input_content_changes(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -625,18 +629,20 @@ class CompletedAttemptProvenanceTests(unittest.TestCase):
                 },
             }), encoding="utf-8")
 
-            old_base = MODULE.BASE
+            old_base, old_matrix = MODULE.BASE, MODULE.MATRIX
             old_manifest = MODULE.MANIFEST
             old_runs = MODULE.RUNS_BASE
             old_run_id = os.environ.get("TIMELEARNER_MATRIX_RUN_ID")
             try:
                 MODULE.BASE = base
+                MODULE.MATRIX = matrix
                 MODULE.MANIFEST = manifest_path
                 MODULE.RUNS_BASE = base / "_repro" / "TimeLearnerMatrixRuns"
                 os.environ["TIMELEARNER_MATRIX_RUN_ID"] = run_id
                 rc = MODULE.run_wave("W01", 1)
             finally:
                 MODULE.BASE = old_base
+                MODULE.MATRIX = old_matrix
                 MODULE.MANIFEST = old_manifest
                 MODULE.RUNS_BASE = old_runs
                 if old_run_id is None:
