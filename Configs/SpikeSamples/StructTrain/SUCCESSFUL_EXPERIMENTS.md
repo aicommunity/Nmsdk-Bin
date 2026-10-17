@@ -10,7 +10,9 @@
 
 | Случай | Тренер | Длительность, мс | Режим | Пресинаптическое торможение | Детекция цели | Acc / FP | Воспроизводимые конфиги |
 |---|---|---:|---|---|---|---|---|
-| _Пока нет подтверждённых строгих PASS матричных прогонов._ | — | — | — | — | — | — | — |
+| W10_HIST_br50_gen | NNeuronTimeLearnerBranch | 50 | 1 | выключено | detected | 8/8 strict; FP=0 | [Train](TimeLearnerMatrix/W10/inputs/W10_HIST_br50_gen/Train/Project.ini) / [Test](TimeLearnerMatrix/W10/inputs/W10_HIST_br50_gen/Test/Project.ini) |
+| W10_HIST_br25_nextseg | NNeuronTimeLearnerBranch | 25 | 1 | выключено | detected | 8/8 strict; FP=0 | [Train](TimeLearnerMatrix/W10/inputs/W10_HIST_br25_nextseg/Train/Project.ini) / [Test](TimeLearnerMatrix/W10/inputs/W10_HIST_br25_nextseg/Test/Project.ini) |
+| W34_BR50_N1_PSIoff_POST | NNeuronTimeLearnerBranch | 50 | 1 | выключено | detected | 8/8 strict; FP=0 | [Train](TimeLearnerMatrix/W34/inputs/W34_BR50_N1_PSIoff_POST/Train/Project.ini) / [Test](TimeLearnerMatrix/W34/inputs/W34_BR50_N1_PSIoff_POST/Test/Project.ini) |
 
 В сохранённых W01–W04 есть четыре обучения с `Need=0`, но строгого PASS нет. Два Classic 50-мс случая не имеют валидных метрик из-за ошибки оценщика. Два Branch short-span случая имеют строгие метрики: 25 мс — цель обнаружена, но один false positive (7/8); 50 мс — цель не обнаружена (`fires=00000000`, 7/8). Полное разделение сходимости, качества и детекции приведено в [EXPERIMENTS.md](EXPERIMENTS.md).
 
