@@ -1,0 +1,77 @@
+{
+  "case": "W20_psi33_300_N0",
+  "wave": "W20",
+  "factors": {
+    "template": "long_psi33_300",
+    "trainer": "NNeuronTimeLearner",
+    "duration_ms": 300,
+    "pattern_family": "PSI historical sweep",
+    "normalization_mode": 0,
+    "presynaptic_inhibition": true,
+    "presynaptic_coefficient": 2.5,
+    "branch_nextseg": false,
+    "posttrain_tuning": false,
+    "tipr_mode": 1,
+    "train_t": 640,
+    "description_ru": "Структурный режим на историческом длинном PSI-шаблоне psi33_300, 300 мс; исходный коэффициент и паттерн сохранены.",
+    "source_config": "SelectivityPresynapticInhib/EXP33_span300ms_preinh250"
+  },
+  "source": "SelectivityPresynapticInhib\\EXP33_span300ms_preinh250",
+  "legacy_noninhibited_template": "SelectivityPresynapticInhib/EXP33_span300ms_preinh250",
+  "presynaptic_topology_template": "SelectivityPresynapticInhib\\EXP33_span300ms_preinh250",
+  "presynaptic_class_template": "SelectivityPresynapticInhib\\EXP33_span300ms_preinh250",
+  "source_mode": "factor_variant",
+  "source_commit": null,
+  "source_files": [
+    {
+      "side": "Train",
+      "file": "Model_00.xml",
+      "sha256": "6d8ebb73d6a750663a17e357e8a2553d33cc4ec9cfda6e0ec8091c4174d53f23"
+    },
+    {
+      "side": "Train",
+      "file": "Parameters_00.xml",
+      "sha256": "c1570c4d5f976d7574f61ab5e9e8c06e707afedc6b91de0d3e49f5b88d096f20"
+    },
+    {
+      "side": "Train",
+      "file": "Project.ini",
+      "sha256": "aabc310fe0b01f0f862ba7df05fb020e211de298e4d5c20e65b31613501edf9f"
+    },
+    {
+      "side": "Train",
+      "file": "Interface.xml",
+      "sha256": "b2bc9ddfd2ae85357359291fac69f9435e52c6ae927519353841d46586fc3cab"
+    },
+    {
+      "side": "Test",
+      "file": "Model_00.xml",
+      "sha256": "2d4a6c4da0e2d026029390e6e1604f4a4f11ab04814ae63152934f4eb1591a52"
+    },
+    {
+      "side": "Test",
+      "file": "Parameters_00.xml",
+      "sha256": "21e1074f8a2f942e4ffa54feb4781e9fd311f889a7979e6c2a5c93c59eb3930e"
+    },
+    {
+      "side": "Test",
+      "file": "Project.ini",
+      "sha256": "b681577661a55178e1f76185f7a00448c150aa0eda0f6d2172330115e476fa87"
+    },
+    {
+      "side": "Test",
+      "file": "Interface.xml",
+      "sha256": "b2bc9ddfd2ae85357359291fac69f9435e52c6ae927519353841d46586fc3cab"
+    }
+  ],
+  "source_commits": {
+    "root": "ee4c26ecdcd4c92b62a5a7a00039fd4e6443ac55",
+    "Bin": "01a8a3cf12ce4a887eef0aca104df25c57f2f02c",
+    "PulseLib": "2bb72a3b6b28812c7b00382929f7461bc9faff30"
+  },
+  "console_sha256": null,
+  "matrix_definition_sha256": "6a2fcf4799e09393d277f98cb2209c71a9fe62a61b7298972fe5cafe0783a7d6",
+  "prepared_utc": "2026-10-10T19:31:20.501254+00:00",
+  "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair.",
+  "registry_refreshed_utc": "2026-10-10T20:17:23.752976+00:00"
+}

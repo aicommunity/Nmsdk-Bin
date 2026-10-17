@@ -1,0 +1,74 @@
+{
+  "run_id": "phase6_positive_replay_9b63613_jsonlog_autoscale0_t14_20261013",
+  "status": "completed_at_model_time_limit",
+  "purpose": "Capture C++ ChangeDendriteStatus decision at first divergent PHASE6 iteration using native RDK JSON sink",
+  "root_source": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+  "pulselib_source": "9b63613ecca2ff7d7fbf1579e7e4f93a64ce5aaf",
+  "bin_source": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+  "console_sha256": "7addef682ddbc0fb58bce647dd1c65c2d26b3bb4238a0772e0afb31880b46006",
+  "reset_helper_git_blob": "5004d741b3503a78b4603b4e2e800d42e7fe6cb3",
+  "model_time_limit_s": 14,
+  "command": [
+    "NeuroModelerConsole.exe",
+    "-c",
+    "Project.ini",
+    "-s",
+    "-t",
+    "14",
+    "-x",
+    "-S"
+  ],
+  "input_sha256": {
+    "Model_00_xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+    "Parameters_00_xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9",
+    "Interface_xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+    "Project_ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69"
+  },
+  "logging": {
+    "sink": "RDK_LOG_JSON_PATH",
+    "level": "debug",
+    "verbosity": "1",
+    "file": "Train/diagnostics/rdk_debug.jsonl",
+    "why": "Train/EventsLog was absent and standard GLog file output failed; native JSON sink writes C++ decisions directly"
+  },
+  "pid": 55912,
+  "started_local": "2026-10-13 01:19:52 MSK",
+  "finished_local": "2026-10-13 01:36:32 MSK",
+  "exit_state": {
+    "need": 1,
+    "cpp_done": false,
+    "failure_reason": 0,
+    "model_time_s": 13.9995,
+    "iterations_recorded": 7,
+    "lengths": [
+      17,
+      17,
+      9,
+      1
+    ],
+    "tip_resistance_ohm": [
+      21243403.392814495,
+      20000000,
+      52456793.160242856,
+      86000000
+    ],
+    "termination": "-t 14 model-time cap; not C++ convergence/refusal; process exited and autosaved at model time limit"
+  },
+  "iteration_6_decision": {
+    "logger_index": 2,
+    "human_pulse_index": 3,
+    "active": true,
+    "peak_valid": true,
+    "expected_relative_pulse_s": 0.24,
+    "measured_peak_relative_s": 0.24,
+    "delay_from_pulse_s": -1.7763568394002505E-15,
+    "source_guard": "if(delay_k < 0.0 || delay_k >= EffectiveIterationGapSec())",
+    "reference_logger_index": 3,
+    "active_dendrite_length": 9,
+    "reference_dendrite_length": 1,
+    "dend_status_after_guard": 0,
+    "consequence": "length change for active dendrite skipped at iteration 6"
+  },
+  "interpretation": "An exact-input tolerance-only Classic control has now confirmed the iteration-level mechanism. Baseline and control both measured raw DelayFromPulse=-1.7763568394002505e-15 s at iteration 6. The baseline strict guard kept DendStatus=0 and length 9; changing only the lower guard to delay_k < -1e-12 s set DendStatus=1 and grew length 9 to 17. See phase6_delay_roundoff_tolerance_pair_2026-10-13.json. This confirms a narrow Classic implementation defect in the near-zero delay decision. Both runs remain censored at the external model-time cap with Need=1, so this does not establish full training convergence.",
+  "diagnostic_events": "phase6_delay_roundoff_gate_events_2026-10-13.jsonl"
+}

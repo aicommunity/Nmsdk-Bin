@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "purpose": "Trace how lowering the Branch Rs/Rm floor changes W04 BR480 N1 PSI-off behavior, and verify the no-action refusal when timing is synchronized but the peak is invalid.",
+  "case": "W04_BR480_N1_PSIoff",
+  "host": "10.245.1.17",
+  "storage_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01",
+  "source": {
+    "root_branch": "codex/historical_view",
+    "root_commit_on_server": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "pulselib_commit_on_server": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "branch_source_sha256": "7b4b155d61425316397a3fbc0a9411f31dc811f82e8762d1855fce8857db654e",
+    "build_type": "Release",
+    "temporary_diagnostic_amendment": "A rescue-only C++ patch deferred invalid-peak refusal while Rs remained above Rmin, permitting extended observation. It is not a production change.",
+    "console_sha256": "fe5102959ce30f4ea803e6b6ff125fa403ec1bd9c2bcd800c1cb46951a59f143"
+  },
+  "common_conditions": {
+    "Rm_ohm": 10000000,
+    "initial_tip_Rs_ohm": 86000000,
+    "max_dendrite_length": 100,
+    "normalization_mode": "parametric",
+    "W3": false,
+    "PSI": false,
+    "AutoEstimateAttenuationGamma": true,
+    "UsePerInputAttenuationGamma": true,
+    "pattern_seconds": [0.01, 0.08, 0.16, 0.24],
+    "dataset_sample": 0,
+    "quality_evaluation": "not_run"
+  },
+  "runs": [
+    {
+      "run_id": "diag-br480-rmin-ratio100-rescue-d09-20261014-01",
+      "max_Rs_to_Rm": 100,
+      "min_Rs_to_Rm": 0.01,
+      "Rmin_ohm": 100000,
+      "train_parameters_sha256_before_reset": "e06f6a5174288c1d609d0a30e571cbf34f0ed4d7e67a1efbb70f3bc53c4a043d",
+      "training_status": "manually_stopped_after_no_progress_and_non_finite_model_state",
+      "Need": 1,
+      "last_iteration": 56,
+      "last_length_active": 81,
+      "last_Rs_ohm": 115000,
+      "last_peak_valid": false,
+      "last_peak_amplitude": 0,
+      "timing_error_seconds": 0.013196260478996524,
+      "sync_tolerance_seconds": 0.02,
+      "invalid_peak_no_action_count": 0,
+      "no_progress_observation": "At iterations 15-56, the active peak was zero/invalid, Need remained 1, the model timing error stayed within tolerance, the no-action counter stayed zero, and no length or Rs updates occurred. The burst-start soma state escalated through extreme finite values and became NaN by iteration 30.",
+      "peak_pathology": {
+        "iteration_14_peak_amplitude": 1.6606640753860923e119,
+        "iteration_14_peak_marked_valid": true,
+        "first_zero_invalid_peak_iteration": 15,
+        "first_nan_burst_start_iteration": 30
+      },
+      "stop": "The console was interrupted after the repeated no-progress/NaN state was established; no quality gate ran.",
+      "child_exit_code": -2,
+      "audit_records": 58,
+      "audit_sha256": "910c8ed9c413000b15d9dccc1860c92bd89aa3933cfddaa9d44316db8714841d",
+      "audit_bytes": 2907971,
+      "dynamics_sha256": "b0258168243c71a83880cb074858147d8284ea2ad308f130a4c1ea2304dc9f0b",
+      "dynamics_bytes": 2190989484,
+      "remote_run": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-ratio100-rescue-d09-20261014-01"
+    },
+    {
+      "run_id": "diag-br480-rmin-ratio1000-rescue-d09-20261014-01",
+      "max_Rs_to_Rm": 1000,
+      "min_Rs_to_Rm": 0.001,
+      "Rmin_ohm": 10000,
+      "train_parameters_sha256_before_reset": "33c51a8c23a429c7308bdc323e94e6ad57a8d88b70a0f558e5623653a6fce2c5",
+      "training_status": "cpp_refusal",
+      "training_failure_phase": 5,
+      "training_failure_reason": 3,
+      "Need": 1,
+      "failure_iteration": 9,
+      "failure_length_active": 41,
+      "failure_Rs_ohm": 10000,
+      "gamma_estimate": 0.2978208482297845,
+      "gamma_attenuation_factor_per_8_segments": 0.09232,
+      "peak_pathology": {
+        "iteration_5_length": 33,
+        "iteration_5_Rs_ohm": 45349.639068027398,
+        "iteration_5_peak_amplitude": 0.5527369594682706,
+        "iteration_6_length": 41,
+        "iteration_6_Rs_ohm": 10000,
+        "iteration_6_peaks": [8.150491026486308e141, 9.733179943581198e159],
+        "iteration_6_peaks_marked_valid": true,
+        "iteration_7_to_9_peak_amplitude": 0,
+        "iteration_7_to_9_peak_valid": false
+      },
+      "audit_records": 11,
+      "audit_sha256": "cd22f17464a5b6e9efeee59d94b41a2b258228cdbf495248731d1e29789693a8",
+      "audit_bytes": 187483,
+      "dynamics_sha256": "888d524dedebe62e55057b59fc564f61242448f76de7bae8a2b015069c5ad056",
+      "dynamics_bytes": 111208628,
+      "remote_run": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-ratio1000-rescue-d09-20261014-01"
+    }
+  ],
+  "source_code_observation": {
+    "attenuation_estimate": "gamma = -ln(peak / InitialSomaPotential) / (DendriteLength - 1)",
+    "length_growth_update": "TipRs *= exp(-gamma * deltaLength), then clamp to [Rmin, Rmax]",
+    "interpretation": "For this training trajectory, the empirical gamma is derived from the measured response ratio and therefore includes the effects of cable length, Rs, and simulator state. It is not an independently measured membrane-only attenuation constant.",
+    "invalid_peak_rule": "SomaPeakValid is set from peak amplitude > 1e-6 and PeakSeen. The captured 1e141-1e159 finite peaks therefore passed the current validity predicate.",
+    "no_action_bug": "The old Branch refusal predicate also required model timing to be outside SyncTolerance. With an invalid peak, parametric synapse count fixed at one, and timing inside tolerance, the trainer marked timing best-effort-synced, reset the no-action counter, could not compute an Rs correction, and repeated indefinitely with Need=1.",
+    "confirmed_change": "The local C++ patch now counts invalid/low-amplitude bursts as no-action in parametric mode regardless of timing agreement and refuses after the existing three-burst bound, except while the explicit W3 Rmax escape remains armed. A regression test now asserts this behavior.",
+    "separate_open_issue": "The trainer still accepts astronomically large but finite peak values as valid. Selecting a domain-based upper plausibility bound requires a separate model-level review; this patch does not change peak validity."
+  },
+  "classification": {
+    "high_Rs_to_Rm_1000": "The tested lower floor led to astronomically large peaks, then invalid peaks and a bounded C++ refusal; no classification result was produced.",
+    "high_Rs_to_Rm_100": "The tested trajectory entered an invalid/no-progress state despite timing inside tolerance; it was manually stopped, so this run is incomplete. The state supports a numerical-instability concern but does not prove that all uses of this ratio fail.",
+    "mathematical_impossibility": "not established",
+    "next_validation": "The current Branch fix was built in Release on .17 and all four BranchInvalidPeakNoRecoveryTest checks passed. A unique capped ratio=100 W04 run was performed, but it did not reach Rmin or reproduce repeated invalid-peak/no-action behavior before the 360-second observation cap, so runtime refusal remains unverified. The full integration target is unstable: one run reported 33 tests passed then crashed in UAppCore static teardown; a Release build with an experimental pre-exit UnInit instead crashed inside BranchSegmentOrderHarness::SetOrderState before DecideLength. The lifecycle change was reverted. Classify the full-target memory/test-host issue before more runs. Review the peak upper-validity criterion separately; do not infer a universal ratio=100 failure from the capped run."
+  }
+}

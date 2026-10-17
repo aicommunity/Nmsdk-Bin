@@ -1,0 +1,275 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "kind": "controlled_cpp_rs_rm_floor_0p1_probe",
+  "host": "10.245.1.17",
+  "build": "Linux Release",
+  "parallel_training_processes": 1,
+  "case": "W04_BR480_N1_PSIoff",
+  "conditions": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "duration_ms": 480,
+    "parametric_normalization": "N1",
+    "psi": false,
+    "w3": false,
+    "branch_gamma_mode": "per-input-auto",
+    "MaxSynapseToMembraneResistanceRatio": 1000,
+    "diagnostic_floor_ratio_cap": 0.1,
+    "Rm_by_input_ohm": [
+      10000000,
+      10000000,
+      10000000
+    ],
+    "rmin_by_input_after_cpp_reset_ohm": [
+      1000000,
+      1000000,
+      1000000
+    ],
+    "rs_rm_min_by_input_after_cpp_reset": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "initial_tip_r_ohm": [
+      86000000,
+      86000000,
+      86000000,
+      86000000
+    ],
+    "input_manifest_sha256": "e30f163dfec95a22b6efbd624584b5f3fc8ba6e2765f4a878f55b014bc4fa481",
+    "input_pattern_seconds": [
+      0.01,
+      0.08,
+      0.16,
+      0.24
+    ],
+    "cpp_time_limit_s": 900
+  },
+  "source": {
+    "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+    "pulselib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+    "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+    "temporary_branch_cpp_sha256": "00bb958e37e87f6c7846000c8ee67c48e4cb20c802091a423e00765a7be06f43",
+    "temporary_console_sha256": "348a99f45ad6a94664828de6c0503a47eb4f859a50029c0bcdaf4d8274bfa98a",
+    "temporary_change": "Replace each computed explicit-step floor Rstable with min(Rstable, 0.1 * target membrane R); reciprocal max-ratio bound remains active. Diagnostic source only.",
+    "canonical_restoration": "queue_exit=1\nrestore_build_rc=0\nrestored_source=c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708\nrestored_console=721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c\n",
+    "canonical_cpp_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+    "canonical_console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c"
+  },
+  "run": {
+    "run_id": "diag-br480-floor01-rsrm1000-perinput-current-20261014-01",
+    "run_fingerprint": "3c2eed2ae0e83cd1c50062c71da85802cc0b0261f9ab8639addde774a5e050c3",
+    "case_fingerprint": "ec8fb6061d4ad462c78c1baa4eef361e4269f5009f73b3f8a522155eeec63609",
+    "source_unchanged_during_run": true,
+    "binary_sha256_unchanged_during_run": true,
+    "runtime_config_sha256_before": {
+      "Train/Parameters_00.xml": "fb316eaa2114cbd3553896410a90c15da55f8679a80a6c9b159203868c10eefb",
+      "Train/Model_00.xml": "e6938aa44713487f27232ab65838a73aafd25bdc994b1d9fc9f39804a8477437",
+      "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+      "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+    },
+    "runtime_config_sha256_after": {
+      "Train/Parameters_00.xml": "86d1b01ba9d949c4291f9ade13c28592be151faffdefe5422a1b4b954cd66556",
+      "Train/Model_00.xml": "371d60b7be29dde2f76e674366bac1afd25fb8b6804dba8a1f3f793a9acf0ce6",
+      "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+      "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+    },
+    "training_audit": {
+      "path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-floor01/diag-br480-floor01-rsrm1000-perinput-current-20261014-01/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log",
+      "bytes": 1134378,
+      "sha256": "8714bf9dccc569dd6ab5e29a6d53ba617a7be6270937d45891c1d752034363b3",
+      "iteration_records": 25
+    },
+    "cold_reset_contract": {
+      "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+      "mode": "soft",
+      "softcold_fix": "2026-09-27_sbm2_strip_tip1",
+      "neuron_class": "NSPNeuronGen",
+      "is_branch": true,
+      "xml_before_nm": {
+        "DendriteLength": "1 1 1 1",
+        "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+        "IsNeedToTrain": "1",
+        "AutoCalibrateFixedLTZThreshold": "0",
+        "ResetToUntrainedState": "1",
+        "FixedLTZThreshold": "1",
+        "StructureBuildMode_all": [
+          "2",
+          "2"
+        ],
+        "NumDendriteMembraneParts": "",
+        "NumDendriteMembranePartsVec": "1 1 1 1"
+      },
+      "model_topology": {
+        "max_seg": 1,
+        "tip_indices": [
+          1
+        ],
+        "StructureBuildMode_all": [
+          "2",
+          "2"
+        ],
+        "expect_max_seg_le": 1,
+        "DelayLenOf_at_L1": 0.0,
+        "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1"
+      },
+      "expected_runtime_after_reset": {
+        "DendriteLength": "1 1 1 1",
+        "reference_dendrite_index": 3,
+        "IsNeedToTrain": "1",
+        "StructureBuildMode": "2",
+        "note": "last dendrite is the Branch reference anchor; ResetToUntrained sets it to 0 before BuildStructure clamps runtime length to 1"
+      },
+      "model_exists": true,
+      "project_autosave_model_time_interval": "10"
+    }
+  },
+  "training": {
+    "status": "cpp_training_failure_3",
+    "convergence": "cpp_training_refusal",
+    "phase": 5,
+    "reason": 3,
+    "need": "1",
+    "quality_gate_evaluated": false,
+    "classification_quality": "not_evaluated_training_incomplete",
+    "detection_quality": "not_evaluated_training_incomplete",
+    "last_iteration": "24",
+    "final_lengths": [
+      1,
+      65,
+      89,
+      1
+    ],
+    "final_tip_r_ohm": [
+      86000000,
+      2357943.480374483,
+      1000000,
+      86000000
+    ],
+    "active_dendrite": "1",
+    "active_pulse": "1",
+    "active_peak_amp": [
+      0,
+      8.799079308507984e-07,
+      0.039531243905584934,
+      0.03694987494006807
+    ],
+    "active_peak_valid": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "active_initial_amp": [
+      0,
+      0.015828572406203167,
+      0.01578146659931945,
+      0.14697357308582448
+    ],
+    "last_abs_dt_s": [
+      0.5192499999999984,
+      0.2617444320000052,
+      0.010429844000009264,
+      1.501
+    ],
+    "invalid_peak_no_action_count": [
+      0,
+      3,
+      0,
+      0
+    ],
+    "dynamics": {
+      "source_path": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/queue-runs-floor01/W04_BR480_N1_PSIoff_20261014T142216Z_3699896_c5ed6da4_work/Train/TimeLearnerTrainingDynamics.log",
+      "bytes": 621622194,
+      "sha256": "b52db73bcadf2cce1684251ff08964cab1f93ada3f78470ca123bd9e43c8dba4",
+      "records": 26971,
+      "ignored_lines": 0,
+      "model_time_start": 0.0105,
+      "model_time_end": 49.539,
+      "soma": {
+        "count": 26971,
+        "min": 0.0,
+        "min_at_model_time": 8.1745,
+        "max": 0.17540921405529764,
+        "max_at_model_time": 10.508,
+        "max_abs": 0.17540921405529764,
+        "non_finite": 0,
+        "samples_at_or_above_abs_limit": null
+      },
+      "membrane": {
+        "channel_count": 90,
+        "min_sum_potential": -3.9829326251220696,
+        "max_sum_potential": 6.115136254871864,
+        "non_finite_total": 0
+      },
+      "channels": {
+        "count": 180,
+        "output_min": -4.98293262512207,
+        "output_max": 5.115136254871864,
+        "output_non_finite_total": 0,
+        "expected_sign_crossings": 144,
+        "outside_signed_envelope": 252,
+        "outside_rest_bound": 216
+      },
+      "synapse_resistances": {
+        "count": 180,
+        "min_ohm": 1000000.0,
+        "max_ohm": 86000000.0,
+        "non_finite_total": 0
+      },
+      "explicit_step_gain_corrected": {
+        "conductance_source": "sum of C++ serialized SynapticInputs vector; previous analyzer incorrectly used the separately serialized SumSynapticInput state",
+        "analyzer_summary_sha256": "82e3771f5857aca1fa15d9a790c70b5250b9abd71697e5104a6dae9dfc493a86",
+        "records": 26971,
+        "channels": 180,
+        "maximum_K": 3.612500093915373,
+        "samples_K_over_1": 324,
+        "samples_K_over_2": 144,
+        "sign_crossings": 144,
+        "signed_envelope_violations": 252,
+        "absolute_rest_bound_violations": 216,
+        "nonfinite_channel_samples": 0,
+        "assessment": "The unstable explicit update is directly observed; several K>2 steps reproduce alternating sign and over-range channel outputs under fixed-sign input."
+      },
+      "unstable_step_example": {
+        "channel": "d25.c0",
+        "declared_type": -1,
+        "fixed_channel_input": -1,
+        "channel_resistance_ohm": 10000000,
+        "capacity_farad": 1e-09,
+        "update_frequency_hz": 2000,
+        "samples": [
+          {
+            "model_time_s": 10.216,
+            "output_before": 0.5,
+            "summed_SynapticInputs_siemens": 7.5e-07,
+            "time_constant_s": 0.0011764705882352942,
+            "K": 3.6125,
+            "output_after_observed": -1.7312499999999997,
+            "output_after_from_cpp_formula": -1.7312499999999997
+          },
+          {
+            "model_time_s": 10.2165,
+            "output_before": -1.7312499999999997,
+            "summed_SynapticInputs_siemens": 6.75e-07,
+            "time_constant_s": 0.0012903225806451613,
+            "K": 3.003125,
+            "output_after_observed": 3.08041015625,
+            "output_after_from_cpp_formula": 3.08041015625
+          }
+        ]
+      },
+      "analyzer_correction": {
+        "old_field_used": "SumSynapticInput state, which was serialized as zero in this trace",
+        "actual_cpp_conductance": "NPulseChannel::ACalculate2 sums the SynapticInputs vector",
+        "code_fix": "Bin/Configs/SpikeSamples/StructTrain/scripts/analyze_timelearner_dynamics.py now sums the serialized vector and falls back only for older records without it",
+        "training_code_changed": false
+      }
+    }
+  },
+  "corrected_step_gain_reanalysis": {
+    "remote_manifest": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261014-repeat-state/dynamics-reanalysis-synaptic-inputs/manifest.json",
+    "remote_manifest_sha256": "bfb666ce415abffb5baee8268e6769c45588053315015dc70a57e0b7",
+    "analyzer_source_sha256": "b1f636d0ffcdaaf88850b2922ee7c141ae426a55da160d70d0c366db0d843a1f"
+  }
+}

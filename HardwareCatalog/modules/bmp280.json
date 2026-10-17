@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "bmp280",
+  "title": "BMP280",
+  "category": "Датчики",
+  "chip": "Bosch BMP280",
+  "platform": "both",
+  "interface": "I2C / SPI",
+  "supply": "3.3 V",
+  "descriptionRu": "Барометр + температура (без влажности); дешёвый клон BME280.",
+  "aliases": [
+    "GY-BMP280",
+    "GY-68"
+  ],
+  "urls": {
+    "buy": "https://amperka.ru/collection/sensors",
+    "datasheet": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+    "docs": "https://learn.adafruit.com/adafruit-bmp280-barometric-pressure-plus-temperature-sensor-breakout",
+    "image": "https://cdn-shop.adafruit.com/970x728/2651-08.jpg",
+    "wiring": "https://learn.adafruit.com/adafruit-bmp280-barometric-pressure-plus-temperature-sensor-breakout/arduino-test"
+  },
+  "notes": "Часто продают как BME280 по ошибке. | P2+: nmsdk_i2c_hub frames 0x34/0x35/0x36.",
+  "runtime": "hub",
+  "signalType": "i2c",
+  "portKind": "i2c",
+  "roles": [
+    "sensor"
+  ],
+  "wires": [
+    "G",
+    "V",
+    "S"
+  ],
+  "preferredFirmware": [
+    "nmsdk_i2c_hub_v1"
+  ],
+  "requiresMcuTiming": false,
+  "requiredCapabilities": [],
+  "asset": "",
+  "tierHint": "C"
+}

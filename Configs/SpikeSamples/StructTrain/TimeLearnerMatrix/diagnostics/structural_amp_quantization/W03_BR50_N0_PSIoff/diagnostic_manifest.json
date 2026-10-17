@@ -1,0 +1,106 @@
+{
+  "diagnostic_id": "structural-amp-quantized-fallback-W03-BR50-N0-20261015",
+  "source_case": "W03_BR50_N0_PSIoff",
+  "trainer": "NNeuronTimeLearnerBranch",
+  "question": "Does a stable discrete amplitude bracket between adjacent integer synapse counts prevent structural-mode convergence even though one count is safely below and the next is above the target?",
+  "factors": {
+    "duration_ms": 50,
+    "normalization_mode": 0,
+    "presynaptic_inhibition": false,
+    "accept_quantized_amp_under_target": true,
+    "quiet_debug_logs": true,
+    "training_limit_seconds": 900,
+    "posttrain_tuning": false,
+    "training_audit": true
+  },
+  "baseline_evidence": {
+    "run": "/home/user/NmsdkRuntime/TimeLearnerAudit-20261015/branch-wiring-validation-20261015-01/lifecycle-fix-w03-verified-t900-20261015-02",
+    "console_sha256": "29a6166fdf0a2927c3a69f082f8e18068953dee40554a2c0d24ace5cb127f210",
+    "target_active_input_2": 0.011583579014583067,
+    "settled_length": 6,
+    "lower_candidate_count": 7,
+    "lower_candidate_peak": 0.0110003808413141,
+    "upper_candidate_count": 8,
+    "upper_candidate_peak_range": [
+      0.0118557497290508,
+      0.0119689855541411
+    ],
+    "audit_alignment": "peak_amp in iteration i belongs to num_synapse in iteration i-1; num_synapse in row i is post-step"
+  },
+  "source_commits": {
+    "root_checkout": "14783af1e23dea5e8e0eb6b639c82837c04523e7",
+    "Bin_config_source": "23a0035277912764e67c70bd07007337f53f109d",
+    "PulseLib": "cfdb66f1fc73570bc141081bd90f449aa93f4c26"
+  },
+  "input_files": [
+    {
+      "file": "Train/Interface.xml",
+      "sha256": "3de82cdc68076b113f9d4dddfc9fd62a25d5de787a5e8485326575622f15abbd"
+    },
+    {
+      "file": "Train/Model_00.xml",
+      "sha256": "bad5453d8aeebf9ac706674ac8f19f7cc9e512e8adcf8ffc3f1f36800a947ddf"
+    },
+    {
+      "file": "Train/Parameters_00.xml",
+      "sha256": "85ee456400f02fc4be8c65690c5740a8d01fadaa0441d204789c867bb0832fd2"
+    },
+    {
+      "file": "Train/Project.ini",
+      "sha256": "3719ec8b443651320678c45273703c4ddb9cd819260bd98168e954ccd432cb36"
+    },
+    {
+      "file": "Test/Interface.xml",
+      "sha256": "3de82cdc68076b113f9d4dddfc9fd62a25d5de787a5e8485326575622f15abbd"
+    },
+    {
+      "file": "Test/Model_00.xml",
+      "sha256": "55d20d5dee52c66e84229fbc33de999350c57491c7d6c2c236d0fa9151511ae0"
+    },
+    {
+      "file": "Test/Parameters_00.xml",
+      "sha256": "21352e335d8b82fa88db5dd6eb7597d5619a6597bad235130dd47bfd35824a43"
+    },
+    {
+      "file": "Test/Project.ini",
+      "sha256": "3719ec8b443651320678c45273703c4ddb9cd819260bd98168e954ccd432cb36"
+    }
+  ],
+  "limitations": [
+    "The proposed acceptance is deliberately under-target and may increase misses; classification must be measured after trainer convergence.",
+    "This single Branch 50 ms case does not establish behavior for Classic or other structural cases."
+  ],
+  "build": {
+    "host": "10.245.1.11",
+    "preset": "linux-gcc-release-local",
+    "build_type": "Release",
+    "console_sha256": "d3505b32f1e2ff74523776ce17d07b7812564740e829baf8649f9a84db82d726",
+    "integration_test": "Release build succeeded; PulseLib_StorageComponents reported 56/56 passing GoogleTest cases, then segfaulted during UAppCore shutdown (CTest exit failure)."
+  },
+  "status": "Corrected Release run 07 is active on 10.245.1.11; early audit confirms the third input has accepted lower candidate N=7 at settled L=6, overall Need remains 1.",
+  "diagnostic_change": "EnableTrainingAudit is enabled independently of EnableDebug in current C++ (PulseLib cfdb66f); component snapshots remain disabled.",
+  "attempts": [
+    {
+      "run_id": "structural-amp-quantized-fallback-W03-BR50-N0-20261015-04",
+      "status": "partial_diagnostic",
+      "observation": "C++ audit recorded lower candidate accepted for active input at iteration 11; overall Need remained 1; run stopped early due log growth."
+    },
+    {
+      "run_id": "structural-amp-quantized-fallback-W03-BR50-N0-20261015-05",
+      "status": "stopped_for_log_growth",
+      "observation": "17 audit rows; debug snapshots and glog INFO grew rapidly; no convergence conclusion."
+    },
+    {
+      "run_id": "structural-amp-quantized-fallback-W03-BR50-N0-20261015-06",
+      "status": "aborted_diagnostic_setup",
+      "observation": "Stopped at model time about 92 s because EnableDebug=0 also suppressed the compact audit in the previous Console; no training result."
+    },
+    {
+      "run_id": "structural-amp-quantized-fallback-W03-BR50-N0-20261015-07",
+      "status": "running",
+      "console_sha256": "d3505b32f1e2ff74523776ce17d07b7812564740e829baf8649f9a84db82d726",
+      "observation": "Early audit shows amp_quantized_under_target[2]=1 with count 7 and L=6; trainer advanced to input index 1; overall Need=1."
+    }
+  ],
+  "current_attempt": "structural-amp-quantized-fallback-W03-BR50-N0-20261015-07"
+}

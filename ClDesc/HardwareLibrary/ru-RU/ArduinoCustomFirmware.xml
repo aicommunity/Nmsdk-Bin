@@ -1,0 +1,110 @@
+<ClassDescription>
+	<ClassName>ArduinoCustomFirmware</ClassName>
+	<Header>CustomFirmware hub host (protocol plugins)</Header>
+	<Description>Компонент `UArduinoCustomFirmware`: serial-owner для nmsdk_*_hub plugins (`HostPluginId`), команды, NamedValues/FrameLog.</Description>
+	<Properties>
+		<HostPluginId>
+			<Header>Host plugin id</Header>
+			<Description>Id plugin (`nmsdk_i2c_hub_v1`, `nmsdk_display_hub_v1`, …).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HostPluginId>
+
+		<Command>
+			<Header>Command</Header>
+			<Description>Текстовая команда hub (отправляется edge `SendCommand`).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Command>
+
+		<SendCommand>
+			<Header>Send command</Header>
+			<Description>Edge: отправить `Command` на MCU.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</SendCommand>
+
+		<NamedValuesJson>
+			<Header>Named values JSON</Header>
+			<Description>State: телеметрия hub (floats + strings, напр. `last_line`).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</NamedValuesJson>
+
+		<PluginBound>
+			<Header>Plugin bound</Header>
+			<Description>State: host plugin найден в registry.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</PluginBound>
+
+		<Connect>
+			<Header>Connect</Header>
+			<Description>Edge: открыть serial-порт.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</Connect>
+
+		<UploadFirmware>
+			<Header>Upload firmware</Header>
+			<Description>Edge: прошивка HEX (avrdude / ESP stub).</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</UploadFirmware>
+	</Properties>
+	<Favorites>
+		<HostPluginId>
+			<Path>{CompName}:HostPluginId</Path>
+		</HostPluginId>
+		<Command>
+			<Path>{CompName}:Command</Path>
+		</Command>
+		<NamedValuesJson>
+			<Path>{CompName}:NamedValuesJson</Path>
+		</NamedValuesJson>
+		<PluginBound>
+			<Path>{CompName}:PluginBound</Path>
+		</PluginBound>
+		<Connect>
+			<Path>{CompName}:Connect</Path>
+		</Connect>
+		<UploadFirmware>
+			<Path>{CompName}:UploadFirmware</Path>
+		</UploadFirmware>
+	</Favorites>
+</ClassDescription>

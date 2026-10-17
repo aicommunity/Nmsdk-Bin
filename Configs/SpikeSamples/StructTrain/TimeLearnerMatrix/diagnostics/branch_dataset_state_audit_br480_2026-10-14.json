@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "kind": "diagnostic_probe_not_training_result",
+  "case": "W04_BR480_N1_PSIoff",
+  "run_id": "diag-br480-dataset-state-audit-20261014-02",
+  "utc_started": "2026-10-13T23:56:16Z",
+  "remote_run_dir": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-dataset-state-audit-20261014-02/attempt",
+  "source_context": {
+    "root_commit": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "pulse_lib_gitlink_at_run": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "bin_gitlink_at_run": "e8c3b246cdb76b7c79137ffd9638d6263b662dbf",
+    "telemetry_commit_in_current_branch": "a20d800",
+    "temporary_rescue_patch_sha256": "aae394a210b77d2d6b532e2696390e7ced566a7a3322d3bce1da286221a38d8e",
+    "candidate_console_sha256": "3f74b2bc4d27b9d2372f6590a54ce6edab0205a9169e940e949603b6e2fbd155",
+    "candidate_branch_cpp_sha256_with_rescue": "585cb33403d74c28e3b54bf4b3c806f0b3d86411cdc13b8c47a426855e59e6c0",
+    "telemetry_only_console_restored_on_server_sha256": "dba3d1776099a787fb4dda6bbaaef34e5785c2e2491398c15e43e95f32a63aaf",
+    "telemetry_only_source_restored_on_server": {
+      "NNeuronTimeLearnerBranch.cpp": "7ab6f0f0d0c77ccdf26d27e98615a9a287566f2d09a691766ce343531ac37666",
+      "NNeuronTimeLearnerBranch.h": "4bb28c50b249c46063b43c2042d7a19cb5b25886f66d34edb42f677f74f931b3",
+      "NDatasetBase.cpp": "99be0749aa500459ced230c78a63687013af2e73f6ced15de53af5566dc16f77",
+      "NDatasetBase.h": "af6967e21358fc8717ae1c6b7a750d23c72c8504a0f29ed227233bc32ce31945"
+    }
+  },
+  "input_and_run_config": {
+    "archive_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/inputs/branch-perinput-gamma/W04_BR480_N1_PSIoff",
+    "input_pattern_seconds": [0.01, 0.08, 0.16, 0.24],
+    "generator_frequency_deviation": 0,
+    "generator_pulse_length_seconds": 0.001,
+    "dataset_runtime_contract": "One sample, Dataset iteration 0, AdvanceSampleAfterBurst=false; the configured timing vector is replayed for every training burst.",
+    "prepared_run_config_sha256_before_launch": {
+      "Train/Parameters_00.xml": "97c50bdcc0a3cc0d6687db8943370a29f1c0c55b1440f3d69e63cff51e9c1d33",
+      "Train/Model_00.xml": "38574b529d683dd5cf3a48cf2f9a737002b739a2ab8020ebda12c01dbbe1ad9b",
+      "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+      "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+    },
+    "diagnostic_overrides": {
+      "normalization_mode": 1,
+      "max_synapse_to_membrane_resistance_ratio": 10,
+      "enable_posttrain_tuning": false,
+      "train_t_effective": 1200,
+      "max_polls": 3,
+      "statistic_log_writes": "disabled"
+    }
+  },
+  "run_status": {
+    "train_status": "exited_by_poll_cap",
+    "training_convergence": "not_converged_at_stop",
+    "need": 1,
+    "child_rc": -15,
+    "quality_gate_evaluated": false,
+    "quality": "not_evaluated_training_incomplete",
+    "training_audit_records_including_reset": 43,
+    "training_audit_sha256": "739957d9aced383559eb72aeaf6fc962637e9f51fd78a7eea7e477f3deea375b",
+    "rescue_patch_executed": false,
+    "reason": "The C++ rescue path requires the no-action counter to reach 3; it was 2 at the last captured iteration, and this attempt stopped before another iteration."
+  },
+  "observations": [
+    {
+      "iteration": 39,
+      "dataset_sample": 0,
+      "dataset_iteration": 0,
+      "dataset_num_samples": 1,
+      "dataset_advance_sample": false,
+      "start_next_spike_index": [0],
+      "end_next_spike_index": [4],
+      "start_generator_pulse_counter": [2],
+      "end_generator_pulse_counter": [0],
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "start_soma_potential": 9.214851104388799e-15,
+      "start_dendrite_potentials_at_input_attachments": [0.0047128389886293975, 0.00023564194943148653, 5.89104873549573e-7, 1.8407497748285095e-13],
+      "tip_r": [57647523.95906498, 1000000, 1000000, 86000000],
+      "length": [9, 8, 6, 1],
+      "peak_amp": [0.0002967384328556033, 0.0005327151836915789, 0.001610788167048294, 1.62458711131519e-5],
+      "peak_valid": [true, true, true, true]
+    },
+    {
+      "iteration": 40,
+      "dataset_sample": 0,
+      "dataset_iteration": 0,
+      "dataset_num_samples": 1,
+      "dataset_advance_sample": false,
+      "start_next_spike_index": [0],
+      "end_next_spike_index": [4],
+      "start_generator_pulse_counter": [2],
+      "end_generator_pulse_counter": [0],
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "start_soma_potential": 9.214851104388799e-15,
+      "start_dendrite_potentials_at_input_attachments": [0.0047128389886293975, 0.00023564194943148653, 5.89104873549573e-7, 1.8407497748285095e-13],
+      "tip_r": [57647523.95906498, 1000000, 1000000, 86000000],
+      "length": [9, 8, 6, 1],
+      "peak_amp": [2.552642541786554e-9, 3.0346505974776505e-8, 3.314894450490158e-6, 1.62458711131519e-5],
+      "peak_valid": [false, false, true, true]
+    },
+    {
+      "iteration": 41,
+      "dataset_sample": 0,
+      "dataset_iteration": 0,
+      "dataset_num_samples": 1,
+      "dataset_advance_sample": false,
+      "start_next_spike_index": [0],
+      "end_next_spike_index": [4],
+      "start_generator_pulse_counter": [2],
+      "end_generator_pulse_counter": [0],
+      "input_pattern": [0.01, 0.08, 0.16, 0.24],
+      "start_soma_potential": 9.214851104388799e-15,
+      "start_dendrite_potentials_at_input_attachments": [0.0047128389886293975, 0.00023564194943148653, 5.89104873549573e-7, 1.8407497748285095e-13],
+      "tip_r": [57647523.95906498, 1000000, 1000000, 86000000],
+      "length": [9, 8, 6, 1],
+      "peak_amp": [2.552642541786554e-9, 3.0346505974776505e-8, 3.314894450490158e-6, 1.62458711131519e-5],
+      "peak_valid": [false, false, true, true]
+    }
+  ],
+  "interpretation": {
+    "measured_change": "Input0 peak declined by about 116248x from iteration 39 to 40 despite identical logged timing pattern, dataset sample/cursor, generator pulse counter, starting soma and input-attachment membrane sums, Rs, and lengths.",
+    "classification": "unexplained response change under apparently matched observable start state; not yet a proven trainer defect",
+    "remaining_gap": "The audit does not yet capture every dendrite-segment/channel state, synapse PreOutput/output at burst start, or the exact generator firing timestamps. Those hidden state/input details can still explain the response difference.",
+    "next_step": "Capture all cable-segment membrane sums and tip synapse output at burst start; retain exact per-pulse launch timestamps if the state snapshots still match. Then compare repeated response with no model reset versus an explicit diagnostic reset, without changing production training behavior."
+  }
+}

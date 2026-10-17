@@ -465,6 +465,94 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</UseAverageLTZonePotential>
+		<UseElementDefaults>
+			<Header>Переопределять параметры элементов</Header>
+			<Description>Если true, после сборки выставляет MembraneCapacity, Exc/InhMembraneResistance, Exc/InhSynapseResistance, SynapseDissociationTC и SynapseSecretionTC на каналах/синапсах Soma и Dendrite (не LTMembrane). По умолчанию false — поведение старых классов без изменений.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseElementDefaults>
+		<MembraneCapacity>
+			<Header>Ёмкость мембраны (override)</Header>
+			<Description>Capacity Exc/Inh каналов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</MembraneCapacity>
+		<SynapseDissociationTC>
+			<Header>Постоянная диссоциации синапса (override)</Header>
+			<Description>DissociationTC Exc/Inh синапсов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseDissociationTC>
+		<ExcMembraneResistance>
+			<Header>Rm возбуждающего канала (override)</Header>
+			<Description>Resistance и RestingResistance ExcChannel Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ExcMembraneResistance>
+		<InhMembraneResistance>
+			<Header>Rm тормозного канала (override)</Header>
+			<Description>Resistance и RestingResistance InhChannel Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InhMembraneResistance>
+		<ExcSynapseResistance>
+			<Header>Rsyn возбуждающих синапсов (override)</Header>
+			<Description>Resistance ExcSynapse* Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ExcSynapseResistance>
+		<InhSynapseResistance>
+			<Header>Rsyn тормозных синапсов (override)</Header>
+			<Description>Resistance InhSynapse* Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InhSynapseResistance>
+		<SynapseSecretionTC>
+			<Header>Постоянная секреции синапса (override)</Header>
+			<Description>SecretionTC Exc/Inh синапсов Soma/Dendrite при UseElementDefaults=true и значении &gt; 0.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SynapseSecretionTC>
 	</Properties>
 		<Favorites>
 		<StructureBuildMode>
@@ -500,6 +588,30 @@
 		<UseAverageLTZonePotential>
 			<Path>{CompName}:UseAverageLTZonePotential</Path>
 		</UseAverageLTZonePotential>
+		<UseElementDefaults>
+			<Path>{CompName}:UseElementDefaults</Path>
+		</UseElementDefaults>
+		<MembraneCapacity>
+			<Path>{CompName}:MembraneCapacity</Path>
+		</MembraneCapacity>
+		<SynapseDissociationTC>
+			<Path>{CompName}:SynapseDissociationTC</Path>
+		</SynapseDissociationTC>
+		<ExcMembraneResistance>
+			<Path>{CompName}:ExcMembraneResistance</Path>
+		</ExcMembraneResistance>
+		<InhMembraneResistance>
+			<Path>{CompName}:InhMembraneResistance</Path>
+		</InhMembraneResistance>
+		<ExcSynapseResistance>
+			<Path>{CompName}:ExcSynapseResistance</Path>
+		</ExcSynapseResistance>
+		<InhSynapseResistance>
+			<Path>{CompName}:InhSynapseResistance</Path>
+		</InhSynapseResistance>
+		<SynapseSecretionTC>
+			<Path>{CompName}:SynapseSecretionTC</Path>
+		</SynapseSecretionTC>
 		<TrainingPattern>
 			<Path>{CompName}:TrainingPattern</Path>
 		</TrainingPattern>

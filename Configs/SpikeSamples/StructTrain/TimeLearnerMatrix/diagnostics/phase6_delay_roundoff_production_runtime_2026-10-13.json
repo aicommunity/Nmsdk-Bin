@@ -1,0 +1,73 @@
+{
+  "run_id": "phase6_production_fix_exact_inputs_t14_20261013",
+  "status": "completed_at_model_time_limit",
+  "source_commits": {
+    "root": "cb48ed9",
+    "pulselib": "28c32e9",
+    "bin": "e05b2600"
+  },
+  "console": {
+    "sha256": "CD6D8AE8B157C1D00A0319251C2BBB3D91C7360C16E5E3299C512A2B5D5D78B5",
+    "build": "local VS2022 test configuration, RDK_USE_LLM=OFF"
+  },
+  "model_time_limit_s": 14,
+  "command": [
+    "NeuroModelerConsole.exe",
+    "-c",
+    "Project.ini",
+    "-s",
+    "-t",
+    "14",
+    "-x",
+    "-S"
+  ],
+  "inputs": {
+    "source": "temp/historical_view/runs/phase6_roundoff_exact_inputs_baseline_t14_retry2_20261013/Train",
+    "exact_pre_run_sha256": {
+      "Model_00.xml": "b7b63aeb4dfc260e77509caed3c8b70ff059a98a91e3cc7fb4ea2eb1d9884eb7",
+      "Parameters_00.xml": "fd60c58d9b173e173a62fa32060355f1bfa1c49e197bb32fcf1aa306ceccc9a9",
+      "Interface.xml": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+      "Project.ini": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69"
+    }
+  },
+  "iteration6": {
+    "active_dendrite_index0": 2,
+    "peak_valid": true,
+    "raw_delay_s": -1.7763568394002505E-15,
+    "roundoff_clamped": true,
+    "dend_status": 1,
+    "length_after": 17,
+    "tip_resistance_after_ohm": 12253722.696478704
+  },
+  "terminal": {
+    "model_time_s": 13.9995,
+    "iteration": 6,
+    "need": 1,
+    "phase": 0,
+    "failure_reason": 0,
+    "cpp_done": false,
+    "eol_sync": false,
+    "eol_amp": false,
+    "lengths": [
+      17,
+      17,
+      17,
+      1
+    ],
+    "tip_resistance_ohm": [
+      21243403.392814495,
+      15860718.738598047,
+      12253722.696478704,
+      86000000
+    ]
+  },
+  "comparison": "Same four pre-run input hashes as the archived strict-guard and tolerance-only pair. Production build emits the clamp event and grows this dendrite; training remains incomplete at t=14.",
+  "extended_run": {
+    "run_id": "phase6_production_fix_exact_inputs_t900_20261013",
+    "status": "running",
+    "pid": 41696,
+    "model_time_limit_s": 900,
+    "run_dir": "temp/historical_view/runs/phase6_production_fix_exact_inputs_t900_20261013",
+    "snapshot_time": "2026-10-13 09:58:51 +03:00"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "hc_sr04",
+  "title": "HC-SR04 Ultrasonic",
+  "category": "Датчики",
+  "chip": "HC-SR04",
+  "platform": "both",
+  "interface": "GPIO (Trig/Echo)",
+  "supply": "5 V",
+  "descriptionRu": "Ультразвуковой дальномер 2–400 см; классика роботов.",
+  "aliases": [
+    "HY-SRF05",
+    "US-015",
+    "JSN-SR04T"
+  ],
+  "urls": {
+    "buy": "https://amperka.ru/product/hc-sr04-ultrasonic-sensor-distance-module",
+    "datasheet": "https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf",
+    "docs": "https://randomnerdtutorials.com/complete-guide-for-ultrasonic-sensor-hc-sr04/",
+    "image": "https://cdn-shop.adafruit.com/970x728/4007-05.jpg",
+    "wiring": "https://randomnerdtutorials.com/complete-guide-for-ultrasonic-sensor-hc-sr04/"
+  },
+  "notes": "Echo 5V — на ESP32 делитель. JSN-SR04T для улицы.",
+  "runtime": "firmata",
+  "signalType": "ultrasonic_timing",
+  "portKind": "digital",
+  "roles": [
+    "sensor"
+  ],
+  "wires": [
+    "G",
+    "V",
+    "Trig",
+    "Echo"
+  ],
+  "preferredFirmware": [
+    "nmsdk_sensor_hub_v1"
+  ],
+  "requiresMcuTiming": true,
+  "requiredCapabilities": [],
+  "asset": "assets/modules/hc_sr04.svg"
+}

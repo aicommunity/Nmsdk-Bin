@@ -1,0 +1,1071 @@
+#!/usr/bin/env python3
+"""Helpers for identical-cold repro harness (clone, soft/strip cold, TipR@Rmin, compare)."""
+from __future__ import annotations
+
+import csv
+import json
+import math
+import os
+import re
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Literal
+
+ROOT = Path(__file__).resolve().parents[1]
+NMSDK_ROOT = Path(__file__).resolve().parents[5]
+
+
+def resolve_console(root: Path, env: dict[str, str] | None = None) -> Path:
+    """Resolve the runner from this checkout; allow explicit per-host override."""
+    env = os.environ if env is None else env
+    override = env.get("NMSDK_CONSOLE")
+    if override:
+        return Path(override)
+    if os.name == "nt":
+        return root / "Bin/Platform/Win/NeuroModelerConsole.exe"
+    return root / "Bin/Platform/Linux/NeuroModelerConsole"
+
+
+NM = resolve_console(NMSDK_ROOT)
+TIPR_COLD = "86000000 86000000 86000000 86000000"
+TIPR_RMIN = "20000000 20000000 20000000 86000000"
+L_COLD = "1 1 1 1"
+ColdMode = Literal["soft", "strip"]
+
+sys.path.insert(0, str(ROOT / "scripts"))
+from audit_structtrain import last_pulse_ok  # noqa: E402
+from selectivity_metrics import classify  # noqa: E402
+
+
+@dataclass(frozen=True)
+class Family:
+    key: str
+    gold: Path
+    clone_name: str
+    train_t: float
+    metric: str  # ltz_potential_max | soma_amp_sum
+    kind: str  # fastspan | branch
+    span_ms: int
+
+
+FAMILIES: dict[str, Family] = {
+    "fastspan": Family(
+        key="fastspan",
+        gold=ROOT / "SelectivityFastSpan" / "EXP_span25ms_fast_C1e9",
+        clone_name="FastSpan_span25_gen_C1e9",
+        train_t=160.0,
+        metric="ltz_potential_max",
+        kind="fastspan",
+        span_ms=25,
+    ),
+    "branch": Family(
+        key="branch",
+        gold=ROOT / "SelectivityBranch" / "EXP_br_span25_packA_gen_C1e9",
+        clone_name="Branch_span25_packA_gen_C1e9",
+        train_t=320.0,
+        metric="soma_amp_sum",
+        kind="branch",
+        span_ms=25,
+    ),
+}
+
+REPRO_ROOT = ROOT / "_repro"
+INVEST_ROOT = REPRO_ROOT / "_invest"
+
+# invest job id -> (family_key, cold_mode, dest_name)
+INVEST_JOBS: dict[str, tuple[str, ColdMode, str]] = {
+    "A1": ("fastspan", "soft", "A1_fs_soft_r1"),
+    "A2": ("fastspan", "strip", "A2_fs_strip_r1"),
+    "B1": ("branch", "soft", "B1_br_soft_r1"),
+    "B2": ("branch", "strip", "B2_br_strip_r1"),
+    "A1r2": ("fastspan", "soft", "A1_fs_soft_r2"),
+    "B1r2": ("branch", "soft", "B1_br_soft_r2"),
+}
+
+
+def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
+    """Replace tag body. count=0 → all occurrences (re.sub semantics)."""
+    return re.sub(
+        rf"(<{tag}\b[^>]*>)[^<]*(</{tag}>)",
+        lambda m: m.group(1) + value + m.group(2),
+        text,
+        count=count or 0,
+    )
+
+
+def get_tag(text: str, tag: str) -> str | None:
+    """First occurrence (XML may contain duplicates — prefer get_all_tags / last)."""
+    m = re.search(rf"<{tag}\b[^>]*>([^<]*)</{tag}>", text)
+    return m.group(1).strip() if m else None
+
+
+def enable_pattern_response_trace(model_path: Path) -> None:
+    """Enable the read-only C++ soma trace for this Test model only."""
+    text = model_path.read_text(encoding="utf-8")
+    component = re.search(
+        r"<PatternResponseAnalyzer\b[^>]*>.*?</PatternResponseAnalyzer\s*>",
+        text,
+        re.S,
+    )
+    if not component:
+        raise ValueError(f"no PatternResponseAnalyzer in {model_path}")
+    block = component.group(0)
+    params = re.search(r"(<Parameters\b[^>]*>)(.*?)(</Parameters\s*>)", block, re.S)
+    if not params:
+        raise ValueError(f"PatternResponseAnalyzer has no Parameters block in {model_path}")
+    body = params.group(2)
+    values = (
+        ("TraceLogEnabled", "b", "1"),
+        ("TraceLogFileName", "std::string", "test_trace.csv"),
+    )
+    for name, type_name, value in values:
+        prop = re.compile(rf"(<{name}\b[^>]*>)(.*?)(</{name}\s*>)", re.S)
+        if prop.search(body):
+            body = prop.sub(lambda m: m.group(1) + value + m.group(3), body, count=1)
+        else:
+            attrs = ' Type="{}" PType="257" IoType="17"'.format(type_name)
+            body += f"\n\t\t\t\t<{name}{attrs}>{value}</{name}>"
+    updated_block = block[:params.start(2)] + body + block[params.end(2):]
+    updated = text[:component.start()] + updated_block + text[component.end():]
+    if updated != text:
+        model_path.write_text(updated, encoding="utf-8")
+
+
+def get_all_tags(text: str, tag: str) -> list[str]:
+    return [
+        m.group(1).strip()
+        for m in re.finditer(rf"<{tag}\b[^>]*>([^<]*)</{tag}>", text)
+    ]
+
+
+def set_tag_all(text: str, tag: str, value: str) -> str:
+    """Force every occurrence of tag to value (SoftCold SBM fix)."""
+    if not re.search(rf"<{tag}\b", text):
+        return text
+    return set_tag(text, tag, value, 0)
+
+
+def insert_or_set_estdelay(text: str, value: str) -> str:
+    """Set EstDelayPerSeg everywhere, or insert after DendriteLength/ResistanceMax."""
+    block = (
+        f'<EstDelayPerSeg Type="d" PType="257" IoType="17">{value}</EstDelayPerSeg>'
+    )
+    if re.search(r"<EstDelayPerSeg\b", text):
+        return set_tag_all(text, "EstDelayPerSeg", value)
+    if re.search(r"</DendriteLength>", text):
+        return re.sub(r"(</DendriteLength>)", rf"\1\n\t\t\t\t\t{block}", text, count=1)
+    if re.search(r"</ResistanceMax>", text):
+        return re.sub(r"(</ResistanceMax>)", rf"\1\n\t\t\t\t\t{block}", text, count=1)
+    raise ValueError("no insertion anchor for EstDelayPerSeg")
+
+
+def sync_estdelay_from_gold(work_train: Path, gold_train: Path | None) -> str | None:
+    """Copy EstDelayPerSeg from gold Train into work when work lacks a usable tag.
+
+    SoftCold-source archives without the tag load C++ default 0.005 and NM -S
+    persists that. Gold (e.g. tiprmin) may already have the cable-correct value.
+    Does not overwrite a positive EstDelay already present in work.
+    """
+    if gold_train is None:
+        return None
+    gold_params = gold_train / "Parameters_00.xml"
+    if not gold_params.is_file():
+        return None
+    gold_val = get_tag(gold_params.read_text(encoding="utf-8"), "EstDelayPerSeg")
+    if not gold_val:
+        return None
+    try:
+        gv = float(gold_val.replace(",", "."))
+    except ValueError:
+        return None
+    if gv <= 0.0:
+        return None
+
+    applied: list[str] = []
+    for rel in ("Parameters_00.xml", "Model_00.xml"):
+        path = work_train / rel
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        cur = get_tag(text, "EstDelayPerSeg")
+        if cur:
+            try:
+                cv = float(cur.replace(",", "."))
+            except ValueError:
+                cv = 0.0
+            if cv > 0.0:
+                continue  # keep existing positive EstDelay
+        new = insert_or_set_estdelay(text, gold_val)
+        if new != text:
+            path.write_text(new, encoding="utf-8")
+            applied.append(rel)
+    if applied:
+        print(f"  EstDelay sync from gold={gold_val} → {', '.join(applied)}")
+        return gold_val
+    return None
+
+
+# SoftCold default: periodic Console SaveProject every N model-seconds (0 = off).
+DEFAULT_AUTOSAVE_MODEL_S = 10
+
+
+def set_project_autosave_model_interval(ini: Path, seconds: int) -> None:
+    """Set <ProjectAutoSaveModelTimeInterval> in Project.ini General (workdir only)."""
+    if not ini.exists():
+        return
+    seconds = max(0, int(seconds))
+    t = ini.read_text(encoding="utf-8")
+    if re.search(r"<ProjectAutoSaveModelTimeInterval\b", t):
+        t = re.sub(
+            r"(<ProjectAutoSaveModelTimeInterval\b[^>]*>)[^<]*(</ProjectAutoSaveModelTimeInterval>)",
+            rf"\g<1>{seconds}\g<2>",
+            t,
+            count=1,
+        )
+    elif re.search(r"</ProjectAutoSaveFlag>", t):
+        t = re.sub(
+            r"(</ProjectAutoSaveFlag>)",
+            rf"\1\n\t\t<ProjectAutoSaveModelTimeInterval>{seconds}</ProjectAutoSaveModelTimeInterval>",
+            t,
+            count=1,
+        )
+    else:
+        t = re.sub(
+            r"(<General>)",
+            rf"\1\n\t\t<ProjectAutoSaveModelTimeInterval>{seconds}</ProjectAutoSaveModelTimeInterval>",
+            t,
+            count=1,
+        )
+    ini.write_text(t, encoding="utf-8")
+
+
+def force_structure_build_mode(text: str, value: str = "2") -> str:
+    """Set all StructureBuildMode tags to value; inject one if missing."""
+    if re.search(r"<StructureBuildMode\b", text):
+        return set_tag_all(text, "StructureBuildMode", value)
+    return _ensure_tag(text, "StructureBuildMode", value, after_tag="IsNeedToTrain")
+
+
+def sync_membrane_parts_scalar(text: str, value: str = "1") -> str:
+    """Align scalar NumDendriteMembraneParts with cold L=1 (remove fat leftover)."""
+    if re.search(r"<NumDendriteMembraneParts\b", text):
+        return set_tag_all(text, "NumDendriteMembraneParts", value)
+    return text
+
+
+def ensure_tag_after(text: str, after_tag: str, new_tag: str, value: str, attrs: str = ' Type="b" PType="257" IoType="17"') -> str:
+    """Insert <new_tag>…</new_tag> after first </after_tag> if missing."""
+    if get_tag(text, new_tag) is not None:
+        return set_tag(text, new_tag, value, 1)
+    m = re.search(rf"(</{after_tag}>)", text)
+    if not m:
+        return text
+    insert = f"{m.group(1)}\n\t\t\t\t\t<{new_tag}{attrs}>{value}</{new_tag}>"
+    return text[: m.start()] + insert + text[m.end() :]
+
+
+def enable_post_train_tuning_on(params_text: str) -> bool:
+    """Default ON when property absent (ADefault / cold retrain of old XML)."""
+    v = get_tag(params_text, "EnablePostTrainTuning")
+    if v is None:
+        return True
+    return v.strip() not in ("0", "false", "False")
+
+
+def tipr_looks_posttuned(tipr: str | None) -> bool:
+    """True when TipR already matches CanonRmin or FlatLastR recipe vectors."""
+    if not tipr:
+        return False
+    nums = [x for x in tipr.replace(",", " ").split() if x]
+    if len(nums) < 4:
+        return False
+    try:
+        vals = [float(x) for x in nums[:4]]
+    except ValueError:
+        return False
+    canon = [2e7, 2e7, 2e7, 8.6e7]
+    flat = [8.6e7] * 4
+    def close(a: list[float], b: list[float]) -> bool:
+        return all(abs(x - y) <= max(1.0, 0.01 * abs(y)) for x, y in zip(a, b))
+    return close(vals, canon) or close(vals, flat)
+
+
+def clone_root(family: Family, rep: int) -> Path:
+    return REPRO_ROOT / family.clone_name / f"r{rep}"
+
+
+def invest_root(job_id: str) -> Path:
+    if job_id not in INVEST_JOBS:
+        raise SystemExit(f"unknown invest job {job_id}")
+    return INVEST_ROOT / INVEST_JOBS[job_id][2]
+
+
+def free_gib(path: Path | None = None) -> float:
+    """Return free space for the experiment checkout's volume on any host OS."""
+    target = path if path is not None else Path(__file__).resolve()
+    return shutil.disk_usage(target).free / (1 << 30)
+
+
+def assert_disk_for_train() -> None:
+    free = free_gib()
+    if free < 50:
+        raise SystemExit(f"HARD STOP Avail={free:.1f}G < 50G")
+    if free < 80:
+        raise SystemExit(f"STOP Avail={free:.1f}G < 80G — pack first")
+
+
+def rsync_clone(gold: Path, dst: Path, project_name: str) -> None:
+    if dst.exists():
+        raise SystemExit(f"refuse existing clone {dst}")
+    dst.mkdir(parents=True, exist_ok=False)
+    excludes = [
+        "--exclude=EventsLog/",
+        "--exclude=StatisticLog/",
+        "--exclude=SelectivityLog/",
+        "--exclude=History.xml",
+        "--exclude=*.log",
+        "--exclude=settings.qt",
+        "--exclude=ltz_sweep/",
+        "--exclude=Test_bak_phase9/",
+        "--exclude=bak_pre_eval/",
+    ]
+    subprocess.check_call(["rsync", "-a", *excludes, f"{gold}/", f"{dst}/"])
+    for ini in (dst / "Train" / "Project.ini", dst / "Test" / "Project.ini"):
+        if not ini.exists():
+            continue
+        t = ini.read_text(encoding="utf-8")
+        t = re.sub(
+            r"<ProjectName>[^<]*</ProjectName>",
+            f"<ProjectName>{project_name}</ProjectName>",
+            t,
+            count=1,
+        )
+        ini.write_text(t, encoding="utf-8")
+
+
+def strip_dendrite_segments_above_one(model_text: str) -> str:
+    """Remove <DendriteX_Y>...</DendriteX_Y> for Y > 1 (keep tip-1 only)."""
+
+    def repl(m: re.Match[str]) -> str:
+        tip = int(m.group(3))
+        return m.group(0) if tip <= 1 else ""
+
+    return re.sub(
+        r"<(Dendrite(\d+)_(\d+))\b[^>]*>.*?</\1>\s*",
+        repl,
+        model_text,
+        flags=re.S,
+    )
+
+
+def rewrite_links_to_tip1(model_text: str) -> str:
+    return re.sub(
+        r"(NeuronTimeLearner(?:Branch)?\.Neuron\.Dendrite\d+)_\d+(\.(?:Exc|Inh)Synapse)",
+        r"\1_1\2",
+        model_text,
+    )
+
+
+def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) -> str:
+    """Set all three membrane resistance fields on selected Branch segments."""
+    for raw_segment, raw_resistance in profile.items():
+        segment = int(raw_segment)
+        resistance = float(raw_resistance)
+        if segment < 1 or not math.isfinite(resistance) or resistance <= 0.0:
+            raise ValueError("Branch Rm profiles require positive segment IDs and finite positive values")
+        segment_name = f"Dendrite1_{segment}"
+        segment_pattern = re.compile(
+            rf"(<{re.escape(segment_name)}\b[^>]*>)(.*?)(</{re.escape(segment_name)}\s*>)",
+            re.S,
+        )
+        matches = list(segment_pattern.finditer(model_text))
+        if len(matches) != 1:
+            raise ValueError(
+                f"expected exactly one {segment_name} component; found {len(matches)}"
+            )
+        segment_match = matches[0]
+        segment_block = segment_match.group(0)
+        for channel_name in ("ExcChannel", "InhChannel"):
+            channel_pattern = re.compile(
+                rf"(<{channel_name}\b[^>]*>)(.*?)(</{channel_name}\s*>)", re.S
+            )
+            channels = list(channel_pattern.finditer(segment_block))
+            if len(channels) != 1:
+                raise ValueError(
+                    f"expected exactly one {channel_name} in {segment_name}; found {len(channels)}"
+                )
+            channel_match = channels[0]
+            channel_block = channel_match.group(0)
+            for field in ("Resistance", "FBResistance", "RestingResistance"):
+                if len(re.findall(rf"<{field}\b", channel_block)) != 1:
+                    raise ValueError(f"expected one {field} in {segment_name}.{channel_name}")
+                channel_block = re.sub(
+                    rf"(<{field}\b[^>]*>).*?(</{field}>)",
+                    lambda match, value=format(resistance, ".17g"):
+                        match.group(1) + value + match.group(2),
+                    channel_block,
+                    count=1,
+                    flags=re.S,
+                )
+            segment_block = (
+                segment_block[:channel_match.start()]
+                + channel_block
+                + segment_block[channel_match.end():]
+            )
+        model_text = (
+            model_text[:segment_match.start()]
+            + segment_block
+            + model_text[segment_match.end():]
+        )
+    return model_text
+
+
+def apply_branch_segment_rm_profile_to_train(
+    train: Path, profile: dict[int, float]
+) -> list[str]:
+    """Apply Rm after SoftCold and suppress the known trainer reset/build paths."""
+    updated_files: list[str] = []
+    for filename in ("Model_00.xml", "Parameters_00.xml"):
+        path = train / filename
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        text = path.read_text(encoding="utf-8")
+        if get_tag(text, "ResetToUntrainedState") is None:
+            raise ValueError(f"ResetToUntrainedState missing after SoftCold reset in {path}")
+        if get_tag(text, "StructureBuildMode") is None:
+            raise ValueError(f"StructureBuildMode missing after SoftCold reset in {path}")
+        text = set_tag_all(text, "ResetToUntrainedState", "0")
+        # The top-level trainer otherwise calls BuildStructure() in ABuild and
+        # replaces the loaded neuron. These flags suppress that known overwrite
+        # path; the live channel values still need confirmation in C++ audit.
+        text = set_tag_all(text, "StructureBuildMode", "2")
+        path.write_text(
+            apply_branch_segment_rm_profile(text, profile),
+            encoding="utf-8",
+            newline="",
+        )
+        updated_files.append(filename)
+    return updated_files
+
+
+def dendrite_tips_above_one(model_text: str) -> list[str]:
+    tips = sorted(set(re.findall(r"<Dendrite(\d+)_(\d+)\b", model_text)))
+    return [f"Dendrite{a}_{b}" for a, b in tips if int(b) > 1]
+
+
+def tip_indices(model_text: str) -> list[int]:
+    return sorted({int(b) for b in re.findall(r"<Dendrite\d+_(\d+)\b", model_text)})
+
+
+def read_need(params: Path | str) -> str:
+    text = params if isinstance(params, str) else params.read_text(encoding="utf-8")
+    return (get_tag(text, "IsNeedToTrain") or "").strip()
+
+
+def assert_train_cold_flags(params: Path, *, mode: ColdMode) -> None:
+    """Pre-NM XML contract after soft/strip cold (not live C++ post-ResetToUntrained)."""
+    assert_train_cold_xml_before_nm(params, mode=mode)
+
+
+def assert_train_cold_xml_before_nm(params: Path, *, mode: ColdMode) -> None:
+    t = params.read_text(encoding="utf-8")
+    need = get_tag(t, "IsNeedToTrain")
+    autocal = get_tag(t, "AutoCalibrateFixedLTZThreshold")
+    L = " ".join((get_tag(t, "DendriteLength") or "").replace(",", " ").split())
+    tipr = " ".join((get_tag(t, "TipSynapseResistance") or "").replace(",", " ").split())
+    sbm_all = get_all_tags(t, "StructureBuildMode")
+    errs: list[str] = []
+    if need != "1":
+        errs.append(f"Need={need}")
+    if autocal != "0":
+        errs.append(f"AutoCal={autocal} (want 0)")
+    if L != L_COLD:
+        errs.append(f"L={L}")
+    if tipr != TIPR_COLD:
+        errs.append(f"TipR={tipr}")
+    if not sbm_all:
+        errs.append("StructureBuildMode missing")
+    elif any(s != "2" for s in sbm_all):
+        errs.append(f"StructureBuildMode={sbm_all} (want all 2)")
+    if errs:
+        raise SystemExit(f"cold flags fail ({mode}): {', '.join(errs)}")
+
+
+def write_cold_reset_contract(train: Path, *, mode: ColdMode = "soft") -> Path:
+    """Record XML-before-NM and expected runtime after C++ ResetToUntrained (TL-02).
+
+    Branch uses the last dendrite as its reference anchor. Reset temporarily sets
+    its length to 0, then BuildStructure clamps runtime lengths to the minimum 1.
+    SoftCold fix (2026-09-27): SBM=2 everywhere; Model tip-1 only (no fat cable).
+    """
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8") if params.exists() else ""
+    mt = model.read_text(encoding="utf-8") if model.exists() else ""
+    neuron = (get_tag(pt, "NeuronClassName") or "").strip()
+    # The neuron class and the trainer class are separate parameters. Branch
+    # experiments commonly use an ordinary NSPNeuron class with
+    # NeuronTimeLearnerBranch configured in Parameters_00.xml.
+    is_branch = (
+        "Branch" in neuron
+        or "TimeLearnerBranch" in neuron
+        or re.search(r"<\s*NeuronTimeLearnerBranch(?:\s|>)", pt) is not None
+    )
+    L_xml = " ".join((get_tag(pt, "DendriteLength") or "").replace(",", " ").split())
+    tipr_xml = " ".join((get_tag(pt, "TipSynapseResistance") or "").replace(",", " ").split())
+    base_rs_xml = " ".join((get_tag(pt, "SynapseResistanceBase") or "").replace(",", " ").split())
+    preserve_loaded_tips = (get_tag(pt, "UseLoadedTipResistanceOnUntrainedReset") or "").strip() == "1"
+    n = len(L_xml.split()) if L_xml else 4
+    tips = tip_indices(mt) if mt else []
+    max_seg = max(tips) if tips else 0
+    sbm_params = get_all_tags(pt, "StructureBuildMode")
+    sbm_model = get_all_tags(mt, "StructureBuildMode") if mt else []
+    if is_branch and n >= 1:
+        # ResetToUntrained sets the reference length to 0 before rebuilding;
+        # Branch::BuildStructure clamps every length below 1, including the
+        # reference, so this contract records the runtime state after reset.
+        L_runtime = " ".join(["1"] * n)
+        note = (
+            "last dendrite is the Branch reference anchor; ResetToUntrained "
+            "sets it to 0 before BuildStructure clamps runtime length to 1"
+        )
+    else:
+        L_runtime = L_COLD if n == 4 else " ".join(["1"] * max(n, 1))
+        note = "classic ResetToUntrained keeps L=1 on all dendrites"
+    payload = {
+        "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+        "mode": mode,
+        "softcold_fix": "2026-09-27_sbm2_strip_tip1",
+        "neuron_class": neuron,
+        "is_branch": is_branch,
+        "xml_before_nm": {
+            "DendriteLength": L_xml,
+            "SynapseResistanceBase": base_rs_xml,
+            "TipSynapseResistance": tipr_xml,
+            "IsNeedToTrain": (get_tag(pt, "IsNeedToTrain") or "").strip(),
+            "AutoCalibrateFixedLTZThreshold": (
+                get_tag(pt, "AutoCalibrateFixedLTZThreshold") or ""
+            ).strip(),
+            "ResetToUntrainedState": (get_tag(pt, "ResetToUntrainedState") or "").strip(),
+            "UseLoadedTipResistanceOnUntrainedReset": (
+                get_tag(pt, "UseLoadedTipResistanceOnUntrainedReset") or ""
+            ).strip(),
+            "FixedLTZThreshold": (get_tag(pt, "FixedLTZThreshold") or "").strip(),
+            "StructureBuildMode_all": sbm_params,
+            "NumDendriteMembraneParts": (get_tag(pt, "NumDendriteMembraneParts") or "").strip(),
+            "NumDendriteMembranePartsVec": (
+                get_tag(pt, "NumDendriteMembranePartsVec") or ""
+            ).strip(),
+        },
+        "model_topology": {
+            "max_seg": max_seg,
+            "tip_indices": tips,
+            "StructureBuildMode_all": sbm_model,
+            "expect_max_seg_le": 1,
+            "DelayLenOf_at_L1": 0.0,
+            "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1",
+        },
+        "expected_runtime_after_reset": {
+            "DendriteLength": L_runtime,
+            "TipSynapseResistance_source": (
+                "loaded TipSynapseResistance vector (explicit opt-in)"
+                if preserve_loaded_tips
+                else "UntrainedTipSynapseResistance snapshot, or SynapseResistanceBase "
+                     "when no untrained snapshot exists"
+            ),
+            "TipSynapseResistance": tipr_xml if preserve_loaded_tips else None,
+            "SynapseResistanceBase": base_rs_xml,
+            "reference_dendrite_index": (n - 1) if is_branch and n >= 1 else None,
+            "IsNeedToTrain": "1",
+            "StructureBuildMode": "2",
+            "note": note,
+        },
+        "model_exists": model.exists(),
+        "project_autosave_model_time_interval": (
+            get_tag(
+                (train / "Project.ini").read_text(encoding="utf-8")
+                if (train / "Project.ini").exists()
+                else "",
+                "ProjectAutoSaveModelTimeInterval",
+            )
+            or "0"
+        ),
+    }
+    out = train / "cold_reset_contract.json"
+    out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return out
+
+
+def _ensure_tag(text: str, tag: str, value: str, *, after_tag: str | None = None) -> str:
+    """Set tag value, or insert a minimal tag block if missing."""
+    if re.search(rf"<{tag}\b", text):
+        return set_tag(text, tag, value, 1)
+    # Match TimeLearner property attrs (bool)
+    block = f'<{tag} Type="b" PType="257" IoType="17">{value}</{tag}>'
+    if after_tag and re.search(rf"</{after_tag}>", text):
+        return re.sub(rf"(</{after_tag}>)", rf"\1\n\t\t\t\t\t\t\t{block}", text, count=1)
+    if re.search(r"</IsNeedToTrain>", text):
+        return re.sub(r"(</IsNeedToTrain>)", rf"\1\n\t\t\t\t\t\t\t{block}", text, count=1)
+    return text
+
+
+def _cold_params_common(t: str, neuron: str) -> str:
+    t = set_tag(t, "IsNeedToTrain", "1", 1)
+    t = force_structure_build_mode(t, "2")
+    t = set_tag(t, "NeuronClassName", neuron, 0)
+    t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
+    t = set_tag(t, "DendriteLength", L_COLD, 1)
+    t = set_tag(t, "NumDendriteMembranePartsVec", L_COLD, 0)
+    t = sync_membrane_parts_scalar(t, "1")
+    t = set_tag(t, "InitialSomaPotential", "0 0 0 0", 1)
+    # Gold Done/tiprmin XML often leaves a recognition mid; force silent for cold train.
+    t = set_tag(t, "FixedLTZThreshold", "1", 1) if re.search(r"<FixedLTZThreshold\b", t) else _ensure_tag(t, "FixedLTZThreshold", "1", after_tag="IsNeedToTrain")
+    t = set_tag(t, "LTZThreshold", "1", 1) if re.search(r"<LTZThreshold\b", t) else t
+    t = set_tag(t, "CalibratedFixedLTZThreshold", "1", 1) if re.search(r"<CalibratedFixedLTZThreshold\b", t) else t
+    # Gold Done XML often lacks this tag — must inject or soft-cold never rebuilds
+    t = _ensure_tag(t, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
+    t = set_tag(t, "UseFixedLTZThreshold", "0", 1) if re.search(r"<UseFixedLTZThreshold\b", t) else _ensure_tag(t, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    t = _ensure_tag(t, "AutoCalibrateFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    return t
+
+
+def _cold_model_common(mt: str, neuron: str) -> str:
+    mt = re.sub(r'(<Neuron Class=")[^"]+(">)', rf"\g<1>{neuron}\2", mt, count=1)
+    mt = set_tag(mt, "NeuronClassName", neuron, 0)
+    mt = set_tag(mt, "DendriteLength", L_COLD, 0)
+    mt = set_tag(mt, "NumDendriteMembranePartsVec", L_COLD, 0)
+    mt = sync_membrane_parts_scalar(mt, "1")
+    mt = set_tag(mt, "TipSynapseResistance", TIPR_COLD, 1)
+    mt = set_tag(mt, "InitialSomaPotential", "0 0 0 0", 1)
+    mt = set_tag(mt, "IsNeedToTrain", "1", 1)
+    mt = force_structure_build_mode(mt, "2")
+    if re.search(r"<FixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "FixedLTZThreshold", "1", 1)
+    if re.search(r"<LTZThreshold\b", mt):
+        mt = set_tag(mt, "LTZThreshold", "1", 1)
+    if re.search(r"<CalibratedFixedLTZThreshold\b", mt):
+        mt = set_tag(mt, "CalibratedFixedLTZThreshold", "1", 1)
+    mt = _ensure_tag(mt, "ResetToUntrainedState", "1", after_tag="IsNeedToTrain")
+    mt = _ensure_tag(mt, "UseFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    mt = _ensure_tag(mt, "AutoCalibrateFixedLTZThreshold", "0", after_tag="IsNeedToTrain")
+    return mt
+
+
+def soft_cold_reset_train(
+    train: Path, *, autosave_model_s: int = DEFAULT_AUTOSAVE_MODEL_S
+) -> None:
+    """SoftCold cold-start: L=1 tags + tip-1 Model (strip fat), SBM=2 all, TipR flat.
+
+    Pre-2026-09-27 kept fat Model cable while L-tag=1 → DelayLenOf=0 desync and
+    leftover StructureBuildMode=0 blocked rebuild (TIMING_SPAN_MISMATCH).
+    """
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8")
+    neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
+    params.write_text(_cold_params_common(pt, neuron), encoding="utf-8")
+    mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
+    mt = strip_dendrite_segments_above_one(mt)
+    mt = rewrite_links_to_tip1(mt)
+    model.write_text(mt, encoding="utf-8")
+    assert_train_cold_xml_before_nm(params, mode="soft")
+    left = dendrite_tips_above_one(mt)
+    if left:
+        raise SystemExit(f"soft-cold Model still has tips>1: {left[:12]}")
+    set_project_autosave_model_interval(train / "Project.ini", autosave_model_s)
+    write_cold_reset_contract(train, mode="soft")
+    print(
+        "soft-cold ok: SBM=2 all, L=1 1 1 1, Model tip-1 only, TipR cold "
+        f"autosave_model_s={autosave_model_s}"
+    )
+
+
+def strip_cold_reset_train(train: Path) -> None:
+    """Strip Model to tip-1 segments + links; SBM=2; AutoCal=0 (same topology as soft)."""
+    params = train / "Parameters_00.xml"
+    model = train / "Model_00.xml"
+    pt = params.read_text(encoding="utf-8")
+    neuron = get_tag(pt, "NeuronClassName") or "NSPNeuronGenAsymRmD001C1e9"
+    params.write_text(_cold_params_common(pt, neuron), encoding="utf-8")
+    mt = _cold_model_common(model.read_text(encoding="utf-8"), neuron)
+    mt = strip_dendrite_segments_above_one(mt)
+    mt = rewrite_links_to_tip1(mt)
+    model.write_text(mt, encoding="utf-8")
+    assert_train_cold_flags(params, mode="strip")
+    left = dendrite_tips_above_one(mt)
+    if left:
+        raise SystemExit(f"strip Model still has tips>1: {left[:12]}")
+    write_cold_reset_contract(train, mode="strip")
+
+def cold_reset_train(train: Path, *, mode: ColdMode = "soft") -> None:
+    if mode == "soft":
+        soft_cold_reset_train(train)
+    else:
+        strip_cold_reset_train(train)
+
+
+def apply_tiprmin(paths: list[Path]) -> None:
+    for p in paths:
+        if not p.exists():
+            continue
+        t = p.read_text(encoding="utf-8").replace(",", ".")
+        t = set_tag(t, "TipSynapseResistance", TIPR_RMIN, 1)
+        p.write_text(t, encoding="utf-8")
+
+
+def read_lengths(params: Path) -> list[int]:
+    raw = get_tag(params.read_text(encoding="utf-8"), "DendriteLength") or ""
+    return [int(float(x)) for x in raw.replace(",", " ").split()]
+
+
+def patch_tip_exc_r(text: str, tips: list[int], *, branch: bool) -> str:
+    """Set tip ExcSynapse1 Resistance to TipR@Rmin values (Branch: Dendrite1_L)."""
+    for i, L in enumerate(tips):
+        r = "20000000" if i < 3 else "86000000"
+        if branch:
+            pat = re.compile(
+                rf'(<Dendrite1_{L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">'
+                rf'.*?<Resistance Type="d"[^>]*>)[^<]*(</Resistance>)',
+                re.S,
+            )
+        else:
+            di = i + 1
+            pat = re.compile(
+                rf'(<Dendrite{di}_{L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">'
+                rf'.*?<Resistance Type="d"[^>]*>)[^<]*(</Resistance>)',
+                re.S,
+            )
+        text, n = pat.subn(lambda m, _r=r: m.group(1) + _r + m.group(2), text, count=1)
+        if not n:
+            print(f"WARN: no ExcSynapse Resistance tip L={L}", file=sys.stderr)
+    return text
+
+
+def fix_generator_tip_links(model_text: str, tips: list[int]) -> str:
+    out = model_text
+    for i, L in enumerate(tips, start=1):
+        out = re.sub(
+            rf"(NeuronTimeLearner\.Neuron\.Dendrite{i}_)\d+(\.(?:Exc|Inh)Synapse)",
+            rf"\g<1>{L}\2",
+            out,
+        )
+    return out
+
+
+def fix_branch_tip_links(model_text: str, tips: list[int]) -> str:
+    it = iter(tips)
+    last = tips[-1] if tips else 1
+
+    def repl(m: re.Match[str]) -> str:
+        try:
+            L = next(it)
+        except StopIteration:
+            L = last
+        return f"{m.group(1)}{L}{m.group(3)}"
+
+    return re.sub(
+        r"(NeuronTimeLearnerBranch\.Neuron\.Dendrite1_)(\d+)(\.(?:Exc|Inh)Synapse)",
+        repl,
+        model_text,
+    )
+
+
+def overlay_neuron(train_model: Path, test_model: Path) -> None:
+    train = train_model.read_text(encoding="utf-8")
+    test = test_model.read_text(encoding="utf-8")
+    mn = re.search(r'(<Neuron Class="[^"]+">.*?</Neuron>)', train, re.S)
+    if not mn:
+        raise SystemExit(f"no Neuron in {train_model}")
+    test2, n = re.subn(
+        r'<Neuron Class="[^"]+">.*?</Neuron>', mn.group(1), test, count=1, flags=re.S
+    )
+    if not n:
+        raise SystemExit(f"no Neuron in {test_model}")
+    test_model.write_text(test2, encoding="utf-8")
+
+
+def first_tip_exc_r(model: Path, *, branch: bool, tip_L: int = 1) -> str:
+    t = model.read_text(encoding="utf-8")
+    if branch:
+        pat = rf'<Dendrite1_{tip_L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">.*?<Resistance Type="d"[^>]*>([^<]*)</Resistance>'
+    else:
+        pat = rf'<Dendrite1_{tip_L} Class="[^"]+">.*?<ExcSynapse1 Class="[^"]+">.*?<Resistance Type="d"[^>]*>([^<]*)</Resistance>'
+    m = re.search(pat, t, re.S)
+    return (m.group(1).strip().replace(",", ".") if m else "")
+
+
+def post_train_hygiene(
+    root: Path,
+    family: Family,
+    *,
+    force_python_hygiene: bool = False,
+) -> None:
+    """FastSpan pre-gate hygiene. Branch full prepare is done by phase8_tiprmin_gate.
+
+    When Train has EnablePostTrainTuning on (default) and TipR already looks
+    post-tuned (CanonRmin / FlatLastR), skip Python apply_tiprmin / tip Exc patch.
+    Use force_python_hygiene=True to always apply tiprmin (debug).
+    """
+    train_params = root / "Train" / "Parameters_00.xml"
+    tp = train_params.read_text(encoding="utf-8") if train_params.exists() else ""
+    tipr = get_tag(tp, "TipSynapseResistance")
+    if (
+        not force_python_hygiene
+        and enable_post_train_tuning_on(tp)
+        and tipr_looks_posttuned(tipr)
+    ):
+        print(
+            "post_train_hygiene: skip apply_tiprmin/mid "
+            "(EnablePostTrainTuning on + TipR already canon/flat)"
+        )
+        return
+
+    if family.kind == "branch":
+        # TipR property on Train only; Exc + Test rebuild via phase8 prepare_test
+        apply_tiprmin([root / "Train" / "Parameters_00.xml", root / "Train" / "Model_00.xml"])
+        tips = read_lengths(root / "Train" / "Parameters_00.xml")
+        mp = root / "Train" / "Model_00.xml"
+        mt = patch_tip_exc_r(mp.read_text(encoding="utf-8").replace(",", "."), tips, branch=True)
+        mp.write_text(mt, encoding="utf-8")
+        return
+
+    train, test = root / "Train", root / "Test"
+    apply_tiprmin(
+        [
+            train / "Parameters_00.xml",
+            train / "Model_00.xml",
+            test / "Parameters_00.xml",
+            test / "Model_00.xml",
+        ]
+    )
+    tips = read_lengths(train / "Parameters_00.xml")
+    merge = ROOT / "SelectivityFastSpan" / "scripts" / "merge_train_weights.py"
+    subprocess.check_call(
+        [
+            sys.executable,
+            str(merge),
+            str(train / "Parameters_00.xml"),
+            str(test / "Parameters_00.xml"),
+        ]
+    )
+    overlay_neuron(train / "Model_00.xml", test / "Model_00.xml")
+    mt = (test / "Model_00.xml").read_text(encoding="utf-8").replace(",", ".")
+    mt = fix_generator_tip_links(mt, tips)
+    mt = patch_tip_exc_r(mt, tips, branch=False)
+    (test / "Model_00.xml").write_text(mt, encoding="utf-8")
+    for p in (test / "Parameters_00.xml", test / "Model_00.xml"):
+        t = p.read_text(encoding="utf-8").replace(",", ".")
+        t = set_tag(t, "IsNeedToTrain", "0", 1)
+        t = set_tag(t, "UseFixedLTZThreshold", "1", 1)
+        t = set_tag(t, "AutoCalibrateFixedLTZThreshold", "0", 1)
+        t = set_tag(t, "TipSynapseResistance", TIPR_RMIN, 1)
+        p.write_text(t, encoding="utf-8")
+    # also tip Exc on Train Model
+    mp = train / "Model_00.xml"
+    mt = patch_tip_exc_r(mp.read_text(encoding="utf-8").replace(",", "."), tips, branch=False)
+    mp.write_text(mt, encoding="utf-8")
+
+
+def snapshot_gate(root: Path) -> dict[str, str]:
+    train_p = root / "Train" / "Parameters_00.xml"
+    test_p = root / "Test" / "Parameters_00.xml"
+    model_p = root / "Train" / "Model_00.xml"
+    csv_path = root / "Test" / "SelectivityLog" / "results.csv"
+    tp = train_p.read_text(encoding="utf-8")
+    L = get_tag(tp, "DendriteLength") or ""
+    tipr = (
+        get_tag(test_p.read_text(encoding="utf-8"), "TipSynapseResistance")
+        if test_p.exists()
+        else ""
+    ) or ""
+    thr = (
+        get_tag(test_p.read_text(encoding="utf-8"), "FixedLTZThreshold")
+        if test_p.exists()
+        else ""
+    ) or ""
+    branch = "NeuronTimeLearnerBranch" in (
+        model_p.read_text(encoding="utf-8") if model_p.exists() else ""
+    )
+    tips = read_lengths(train_p) if L else [1]
+    tip1 = first_tip_exc_r(model_p, branch=branch, tip_L=tips[0] if tips else 1) if model_p.exists() else ""
+    out = {
+        "L": L.replace(",", " "),
+        "TipR": tipr.replace(",", " "),
+        "thr": thr.replace(",", "."),
+        "Need": read_need(tp),
+        "InitSoma": (get_tag(tp, "InitialSomaPotential") or "").replace(",", ".")[:64],
+        "tip1_ExcR": tip1,
+        "fires": "",
+        "acc": "",
+        "mode": "",
+        "ok_audit": "",
+        "last_pulse_ok": "0",
+        "n": "0",
+    }
+    if not csv_path.exists():
+        return out
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    m = classify(rows)
+    out.update(
+        {
+            "fires": m.get("fires", ""),
+            "acc": str(m.get("acc_strict", m.get("acc", ""))),
+            "mode": m.get("mode", m.get("mode_legacy", "")),
+            "ok_audit": str(int(bool(m.get("ok_audit")))),
+            "n": str(m.get("n", len(rows))),
+            "last_pulse_ok": last_pulse_ok(rows),
+        }
+    )
+    return out
+
+
+def verdict_family(gold: dict[str, str], r1: dict[str, str], r2: dict[str, str]) -> str:
+    def L(d: dict[str, str]) -> str:
+        return " ".join(d.get("L", "").split())
+
+    def fires(d: dict[str, str]) -> str:
+        return d.get("fires", "")
+
+    if fires(r1) != fires(r2) or L(r1) != L(r2):
+        return "NONDET"
+    try:
+        acc_ok = int(r1.get("acc") or 0) >= 8 and int(r2.get("acc") or 0) >= 8
+    except ValueError:
+        acc_ok = False
+    if r1.get("ok_audit") == "1" and r2.get("ok_audit") == "1" and acc_ok:
+        if fires(r1) == fires(gold) and L(r1) == L(gold):
+            return "REPRO_OK_EXACT"
+        return "REPRO_OK_QUALITY"
+    for r in (r1, r2):
+        if r.get("ok_audit") != "1":
+            return "REPRO_FAIL"
+        if fires(r) != fires(gold):
+            return "REPRO_FAIL"
+    if L(r1) == L(gold) and r1.get("last_pulse_ok") == "1" and r2.get("last_pulse_ok") == "1":
+        return "REPRO_OK"
+    try:
+        if int(r1.get("acc") or 0) >= 7 and int(r2.get("acc") or 0) >= 7:
+            return "REPRO_SOFT"
+    except ValueError:
+        pass
+    return "REPRO_SOFT"
+
+
+def _cold_test_params(dst: Path) -> None:
+    tp = dst / "Test" / "Parameters_00.xml"
+    if not tp.exists():
+        return
+    t = tp.read_text(encoding="utf-8")
+    t = set_tag(t, "IsNeedToTrain", "0", 1)
+    t = set_tag(t, "DendriteLength", L_COLD, 1)
+    t = set_tag(t, "TipSynapseResistance", TIPR_COLD, 1)
+    tp.write_text(t, encoding="utf-8")
+
+
+def prepare_family(
+    family: Family,
+    reps: tuple[int, ...] = (1, 2),
+    *,
+    force: bool = False,
+    mode: ColdMode = "soft",
+) -> list[Path]:
+    REPRO_ROOT.mkdir(parents=True, exist_ok=True)
+    out: list[Path] = []
+    for rep in reps:
+        dst = clone_root(family, rep)
+        if dst.exists():
+            if force:
+                shutil.rmtree(dst)
+            else:
+                print(f"skip existing {dst}")
+                out.append(dst)
+                continue
+        pname = f"{family.clone_name}_r{rep}_{mode}"
+        print(f"clone {family.gold.name} -> {dst} cold={mode}")
+        rsync_clone(family.gold, dst, pname)
+        cold_reset_train(dst / "Train", mode=mode)
+        _cold_test_params(dst)
+        mt = (dst / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+        if mode == "strip":
+            left = dendrite_tips_above_one(mt)
+            if left:
+                raise SystemExit(f"prepare assert failed tips>1: {left}")
+            print("  strip ok L=1 1 1 1 TipR cold AutoCal=0")
+        else:
+            tips = tip_indices(mt)
+            print(f"  soft ok L=1 1 1 1 TipR cold AutoCal=0 tips_max={max(tips) if tips else 0}")
+        out.append(dst)
+    return out
+
+
+def prepare_invest(job_id: str, *, force: bool = False) -> Path:
+    fam_key, mode, _name = INVEST_JOBS[job_id]
+    family = FAMILIES[fam_key]
+    dst = invest_root(job_id)
+    INVEST_ROOT.mkdir(parents=True, exist_ok=True)
+    if dst.exists():
+        if force:
+            shutil.rmtree(dst)
+        else:
+            raise SystemExit(f"refuse existing invest {dst} (use --force)")
+    pname = f"invest_{job_id}_{mode}"
+    print(f"INVEST prepare {job_id}: {family.gold.name} -> {dst} cold={mode}")
+    rsync_clone(family.gold, dst, pname)
+    cold_reset_train(dst / "Train", mode=mode)
+    _cold_test_params(dst)
+    assert_train_cold_flags(dst / "Train" / "Parameters_00.xml", mode=mode)
+    mt = (dst / "Train" / "Model_00.xml").read_text(encoding="utf-8")
+    tips = tip_indices(mt)
+    if mode == "soft":
+        if tips and max(tips) <= 1:
+            print("WARN soft invest: tip max <=1")
+        else:
+            print(f"  soft preflight tips_max={max(tips)}")
+    else:
+        if dendrite_tips_above_one(mt):
+            raise SystemExit("strip invest still has tips>1")
+        print("  strip preflight tip-1 only")
+    return dst
+
+
+def append_compare_row(job_id: str, family: Family, mode: ColdMode, root: Path) -> Path:
+    snap = snapshot_gate(root)
+    gold = snapshot_gate(family.gold)
+    compare = INVEST_ROOT / "COMPARE.md"
+    INVEST_ROOT.mkdir(parents=True, exist_ok=True)
+    if not compare.exists():
+        compare.write_text(
+            "# Cold invest COMPARE\n\n"
+            "| ID | cold | Need_end | L | InitSoma | TipR | tip1_ExcR | thr | fires | acc | ok_audit | last_pulse | vs_gold_L | vs_gold_fires |\n"
+            "|----|------|----------|---|----------|------|-----------|-----|-------|-----|----------|------------|-----------|---------------|\n",
+            encoding="utf-8",
+        )
+    vs_L = "Y" if " ".join(snap.get("L", "").split()) == " ".join(gold.get("L", "").split()) else "N"
+    vs_f = "Y" if snap.get("fires") == gold.get("fires") else "N"
+    line = (
+        f"| {job_id} | {mode} | {snap.get('Need','')} | `{snap.get('L','')}` | "
+        f"`{snap.get('InitSoma','')[:40]}` | `{snap.get('TipR','')[:40]}` | "
+        f"`{snap.get('tip1_ExcR','')}` | {snap.get('thr','')} | `{snap.get('fires','')}` | "
+        f"{snap.get('acc','')} | {snap.get('ok_audit','')} | {snap.get('last_pulse_ok','')} | "
+        f"{vs_L} | {vs_f} |\n"
+    )
+    # replace existing row for same ID if present
+    text = compare.read_text(encoding="utf-8")
+    rows = text.splitlines(keepends=True)
+    out_lines: list[str] = []
+    replaced = False
+    for r in rows:
+        if r.startswith(f"| {job_id} |"):
+            out_lines.append(line)
+            replaced = True
+        else:
+            out_lines.append(r)
+    if not replaced:
+        if out_lines and not out_lines[-1].endswith("\n"):
+            out_lines[-1] += "\n"
+        out_lines.append(line)
+    compare.write_text("".join(out_lines), encoding="utf-8")
+    return compare

@@ -1,0 +1,83 @@
+{
+  "case": "W14_HIST_pa06_ltzone_int",
+  "wave": "W14",
+  "factors": {
+    "template": "historical_asym",
+    "trainer": "NNeuronTimeLearner",
+    "duration_ms": 480,
+    "pattern_family": "PhaseA/Phase6",
+    "normalization_mode": 1,
+    "presynaptic_inhibition": false,
+    "presynaptic_coefficient": 0.0,
+    "branch_nextseg": false,
+    "posttrain_tuning": true,
+    "tipr_mode": 1,
+    "train_t": 160,
+    "description_ru": "Точная повторная проверка исторического случая pa06_ltzone_int: PhaseA/Phase6, 480 мс; исходный Train/Test из Bin@6a7ef63a.",
+    "source_config": "SelectivityPhaseA/EXP06_ltzone_integration",
+    "source_mode": "historical_exact",
+    "source_commit": "6a7ef63adb1b10ff468d7910424fc2ab75e0ad3d",
+    "worker_case": "pa06_ltzone_int",
+    "expect_tipr": "canon",
+    "expect_fires": "10000000",
+    "skip_tipr_mid": true
+  },
+  "source": "SelectivityPhaseA\\EXP06_ltzone_integration",
+  "legacy_noninhibited_template": "SelectivityAsymRm/EXP_span25ms_packA_gen_posttune",
+  "presynaptic_topology_template": "SelectivityAsymRm\\EXP_span25ms_packA_gen_posttune",
+  "presynaptic_class_template": "SelectivityAsymRm\\EXP_span25ms_packA_gen_posttune",
+  "source_mode": "historical_exact",
+  "source_commit": "6a7ef63adb1b10ff468d7910424fc2ab75e0ad3d",
+  "source_files": [
+    {
+      "side": "Test",
+      "file": "Interface.xml",
+      "sha256": "15d469b61539cc15905da7acd80ba1a9dc0aa04661e937d076cd63bef8816865"
+    },
+    {
+      "side": "Test",
+      "file": "Model_00.xml",
+      "sha256": "028e89e702288e7556f7f73b88afa78b43d7bdb4af497f5b52126cbbcd887104"
+    },
+    {
+      "side": "Test",
+      "file": "Parameters_00.xml",
+      "sha256": "18048f4aadfa655fbfd447762c02f2032fe0e41b2871b07ca822dcf2b0e3a8bf"
+    },
+    {
+      "side": "Test",
+      "file": "Project.ini",
+      "sha256": "428b4660dca5b920587f675964701a431d6ad4eeff8938bf7d4b22ed75310b9b"
+    },
+    {
+      "side": "Train",
+      "file": "Interface.xml",
+      "sha256": "15d469b61539cc15905da7acd80ba1a9dc0aa04661e937d076cd63bef8816865"
+    },
+    {
+      "side": "Train",
+      "file": "Model_00.xml",
+      "sha256": "02156e150cc6ecfb069940969ebcad284c1962d06c6be5156b0bd3c97955ffd6"
+    },
+    {
+      "side": "Train",
+      "file": "Parameters_00.xml",
+      "sha256": "88bfc09d4717d778c9fbb21bb38da283633b6acc1674f2efcc00ae0cbe412af6"
+    },
+    {
+      "side": "Train",
+      "file": "Project.ini",
+      "sha256": "b544183c2e9fe242fdc624331251abb67d0f9b4dfe943b53fc905f422679f56f"
+    }
+  ],
+  "source_commits": {
+    "root": "ee4c26ecdcd4c92b62a5a7a00039fd4e6443ac55",
+    "Bin": "01a8a3cf12ce4a887eef0aca104df25c57f2f02c",
+    "PulseLib": "2bb72a3b6b28812c7b00382929f7461bc9faff30"
+  },
+  "console_sha256": null,
+  "matrix_definition_sha256": "6a2fcf4799e09393d277f98cb2209c71a9fe62a61b7298972fe5cafe0783a7d6",
+  "prepared_utc": "2026-10-10T19:30:40.132078+00:00",
+  "note": "Each matched pair starts from the same historical presynaptic-inhibition topology, segment lengths and fixed threshold. The off arm strips the inhibition class suffix and clears inhibition flags; only inhibition and NormalizationMode differ within a pair.",
+  "registry_refreshed_utc": "2026-10-10T20:17:23.402663+00:00"
+}

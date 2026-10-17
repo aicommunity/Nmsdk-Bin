@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "sensor_lab_v1",
+  "title": "Sensor Lab (DHT/Hall/Servo)",
+  "tier": "A",
+  "transport": "custom",
+  "available": true,
+  "runtimeBaud": 57600,
+  "boards": ["uno", "mega2560"],
+  "compatibleShields": ["sensor_shield_v5"],
+  "capabilities": ["custom_sensor_lab"],
+  "hex": {
+    "uno": "sensor_lab/uno.hex",
+    "mega2560": "sensor_lab/mega2560.hex"
+  },
+  "hostPlugin": "sensor_lab_v1",
+  "protocolId": "sensor_lab",
+  "defaultPins": { "dht": "D2", "hall": "A2", "servo": "D9" },
+  "legacyManifestId": "sensor_lab_v1"
+}

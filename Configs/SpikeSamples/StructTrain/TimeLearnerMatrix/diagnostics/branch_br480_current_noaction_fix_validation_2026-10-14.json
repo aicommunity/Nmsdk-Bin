@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "purpose": "Validate the Branch invalid-peak no-action refusal fix with a Release build, targeted C++ tests, the full integration target, and one capped W04 BR480 run.",
+  "host": "10.245.1.17",
+  "storage_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01",
+  "build": {
+    "build_type": "Release",
+    "command": "cmake --build <isolated-build> --target Test_PulseLib_StorageComponents NeuroModelerConsole -j3",
+    "exit_code": 0,
+    "console_sha256": "1443755cb88869de8998d248f2356066358284bc22f2cadd4547a7e59e20e7e8",
+    "test_binary_sha256": "59df51cfdc145bf80ff6743dd052b49a51d9ba3cc01422858752f76177d6eff7",
+    "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/release-current-exact-source-build-20261014.log",
+    "log_sha256": "56ad77cdfacfa6fa92d2dc1e5035c2eb3e7d6da35bc6af2d3213ded5f0f0919b",
+    "source_provenance": {
+      "local_branch": "codex/historical_view",
+      "local_pulselib_commit": "7f97ae74b98a17b0b9cad5f48386a58224587e8b",
+      "server_clone_root_commit": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+      "server_clone_pulselib_gitlink": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+      "branch_source_sha256": "2a1e4e4bf194c5a1af9d8d008485c73d3e26e06ab0529f90baaca48107c1c38d",
+      "note": "The isolated .17 source clone was older than the local branch. The current local PulseLib snapshots needed for this investigation and the current root integration-test file were overlaid from a verified archive before building. This validates those overlaid files, but is not a complete checkout of the local root commit."
+    }
+  },
+  "tests": {
+    "targeted": {
+      "filter": "BranchInvalidPeakNoRecoveryTest.*",
+      "passed": 4,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/branch-invalid-peak-tests-20261014.log",
+      "log_sha256": "7bf08c72aa69f82b5830110e1e54a12b30e112da4a9e5c05c4aa3dc5f68cbbcc"
+    },
+    "full_target": {
+      "test_cases_passed": 33,
+      "test_cases_failed": 0,
+      "exit_code": 139,
+      "termination": "SIGSEGV after Google Test reported all 33 tests passed",
+      "observed_stack": "UAppCore destructor -> UApplication::UnInit -> UEngineControl::PauseChannel -> URdkCoreManager::GetNumChannels",
+      "interpretation": "The test host failed during static application teardown. Its root cause remains unclassified; the process exit is not clean and the full target cannot yet be reported as passing.",
+      "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/all-pulselib-storagecomponents-20261014.log",
+      "log_sha256": "7a593a19759da6facce5afe4b2da9c5a17dfd033a3276abbba506efe99b01889"
+    },
+    "full_target_followup": {
+      "purpose": "Check whether explicitly calling UApplication::UnInit before static destruction makes the full integration binary exit cleanly.",
+      "temporary_change": "Test_PulseLib_Main called ShutdownEngineForPulseLibTests after RUN_ALL_TESTS; that helper called UApplication::UnInit and cleared global UEPtr references. This test-only change was reverted after it failed to produce a reliable full run.",
+      "first_release_build": {
+        "exit_code": 2,
+        "failure": "Compilation rejected assignment of empty braced temporaries to legacy UEPtr because its operator= takes non-const lvalue references; no binary was run.",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/release-testhost-clean-shutdown-build-20261014.log",
+        "log_sha256": "9b28868c1b9a29f3d872a8d6fefee58a191967e8c5b8d562403a7a6ad27f5dc9"
+      },
+      "second_release_build": {
+        "exit_code": 0,
+        "test_binary_sha256": "425f3754d6288494e6950890ff823a00d9b8ebd720f1ee7fcab74a5623ccd632",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/release-testhost-clean-shutdown-v2-build-20261014.log",
+        "log_sha256": "c63dfb21be3a0f91c6c5ef883dbde012cf9fe478880cb27e25823382451a6504"
+      },
+      "followup_run": {
+        "exit_code": 139,
+        "termination": "SIGSEGV during BranchSegmentOrderTransitionTest.GrowsSyncedActivePulseWhenOrderIsBroken, before DecideLength",
+        "observed_stack": "std::vector::_M_fill_assign -> BranchSegmentOrderHarness::SetOrderState -> GrowsSyncedActivePulseWhenOrderIsBroken",
+        "log": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/build-logs/all-pulselib-storagecomponents-clean-shutdown-20261014.log",
+        "log_sha256": "05ad7fb591b9e384e11b605e4b4dc71ce97f4088a2d46a12dcc221740152ee14"
+      },
+      "interpretation": "The explicit-shutdown experiment did not resolve the test target. The changed binary failed in a different place; this does not establish that the lifecycle change caused the crash. Current full-target instability may involve test-harness memory corruption or environment sensitivity and remains unclassified. The temporary lifecycle patch was reverted; no more full-target runs were started."
+    }
+  },
+  "run": {
+    "run_id": "diag-br480-rmin-ratio100-current-branchfix-20261014-01",
+    "case": "W04_BR480_N1_PSIoff",
+    "train_case_alias": "phase6_480",
+    "console_sha256": "1443755cb88869de8998d248f2356066358284bc22f2cadd4547a7e59e20e7e8",
+    "input_archive": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/inputs/branch-perinput-gamma/W04_BR480_N1_PSIoff",
+    "input_manifest_sha256": "3360086e723ff1009acbab7611bb4a73d53b92dec6f9dbb8b74cf6fa1facecd4",
+    "effective_train_parameters_sha256_before_reset": "e06f6a5174288c1d609d0a30e571cbf34f0ed4d7e67a1efbb70f3bc53c4a043d",
+    "conditions": {
+      "Rm_ohm": 10000000,
+      "MaxSynapseToMembraneResistanceRatio": 100,
+      "runtime_Rmin_ohm": 100000,
+      "MaxDendriteLength": 100,
+      "normalization_mode": "parametric",
+      "W3": false,
+      "PSI": false,
+      "EnablePostTrainTuning": false,
+      "max_model_time_seconds": 1200,
+      "monitor_poll_count": 12,
+      "monitor_poll_interval_seconds": 30
+    },
+    "status": {
+      "wrapper_exit_code": 0,
+      "child_exit_code": -15,
+      "stop_reason": "The diagnostic harness reached its 12-poll observation cap and sent SIGTERM; this was not a C++ training refusal.",
+      "convergence": "not_converged_at_stop",
+      "Need": 1,
+      "quality_gate": "not_run",
+      "detection_and_classification_metrics": "not_evaluated"
+    },
+    "trace_summary": {
+      "audit_records_in_provenance": 176,
+      "iteration_records": 175,
+      "audit_bytes": 474012,
+      "audit_sha256": "048c6b00e6e12fd859fe97d6e6bc9ef7aa6c1ecc4336ff0edae612c084020d73",
+      "observed_active_Rs_min_ohm": 290339.0423633868,
+      "observed_active_Rs_max_ohm_including_reset": 86000000,
+      "final_active_Rs_ohm": 414825.76095226884,
+      "Rmin_reached": false,
+      "observed_active_dendrite_length_min": 1,
+      "observed_active_dendrite_length_max": 13,
+      "final_active_dendrite_length": 6,
+      "observed_active_peak_max": 568571292.7813358,
+      "peak_max_finite_and_marked_valid": true,
+      "active_invalid_peak_records": 1,
+      "max_invalid_peak_no_action_counter": 0,
+      "eol_sync_true_records": 0,
+      "eol_amp_true_records": 0,
+      "nonzero_training_failure_reason_records": 0,
+      "NaN_or_infinity_in_audit": false,
+      "final_active_peak": 0.00063433625199804666
+    },
+    "remote_run_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-ratio100-current-branchfix-20261014-01"
+  },
+  "conclusion": {
+    "confirmed": "The four C++ tests pass, including timing-within-tolerance, three-cycle refusal and W3 Rmax exception contracts.",
+    "not_confirmed_by_training_run": "The capped W04 run did not reproduce repeated invalid-peak/no-action behavior, reach Rmin, or converge. It therefore does not validate the runtime refusal path.",
+    "separate_observation": "A finite active peak up to 5.69e8 was marked valid by the current lower-bound-only peak predicate; the model-based upper-validity criterion remains open.",
+    "scope_limit": "The four target Branch regression tests exit cleanly, but the full integration executable has two non-clean runs with different SIGSEGV stacks. The test-host/memory issue remains unclassified and no further runs were started after the second crash."
+  }
+}

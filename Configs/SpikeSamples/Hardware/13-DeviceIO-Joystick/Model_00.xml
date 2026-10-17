@@ -1,0 +1,35 @@
+<Save ModelName="Model">
+	<Model Class="Model">
+		<Parameters>
+			<Activity Type="bool" PType="257" IoType="17">1</Activity>
+			<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">0 0 0</Coord>
+		</Parameters>
+		<Links Type="ULinksList" Size="0"/>
+		<Components>
+			<Firmata Class="ArduinoFirmata">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">4 4 0</Coord>
+					<PortName Type="std::string" PType="257" IoType="17">/dev/ttyACM0</PortName>
+					<BaudRate Type="int" PType="257" IoType="17">57600</BaudRate>
+					<BundledFirmwareId Type="std::string" PType="257" IoType="17">standard_firmata</BundledFirmwareId>
+					<Connect Type="bool" PType="257" IoType="17">0</Connect>
+				</Parameters>
+				<Components/>
+			</Firmata>
+			<DeviceIO Class="ArduinoDeviceIO">
+				<Parameters>
+					<Activity Type="bool" PType="257" IoType="17">1</Activity>
+					<Coord Type="MVector&lt;double&gt;" Size="3" PType="257" IoType="17">12 4 0</Coord>
+					<LinkedFirmataName Type="std::string" PType="257" IoType="17">Firmata</LinkedFirmataName>
+					<ModuleId Type="std::string" PType="257" IoType="17">analog_joystick</ModuleId>
+					<Port Type="std::string" PType="257" IoType="17">A0</Port>
+					<Continuous Type="bool" PType="257" IoType="17">1</Continuous>
+					<ApplyConfig Type="bool" PType="257" IoType="17">0</ApplyConfig>
+					<ReadInput Type="bool" PType="257" IoType="17">0</ReadInput>
+				</Parameters>
+				<Components/>
+			</DeviceIO>
+		</Components>
+	</Model>
+</Save>

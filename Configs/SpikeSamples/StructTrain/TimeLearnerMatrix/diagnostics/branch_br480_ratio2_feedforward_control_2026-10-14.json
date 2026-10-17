@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "case": "W04_BR480_N1_PSIoff",
+  "host": "10.245.1.17",
+  "build": "Linux Release",
+  "canonical_console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+  "common": {
+    "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+    "pulselib_git": "d690aed54aaeae71332e0de378e95017d73a6f16",
+    "bin_git": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+    "Rm_ohm": 10000000,
+    "rs_rm_limit": 2.0,
+    "effective_Rs_bounds_ohm": [
+      5000000,
+      20000000
+    ],
+    "W3": false,
+    "PSI": false,
+    "normalization": "parametric",
+    "gamma_mode_for_no_feedforward_arm": "shared-fixed-005; AutoEstimate=0; UsePerInput=0; stored gamma=0.05; temporary C++ build overrides gamma to 0 only inside FeedforwardResistanceOnLengthGrow",
+    "quality": "not evaluated: all arms refused during C++ training"
+  },
+  "trajectory_csv": "branch_br480_ratio2_feedforward_trajectory_2026-10-14.csv",
+  "runs": [
+    {
+      "run_id": "tl-br480-cold-ratio2-20261014",
+      "fingerprint": "127e64189f28435b77780c7b037770aa39e4b89d02064793196be5776c2afead",
+      "case_fingerprint": "f19f44efdaa3a1272af9ee0382c590203f52ea9211479fe691a8477314881d0f",
+      "gamma_mode": "shared-auto",
+      "feedforward_enabled": true,
+      "temporary_source_patch": null,
+      "status": {
+        "train_status": "cpp_training_failure_3",
+        "training_convergence": "cpp_training_refusal",
+        "training_failure_phase": 5,
+        "training_failure_reason": 3,
+        "separation_quality": "not_evaluated_training_incomplete",
+        "detection_quality": "not_evaluated_training_incomplete",
+        "failure_class": "trainer_refused",
+        "fail_notes": [
+          "cpp_training_refusal:3",
+          "Need=1",
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "final": {
+        "TipSynapseResistance": "20000000 5000000 5000000 20000000",
+        "FixedLTZThreshold": "0.111136",
+        "ResistanceMin": "",
+        "IsNeedToTrain": "1",
+        "EnablePostTrainTuning": "0",
+        "PostTrainTipResistanceMode": "1",
+        "PostTrainTuneComplete": "",
+        "TrainingPhase": "",
+        "DendriteLength": "1 49 89 1"
+      },
+      "reset_lengths": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "reset_rs_mohm": [
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "rmin_mohm": [
+        5.0,
+        5.0,
+        5.0
+      ],
+      "rs_rm_min": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "first_floor_reached": {
+        "1": {
+          "iter": 16,
+          "length": 25,
+          "rs_mohm": 5.0
+        },
+        "2": {
+          "iter": 3,
+          "length": 17,
+          "rs_mohm": 5.0
+        }
+      },
+      "iteration_count": 25,
+      "max_length": 89,
+      "console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+      "branch_source_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+      "source_changed_during_run": false,
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "gitlinks": {
+        "Libraries/Nmsdk-PulseLib": "d690aed54aaeae71332e0de378e95017d73a6f16",
+        "Bin": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+        "Rdk": "b3b2472dc347899af266cd46e64bca2a6ea16fea"
+      },
+      "audit_sha256": "2d7bae9eb3bd005c170db67494819db219a136925a2296d8a92daeed4a67ddef",
+      "audit_bytes": 1129983,
+      "raw_audit": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/tl-br480-cold-ratio2-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log"
+    },
+    {
+      "run_id": "tl-br480-ratio2-fixed005-20261014",
+      "fingerprint": "3aca8e89a1a157224397736cae4d745c74245268d79b7f7f1a155fb73453d250",
+      "case_fingerprint": "8d9c58e6bb10a53dc38bcfe70264d1c38d82c5ffd014c76b96811e0f322d4d41",
+      "gamma_mode": "shared-fixed-005",
+      "feedforward_enabled": true,
+      "temporary_source_patch": null,
+      "status": {
+        "train_status": "cpp_training_failure_3",
+        "training_convergence": "cpp_training_refusal",
+        "training_failure_phase": 5,
+        "training_failure_reason": 3,
+        "separation_quality": "not_evaluated_training_incomplete",
+        "detection_quality": "not_evaluated_training_incomplete",
+        "failure_class": "trainer_refused",
+        "fail_notes": [
+          "cpp_training_refusal:3",
+          "Need=1",
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "final": {
+        "TipSynapseResistance": "20000000 5000000 5000000 20000000",
+        "FixedLTZThreshold": "0.111136",
+        "ResistanceMin": "",
+        "IsNeedToTrain": "1",
+        "EnablePostTrainTuning": "0",
+        "PostTrainTipResistanceMode": "1",
+        "PostTrainTuneComplete": "",
+        "TrainingPhase": "",
+        "DendriteLength": "1 65 89 1"
+      },
+      "reset_lengths": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "reset_rs_mohm": [
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "rmin_mohm": [
+        5.0,
+        5.0,
+        5.0
+      ],
+      "rs_rm_min": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "first_floor_reached": {
+        "1": {
+          "iter": 17,
+          "length": 33,
+          "rs_mohm": 5.0
+        },
+        "2": {
+          "iter": 5,
+          "length": 33,
+          "rs_mohm": 5.0
+        }
+      },
+      "iteration_count": 25,
+      "max_length": 89,
+      "console_sha256": "721cea6649964352920f21380e60b034e0ceaaf852894866260b5962e6d54e9c",
+      "branch_source_sha256": "c0d42521ecc97d08d3e073f0feb12cd9fa170afe25deda65179fb142135ce708",
+      "source_changed_during_run": false,
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "gitlinks": {
+        "Libraries/Nmsdk-PulseLib": "d690aed54aaeae71332e0de378e95017d73a6f16",
+        "Bin": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+        "Rdk": "b3b2472dc347899af266cd46e64bca2a6ea16fea"
+      },
+      "audit_sha256": "41a1e16830c077dc6a2cba0da71ece51db507a70ec04f75a15151ab6b748a6d0",
+      "audit_bytes": 1133241,
+      "raw_audit": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/tl-br480-ratio2-fixed005-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log"
+    },
+    {
+      "run_id": "tl-br480-ratio2-nofeedforward-20261014",
+      "fingerprint": "5842a810665571e67563e63955d588386df73c86da9f3c92c048bc29a113f5c7",
+      "case_fingerprint": "0bf2f241287a278b98060be4069d505b179fa3a07fa56c25c22b114e3345cba4",
+      "gamma_mode": "shared-fixed-005",
+      "feedforward_enabled": false,
+      "temporary_source_patch": "Temporary C++ diagnostic in FeedforwardResistanceOnLengthGrow used gamma=0; source was restored after the run.",
+      "status": {
+        "train_status": "cpp_training_failure_3",
+        "training_convergence": "cpp_training_refusal",
+        "training_failure_phase": 5,
+        "training_failure_reason": 3,
+        "separation_quality": "not_evaluated_training_incomplete",
+        "detection_quality": "not_evaluated_training_incomplete",
+        "failure_class": "trainer_refused",
+        "fail_notes": [
+          "cpp_training_refusal:3",
+          "Need=1",
+          "tipr_class=other expect=canon"
+        ]
+      },
+      "final": {
+        "TipSynapseResistance": "20000000 20000000 5000000 20000000",
+        "FixedLTZThreshold": "0.111136",
+        "ResistanceMin": "",
+        "IsNeedToTrain": "1",
+        "EnablePostTrainTuning": "0",
+        "PostTrainTipResistanceMode": "1",
+        "PostTrainTuneComplete": "",
+        "TrainingPhase": "",
+        "DendriteLength": "1 65 89 1"
+      },
+      "reset_lengths": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "reset_rs_mohm": [
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "rmin_mohm": [
+        5.0,
+        5.0,
+        5.0
+      ],
+      "rs_rm_min": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "first_floor_reached": {
+        "2": {
+          "iter": 15,
+          "length": 89,
+          "rs_mohm": 5.0
+        }
+      },
+      "iteration_count": 27,
+      "max_length": 89,
+      "console_sha256": "36de46356038494ec53cc4c363546702d75ac0373a2c4467d4714afeed5a9a71",
+      "branch_source_sha256": "65c0f96ebd1b2753daf9bf522126ab9103c84d2b94d1ba2d6cd74b2d9f13bb66",
+      "source_changed_during_run": false,
+      "root_git": "b4336f7475d709e0139620d2ec6325c9c506c80a",
+      "gitlinks": {
+        "Libraries/Nmsdk-PulseLib": "d690aed54aaeae71332e0de378e95017d73a6f16",
+        "Bin": "0e080c94f785bbdb7e0b2d76b6b0e23f53faf2c7",
+        "Rdk": "b3b2472dc347899af266cd46e64bca2a6ea16fea"
+      },
+      "audit_sha256": "68975098e625f80e95d9f900604e4e56441caaa929da3011e800aec6e171537e",
+      "audit_bytes": 1253372,
+      "raw_audit": "/media/user/Data/NmsdkRuntime/TimeLearnerAudit-20261014/worktree-f3296ff/Bin/Configs/SpikeSamples/StructTrain/_repro/TimeLearnerMatrixRuns/tl-br480-ratio2-nofeedforward-20261014/W04/W04_BR480_N1_PSIoff/attempt-0001/Train/TimeLearnerTrainingAudit.log"
+    }
+  ],
+  "conclusion": "All three arms refuse with phase=5/reason=3/Need=1, no quality result. With feedforward disabled, Rs remains 20M while input 2 grows from L=1 to L=89; after its timing error reaches 1.43ms (within SyncTolerance=20ms), the amplitude controller lowers Rs geometrically 20M→12.001M→7.202M→5M while measured peak remains around 1e-5..3e-5 against an initial 0.06999. The next input then grows to L=65 and has invalid peaks. Thus feedforward is not necessary for Rs to reach its floor, and disabling it does not restore convergence; it changes when Rs falls and which active input reaches the floor. This is a single diagnostic condition, not proof of impossibility."
+}

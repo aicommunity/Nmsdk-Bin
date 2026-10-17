@@ -1,0 +1,43 @@
+{
+  "phase": "xml_before_nm_vs_expected_runtime_after_cpp_reset",
+  "mode": "soft",
+  "softcold_fix": "2026-09-27_sbm2_strip_tip1",
+  "neuron_class": "NSPNeuronGenAsymRmD001C1e9",
+  "is_branch": false,
+  "xml_before_nm": {
+    "DendriteLength": "1 1 1 1",
+    "TipSynapseResistance": "86000000 86000000 86000000 86000000",
+    "IsNeedToTrain": "1",
+    "AutoCalibrateFixedLTZThreshold": "0",
+    "ResetToUntrainedState": "1",
+    "FixedLTZThreshold": "1",
+    "StructureBuildMode_all": [
+      "2",
+      "2"
+    ],
+    "NumDendriteMembraneParts": "",
+    "NumDendriteMembranePartsVec": "1 1 1 1"
+  },
+  "model_topology": {
+    "max_seg": 1,
+    "tip_indices": [
+      1
+    ],
+    "StructureBuildMode_all": [
+      "2",
+      "2"
+    ],
+    "expect_max_seg_le": 1,
+    "DelayLenOf_at_L1": 0.0,
+    "note": "DelayLenOf returns 0 when DendriteLength[i]<=1; Model must be tip-1"
+  },
+  "expected_runtime_after_reset": {
+    "DendriteLength": "1 1 1 1",
+    "reference_dendrite_index": null,
+    "IsNeedToTrain": "1",
+    "StructureBuildMode": "2",
+    "note": "classic ResetToUntrained keeps L=1 on all dendrites"
+  },
+  "model_exists": true,
+  "project_autosave_model_time_interval": "10"
+}

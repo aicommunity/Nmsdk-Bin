@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "experiment": "W04_BR480_N1_PSIoff",
+  "run_id": "diag-br480-rmin-perinputgamma-norecovery-20261014-01",
+  "classification": "trainer_refused_without_training_convergence",
+  "purpose": "Recheck the per-input attenuation-gamma variant with the generic Branch invalid-peak/no-action C++ refusal detector.",
+  "server": "10.245.1.17",
+  "raw_attempt": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01/runs/diag-br480-rmin-perinputgamma-norecovery-20261014-01/attempt",
+  "raw_audit": {
+    "path": "Train/TimeLearnerTrainingAudit.log",
+    "records": 18,
+    "sha256": "8b143d1a9d14d1867d20fe032efe79198f05eb6a6fcb24a12185d814d23f70bb"
+  },
+  "provenance": {
+    "root_commit": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "pulse_lib_gitlink": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+    "pulse_lib_source_head_overlay": "e4e02742bcf18ca897acdbda4096cfa79e08ab12",
+    "pulse_lib_branch_cpp_sha256": "07d28bf8cae01835908a3bb2705287e06d63ac3b98666f1b7cca0cf15bf3ef57",
+    "pulse_lib_branch_h_sha256": "97d572109901e61d2e48d8e73f0ba74b8931b4fb02dd70f50eb367f9aaed21a9",
+    "bin_gitlink": "e8c3b246cdb76b7c79137ffd9638d6263b662dbf",
+    "bin_script_source_head_overlay": "363740b4dfa2ed7676bd72bd2be3269e434c8921",
+    "console_sha256": "e458d7f7fdb2e8d97ff71a05f0cd639fb94ec26c2af6cc3e651d64eb5b4a25b5",
+    "build_type": "Release",
+    "source_composition_note": "Root checkout used c0ce with gitlinks recorded above; Branch cpp source was overlaid from PulseLib e4e and then modified by the uncommitted no-recovery patch whose SHA is recorded. Selected current Bin runner/gate scripts were copied for orchestration; their individual hashes are in remote attempt/provenance.json."
+  },
+  "conditions": {
+    "trainer": "Branch",
+    "pattern_duration_ms": 480,
+    "parametric_mode": true,
+    "presynaptic_inhibition": false,
+    "use_per_input_attenuation_gamma": true,
+    "max_synapse_to_membrane_resistance_ratio": 10,
+    "w3_length_escape": false,
+    "sync_tolerance_s": 0.02,
+    "max_dendrite_length": 100,
+    "prepared_train_parameters_sha256_at_launch": "97c50bdcc0a3cc0d6687db8943370a29f1c0c55b1440f3d69e63cff51e9c1d33",
+    "prepared_train_model_sha256_at_launch": "38574b529d683dd5cf3a48cf2f9a737002b739a2ab8020ebda12c01dbbe1ad9b"
+  },
+  "outcome": {
+    "train_status": "cpp_training_failure_3",
+    "training_convergence": "cpp_training_refusal",
+    "training_failure_phase": 5,
+    "training_failure_reason": 3,
+    "need": 1,
+    "quality_gate_evaluated": false,
+    "classification_quality": "not_evaluated_training_incomplete",
+    "iterations_through_refusal": 16,
+    "active_input_index": 1,
+    "invalid_peak_no_action_count": 3,
+    "peak_valid": false,
+    "target_peak_amplitude": 0.015828572406203167,
+    "measured_peak_amplitude": 7.446138508004907e-7,
+    "abs_timing_error_s": 0.070428125,
+    "tip_resistance_ohm": 57647523.959064983,
+    "membrane_resistance_ohm": 10000000,
+    "tip_to_membrane_resistance_ratio": 5.764752395906498,
+    "resistance_min_ohm": 1000000,
+    "dendrite_lengths": [1, 6, 6, 1],
+    "length_status": 0,
+    "synapse_status": 0,
+    "source_archive_unchanged": true,
+    "training_state_mutated_by_runner_before_launch": true
+  },
+  "verification": {
+    "remote_release_build_target": "Test_PulseLib_StorageComponents",
+    "focused_test_filter": "BranchSegmentOrderTransitionTest.*:BranchInvalidPeakNoRecoveryTest.*",
+    "focused_tests_passed": 9,
+    "focused_tests_total": 9,
+    "test_binary_sha256": "257af42fa62e3fb247e055633d5a36339673c914cd51cb8fd98ac2d2b8a9ed4b"
+  },
+  "interpretation": [
+    "Per-input gamma avoided the immediate cross-input gamma transfer seen with shared gamma, but did not produce convergence in this BR480 condition.",
+    "The active input stopped at Rs=57.65 MOhm, well above Rmin=1 MOhm; the refusal was not caused by reaching the resistance floor or MaxDendriteLength.",
+    "After the active peak became invalid, the measured timing error remained outside SyncTolerance. The tested C++ state machine made no length or resistance transition for three consecutive bursts and reported an explicit refusal.",
+    "This is evidence of a no-action control-flow state in this tested trajectory, not proof that the underlying learning problem has no solution. No classification metric was measured."
+  ]
+}

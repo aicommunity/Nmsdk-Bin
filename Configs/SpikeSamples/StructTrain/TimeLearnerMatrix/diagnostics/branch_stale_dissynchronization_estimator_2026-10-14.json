@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "question": "Does Branch segment-order recovery leave a stale timing error that corrupts EstDelayPerSeg?",
+  "remote": {
+    "host": "10.245.1.17 via the .12 tunnel",
+    "source_tree": "/home/user/Nmsdk",
+    "large_logs_root": "/media/user/Data/NmsdkStructTrainArchive/TimeLearnerAudit-20261013-historical_view/diagnostics/branch-rmin-refusal-20261014-01",
+    "build_type": "Release",
+    "root_git_at_launch": "c0ce4280258a6daa5f64d809dc046410ffa0eb8a",
+    "gitlinks_at_launch": {
+      "Bin": "86435676e46a5eb4be33fb065f5d0bad47f3d1cf",
+      "Libraries/Nmsdk-PulseLib": "2b30628ac99130edac42b526b0fe4be4d82e62c2",
+      "Rdk": "b3b2472dc347899af266cd46e64bca2a6ea16fea"
+    },
+    "note": "The server checkout had stale Git SHAs and dirty files. Source and binary SHA-256 values below identify the actual code used."
+  },
+  "pair_comparison": {
+    "same_root_and_gitlinks": true,
+    "same_effective_train_test_config_sha256": true,
+    "config_sha256_before": {
+      "Train/Parameters_00.xml": "97c50bdcc0a3cc0d6687db8943370a29f1c0c55b1440f3d69e63cff51e9c1d33",
+      "Train/Model_00.xml": "38574b529d683dd5cf3a48cf2f9a737002b739a2ab8020ebda12c01dbbe1ad9b",
+      "Test/Parameters_00.xml": "34bb4af77a1cb321bee1fc66400daa36a23ebdc5631af806a98c9e14ae71ed44",
+      "Test/Model_00.xml": "ad4666850d41a0b81674c6c59862399200ea7121398c432595c8ad6abecb896e"
+    },
+    "only_source_file_changed": "Libraries/Nmsdk-PulseLib/Core/NNeuronTimeLearnerBranch.cpp",
+    "baseline_source_sha256": "31de960e40f8ea78c786bbc31f4437471d1c6fec2873f5ba5f87b5f0c66856c5",
+    "fixed_source_sha256": "7b4b155d61425316397a3fbc0a9411f31dc811f82e8762d1855fce8857db654e",
+    "input_manifest_sha256": {
+      "diag-br480-estimator-window-audit-20261014-06": "feca1982d15b3b35063f3e98567fe247511f9f151600fcca1941992b3d5b9e5f",
+      "diag-br480-estimator-fix-audit-20261014-07": "e98e6b0c655f9bc5a9de8368749413b788e1c71985330b8cd46a4bfba3b8aa32"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "diag-br480-estimator-window-audit-20261014-06",
+      "condition": "W04 Branch480, N1, PSI off, per-input attenuation gamma, max Rs/Rm override 10",
+      "console_sha256": "4812508db7524b40665792a597dcc69372622c9ea3b60abf0a02c4750adee3e3",
+      "audit": {
+        "path": "runs/diag-br480-estimator-window-audit-20261014-06/attempt/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 143659,
+        "records": 18,
+        "sha256": "92ae8f94138668bf6754debc575700ade79920e632df706bafb425d1fbcdc90f"
+      },
+      "dynamics": {
+        "path": "runs/diag-br480-estimator-window-audit-20261014-06/workdirs/phase6_480_20261014T003318Z_3161975_530081db_work/Train/TimeLearnerTrainingDynamics.log",
+        "bytes": 72990288,
+        "sha256": "fd845c33c5e4c6d4d4b3a0c92e10a133acc9d2f12f97b7a1548d5f3d850cfbd0"
+      },
+      "outcome": {
+        "training_convergence": "cpp_training_refusal",
+        "need": 1,
+        "phase": 5,
+        "failure_reason": 3,
+        "quality_gate_evaluated": false
+      },
+      "observations": [
+        {
+          "iteration": 11,
+          "length_before": [
+            1,
+            1,
+            6,
+            1
+          ],
+          "length_after": [
+            1,
+            9,
+            6,
+            1
+          ],
+          "active_pulse": 1,
+          "applied_length_delta": 8,
+          "dissynchronization_after_order_repair": 1.5,
+          "interpretation": "stale reset IterationGap remained in the timing-error slot"
+        },
+        {
+          "iteration": 12,
+          "active_pulse": 1,
+          "previous_error_used_by_estimator": 1.5,
+          "current_error": -0.0269,
+          "delay_per_segment_before": 0.05170625,
+          "delay_per_segment_after": 0.091435625,
+          "selected_peak_amplitude": 0.00025865239951161634
+        },
+        {
+          "iteration": 13,
+          "est_delay_per_seg": 0.091435625,
+          "selected_peak_window_rel_sec": [
+            0.7515,
+            0.8715
+          ],
+          "selected_peak_amplitude": 1.9844719952866186e-06,
+          "peak_amplitude_before_window_shift": 0.00025865239951161634,
+          "interpretation": "the larger estimated cable delay moved the selection window away from the earlier peak; the recorded amplitude drop is therefore a measurement-window shift in this trace"
+        }
+      ]
+    },
+    {
+      "run_id": "diag-br480-estimator-fix-audit-20261014-07",
+      "condition": "Same effective W04 Branch480 input and runtime overrides, with stale-error fix",
+      "console_sha256": "b1bb240104930a0fd03e62737b571023989b53fe199dace58e41e36d9b4b7a11",
+      "audit": {
+        "path": "runs/diag-br480-estimator-fix-audit-20261014-07/attempt/Train/TimeLearnerTrainingAudit.log",
+        "bytes": 1049398,
+        "records": 26,
+        "sha256": "5f0a63aa84b964474971e2eb6359981c66e166ad25bf8c98843d6bf74dc394ff"
+      },
+      "dynamics": {
+        "path": "runs/diag-br480-estimator-fix-audit-20261014-07/workdirs/phase6_480_20261014T003550Z_3163875_dd23e1cc_work/Train/TimeLearnerTrainingDynamics.log",
+        "bytes": 596345664,
+        "sha256": "b711a611511d6fabb6609a2260be5ef7f42db538b454d40bab0e1a6d2fbaa5da"
+      },
+      "outcome": {
+        "training_convergence": "cpp_training_refusal",
+        "need": 1,
+        "phase": 5,
+        "failure_reason": 3,
+        "iterations": 24,
+        "lengths": [
+          1,
+          65,
+          89,
+          1
+        ],
+        "active_tip_resistance": 2357943.480374483,
+        "rmin": 1000000,
+        "quality_gate_evaluated": false
+      },
+      "observations": [
+        {
+          "iteration": 14,
+          "length_before": [
+            1,
+            1,
+            89,
+            1
+          ],
+          "length_after": [
+            1,
+            9,
+            89,
+            1
+          ],
+          "active_pulse": 1,
+          "applied_length_delta": 8,
+          "dissynchronization_after_order_repair": 0.42475,
+          "previous_error": 1.5
+        },
+        {
+          "iteration": 15,
+          "active_pulse": 1,
+          "previous_error_used_by_estimator": 0.42475,
+          "delay_per_segment": 0.0027735245
+        },
+        {
+          "iteration": 24,
+          "active_pulse": 1,
+          "peak_valid": false,
+          "training_failure_reason": 3
+        }
+      ]
+    }
+  ],
+  "classification": {
+    "confirmed_implementation_defect": "Branch order-repair early return left Dissynchronization[num] stale; next estimator update treated IterationGap as response to length delta.",
+    "fix_effect": "The stale estimator jump disappeared and the same case progressed further.",
+    "remaining_failure": "The fixed run still refused after repeated invalid peak/no-action at length 65; this is unresolved in the tested conditions, not proof of mathematical impossibility.",
+    "quality": "not_evaluated because C++ training did not reach a terminal success state"
+  },
+  "release_integration_test": {
+    "target": "Test_PulseLib_StorageComponents",
+    "console_sha256": "77bd09073be35623a46266a6d7c47618ca4a9d1b826edc25004a9cca9955ef59",
+    "build_exit_code": 0,
+    "gtest_tests_reported_passed": 34,
+    "ctest_exit_code": 8,
+    "process_exit": "SIGSEGV after all assertions in UAppCore destructor / UApplication::UnInit / UEngineControl::PauseChannel"
+  },
+  "positive_control": {
+    "run_id": "diag-br50gen-estimator-fix-control-20261014-09",
+    "input_bundle": "W10_HIST_br50_gen",
+    "source_commit": "6a7ef63adb1b10ff468d7910424fc2ab75e0ad3d",
+    "manifest_expected_hashes_verified_after_crlf_normalization": true,
+    "console_sha256": "b1bb240104930a0fd03e62737b571023989b53fe199dace58e41e36d9b4b7a11",
+    "training_configuration": "Historical W10 Train/Test in a unique workspace; Release C++ training, configured PostTrain, train_t=320 s, max_polls=20, runtime Rs/Rm max override=1e10",
+    "training_outcome": {
+      "convergence": "Need=0 at poll 9; posttune_complete.flag present; terminal C++ training state",
+      "final_lengths": [15, 12, 6, 1],
+      "final_tip_resistance": [20000000, 20000000, 20000000, 86000000],
+      "train_posttune_flag": {
+        "result": 2,
+        "landscape_ok": false,
+        "inference": false,
+        "mid": 1,
+        "gap": -3.77434e-05,
+        "metrics": [0.0497069, 0.04872, 0.0497446, 0.0494495, 0.0495735, 0.048208, 0.0493166, 0.0468227],
+        "classification": "nonseparable"
+      }
+    },
+    "training_artifacts": {
+      "audit_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/attempt/Train/TimeLearnerTrainingAudit.log",
+      "audit_bytes": 434411,
+      "audit_sha256": "ce68f50a0512a1c2549d5b6870191d519a673fca27bd1d9f1cf21e1238a333a5",
+      "dynamics_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/workdirs/br50_gen_20261014T004233Z_3168142_9d85affb_work/Train/TimeLearnerTrainingDynamics.log",
+      "dynamics_bytes": 437213822,
+      "dynamics_sha256": "77aa7aa7c9759797dfbe3627820a845b72ebfb9f9873ab03b450d5721a854bd5"
+    },
+    "quality_only_retry": {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-12",
+      "training_repeated": false,
+      "gate_rc": 0,
+      "training_state": "skip_train; reused finalized Train state from -09 in a separate Test workspace",
+      "test_stage_cpp_mid": 0.0549386,
+      "gold_threshold_for_comparison": 0.06440315,
+      "test_posttune_flag": {
+        "result": 1,
+        "landscape_ok": true,
+        "inference": true,
+        "mid": 0.0549386,
+        "gap": 0.000344049,
+        "metrics": [0.0551107, 0.0538105, 0.0547666, 0.0545888, 0.0539437, 0.0528919, 0.0538252, 0.0518069]
+      },
+      "quality": {
+        "classification": "pass under the configured Test-stage C++ inference-mid calibration",
+        "n": 8,
+        "accuracy": "8/8",
+        "target_detected": true,
+        "fires": "10000000",
+        "matches": "11111111",
+        "false_alarms": 0,
+        "late_false_positives": 0,
+        "late_false_negatives": 0,
+        "response_quality": "ok_single"
+      },
+      "results_path": "runs/diag-br50gen-estimator-fix-quality-retry-20261014-12/attempt/Test/results.csv",
+      "results_bytes": 1425,
+      "results_sha256": "4f89eafd087331abcfce352903d02a01123171d30a231037e20ed31fc66589e0",
+      "quality_flag_sha256": "7d6d86bbbdfa4dd0387a8856c46a8db7d358f8fb9e0da6a7b2a2e2e076ac704f",
+      "remote_path": "runs/diag-br50gen-estimator-fix-quality-retry-20261014-12/"
+    },
+    "interpretation": "Training convergence, Train-side PostTrain landscape result, and Test classification are separate outcomes. The Train flag remained nonseparable; the Test gate passed after deriving a different threshold on the Test stage (0.0549386 vs gold 0.06440315). Record the 8/8 as this configured protocol result, not as evidence that the Train-side landscape flag was positive or that a fixed untouched threshold also gives 8/8.",
+    "remote_path": "runs/diag-br50gen-estimator-fix-control-20261014-09/"
+  },
+  "setup_attempts": [
+    {
+      "run_id": "diag-br50gen-estimator-fix-control-20261014-08",
+      "console_started": false,
+      "launcher_exit_code": 1,
+      "cause": "FileExistsError: launch shell created the log directory before the runner required the run root to be absent",
+      "effect": "no training process launched and no experiment input modified; preserved as a setup-only attempt; new unique ID -09 used"
+    },
+    {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-10",
+      "console_started": false,
+      "launcher_exit_code": 0,
+      "cause": "copied helper shell script retained Windows CRLF; /usr/bin/env could not resolve bash\\r",
+      "effect": "quality gate setup failed before Console; no training repeated"
+    },
+    {
+      "run_id": "diag-br50gen-estimator-fix-quality-retry-20261014-11",
+      "console_started": false,
+      "launcher_exit_code": 0,
+      "cause": "captured source mirror lacked the AsymRm span50 Test/Parameters_00.xml template required by the Branch gate helper",
+      "effect": "quality gate setup failed before Console; no training repeated"
+    }
+  ]
+}

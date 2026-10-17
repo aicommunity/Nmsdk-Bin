@@ -1,0 +1,141 @@
+{
+  "run_id": "phase6_positive_replay_b32_20261012",
+  "started_utc": "2026-10-12T19:08:03.840523+00:00",
+  "finished_utc": "2026-10-12T20:16:19.1578753Z",
+  "observed_wall_minutes": 68.26,
+  "status": "external_stop_after_stable_plateau",
+  "root_source": "59d2100c42620f1e462d5aabfc3e77077d52126f",
+  "pulselib_source": "b32d7158527beb8c16d25a99fb4f58172ee2ea59",
+  "bin_gitlink": "6633b357d1d5e254c1f75f3d6d999f9597b38c97",
+  "historical_report": {
+    "bin_commit": "b8cef720ec4590cc2778ede5bb5a1e83772c4b29",
+    "generated_utc": "2026-09-21T21:56:00Z",
+    "result": "phase6_480 done_canon; Need=0; C++ inference mid; TipR canonical; fires 10000010; acc=7/8",
+    "root_candidate_same_day": "94094ad72e3aa18eba4d634d1107ee4cec33d33c",
+    "pulselib_candidate_same_day": "fb3a41f5e6409404db3a047fa78edb5ac3e821ec",
+    "original_console_sha256": null,
+    "interpretation": "b32 is an Oct-06 comparison source, not the source revision of the Sep-21 result"
+  },
+  "console": {
+    "path": "E:\\Science-Repo\\nmsdk-git\\temp\\historical_view\\root-full49-source-20261006\\Bin\\Platform\\Win\\NeuroModelerConsole.exe",
+    "sha256": "bc16135159c3e943fdf73d10f503c145d64aabcf0b7ffcc49f8151ed14dcbf0f",
+    "build": "CMake win-msvc-release; MSVC 19.44.35228; Qt 5.15.2 msvc2019_64; RDK_USE_LLM=OFF; tests disabled for isolated runtime build"
+  },
+  "input": {
+    "root_source": "E:\\Science-Repo\\nmsdk-git\\temp\\historical_view\\phase6-historical-root-94094\\Bin\\Configs\\SpikeSamples\\StructTrain\\SelectivityPhaseA\\Phase6\\EXP_480_gen_posttune\\Train",
+    "archive_model_sha256": "0bd1e49c2ebfd91ab47f6214a4579304f759cadb2cfe006574131f396b376f5b",
+    "archive_parameters_sha256": "62138e32036c1f38acf52754276980fe592c7ddfabf6999773aa90dcb5ccdac2",
+    "archive_project_sha256": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69",
+    "archive_interface_sha256": "c5f90131e049aa5de8710d5849ff55b91594879bc8dff0fc1594025549635124",
+    "post_reset_model_sha256": "c5871e2c0b35e43cf78d04627d72642baafd4c8e0ec3903dd9be355f9e37faa5",
+    "post_reset_parameters_sha256": "8922e92ba56015e1beef862cb8b044e3c5728ddc5592251976f7248798e77ac2",
+    "project_sha256": "b31f69e80e81356af20ad6fc911ad0a9e79c6a0b09d66f3f9036be87e214cc69",
+    "need_before_launch": "1",
+    "dendrite_length_before_launch": "1 1 1 1",
+    "tip_resistance_before_launch": "86000000 86000000 86000000 86000000",
+    "posttrain_mode": "1",
+    "fixed_threshold_before_launch": "0.016894"
+  },
+  "command": [
+    "E:\\Science-Repo\\nmsdk-git\\temp\\historical_view\\root-full49-source-20261006\\Bin\\Platform\\Win\\NeuroModelerConsole.exe",
+    "-c",
+    "Project.ini",
+    "-s",
+    "-t",
+    "900",
+    "-x",
+    "-S"
+  ],
+  "monitor": {
+    "poll_seconds": 30,
+    "polls_total": 134,
+    "observed_wall_minutes": 68.26,
+    "external_wall_limit_min": 67.5,
+    "statisticlog_size_bytes": 131311941.0,
+    "process_returncode": null,
+    "stderr": "discarded because candidate's Glog file observer emits repeated file-open errors; stdout retained"
+  },
+  "completion_evidence": {
+    "persisted_need": "1",
+    "cpp_posttune_flag_exists": false,
+    "flag_text": "",
+    "classification": "incomplete_external_stop_not_cpp_done_not_cpp_refusal"
+  },
+  "final_trace_state": {
+    "stimulus_iter": [
+      "50"
+    ],
+    "sample_index": 208173,
+    "model_time_s": 104.0865,
+    "lengths": [
+      "97",
+      "81",
+      "49",
+      "1"
+    ],
+    "tip_resistance_ohm": [
+      "100000000000",
+      "100000000000",
+      "100000000000",
+      "86000000"
+    ],
+    "last_abs_dt_s": [
+      "0.016000000000005343",
+      "0.016000000000003622",
+      "0.014500000000002178",
+      "1.5009999999999999"
+    ],
+    "amp_error_initial_minus_peak": [
+      "-0.063644951888278789",
+      "-0.063896146596776782",
+      "-0.04843741406418034",
+      "0"
+    ],
+    "no_improve_count": [
+      "1",
+      "2",
+      "1",
+      "0"
+    ],
+    "resistance_status": [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "effective_gain": [
+      "0.40000000000000002",
+      "0.40000000000000002",
+      "0.40000000000000002",
+      "0.40000000000000002"
+    ],
+    "sync_tolerance_s": 0.02,
+    "max_dendrite_length": 100
+  },
+  "observations": [
+    "At model time 104.0865 s the three trainable LastAbsDt values were 0.016, 0.016, 0.0145 s and hence within the 0.02 s SyncTolerance.",
+    "Lengths were 97, 81, 49, 1; none was at MaxDendriteLength=100. They remained unchanged from about model time 79.5 s through the external stop.",
+    "All three trainable TipR values were 100G at the final sample; AmpDt remained about -63.645mV, -63.896mV, -48.437mV. These are overshoots under dt=InitialSomaPotential-MaxIterSomaAmp.",
+    "No C++ posttune completion flag appeared and persisted Need stayed 1. The Console did not complete the requested 900 model seconds before the external wall-time stop.",
+    "The b32 source contains an explicit Rmax-dwell dt<0 hold branch; this observed run did not show length compensation after the synchronized lengths stabilized. This is an observed algorithm path, not proof of universal failure."
+  ],
+  "raw_trace_sha256": {
+    "StimulusIterTrace": "ced7d7a7a95e94e39748ac16ee68eab5ae196e124110bfe757b2de5183aa20a9",
+    "DendriteLengthTrace": "0be7457d873588a738c50ecf7da99b2563d23bad8b5191e949780a25295ce746",
+    "TipSynapseResistanceTrace": "3ae9d93ccaab964a337ab9101f291d70bc6986ba153f17320a30737fe176800e",
+    "AmpDtTrace": "63f6690394b55319903c4e6ee767a031a600a9c4abd8b21c2ffe48330d3ec68b",
+    "LastAbsDtTrace": "efa5cee857f4def5759c8763c4e8a2cfca89999730e9fd7f1d5c29d350442fa6",
+    "NoImproveResistanceTrace": "28e66f0f2a206c811c76fec292c80325a79e04b0dcdbf97ec26abdb1dcadc5e8",
+    "ResistanceStatusTrace": "5bd51ba3f29a9aac574756b2f6a8ef9df28e7b5cb55f53d20b72a16abfc4888f",
+    "EffectiveGainTrace": "fcfb53d9c21874d6ff8e05e6fed12c9edac1a5d6e0a9e0c7aa6dd9d02bd2b687"
+  },
+  "console_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "final_params_sha256": "8922e92ba56015e1beef862cb8b044e3c5728ddc5592251976f7248798e77ac2",
+  "final_model_sha256": "c5871e2c0b35e43cf78d04627d72642baafd4c8e0ec3903dd9be355f9e37faa5",
+  "iteration_audit": {
+    "path": "Bin\\Configs\\SpikeSamples\\StructTrain\\TimeLearnerMatrix\\diagnostics\\phase6_historical_positive_replay_oct06_iteration_audit_2026-10-12.csv",
+    "sha256": "5d4d01e68edbba693ac34cccdbdccca3ef7bdd4be06f583b73dc6be738d155af",
+    "rows": 51,
+    "sampling": "first trace sample of each distinct non-empty StimulusIterTrace value; other vectors taken from the last sample at or before that model time"
+  }
+}

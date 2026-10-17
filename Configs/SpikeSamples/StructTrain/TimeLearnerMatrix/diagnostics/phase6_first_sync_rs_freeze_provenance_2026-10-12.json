@@ -1,0 +1,197 @@
+{
+  "study": "Classic Phase6_480 first-global-sync resistance freeze",
+  "date": "2026-10-12",
+  "scope": "diagnostic ablation only; no classification-quality target",
+  "shared_inputs": {
+    "historical_train_source": "PHASE6 EXP_480_gen_posttune/Train",
+    "historical_input_parameters_sha256": "62138e32036c1f38acf52754276980fe592c7ddfabf6999773aa90dcb5ccdac2",
+    "runtime_reset_parameters_sha256": "a8e334fce7fb7ec2d87918edcbf52d2b5347e426bb91d8442c2af8aec204cd11",
+    "root_commit": "f220f6b39ea4310d3d15d4939532f5ad9bac4a2f",
+    "bin_commit": "30ec54c21d13009bb5f907b46f2c91de1986361d",
+    "normalization_mode": 1,
+    "auto_scale_iteration_gap": 0,
+    "iteration_gap_seconds": 1.5,
+    "est_delay_per_segment_seconds": 0.01,
+    "sync_tolerance_seconds": 0.02,
+    "attenuation_gamma": 0.05,
+    "auto_estimate_attenuation_gamma": false,
+    "max_synapse_to_membrane_resistance_ratio": 10000,
+    "runtime_rmin_ohm": 1000,
+    "runtime_rmax_ohm": 100000000000,
+    "w3_length_escape": false,
+    "initial_lengths": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "initial_tip_resistance_ohm": [
+      86000000,
+      86000000,
+      86000000,
+      86000000
+    ],
+    "console_command": "-c Project.ini -s -t 900 -x -S"
+  },
+  "paired_provenance": [
+    {
+      "run": "baseline, resistance updates enabled",
+      "console_sha256": "048ff11ee26e18f838be6d6cdb1f0fa847ade3587b88d2392a1d18ff9aa5f9f8",
+      "pulselib_source_at_build": "10a954906349c724533e72d24fce24b0417b8a4d plus uncommitted C++ gamma diagnostic switch and audit fields",
+      "monitor_outcome": "exited",
+      "console_rc_after_external_limit": 1,
+      "final_iteration": 37,
+      "need": 1,
+      "phase": 0,
+      "failure_reason": 0,
+      "eol_sync": 0,
+      "lengths": [
+        53,
+        41,
+        25,
+        1
+      ],
+      "tip_resistance_ohm": [
+        266461483.03682044,
+        100000000000,
+        1000,
+        86000000
+      ],
+      "last_abs_dt_seconds": [
+        0.02049999999999841,
+        0.014499999999987911,
+        0.014499999999987967,
+        1.501
+      ],
+      "runtime_reset_parameters_sha256": "a8e334fce7fb7ec2d87918edcbf52d2b5347e426bb91d8442c2af8aec204cd11",
+      "pulselib_content_commit_created_after_launch": "4f9dca3"
+    },
+    {
+      "run": "C++ freeze after first global sync",
+      "console_sha256": "1b6006554728555c25c6398128947ec46751b0e78e4617a7cd0109fb7105864b",
+      "pulselib_source_at_build": "4f9dca35bbcd7d2a9547b98dbcb4ac6c99982eb3 plus uncommitted C++ first-sync resistance-freeze control and audit fields",
+      "pulselib_commit_created_after_launch": "30f820c",
+      "monitor_outcome": "monitor_limit",
+      "console_rc_after_external_limit": 1,
+      "first_sync_iteration": 20,
+      "post_sync_iterations_observed": 6,
+      "final_iteration": 26,
+      "need": 1,
+      "phase": 0,
+      "failure_reason": 0,
+      "eol_sync": 1,
+      "eol_amp": 0,
+      "lengths": [
+        51,
+        41,
+        25,
+        1
+      ],
+      "tip_resistance_ohm": [
+        7059309.881655297,
+        255824443.00221515,
+        1000,
+        86000000
+      ],
+      "last_abs_dt_seconds": [
+        0.01650000000000773,
+        0.014500000000002122,
+        0.014500000000002178,
+        1.501
+      ],
+      "runtime_reset_parameters_sha256": "4be08bb960c07adeec0fe60c7513e0ee61748e5a3d1cc00e24c9b5b343d4ebba",
+      "post_sync_observation_limit_requested": 12,
+      "post_sync_observation_limit_reached": false,
+      "stop_reason": "40-minute external monitor limit; six post-sync iterations captured"
+    }
+  ],
+  "paired_observation": {
+    "iterations_0_through_19_equal": true,
+    "fields_compared": [
+      "eol_sync",
+      "eol_amp",
+      "attenuation_gamma",
+      "tip_r",
+      "amp_dt",
+      "last_abs_dt",
+      "length_after",
+      "last_length_delta",
+      "last_length_dendrite",
+      "failure_reason"
+    ],
+    "different_fields_before_freeze": 0,
+    "at_iteration_20": {
+      "baseline": {
+        "eol_sync": 1,
+        "lengths": [
+          51,
+          41,
+          25,
+          1
+        ],
+        "tip_resistance_ohm": [
+          30704506.938975707,
+          408772577.5786583,
+          1000,
+          86000000
+        ],
+        "last_abs_dt_seconds": [
+          0.0165,
+          0.0145,
+          0.0145,
+          1.501
+        ]
+      },
+      "frozen": {
+        "eol_sync": 1,
+        "frozen_state": 1,
+        "lengths": [
+          51,
+          41,
+          25,
+          1
+        ],
+        "tip_resistance_ohm": [
+          7059309.881655297,
+          255824443.00221515,
+          1000,
+          86000000
+        ],
+        "last_abs_dt_seconds": [
+          0.0165,
+          0.0145,
+          0.0145,
+          1.501
+        ]
+      }
+    },
+    "at_iteration_23": {
+      "baseline": {
+        "eol_sync": 0,
+        "lengths": [
+          51,
+          41,
+          25,
+          1
+        ],
+        "first_last_abs_dt_seconds": 0.0205
+      },
+      "frozen": {
+        "eol_sync": 1,
+        "frozen_state": 1,
+        "lengths": [
+          51,
+          41,
+          25,
+          1
+        ],
+        "first_last_abs_dt_seconds": 0.0165
+      }
+    },
+    "classification": "diagnostic evidence that post-sync parametric Rs updates can reopen Classic sync in this PHASE6 condition; not proof of universal behavior or a training defect, and neither run establishes Need=0 in this ablation pair",
+    "raw_logs": [
+      "temp/historical_view/runs/phase6_current_gamma_fixed005_ratio10000_est010_20261012/Train/TimeLearnerTrainingAudit.log",
+      "temp/historical_view/runs/phase6_current_gamma_fixed005_ratio10000_est010_freeze_after_sync_20261012/Train/TimeLearnerTrainingAudit.log"
+    ]
+  }
+}
