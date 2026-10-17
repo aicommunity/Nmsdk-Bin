@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "run_id": "tl-m0-c-w04-86m-11-20261017-01",
+  "case": "W04_BR480_N0_PSIoff",
+  "server": "10.245.1.11",
+  "source": {
+    "root_commit": "d8302bc3e",
+    "pulselib_commit": "282073834",
+    "bin_commit": "9f824fa63",
+    "release_console_sha256": "f8893a3bcd193ddbfbb76ead736112dfaac1914db696c55b935bc377238d2cd3"
+  },
+  "factors": {
+    "trainer": "NNeuronTimeLearnerBranch",
+    "duration_ms": 480,
+    "normalization_mode": 0,
+    "synapse_resistance_step_ohm": 86000000,
+    "training_time_limit_seconds": 900
+  },
+  "training": {
+    "status": "not_converged_at_stop",
+    "need": 1,
+    "cpp_failure_reason": 0,
+    "last_audit_iteration": 440,
+    "eol_sync": 0,
+    "eol_amp": 0,
+    "lengths": [1, 75, 89, 1],
+    "synapse_counts_last_audit": [1, 88, 128, 1],
+    "active_dendrite_at_stop": 1,
+    "peak_valid": [false, false, false, true],
+    "initial_amp": [0, 0.015828572406203167, 0.015781466599319449, 0.015781441636540494],
+    "best_effort": [0, 0, 0, 0],
+    "frames_active_input1": 89,
+    "frames_peak_valid_input1": 13
+  },
+  "classification": {
+    "evaluated": false,
+    "reason": "training_incomplete"
+  },
+  "verdict": {
+    "class": "algorithm_or_protocol_limit_under_tested_conditions",
+    "notes_ru": "На текущем SHA воспроизведён Need=1 с длинами [1,75,89,1] как у matched Step86M на f465f55. Amp-reference для входа 1 захватывается, но валидный измеримый пик на активном этапе 1 редок/субпорогов; best_effort=0; MaxLen не достигнут; C++ refusal нет."
+  },
+  "remote_run_root": "/home/user/TimeLearnerAudit-20261017/dualtrack/runs/tl-m0-c-w04-86m-11-20261017-01"
+}
