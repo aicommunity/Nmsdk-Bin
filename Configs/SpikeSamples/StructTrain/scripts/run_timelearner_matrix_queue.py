@@ -139,6 +139,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
     condition_runtime = {
         "quiet_debug_logs": bool(args.quiet_debug_logs),
         "max_polls": args.max_polls,
+        "stall_autosave_n": args.stall_autosave_n,
         "branch_gamma_mode": args.branch_gamma_mode,
         "classic_gamma_mode": args.classic_gamma_mode,
         "branch_rs_rm_limit": args.branch_rs_rm_limit,
@@ -206,6 +207,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "jobs": args.jobs,
             "quiet_debug_logs": bool(args.quiet_debug_logs),
             "max_polls": args.max_polls,
+            "stall_autosave_n": args.stall_autosave_n,
             "branch_gamma_mode": args.branch_gamma_mode,
             "classic_gamma_mode": args.classic_gamma_mode,
             "branch_rs_rm_limit": args.branch_rs_rm_limit,
@@ -585,6 +587,12 @@ def main() -> int:
     )
     parser.add_argument("--max-polls", type=int)
     parser.add_argument(
+        "--stall-autosave-n",
+        type=int,
+        default=0,
+        help="legacy runner-side Rmax early stop; default 0 so matrix runs end only by C++ status or configured limits",
+    )
+    parser.add_argument(
         "--train-time-limit-override-seconds",
         type=float,
         help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
@@ -606,6 +614,8 @@ def main() -> int:
         raise SystemExit(f"--jobs must be between 1 and this host's logical CPU count ({host_cpu_limit})")
     if args.max_polls is not None and args.max_polls < 1:
         raise SystemExit("--max-polls must be positive")
+    if args.stall_autosave_n < 0:
+        raise SystemExit("--stall-autosave-n must be non-negative")
     if args.train_time_limit_override_seconds is not None and (
         not math.isfinite(args.train_time_limit_override_seconds)
         or args.train_time_limit_override_seconds <= 0
@@ -788,6 +798,7 @@ def main() -> int:
             runner_command.append("--quiet-debug-logs")
         if args.max_polls is not None:
             runner_command.extend(("--max-polls", str(args.max_polls)))
+        runner_command.extend(("--stall-autosave-n", str(args.stall_autosave_n)))
         if args.train_time_limit_override_seconds is not None:
             runner_command.extend((
                 "--train-time-limit-override-seconds",

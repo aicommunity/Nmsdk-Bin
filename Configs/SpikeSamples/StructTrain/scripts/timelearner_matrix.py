@@ -1249,6 +1249,7 @@ def worker(
     *,
     quiet_debug_logs: bool = False,
     max_polls: int | None = None,
+    stall_autosave_n: int = 0,
 ) -> int:
     pv = load_pv()
     data = load_manifest()
@@ -1381,6 +1382,7 @@ def worker(
         run_dir=run_dir,
         train_t=train_time_limit,
         max_polls=max_polls,
+        stall_autosave_n=stall_autosave_n,
         max_rs_rm=spec.get("max_rs_rm"),
         tip_synapse_resistance_ohm=initial_rs_scalar,
         tip_synapse_resistance_values_ohm=initial_rs_vector,
@@ -1401,6 +1403,7 @@ def worker(
         "quiet_debug_logs": quiet_debug_logs,
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
+        "stall_autosave_n": stall_autosave_n,
         "branch_gamma_mode": branch_gamma_mode,
         "classic_gamma_mode": classic_gamma_mode,
         "branch_rs_rm_limit": branch_rs_rm_limit,
@@ -1467,6 +1470,7 @@ def run_wave(
     case_ids: list[str] | None = None,
     quiet_debug_logs: bool = False,
     max_polls: int | None = None,
+    stall_autosave_n: int = 0,
     train_time_limit_override_seconds: float | None = None,
 ) -> int:
     host_cpu_limit = logical_cpu_count()
@@ -1476,6 +1480,8 @@ def run_wave(
         not math.isfinite(train_time_limit_override_seconds) or train_time_limit_override_seconds <= 0
     ):
         raise ValueError("--train-time-limit-override-seconds must be finite and positive")
+    if stall_autosave_n < 0:
+        raise ValueError("--stall-autosave-n must be non-negative")
     data = load_manifest()
     specs = [case for case in data["cases"] if case["wave"] == wave]
     if case_ids is not None:
@@ -1515,6 +1521,7 @@ def run_wave(
         "quiet_debug_logs": quiet_debug_logs,
         "disable_train_statistic_logs": True,
         "max_polls": max_polls,
+        "stall_autosave_n": stall_autosave_n,
         "branch_gamma_mode": run_manifest.get("runtime", {}).get("branch_gamma_mode"),
         "classic_gamma_mode": run_manifest.get("runtime", {}).get("classic_gamma_mode"),
         "branch_rs_rm_limit": run_manifest.get("runtime", {}).get("branch_rs_rm_limit"),
@@ -1569,6 +1576,7 @@ def run_wave(
             command.append("--quiet-debug-logs")
         if max_polls is not None:
             command.extend(("--max-polls", str(max_polls)))
+        command.extend(("--stall-autosave-n", str(stall_autosave_n)))
         env = {
             **os.environ,
             "PYTHONUNBUFFERED": "1",
@@ -1762,6 +1770,12 @@ def main() -> int:
         help="override the worker polling ceiling (30 seconds per poll); useful for slow local simulations",
     )
     parser.add_argument(
+        "--stall-autosave-n",
+        type=int,
+        default=0,
+        help="legacy runner-side Rmax early stop; default 0 so matrix runs end only by C++ status or configured limits",
+    )
+    parser.add_argument(
         "--train-time-limit-override-seconds",
         type=float,
         help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
@@ -1774,6 +1788,7 @@ def main() -> int:
             *args.worker,
             quiet_debug_logs=args.quiet_debug_logs,
             max_polls=args.max_polls,
+            stall_autosave_n=args.stall_autosave_n,
         )
     if args.case:
         raise SystemExit("direct single-case launches are disabled; use run_timelearner_matrix_queue.py --case CASE --no-commit")
@@ -1794,6 +1809,7 @@ def main() -> int:
             case_ids=args.case_ids,
             quiet_debug_logs=args.quiet_debug_logs,
             max_polls=args.max_polls,
+            stall_autosave_n=args.stall_autosave_n,
             train_time_limit_override_seconds=args.train_time_limit_override_seconds,
         )
     parser.error("use --prepare WAVE or --run WAVE")
