@@ -12,12 +12,14 @@
   ],
   "compatibleShields": [],
   "capabilities": [
-    "oled_ssd1306",
     "lcd_1602",
-    "lcd_2004",
+    "oled_ssd1306",
     "display"
   ],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_display_hub/uno.hex",
+    "mega2560": "nmsdk_display_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_display_hub_v1",
   "protocolId": "nmsdk_hub_display_v1",
   "defaultPins": {
@@ -25,5 +27,5 @@
     "scl": "A5"
   },
   "legacyManifestId": "nmsdk_display_hub_v1",
-  "notes": "P2+ Wave 2 display hub."
+  "notes": "Bundled HEX enables SSD1306 OLED and LCD1602. LCD2004 requires a custom build with NMSDK_DISPLAY_HUB_LCD2004 enabled."
 }

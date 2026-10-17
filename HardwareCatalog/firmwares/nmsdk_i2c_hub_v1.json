@@ -14,27 +14,16 @@
     "pca9685_16_ch_pwm"
   ],
   "capabilities": [
-    "ads1115",
-    "adxl345",
-    "aht20",
-    "apds_9960",
-    "bh1750",
     "bme280",
-    "bme680",
-    "bmp280",
     "i2c",
-    "icm_20948",
     "ina219",
-    "mlx90614",
-    "mpu_6050",
     "pca9685",
-    "sgp30",
-    "sht31",
-    "tcs34725",
-    "vl53l0x",
-    "vl53l1x"
+    "vl53l0x"
   ],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_i2c_hub/uno.hex",
+    "mega2560": "nmsdk_i2c_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_i2c_hub_v1",
   "protocolId": "nmsdk_hub_i2c_v1",
   "defaultPins": {
@@ -42,5 +31,5 @@
     "scl": "A5"
   },
   "legacyManifestId": "nmsdk_i2c_hub_v1",
-  "notes": "P2+ I2C hub. Priority flags default 1; extras NMSDK_I2C_HUB_* default 0. Adafruit/BH1750 libs for enabled sensors."
+  "notes": "Bundled Uno/Mega HEX enables BME280, VL53L0X, INA219 and PCA9685. MPU6050 and other catalog sensors require a custom build with their NMSDK_I2C_HUB_* flag and matching libraries enabled; MPU6050 is off by default to fit the Uno flash limit."
 }

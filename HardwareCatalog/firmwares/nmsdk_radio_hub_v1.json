@@ -1,28 +1,36 @@
 {
   "schemaVersion": 1,
   "id": "nmsdk_radio_hub_v1",
-  "title": "Nmsdk Radio Hub (NRF/LoRa/RFID) + ESP32 WiFi twin",
+  "title": "Nmsdk Radio Hub (NRF24/RFID, AVR)",
   "tier": "D",
   "transport": "custom",
   "available": true,
   "runtimeBaud": 57600,
   "boards": [
     "uno",
-    "mega2560",
-    "esp32_devkit"
+    "mega2560"
   ],
   "compatibleShields": [],
   "capabilities": [
     "nrf24",
-    "lora",
     "rfid",
-    "wifi",
     "radio"
   ],
-  "hex": {},
+  "hex": {
+    "uno": "nmsdk_radio_hub/uno.hex",
+    "mega2560": "nmsdk_radio_hub/mega2560.hex"
+  },
   "hostPlugin": "nmsdk_radio_hub_v1",
   "protocolId": "nmsdk_hub_radio_v1",
-  "defaultPins": {},
   "legacyManifestId": "nmsdk_radio_hub_v1",
-  "notes": "P2+ Wave 4. ESP32 twin sketch nmsdk_radio_hub_esp32 @115200."
+  "defaultPins": {
+    "nrf24_ce": "D9",
+    "nrf24_csn": "D10",
+    "rc522_ss": "D8",
+    "rc522_rst": "D7",
+    "spi_mosi": "D11",
+    "spi_miso": "D12",
+    "spi_sck": "D13"
+  },
+  "notes": "Bundled Uno/Mega HEX enables NRF24 and RC522 with separate chip-select/reset pins on the shared SPI bus. ESP32 Wi-Fi twin is tracked as a separate firmware and is not bundled here."
 }
