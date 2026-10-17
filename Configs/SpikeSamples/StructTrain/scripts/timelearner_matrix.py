@@ -385,7 +385,9 @@ def make_runtime_input_overlay(
             "a Branch segment Rm profile without prebuilt initial lengths may only target segment 1, "
             "which survives the standard SoftCold reset"
         )
-    overlay = attempt_dir / "runtime-input-overrides" / wave / case_id
+    # attempt_dir already scopes this copy to a unique wave/case/attempt.
+    # Keep the relative path short for Windows hosts that approach MAX_PATH.
+    overlay = attempt_dir / "input-overlay"
     if overlay.exists():
         raise FileExistsError(f"runtime input overlay already exists: {overlay}")
     overlay.parent.mkdir(parents=True, exist_ok=True)

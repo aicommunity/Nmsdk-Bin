@@ -113,12 +113,16 @@ def config_entries(run_root: Path, provenance: dict[str, Any]) -> list[dict[str,
     for side, subdir in (("Train", "prelaunch-inputs/Train"), ("Test", "effective-inputs/Test/post-gate")):
         source_kind = "exact prelaunch C++ snapshot" if side == "Train" else "effective post-gate Test snapshot"
         if side == "Train" and not (run_root / subdir).is_dir():
-            candidates = list(run_root.glob("runtime-input-overrides/**/Train"))
+            candidates = [run_root / "input-overlay" / "Train"]
+            candidates.extend(sorted(run_root.glob("runtime-input-overrides/**/Train")))
+            candidates = [candidate for candidate in candidates if candidate.is_dir()]
             if candidates:
                 subdir = candidates[0].relative_to(run_root).as_posix()
                 source_kind = "matrix input override; final prelaunch XML not preserved"
         if side == "Test" and not (run_root / subdir).is_dir():
-            candidates = list(run_root.glob("runtime-input-overrides/**/Test"))
+            candidates = [run_root / "input-overlay" / "Test"]
+            candidates.extend(sorted(run_root.glob("runtime-input-overrides/**/Test")))
+            candidates = [candidate for candidate in candidates if candidate.is_dir()]
             if candidates:
                 subdir = candidates[0].relative_to(run_root).as_posix()
                 source_kind = "matrix Test input override; effective gate XML not preserved"
@@ -539,6 +543,10 @@ def add_run(
     paragraph.paragraph_format.line_spacing = 0.9
     paragraph.add_run("\n".join(script_lines) if script_lines else "Сведения о запущенных скриптах не сохранены.").font.size = Pt(7.5)
 
+    # Keep the full trial table together; Word otherwise stranded its final
+    # row on a mostly empty page immediately before the chart page break.
+    if rows:
+        document.add_page_break()
     document.add_heading("Реакции по тестовым примерам", level=2)
     table = document.add_table(rows=1, cols=6)
     table.style = "Table Grid"

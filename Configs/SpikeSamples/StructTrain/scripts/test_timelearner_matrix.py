@@ -54,6 +54,36 @@ class QuietDebugLoggingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 MODULE.set_project_debug_logging(project_ini, enabled=False)
 
+    def test_runtime_overlay_uses_short_path_under_long_attempt_root(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            input_root = root / "immutable-input"
+            for side in ("Train", "Test"):
+                side_dir = input_root / side
+                side_dir.mkdir(parents=True)
+                (side_dir / "Project.ini").write_text(
+                    "<Project><MultiGeneral><DebugModeFlag>1</DebugModeFlag>"
+                    "</MultiGeneral></Project>",
+                    encoding="utf-8",
+                )
+                for filename in ("Model_00.xml", "Parameters_00.xml"):
+                    (side_dir / filename).write_text(
+                        "<Root><NormalizationMode>1</NormalizationMode></Root>",
+                        encoding="utf-8",
+                    )
+            (input_root / "matrix_input_manifest.json").write_text("{}", encoding="utf-8")
+            attempt_dir = root / ("long-attempt-root-" + ("x" * 140))
+            attempt_dir.mkdir()
+
+            overlay, _ = MODULE.make_quiet_debug_input_overlay(
+                input_root, attempt_dir, "W04", "W04_BR480_N1_PSIoff"
+            )
+
+            self.assertEqual(overlay, attempt_dir / "input-overlay")
+            self.assertTrue((overlay / "Train" / "Project.ini").is_file())
+            self.assertTrue((overlay / "Test" / "Project.ini").is_file())
+            self.assertLess(len(str(overlay)), 260)
+
 
 class TrainingLimitOverrideTests(unittest.TestCase):
     def test_default_and_diagnostic_override_are_resolved(self):
