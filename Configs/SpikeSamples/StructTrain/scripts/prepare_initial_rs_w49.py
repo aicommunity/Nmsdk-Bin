@@ -27,7 +27,7 @@ def build_registry() -> dict[str, Any]:
     }
     by_id = {case["id"]: case for case in official["cases"]}
     ratios = {
-        "classic": (1, 30, 100, 300),
+        "classic": (1, 10, 30, 100),
         "branch": (1, 10, 30, 100, 300, 1000),
     }
     cases: list[dict[str, Any]] = []
