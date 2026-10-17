@@ -11,18 +11,22 @@ import hashlib
 import importlib.util
 import json
 import math
+import os
 import re
+import shutil
+import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from docx import Document
 from docx.enum.section import WD_ORIENT
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
+from docx.oxml.ns import qn
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -182,7 +186,7 @@ def downsample_trace(trace_path: Path, width: int) -> dict[int, dict[str, Any]]:
     buckets: dict[int, dict[str, Any]] = {
         trial: {
             "min_s": limits[0], "max_s": limits[1], "count": counts[trial],
-            "soma": {}, "ltz": {},
+            "width": width, "soma": {}, "ltz": {},
         }
         for trial, limits in ranges.items()
     }
@@ -205,115 +209,104 @@ def downsample_trace(trace_path: Path, width: int) -> dict[int, dict[str, Any]]:
     return buckets
 
 
-def load_font(size: int) -> ImageFont.ImageFont:
-    for path in (
-        Path("C:/Windows/Fonts/arial.ttf"),
-        Path("C:/Windows/Fonts/segoeui.ttf"),
-        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
-    ):
-        if path.is_file():
-            try:
-                return ImageFont.truetype(str(path), size=size)
-            except OSError:
-                pass
-    return ImageFont.load_default()
+def artifact_runtime(node_override: str | None, modules_override: str | None) -> tuple[Path, Path]:
+    dependency_root = Path.home() / ".cache" / "codex-runtimes" / "codex-primary-runtime" / "dependencies" / "node"
+    node_name = "node.exe" if os.name == "nt" else "node"
+    node_path = Path(node_override) if node_override else dependency_root / "bin" / node_name
+    modules_path = Path(modules_override) if modules_override else dependency_root / "node_modules"
+    if not node_path.is_file():
+        found = shutil.which("node")
+        if found:
+            node_path = Path(found)
+    if not node_path.is_file():
+        raise FileNotFoundError("Node runtime not found; set CODEX_NODE_RUNTIME or --node-runtime")
+    if not (modules_path / "@oai" / "artifact-tool").exists():
+        raise FileNotFoundError("@oai/artifact-tool not found; set CODEX_NODE_MODULES or --artifact-node-modules")
+    return node_path, modules_path
 
 
-def draw_series(
-    path: Path,
-    row: dict[str, str],
-    trace_data: dict[int, dict[str, Any]] | None,
-    *,
-    width: int = 1500,
-    height: int = 660,
-) -> None:
-    image = Image.new("RGB", (width, height), "white")
-    draw = ImageDraw.Draw(image)
-    title_font = load_font(27)
-    label_font = load_font(21)
-    small_font = load_font(17)
-    trial = row_int(row, "trial")
-    target = row.get("target_class", "?")
-    fired = row.get("neuron_fired", "?")
-    title = f"Trial {trial} | target={target} | neuron_fired={fired}"
-    draw.text((55, 15), title, fill=(20, 32, 45), font=title_font)
-
-    left, right = 175, width - 55
-    event_top, event_bottom = 70, 200
-    soma_top, soma_bottom = 250, 420
-    ltz_top, ltz_bottom = 475, 610
-    for y, label in ((event_top, "EVENTS"), (soma_top, "SomaNeuronAmplitude total (row 0)"), (ltz_top, "LTZone Potential")):
-        draw.text((left, y - 30), label, fill=(45, 54, 64), font=label_font)
-    for y1, y2 in ((event_top, event_bottom), (soma_top, soma_bottom), (ltz_top, ltz_bottom)):
-        draw.rectangle((left, y1, right, y2), outline=(160, 170, 180), width=2)
-
-    stim_times = stimulus_times_s(row)
-    spike_times = parse_times(row, "neuron_spike_times")
-    trace = trace_data.get(trial) if trace_data else None
-    start = trace["min_s"] if trace else 0.0
-    end = trace["max_s"] if trace else max(stim_times + spike_times + [0.1])
-    if end <= start:
-        end = start + 1e-6
-
-    def x_pixel(value_s: float) -> int:
-        return int(left + max(0.0, min(1.0, (value_s - start) / (end - start))) * (right - left))
-
-    input_y0, input_y1 = event_top + 18, event_top + 55
-    output_y0, output_y1 = event_top + 77, event_top + 115
-    draw.text((15, input_y0 + 6), "INPUT", fill=(25, 80, 150), font=small_font)
-    draw.text((15, output_y0 + 6), "OUTPUT", fill=(175, 45, 45), font=small_font)
-    for value in stim_times:
-        x = x_pixel(value)
-        draw.line((x, input_y0, x, input_y1), fill=(25, 110, 200), width=4)
-    for value in spike_times:
-        x = x_pixel(value)
-        draw.line((x, output_y0, x, output_y1), fill=(200, 45, 45), width=5)
-
-    if not trace or not trace["soma"]:
-        message = "Somatic waveform not present in this run bundle"
-        draw.text((left + 15, soma_top + 55), message, fill=(150, 60, 35), font=label_font)
-        draw.text((left + 15, ltz_top + 45), "LTZone waveform unavailable", fill=(150, 60, 35), font=label_font)
-        draw.text((left, height - 35), f"time range {start*1000:.3f} .. {end*1000:.3f} ms | events from results.csv", fill=(85, 95, 105), font=small_font)
-        image.save(path)
+def link_node_modules(link_path: Path, modules_path: Path) -> None:
+    if link_path.exists():
         return
+    if os.name == "nt":
+        command = f"New-Item -ItemType Junction -Path '{link_path}' -Target '{modules_path}' | Out-Null"
+        subprocess.run(["powershell", "-NoProfile", "-Command", command], check=True, capture_output=True, text=True)
+    else:
+        link_path.symlink_to(modules_path, target_is_directory=True)
 
-    trace_start = trace["min_s"]
-    trace_end = trace["max_s"]
-    span = max(trace_end - trace_start, 1e-12)
 
-    def plot_channel(values: dict[int, list[float]], top: int, bottom: int, color: tuple[int, int, int]) -> None:
-        if not values:
-            return
-        ymin = min(v[0] for v in values.values())
-        ymax = max(v[1] for v in values.values())
-        pad = max((ymax - ymin) * 0.08, max(abs(ymin), abs(ymax), 1.0) * 0.005)
-        ymin -= pad
-        ymax += pad
-        if ymax <= ymin:
-            ymax = ymin + 1.0
+def xlsx_trial_payload(row: dict[str, str], trace: dict[str, Any] | None) -> dict[str, Any]:
+    stim = stimulus_times_s(row)
+    spikes = parse_times(row, "neuron_spike_times")
+    start_s = trace["min_s"] if trace else 0.0
+    end_s = trace["max_s"] if trace else max(stim + spikes + [0.0]) + 0.005
+    if end_s <= start_s:
+        end_s = start_s + 0.001
+    points: list[dict[str, Any]] = []
+    if trace:
+        columns = set(trace["soma"]) | set(trace["ltz"])
+        span = trace["max_s"] - trace["min_s"]
+        denominator = max(1, int(trace.get("width", 1350)) - 1)
+        for column in sorted(columns):
+            soma = trace["soma"].get(column)
+            ltz = trace["ltz"].get(column)
+            points.append(
+                {
+                    "time_ms": (trace["min_s"] + (float(column) / denominator) * span) * 1000.0,
+                    "soma_min": soma[0] if soma else None,
+                    "soma_max": soma[1] if soma else None,
+                    "ltz_min": ltz[0] if ltz else None,
+                    "ltz_max": ltz[1] if ltz else None,
+                }
+            )
+    return {
+        "trial": row_int(row, "trial", 0),
+        "start_ms": start_s * 1000.0,
+        "end_ms": end_s * 1000.0,
+        "input_ms": [value * 1000.0 for value in stim],
+        "output_ms": [value * 1000.0 for value in spikes],
+        "trace": points,
+    }
 
-        def y_pixel(value: float) -> int:
-            return int(bottom - (value - ymin) / (ymax - ymin) * (bottom - top))
 
-        centers: list[tuple[int, int]] = []
-        for column, (vmin, vmax) in sorted(values.items()):
-            x = left + int(column / max(1, width - 1) * (right - left))
-            draw.line((x, y_pixel(vmin), x, y_pixel(vmax)), fill=color, width=2)
-            centers.append((x, y_pixel((vmin + vmax) / 2.0)))
-        if len(centers) >= 2:
-            draw.line(centers, fill=color, width=2)
-        draw.text((left + 8, top + 5), f"min={min(v[0] for v in values.values()):.6g} max={max(v[1] for v in values.values()):.6g}", fill=color, font=small_font)
-
-    plot_channel(trace["soma"], soma_top, soma_bottom, (20, 135, 75))
-    plot_channel(trace["ltz"], ltz_top, ltz_bottom, (100, 75, 175))
-    duration_ms = (trace_end - trace_start) * 1000.0
-    for tick in range(6):
-        x = left + tick * (right - left) // 5
-        value = trace_start + tick * span / 5
-        draw.line((x, ltz_bottom, x, ltz_bottom + 6), fill=(50, 55, 60), width=1)
-        draw.text((x - 25, ltz_bottom + 8), f"{value*1000:.1f}", fill=(80, 85, 90), font=small_font)
-    draw.text((right - 115, height - 35), "time, ms", fill=(85, 95, 105), font=small_font)
-    image.save(path)
+def render_chart_images(
+    rows: list[dict[str, str]],
+    trace_data: dict[int, dict[str, Any]],
+    run_id: str,
+    temp_dir: Path,
+    node_runtime: str | None,
+    artifact_node_modules: str | None,
+) -> dict[int, Path]:
+    node_path, modules_path = artifact_runtime(node_runtime, artifact_node_modules)
+    safe_run = re.sub(r"[^A-Za-z0-9_-]+", "_", run_id)
+    runtime_dir = temp_dir / f"xlsx-chart-{safe_run}"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    link_node_modules(runtime_dir / "node_modules", modules_path)
+    helper_src = SCRIPT_DIR / "generate_timelearner_chart_workbook.mjs"
+    helper_copy = runtime_dir / helper_src.name
+    shutil.copy2(helper_src, helper_copy)
+    output_dir = runtime_dir / "rendered"
+    payload = {
+        "trials": [
+            xlsx_trial_payload(row, trace_data.get(row_int(row, "trial")))
+            for row in rows
+        ]
+    }
+    payload_path = runtime_dir / "chart_payload.json"
+    payload_path.write_text(json.dumps(payload, ensure_ascii=False, allow_nan=False), encoding="utf-8")
+    subprocess.run([str(node_path), str(helper_copy), str(payload_path), str(output_dir)], check=True)
+    output: dict[int, Path] = {}
+    for row in rows:
+        trial = row_int(row, "trial", 0)
+        image_path = output_dir / f"trial_{trial}.png"
+        if not image_path.is_file():
+            raise FileNotFoundError(f"XLSX renderer did not create a chart for trial {trial}: {image_path}")
+        with Image.open(image_path) as image:
+            left = min(40, max(0, image.width - 1))
+            top = min(20, max(0, image.height - 1))
+            image.crop((left, top, image.width, image.height)).save(image_path)
+        output[trial] = image_path
+    return output
 
 
 def add_metadata_table(
@@ -337,7 +330,14 @@ def add_metadata_table(
             run.bold = True
 
 
-def add_run(document: Document, run_root: Path, allow_missing_trace: bool, temp_dir: Path) -> int:
+def add_run(
+    document: Document,
+    run_root: Path,
+    allow_missing_trace: bool,
+    temp_dir: Path,
+    node_runtime: str | None,
+    artifact_node_modules: str | None,
+) -> int:
     provenance_path = run_root / "provenance.json"
     provenance = read_json(provenance_path)
     if not provenance:
@@ -530,12 +530,25 @@ def add_run(document: Document, run_root: Path, allow_missing_trace: bool, temp_
 
     if rows:
         document.add_page_break()
+    chart_images = render_chart_images(
+        rows,
+        trace_data or {},
+        f"{case}_{run_id}",
+        temp_dir,
+        node_runtime,
+        artifact_node_modules,
+    )
+    has_waveforms = any(data.get("soma") or data.get("ltz") for data in (trace_data or {}).values())
     for index, row in enumerate(rows):
-        if index > 0 and index % 2 == 0:
+        if index > 0 and (has_waveforms or index % 2 == 0):
             document.add_page_break()
         trial = row_int(row, "trial", index)
-        image_path = temp_dir / f"{re.sub(r'[^A-Za-z0-9_-]+', '_', run_id)}_trial_{trial}.png"
-        draw_series(image_path, row, trace_data)
+        image_path = chart_images[trial]
+        if not trace_data or not (trace_data.get(trial, {}).get("soma") or trace_data.get(trial, {}).get("ltz")):
+            note = document.add_paragraph(
+                "Осциллограмма выхода сомы не записана в исходном запуске; показаны фактические входные импульсы и импульсы нейрона из results.csv."
+            )
+            note.paragraph_format.space_after = Pt(4)
         p = document.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.add_run().add_picture(str(image_path), width=Inches(7.7))
@@ -547,6 +560,8 @@ def main() -> int:
     parser.add_argument("--run-root", action="append", required=True, type=Path, help="immutable run directory; repeat for a series")
     parser.add_argument("--out", required=True, type=Path, help="output .docx path")
     parser.add_argument("--allow-missing-trace", action="store_true", help="for historical runs; mark soma waveform unavailable")
+    parser.add_argument("--node-runtime", default=os.environ.get("CODEX_NODE_RUNTIME"), help="Node runtime used for XLSX chart generation")
+    parser.add_argument("--artifact-node-modules", default=os.environ.get("CODEX_NODE_MODULES"), help="workspace node_modules containing @oai/artifact-tool")
     args = parser.parse_args()
     args.out.parent.mkdir(parents=True, exist_ok=True)
 
@@ -562,6 +577,16 @@ def main() -> int:
     normal.font.name = "Arial"
     normal.font.size = Pt(9)
     normal.font.color.rgb = RGBColor(35, 40, 45)
+    for style_name, font_size in (("Title", 20), ("Heading 1", 15), ("Heading 2", 12), ("Heading 3", 10)):
+        style = document.styles[style_name]
+        style.font.name = "Arial"
+        style.font.size = Pt(font_size)
+        style.font.color.rgb = RGBColor(0, 0, 0)
+        style.font.underline = False
+        ppr = style._element.get_or_add_pPr()
+        border = ppr.find(qn("w:pBdr"))
+        if border is not None:
+            ppr.remove(border)
 
     document.add_heading("Отчёт по визуальному анализу TimeLearner", 0)
     document.add_paragraph(f"Создано UTC: {datetime.now(timezone.utc).isoformat()}")
@@ -576,7 +601,14 @@ def main() -> int:
         for index, run_root in enumerate(args.run_root):
             if index:
                 document.add_page_break()
-            total_trials += add_run(document, run_root.resolve(), args.allow_missing_trace, temp_dir)
+            total_trials += add_run(
+                document,
+                run_root.resolve(),
+                args.allow_missing_trace,
+                temp_dir,
+                args.node_runtime,
+                args.artifact_node_modules,
+            )
         document.add_paragraph(f"\nСводка: запусков — {len(args.run_root)}; тестовых примеров — {total_trials}.")
         document.save(args.out)
     print(f"WROTE {args.out} runs={len(args.run_root)} trials={total_trials}")
