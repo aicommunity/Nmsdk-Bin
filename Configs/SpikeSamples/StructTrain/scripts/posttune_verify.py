@@ -2150,6 +2150,7 @@ def run_case(
     max_rs_rm: float | None = None,
     synapse_resistance_step_ohm: float | None = None,
     tip_synapse_resistance_ohm: float | None = None,
+    tip_synapse_resistance_values_ohm: Sequence[float] | None = None,
     disable_train_statistic_logs: bool = False,
 ) -> dict:
     case = dict(CASES[name])
@@ -2169,6 +2170,18 @@ def run_case(
             raise ValueError(
                 "TipSynapseResistance override is only valid for parametric NormalizationMode=1"
             )
+    if tip_synapse_resistance_values_ohm is not None:
+        if tip_synapse_resistance_ohm is not None:
+            raise ValueError("choose either scalar or per-input TipSynapseResistance override")
+        if case.get("normalization_mode") != 1:
+            raise ValueError(
+                "per-input TipSynapseResistance override is only valid for parametric NormalizationMode=1"
+            )
+        if not tip_synapse_resistance_values_ohm or any(
+            not math.isfinite(float(value)) or float(value) <= 0.0
+            for value in tip_synapse_resistance_values_ohm
+        ):
+            raise ValueError("per-input TipSynapseResistance values must be finite and positive")
     if train_t is not None:
         case["train_t"] = float(train_t)
     archive_root: Path = case["root"]
@@ -2293,6 +2306,25 @@ def run_case(
                 if get_tag(t, "SynapseResistanceBase") is None:
                     raise ValueError(f"SynapseResistanceBase is missing from {rel}")
                 t = set_tag(t, "SynapseResistanceBase", tip_value)
+            if tip_synapse_resistance_values_ohm is not None:
+                tip_tag = get_tag(t, "TipSynapseResistance")
+                if tip_tag is None:
+                    raise ValueError(f"TipSynapseResistance is missing from {rel}")
+                values = [float(value) for value in tip_synapse_resistance_values_ohm]
+                tip_count = len(tip_tag.replace(",", " ").split())
+                if tip_count != len(values):
+                    raise ValueError(
+                        f"per-input TipSynapseResistance has {len(values)} values, expected {tip_count} in {rel}"
+                    )
+                # Preserve SynapseResistanceBase: this diagnostic intentionally
+                # varies only trainable input tips and holds the final reference
+                # anchor at its historical value. The C++ cold snapshot captures
+                # the loaded per-input vector before ResetToUntrained.
+                t = set_tag(
+                    t,
+                    "TipSynapseResistance",
+                    " ".join(format(value, ".17g") for value in values),
+                )
             if max_rs_rm is not None:
                 mode = get_tag(t, "NormalizationMode")
                 if mode is None or mode.strip() != "1":
@@ -2350,6 +2382,12 @@ def run_case(
                     f"  parametric cold-start Rs override {rel}: "
                     f"SynapseResistanceBase and every TipSynapseResistance="
                     f"{format(tip_synapse_resistance_ohm, '.17g')} Ohm"
+                )
+            if tip_synapse_resistance_values_ohm is not None:
+                print(
+                    f"  parametric per-input cold-start Rs override {rel}: "
+                    f"TipSynapseResistance={' '.join(format(float(value), '.17g') for value in tip_synapse_resistance_values_ohm)} Ohm; "
+                    "SynapseResistanceBase preserved"
                 )
             print(
                 f"  PostTune tags {rel}: enable={enable} mode="

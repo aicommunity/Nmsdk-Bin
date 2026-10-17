@@ -37,7 +37,8 @@ from matrix_run_safety import (
 )
 
 BASE = Path(__file__).resolve().parents[1]
-MANIFEST = BASE / "TimeLearnerMatrix" / "matrix.json"
+MATRIX = Path(os.environ.get("TIMELEARNER_MATRIX_DIR", BASE / "TimeLearnerMatrix")).resolve()
+MANIFEST = MATRIX / "matrix.json"
 RUNS_BASE = resolve_runs_base(BASE / "_repro" / "TimeLearnerMatrixRuns")
 PV_PATH = BASE / "scripts" / "posttune_verify.py"
 CLASS_TAGS = ("NeuronClassName", "MembraneClassName", "SynapseClassName")
@@ -398,6 +399,34 @@ def make_runtime_input_overlay(
             item = set_project_debug_logging(project_ini, enabled=False)
             item.update({"side": side, "file": f"{side}/Project.ini"})
             changed.append(item)
+        # Project.ini's DebugModeFlag only controls the application logger. The
+        # trainers have a separate EnableDebug property that writes the
+        # per-tick TimeLearnerTrainingDynamics.log; it can grow by many GiB in
+        # long runs. Keep the compact C++ iteration audit enabled while
+        # disabling that detailed stream in this attempt-local Train copy.
+        for filename in XML_INPUTS:
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = _set_or_insert_runtime_tag(
+                original, "EnableDebug", "0", "NormalizationMode", value_type="b"
+            )
+            updated = _set_or_insert_runtime_tag(
+                updated, "EnableTrainingAudit", "1", "EnableDebug", value_type="b"
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {
+                    "EnableDebug": 0,
+                    "EnableTrainingAudit": 1,
+                },
+            })
     if branch_gamma_mode is not None:
         gamma_modes = {
             "shared-auto": ("1", "0", "0.05"),
@@ -689,27 +718,43 @@ def apply_xml_factors(
             value = float(raw.replace(",", ".")) * float(factor)
             updated.append(format(value, ".17g"))
         text = set_tag_values(text, str(tag), updated)
-    if spec.get("initial_rs_to_rm") is not None and side == "Train":
+    if (
+        spec.get("initial_rs_to_rm") is not None
+        and spec.get("initial_rs_trainable_to_rm") is not None
+    ):
+        raise ValueError("choose one initial Rs/Rm factor mode")
+    if (
+        spec.get("initial_rs_to_rm") is not None
+        or spec.get("initial_rs_trainable_to_rm") is not None
+    ) and side == "Train":
         if membrane_resistance is None or membrane_resistance <= 0:
             raise ValueError("initial Rs experiment requires a positive membrane resistance")
-        ratio = float(spec["initial_rs_to_rm"])
+        trainable_only = spec.get("initial_rs_trainable_to_rm") is not None
+        ratio = float(
+            spec["initial_rs_trainable_to_rm"]
+            if trainable_only else spec["initial_rs_to_rm"]
+        )
         if not math.isfinite(ratio) or ratio <= 0.0:
             raise ValueError("initial Rs/Rm ratio must be finite and positive")
         rs_text = format(membrane_resistance * ratio, ".17g")
-        if tag_values(text, "SynapseResistanceBase"):
-            text = set_all_tags(text, "SynapseResistanceBase", rs_text)
-        # Existing Train snapshots often contain an explicit per-input tip-R
-        # vector. Changing only SynapseResistanceBase would leave that vector in
-        # control after C++ Reset and make the advertised initial-Rs factor a
-        # no-op. Keep the vector shape and initialize each entry to the same
-        # requested Rs so the experiment actually varies the starting state.
         tip_vectors = tag_values(text, "TipSynapseResistance")
         if tip_vectors:
-            initialized = [
-                " ".join([rs_text] * len(values.split()))
-                for values in tip_vectors
-            ]
+            initialized = []
+            for values in tip_vectors:
+                tokens = values.replace(",", " ").split()
+                if trainable_only:
+                    if len(tokens) < 2:
+                        raise ValueError(
+                            "trainable-only initial Rs requires an input vector and final reference anchor"
+                        )
+                    # The final entry is the timing/reference input. Change only
+                    # the independent parameters that the trainer tunes.
+                    initialized.append(" ".join([rs_text] * (len(tokens) - 1) + [tokens[-1]]))
+                else:
+                    initialized.append(" ".join([rs_text] * len(tokens)))
             text = set_tag_values(text, "TipSynapseResistance", initialized)
+            if not trainable_only and tag_values(text, "SynapseResistanceBase"):
+                text = set_all_tags(text, "SynapseResistanceBase", rs_text)
     if spec.get("reverse_pattern_order"):
         matrix_re = re.compile(r'(<MatrixData\b[^>]*Rows="4"[^>]*>)(.*?)(</MatrixData\s*>)', re.S)
         found = 0
@@ -726,13 +771,67 @@ def apply_xml_factors(
 
 def initial_rs_override_from_input(
     spec: dict[str, Any], input_root: Path
-) -> float | None:
+) -> float | list[float] | None:
     """Return the requested initial Rs after validating the prepared Train pair.
 
     SoftCold intentionally restores the historical 86 MOhm TipR in both XML
-    files. For matrix cases with an explicit initial Rs/Rm factor, run_case must
-    reapply that factor after SoftCold and before launching the C++ trainer.
+    files. Explicit initial-Rs cases reapply their scalar or per-input vector
+    after SoftCold and before launching the C++ trainer.
     """
+    if spec.get("initial_rs_trainable_to_rm") is not None:
+        if spec.get("initial_rs_to_rm") is not None:
+            raise ValueError("choose one initial Rs/Rm factor mode")
+        if int(spec.get("normalization_mode", 0)) != 1:
+            raise ValueError("initial Rs/Rm overrides require parametric NormalizationMode=1")
+        ratio = float(spec["initial_rs_trainable_to_rm"])
+        if not math.isfinite(ratio) or ratio <= 0.0:
+            raise ValueError("initial trainable Rs/Rm ratio must be finite and positive")
+
+        observed_vectors: list[list[float]] = []
+        observed_bases: list[float] = []
+        for rel in XML_INPUTS:
+            path = input_root / "Train" / rel
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            text = path.read_text(encoding="utf-8")
+            bases = tag_values(text, "SynapseResistanceBase")
+            vectors = tag_values(text, "TipSynapseResistance")
+            membranes = tag_values(text, "ExcMembraneResistance") or tag_values(text, "RestingResistance")
+            if not bases or len(vectors) != 1 or not membranes:
+                raise ValueError(f"trainable-only initial Rs input is missing Base/TipR/Rm in {path}")
+            base_values = [float(value.replace(",", ".")) for raw in bases for value in raw.split()]
+            vector = [float(value.replace(",", ".")) for value in vectors[0].replace(",", " ").split()]
+            rm = float(membranes[0].replace(",", "."))
+            if (
+                not vector or not math.isfinite(rm) or rm <= 0.0
+                or any(not math.isfinite(value) or value <= 0.0 for value in base_values + vector)
+            ):
+                raise ValueError(f"invalid trainable-only initial Rs input in {path}")
+            base = base_values[0]
+            if any(not math.isclose(value, base, rel_tol=1e-12, abs_tol=1e-9) for value in base_values[1:]):
+                raise ValueError(f"SynapseResistanceBase values disagree in {path}")
+            expected_trainable = rm * ratio
+            if len(vector) < 2 or any(
+                not math.isclose(value, expected_trainable, rel_tol=1e-12, abs_tol=1e-8)
+                for value in vector[:-1]
+            ):
+                raise ValueError(f"trainable TipR values do not match {ratio:g}×Rm in {path}")
+            if not math.isclose(vector[-1], base, rel_tol=1e-12, abs_tol=1e-9):
+                raise ValueError(f"reference anchor TipR must equal preserved SynapseResistanceBase in {path}")
+            observed_vectors.append(vector)
+            observed_bases.append(base)
+        if any(
+            len(vector) != len(observed_vectors[0])
+            or any(not math.isclose(value, observed_vectors[0][i], rel_tol=1e-12, abs_tol=1e-9)
+                   for i, value in enumerate(vector))
+            for vector in observed_vectors[1:]
+        ):
+            raise ValueError("Train Model and Parameters disagree on initial per-input TipR vector")
+        if any(not math.isclose(value, observed_bases[0], rel_tol=1e-12, abs_tol=1e-9)
+               for value in observed_bases[1:]):
+            raise ValueError("Train Model and Parameters disagree on initial SynapseResistanceBase")
+        return observed_vectors[0]
+
     ratio = spec.get("initial_rs_to_rm")
     if ratio is None:
         return None
@@ -891,7 +990,7 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
     preinh_source = BASE / preinh_rel
     class_source_rel = spec.get("preinh_class_source") or preinh_rel
     class_source = BASE / class_source_rel
-    destination = BASE / "TimeLearnerMatrix" / spec["wave"] / "inputs" / case_id
+    destination = MATRIX / spec["wave"] / "inputs" / case_id
     if destination.exists():
         saved = destination / "matrix_input_manifest.json"
         if saved.is_file() and not refresh:
@@ -931,7 +1030,10 @@ def prepare_case(spec: dict[str, Any], templates: dict[str, Any], pv, *, refresh
         copied = [{"side": rel.parts[0], "file": str(Path(*rel.parts[1:])), "sha256": sha256(destination / rel)} for rel in selected]
     else:
         membrane_resistance = None
-        if spec.get("initial_rs_to_rm") is not None:
+        if (
+            spec.get("initial_rs_to_rm") is not None
+            or spec.get("initial_rs_trainable_to_rm") is not None
+        ):
             for rel in XML_INPUTS:
                 source_xml = source / "Train" / rel
                 if not source_xml.is_file():
@@ -1157,7 +1259,7 @@ def worker(
     if spec is None:
         raise ValueError(f"unknown case {wave}/{case_id}")
     train_time_limit = effective_train_time_limit_seconds(spec, data["templates"], run_manifest)
-    input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
+    input_root = MATRIX / wave / "inputs" / case_id
     if not input_root.is_dir():
         raise FileNotFoundError(f"input snapshot missing; run --prepare {wave}: {input_root}")
     input_manifest_path = input_root / "matrix_input_manifest.json"
@@ -1238,6 +1340,14 @@ def worker(
             branch_initial_lengths=branch_initial_lengths,
         )
     initial_rs_override = initial_rs_override_from_input(spec, runtime_input_root)
+    initial_rs_scalar = (
+        float(initial_rs_override)
+        if isinstance(initial_rs_override, (int, float)) else None
+    )
+    initial_rs_vector = (
+        [float(value) for value in initial_rs_override]
+        if isinstance(initial_rs_override, list) else None
+    )
     template = data["templates"][spec["template"]]
     gold = input_root if spec.get("source_mode") == "historical_exact" else BASE / spec.get(
         "source_config", template.get("paired_source", template["preinh_source"])
@@ -1272,7 +1382,8 @@ def worker(
         train_t=train_time_limit,
         max_polls=max_polls,
         max_rs_rm=spec.get("max_rs_rm"),
-        tip_synapse_resistance_ohm=initial_rs_override,
+        tip_synapse_resistance_ohm=initial_rs_scalar,
+        tip_synapse_resistance_values_ohm=initial_rs_vector,
         disable_train_statistic_logs=True,
     )
     result["worker_case"] = internal_id
@@ -1296,7 +1407,9 @@ def worker(
         "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
-        "initial_rs_post_softcold_override_ohm": initial_rs_override,
+        "initial_rs_post_softcold_override_ohm": initial_rs_scalar,
+        "initial_trainable_tipr_vector_post_softcold_override_ohm": initial_rs_vector,
+        "initial_trainable_tipr_rm_ratio": spec.get("initial_rs_trainable_to_rm"),
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "skip_softcold_reset": branch_initial_lengths is not None,
@@ -1373,7 +1486,7 @@ def run_wave(
         specs = [case for case in specs if case["id"] in requested]
     if not specs:
         raise ValueError(f"no cases in manifest for {wave}")
-    missing = [s["id"] for s in specs if not (BASE / "TimeLearnerMatrix" / wave / "inputs" / s["id"]).is_dir()]
+    missing = [s["id"] for s in specs if not (MATRIX / wave / "inputs" / s["id"]).is_dir()]
     if missing:
         raise FileNotFoundError(f"inputs not prepared: {missing}; run --prepare {wave}")
     run_manifest = load_run_manifest()
@@ -1386,7 +1499,7 @@ def run_wave(
     input_manifest_shas: dict[str, str] = {}
     for spec in specs:
         case_id = spec["id"]
-        input_root = BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id
+        input_root = MATRIX / wave / "inputs" / case_id
         input_manifest_path = input_root / "matrix_input_manifest.json"
         input_manifest = json.loads(input_manifest_path.read_text(encoding="utf-8"))
         verify_prepared_input_snapshot(input_root, input_manifest)
@@ -1530,7 +1643,7 @@ def run_wave(
                     case_id=case_id,
                     run_manifest=run_manifest,
                     input_manifest_sha256=sha256(
-                        BASE / "TimeLearnerMatrix" / wave / "inputs" / case_id / "matrix_input_manifest.json"
+                        MATRIX / wave / "inputs" / case_id / "matrix_input_manifest.json"
                     ),
                 ) is not None
                 status["cases"][case_id] = {
@@ -1552,7 +1665,7 @@ def run_wave(
             case_id=spec["id"],
             run_manifest=run_manifest,
             input_manifest_sha256=sha256(
-                BASE / "TimeLearnerMatrix" / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
+                MATRIX / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
             ),
         ) is not None
         for spec in specs
@@ -1569,7 +1682,7 @@ def run_wave(
                     case_id=spec["id"],
                     run_manifest=run_manifest,
                     input_manifest_sha256=sha256(
-                        BASE / "TimeLearnerMatrix" / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
+                        MATRIX / wave / "inputs" / spec["id"] / "matrix_input_manifest.json"
                     ),
                 )
                 if saved is None:

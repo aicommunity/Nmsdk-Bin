@@ -723,7 +723,10 @@ def validate_sources(registry: dict[str, Any]) -> None:
                 if not re.search(r'<MatrixData\b[^>]*Rows="4"[^>]*>', content):
                     invalid.append((case["id"], side, "Model_00.xml", "four-row MatrixData source not found"))
         membrane_resistance = None
-        if case.get("initial_rs_to_rm") is not None:
+        if (
+            case.get("initial_rs_to_rm") is not None
+            or case.get("initial_rs_trainable_to_rm") is not None
+        ):
             for rel in ("Model_00.xml", "Parameters_00.xml"):
                 p = BASE / source / "Train" / rel
                 if not p.is_file():
