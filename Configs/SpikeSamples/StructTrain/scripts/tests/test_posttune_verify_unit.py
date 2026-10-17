@@ -8,6 +8,7 @@ import time
 import unittest
 import importlib.util
 import os
+import json
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -131,6 +132,50 @@ class TestColdResetContract(unittest.TestCase):
         runtime = contract["expected_runtime_after_reset"]
         self.assertEqual(runtime["DendriteLength"], "1 1 1 1")
         self.assertIsNone(runtime["reference_dendrite_index"])
+
+
+class TestRuntimeLoadedTipResetAudit(unittest.TestCase):
+    def _check(self, *, is_branch: bool, audit_kind: str) -> dict:
+        with tempfile.TemporaryDirectory() as td:
+            train = Path(td) / "Train"
+            train.mkdir()
+            contract = {
+                "is_branch": is_branch,
+                "expected_runtime_after_reset": {
+                    "TipSynapseResistance": "50000000 60000000 86000000"
+                },
+            }
+            (train / "cold_reset_contract.json").write_text(
+                json.dumps(contract), encoding="utf-8"
+            )
+            (train / "TimeLearnerTrainingAudit.log").write_text(
+                "schema=1;kind=" + audit_kind
+                + ";tip_r=[50000000,60000000,86000000]"
+                + ";rmin_by_input=[1000000,1000000,1000000]"
+                + ";rmax_by_input=[10000000000,10000000000,10000000000]\n",
+                encoding="utf-8",
+            )
+            return pv.runtime_loaded_tip_reset_check(train)
+
+    def test_classic_reset_event_matches_explicit_loaded_tip_vector(self):
+        result = self._check(is_branch=False, audit_kind="reset")
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["audit_kind"], "reset")
+        self.assertEqual(result["expected_audit_kind"], "reset")
+
+    def test_branch_reset_event_matches_explicit_loaded_tip_vector(self):
+        result = self._check(
+            is_branch=True, audit_kind="reset_complete_untrained"
+        )
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["audit_kind"], "reset_complete_untrained")
+
+    def test_classic_does_not_accept_branch_reset_event_as_its_reset(self):
+        result = self._check(
+            is_branch=False, audit_kind="reset_complete_untrained"
+        )
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["reason"], "reset_audit_missing")
 
 
 class TestTiprNumeric(unittest.TestCase):

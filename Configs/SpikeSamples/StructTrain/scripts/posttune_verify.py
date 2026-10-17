@@ -1215,6 +1215,9 @@ def runtime_loaded_tip_reset_check(train: Path) -> dict[str, Any]:
         return {"enabled": True, "passed": False, "reason": "cold_reset_contract_missing"}
     if not expected_text:
         return {"enabled": True, "passed": False, "reason": "expected_vector_missing"}
+    expected_reset_kind = (
+        "reset_complete_untrained" if bool(contract.get("is_branch")) else "reset"
+    )
 
     def parse_audit_vector(raw: str) -> list[float] | None:
         value = raw.strip()
@@ -1241,7 +1244,7 @@ def runtime_loaded_tip_reset_check(train: Path) -> dict[str, Any]:
             fields = dict(
                 item.split("=", 1) for item in line.split(";") if "=" in item
             )
-            if fields.get("kind") != "reset_complete_untrained":
+            if fields.get("kind") != expected_reset_kind:
                 continue
             actual = parse_audit_vector(fields.get("tip_r", ""))
             minima = parse_audit_vector(fields.get("rmin_by_input", "") or "") or []
@@ -1265,6 +1268,7 @@ def runtime_loaded_tip_reset_check(train: Path) -> dict[str, Any]:
                 "passed": passed,
                 "reason": "matched" if passed else "post_reset_vector_mismatch",
                 "audit_kind": fields.get("kind"),
+                "expected_audit_kind": expected_reset_kind,
                 "expected_ohm": expected_raw,
                 "expected_after_bounds_ohm": expected_effective,
                 "actual_ohm": actual,
@@ -1274,7 +1278,8 @@ def runtime_loaded_tip_reset_check(train: Path) -> dict[str, Any]:
     return {
         "enabled": True,
         "passed": False,
-        "reason": "reset_complete_untrained_audit_missing",
+        "reason": f"{expected_reset_kind}_audit_missing",
+        "expected_audit_kind": expected_reset_kind,
         "expected_ohm": expected_raw,
     }
 
