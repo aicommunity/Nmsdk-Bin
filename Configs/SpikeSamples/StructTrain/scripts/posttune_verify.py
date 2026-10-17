@@ -1162,6 +1162,33 @@ def runtime_resistance_max_from_audit(train: Path) -> float | None:
     return None
 
 
+def runtime_resistance_max_by_input_from_audit(train: Path) -> list[float] | None:
+    """Read per-input caps from the C++ cold-reset record.
+
+    TimeLearner's final input is a reference/timing anchor and is intentionally
+    absent from this vector. Using the scalar ResistanceMax against the whole
+    TipSynapseResistance vector would mistake an anchor at Rmax for an
+    adjustable synapse stalled at Rmax.
+    """
+    audit = train / "TimeLearnerTrainingAudit.log"
+    if not audit.is_file():
+        return None
+    try:
+        with audit.open("r", encoding="utf-8", errors="replace") as stream:
+            for line in stream:
+                fields = dict(
+                    item.split("=", 1) for item in line.strip().split(";") if "=" in item
+                )
+                if fields.get("kind") != "reset":
+                    continue
+                values = parse_float_vec(fields.get("rmax_by_input", "") or "")
+                if values and all(math.isfinite(value) and value > 0.0 for value in values):
+                    return values
+    except OSError:
+        return None
+    return None
+
+
 def _training_audit_lines_reverse(audit: Path, chunk_size: int = 65536):
     """Yield complete audit lines newest-first without truncating long records."""
     with audit.open("rb") as stream:
@@ -1242,15 +1269,27 @@ def parse_float_vec(s: str) -> list[float] | None:
         return None
 
 
-def tipr_any_at_rmax(tipr: str, rmax: float, *, frac: float = 0.99) -> bool:
-    """True if any TipR component is at/above frac*ResistanceMax."""
-    if rmax <= 0.0:
-        return False
+def tipr_any_at_rmax(
+    tipr: str, rmax: float | Sequence[float], *, frac: float = 0.99
+) -> bool:
+    """True if any trainable TipR is at/above its corresponding Rmax.
+
+    The C++ audit's per-input cap vector is preferred because it excludes the
+    reference anchor. A scalar fallback compares all TipR entries except the
+    final anchor used by both TimeLearner trainers.
+    """
     vec = parse_float_vec(tipr)
     if not vec:
         return False
-    thr = frac * rmax
-    return any(v >= thr for v in vec)
+    if isinstance(rmax, Sequence) and not isinstance(rmax, (str, bytes)):
+        return any(
+            math.isfinite(cap) and cap > 0.0 and value >= frac * cap
+            for value, cap in zip(vec, rmax)
+        )
+    if not math.isfinite(float(rmax)) or float(rmax) <= 0.0:
+        return False
+    trainable_count = max(0, len(vec) - 1)
+    return any(value >= frac * float(rmax) for value in vec[:trainable_count])
 
 
 def length_vecs_equal(a: str, b: str) -> bool:
@@ -1267,12 +1306,12 @@ def rmax_stall_tick(
     tipr: str,
     length: str,
     need: str,
-    rmax: float,
+    rmax: float | Sequence[float],
     prev_L: str | None,
     prev_tipr: str | None,
     streak: int,
 ) -> tuple[int, str | None, str | None]:
-    """Update TipR@Rmax stall streak; return (streak, new_prev_L, new_prev_tipr).
+    """Update trainable TipR@Rmax stall streak; return prior autosave state.
 
     Require TipR@Rmax, Need!=0, and *both* L and TipR vectors unchanged vs the
     previous autosave. If TipR starts leaving Rmax (escape in progress), reset.
@@ -1348,6 +1387,7 @@ def wait_need0(
     params = train / "Parameters_00.xml"
     prev_mtime = params.stat().st_mtime if params.exists() else 0.0
     rmax = 0.0
+    rmax_by_input: list[float] | None = None
     if params.exists():
         try:
             rmax = float(
@@ -1391,8 +1431,17 @@ def wait_need0(
             stall_status = f"cpp_training_failure_{reason}"
             break
         if not runtime_rmax_seen:
+            runtime_caps = runtime_resistance_max_by_input_from_audit(train)
             runtime_rmax = runtime_resistance_max_from_audit(train)
-            if runtime_rmax is not None:
+            if runtime_caps is not None:
+                rmax_by_input = runtime_caps
+                rmax = max(runtime_caps)
+                runtime_rmax_seen = True
+                print(
+                    f"  RMAX_RUNTIME_BY_INPUT={runtime_caps} from C++ cold-reset audit",
+                    flush=True,
+                )
+            elif runtime_rmax is not None:
                 rmax = runtime_rmax
                 runtime_rmax_seen = True
                 print(f"  RMAX_RUNTIME={rmax:g} from C++ cold-reset audit")
@@ -1408,7 +1457,7 @@ def wait_need0(
                     tipr=snap["tipr"],
                     length=snap["L"],
                     need=snap["need"] or "",
-                    rmax=rmax,
+                    rmax=rmax_by_input if rmax_by_input is not None else rmax,
                     prev_L=stall_prev_L,
                     prev_tipr=stall_prev_tipr,
                     streak=stall_streak,

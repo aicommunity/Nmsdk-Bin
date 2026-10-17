@@ -1047,6 +1047,31 @@ class TestRmaxStallTick(unittest.TestCase):
     def test_tipr_any_at_rmax(self):
         self.assertTrue(pv.tipr_any_at_rmax("1e11 1 1 1", 1e11))
         self.assertFalse(pv.tipr_any_at_rmax("2e7 2e7 2e7 8.6e7", 1e11))
+        # The final value is the reference anchor, which is not present in
+        # C++ rmax_by_input and must not trigger the trainable-R stall guard.
+        self.assertFalse(pv.tipr_any_at_rmax("2e7 2e7 2e7 1e11", 1e11))
+        self.assertFalse(
+            pv.tipr_any_at_rmax(
+                "2e7 2e7 2e7 1e11", [1e11, 1e11, 1e11]
+            )
+        )
+        self.assertTrue(
+            pv.tipr_any_at_rmax(
+                "1e11 2e7 2e7 1e11", [1e11, 1e11, 1e11]
+            )
+        )
+
+    def test_anchor_only_rmax_does_not_start_a_stall_streak(self):
+        streak, _, _ = pv.rmax_stall_tick(
+            tipr="2e7 2e7 2e7 1e11",
+            length="49 41 25 1",
+            need="1",
+            rmax=1e11,
+            prev_L=None,
+            prev_tipr=None,
+            streak=0,
+        )
+        self.assertEqual(streak, 0)
 
 
 class TestAutosavePoll(unittest.TestCase):
