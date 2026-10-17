@@ -6,8 +6,8 @@
 **Карта надёжности (доверие Test ∩ cold по подходам и размеру паттерна):** [`RELIABILITY_MAP.ru.md`](RELIABILITY_MAP.ru.md) · [`RELIABILITY_MAP.md`](RELIABILITY_MAP.md).  
 **Пост-тюнинг в C++ (tip-resistance + silent mid в учителе):** [`POST_TRAIN_TUNING.ru.md`](POST_TRAIN_TUNING.ru.md) · [`POST_TRAIN_TUNING.md`](POST_TRAIN_TUNING.md).
 
-Критерии кода не меняются — [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».  
-Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). GATE: 2026-09-15 · 168 Test · 97 `ok_audit=1` (PHASE11 R1). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
+Значения `ok_audit` и 97/168 из GATE 2026-09-15 относятся к тогдашней версии метрик; с 2026-09-23 текущий gate v2 дополнительно требует `fa_strict=0`. Исторические partial_FA результаты не являются текущим строгим PASS без пересчёта. См. [аудит исторических 4/8–6/8](../../../../Docs/Audit/TimeLearner-2026-09-26-review/DETECTION_GATE_HISTORICAL_AUDIT_2026-10-17.ru.md) и [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».
+Журнал PHASE9: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Журнал PHASE10: [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md). Журнал PHASE11: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md). Исторический GATE: 2026-09-15 · 168 Test · 97 `ok_audit=1` (PHASE11 R1). MATRIX: [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv).
 
 ## Covered
 

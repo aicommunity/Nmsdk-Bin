@@ -6,14 +6,14 @@ Excluded: `XOR/`, `SpikeAnsTrainer/`, `SpikeTrainer/`, `RTlibs/`.
 
 Термины (RU): см. глоссарий в [`CAMPAIGN_REPORT_2026-08_09.md`](CAMPAIGN_REPORT_2026-08_09.md). Кратко: **ответ/спайк** на выходе нейрона (не «стрельба»); **алгоритм обучения** `NNeuronTimeLearner` / Branch = **обучение на одном дендрите** (сегменты импульсов); `fire_all` = ответ на все 8 проб.
 
-Canonical metrics: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py)  
-- `ok_legacy` — historical gate (`match` / in-window only); late на чужом **не** FA; PASS при acc≥4  
-- `ok_strict` — late_fp/late_fn counted as errors; nontarget ok только при тишине in-window **и** late; PASS при acc_strict≥4  
-- `ok_audit` — `ok_strict` ∧ `response_quality=ok_single` ∧ `n=8` (**не** требует 8/8; partial_FA 4–6/8 может пройти)  
-- **Last-pulse (реестр)** — target `t_rel ≥ 0.8·pattern_end`; поверх audit, см. [`SUCCESSFUL_EXPERIMENTS.md`](SUCCESSFUL_EXPERIMENTS.md)  
+Canonical metrics at the time of each row: [`scripts/selectivity_metrics.py`](scripts/selectivity_metrics.py).
+- `ok_legacy` — historical gate (`match` / in-window only); late на чужом **не** FA; PASS при acc≥4.
+- `ok_strict` — late/recorded foil spikes counted as errors; target должен сработать своевременно; PASS при `acc_strict≥4`.
+- **Current `ok_audit` (metrics v2/v3):** valid schema, no censoring, `ok_strict`, `response_quality=ok_single`, 8 полных проб, `fa_strict=0` и target `t_rel ≥ sum(ISI)`. Для одной цели и семи foil это фактически полный 8/8 PASS. Частичные 4/8–6/8 сохраняются как метрики, но не являются `ok_audit=1`.
+- **Historical gate change:** `616deefa` (2026-09-23) добавил любое записанное foil-срабатывание в FA и потребовал `fa_strict=0`; `452141572` (2026-09-24) добавил текущую last-pulse проверку. Таблицы ниже, пересчитанные 2026-09-15, относятся к прежней версии gate и не являются пересчётом по текущим правилам. См. [аудит исторических 4/8–6/8](../../../../Docs/Audit/TimeLearner-2026-09-26-review/DETECTION_GATE_HISTORICAL_AUDIT_2026-10-17.ru.md).
 Analyzer: mid-pattern spike не ставит `neuron_fired` (`kMinStimForInWindowFire` в `NPatternResponseAnalyzer`).  
 Artifacts: [`AUDIT_GATE_RECOMPUTE.csv`](AUDIT_GATE_RECOMPUTE.csv) (live), [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) (PHASE11), [`archive/AUDIT_GATE_RECOMPUTE_20260915T082600Z_phase11_r1_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T082600Z_phase11_r1_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T074504Z_phase11_reaudit.csv), [`archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv`](archive/AUDIT_GATE_RECOMPUTE_20260915T035752Z_phase10_fast.csv), [`LAYOUT.md`](LAYOUT.md), [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md), [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md), [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md), [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).  
-Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот». Пороги `ok_audit` **не** ужесточались.
+Полная таблица слоёв / ошибок на чужом — в SUCCESSFUL_EXPERIMENTS §«Слои ворот». Изменение между исторической версией и текущим gate описано выше и в отдельном аудите.
 
 ## Layout
 
@@ -30,7 +30,7 @@ Merged sibling `*Test` TimeNeuron folders into Train/Test pairs. PhaseA EXP01/02
 | n≠8 | 11 (AsymRm diag Dspan/ampaudit/old preinh + RegressionFull480 + smoke — skip) |
 | no CSV | 0 |
 
-Δ vs R0: +1 foil6 CSV; PSI/PhaseA/FR hygiene → +20 `ok_audit` (partial/selective n=8). Журнал: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
+Историческая разница с R0 отражает пересчёт gate на 2026-09-15 (до v2); указанные тогда partial/selective `ok_audit` не сравнимы напрямую с текущим `ok_audit`. Журнал: [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md).
 
 ## Gate recompute (2026-09-15 PHASE11 R0, 167 Test / 168 EXP roots)
 

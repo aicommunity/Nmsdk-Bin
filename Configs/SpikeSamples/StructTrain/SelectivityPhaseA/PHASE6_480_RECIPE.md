@@ -5,7 +5,7 @@
 **ISI:** `0.01 0.08 0.16 0.24` → `pattern_end ≈ 0.48 с`.  
 **Эталон уже C=1e-9**, L≈`49 41 25 1` — **не** копировать EstDelay=0.002 / short-span L с PHASE5.
 
-Gate (процедурная цель волны, критерии кода **не** меняем): `ok_audit` + last-pulse `t_rel ≥ 0.8·pattern_end` + `ok_single`; цель **8/8 selective**. Канон `ok_audit` по-прежнему допускает acc≥4 — см. [`../SUCCESSFUL_EXPERIMENTS.md`](../SUCCESSFUL_EXPERIMENTS.md) §«Слои ворот».
+Историческая процедурная цель волны: `ok_audit` по версии на момент прогона + last-pulse `t_rel ≥ 0.8·pattern_end` + `ok_single`; целились в **8/8 selective**. С 2026-09-23 текущий `ok_audit` требует `fa_strict=0`; утверждение старой версии о допустимости `acc≥4` относится только к прежнему gate. Сопоставление версий — [аудит исторических 4/8–6/8](../../../../../Docs/Audit/TimeLearner-2026-09-26-review/DETECTION_GATE_HISTORICAL_AUDIT_2026-10-17.ru.md) и [`../SUCCESSFUL_EXPERIMENTS.md`](../SUCCESSFUL_EXPERIMENTS.md).
 
 Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PHASE5_SPAN50_100.md), [`../SelectivityAsymRm/THR_FRAGILITY_DIAG.md`](../SelectivityAsymRm/THR_FRAGILITY_DIAG.md).
 
@@ -108,7 +108,7 @@ Reference: [`../SelectivityAsymRm/PHASE5_SPAN50_100.md`](../SelectivityAsymRm/PH
 
 - Не трогать AsymRm span25/50/100 PASS cold-reset.
 - Исторические PhaseA / TimeNeuron / PSI — сохранены; Phase6 только клоны.
-- Критерии `ok_audit` / acc≥4 в коде **не** менялись.
+- Это замечание описывает состояние кода на момент PHASE6; последующий `ok_audit_v2` от 2026-09-23 добавил обязательное отсутствие foil-срабатываний.
 
 ## PHASE9 P4 note
 

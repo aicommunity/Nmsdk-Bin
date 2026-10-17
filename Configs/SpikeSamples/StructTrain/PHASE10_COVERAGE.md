@@ -1,6 +1,6 @@
 # PHASE10 — coverage journal
 
-Журнал после PHASE9 tails. Критерии кода **не** меняются (`ok_audit`).  
+Журнал после PHASE9 tails. Числа `ok_audit` в этой сводке рассчитаны 2026-09-15 по тогдашней версии gate. С 2026-09-23 `ok_audit_v2` требует `fa_strict=0`, поэтому исторические partial_FA 4–6/8 не являются текущим строгим PASS без пересчёта. См. [аудит исторических 4/8–6/8](../../../../Docs/Audit/TimeLearner-2026-09-26-review/DETECTION_GATE_HISTORICAL_AUDIT_2026-10-17.ru.md).
 Предшественник: [`PHASE9_COVERAGE.md`](PHASE9_COVERAGE.md). Рецепты: [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md).
 
 ## Волны
