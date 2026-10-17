@@ -18,28 +18,6 @@ function niceMajorUnit(span, targetTicks = 8) {
   return factor * power;
 }
 
-function eventRows(item) {
-  const all = new Map();
-  for (const time of item.input_ms ?? []) {
-    const key = Number(time.toFixed(9));
-    all.set(key, { time: key, input: 1, output: null });
-  }
-  for (const time of item.output_ms ?? []) {
-    const key = Number(time.toFixed(9));
-    const row = all.get(key) ?? { time: key, input: null, output: null };
-    row.output = 2;
-    all.set(key, row);
-  }
-  const start = Number(item.start_ms ?? 0);
-  const end = Number(item.end_ms ?? 100);
-  if (!all.size) {
-    all.set(start, { time: start, input: null, output: null });
-  }
-  if (!all.has(start)) all.set(start, { time: start, input: null, output: null });
-  if (!all.has(end)) all.set(end, { time: end, input: null, output: null });
-  return [...all.values()].sort((a, b) => a.time - b.time);
-}
-
 function styleLineChart(chart, title, yTitle, xMajorUnit, yFormat) {
   chart.title = title;
   chart.titleTextStyle.typeface = "Arial";
@@ -49,7 +27,7 @@ function styleLineChart(chart, title, yTitle, xMajorUnit, yFormat) {
     axisType: "textAxis",
     numberFormatCode: "0.0",
     numberFormatSourceLinked: false,
-    majorUnit: xMajorUnit,
+    tickLabelInterval: xMajorUnit,
     textStyle: { typeface: "Arial", fontSize: 10 },
     majorGridlines: null,
     minorGridlines: null,
@@ -74,17 +52,27 @@ for (const item of payload.trials ?? []) {
   const sheet = workbook.worksheets.add(sheetName);
   sheet.showGridLines = false;
 
-  const events = eventRows(item);
-  const eventStart = Number(item.start_ms ?? events[0]?.time ?? 0);
-  const eventEnd = Math.max(Number(item.end_ms ?? events.at(-1)?.time ?? 1), eventStart + 0.001);
-  const eventData = [
-    ["time_ms", "Входные импульсы", "Импульсы нейрона"],
-    ...events.map((row) => [row.time, row.input, row.output]),
-  ];
-  const eventRange = `AA1:AC${eventData.length}`;
-  sheet.getRange(eventRange).values = eventData;
-  const eventChart = sheet.charts.add("scatter", sheet.getRange(eventRange));
-  eventChart.title = `Вход и выход нейрона — пример ${trialNum + 1}`;
+  const inputTimes = (item.input_ms ?? []).map((time) => Number(Number(time).toFixed(9)));
+  const outputTimes = (item.output_ms ?? []).map((time) => Number(Number(time).toFixed(9)));
+  const eventStart = Number(item.start_ms ?? 0);
+  const eventEnd = Math.max(Number(item.end_ms ?? 100), eventStart + 0.001);
+  if (inputTimes.length) {
+    sheet.getRange(`AA1:AB${inputTimes.length + 1}`).values = [
+      ["input_time_ms", "input_level"],
+      ...inputTimes.map((time) => [time, 1]),
+    ];
+  }
+  if (outputTimes.length) {
+    sheet.getRange(`AD1:AE${outputTimes.length + 1}`).values = [
+      ["output_time_ms", "output_level"],
+      ...outputTimes.map((time) => [time, 2]),
+    ];
+  }
+  const eventChart = sheet.charts.add("scatter", {
+    from: { row: 0, col: 0 },
+    extent: { widthPx: 1080, heightPx: 370 },
+  });
+  eventChart.title = `Вход и выход нейрона — пример ${trialNum + 1}; выходных импульсов: ${outputTimes.length}`;
   eventChart.titleTextStyle.typeface = "Arial";
   eventChart.titleTextStyle.fontSize = 12;
   eventChart.legend = { position: "top", textStyle: { typeface: "Arial", fontSize: 10 } };
@@ -98,6 +86,14 @@ for (const item of payload.trials ?? []) {
   };
   eventChart.xAxis.title.text = "Время от первого стимула, мс";
   eventChart.yAxis = { deleted: true };
+  const inputSeries = eventChart.series.add("Входные импульсы");
+  inputSeries.xValuesSource = `'${sheetName}'!$AA$2:$AA$${inputTimes.length + 1}`;
+  inputSeries.valuesSource = `'${sheetName}'!$AB$2:$AB$${inputTimes.length + 1}`;
+  if (outputTimes.length) {
+    const outputSeries = eventChart.series.add("Импульсы нейрона");
+    outputSeries.xValuesSource = `'${sheetName}'!$AD$2:$AD$${outputTimes.length + 1}`;
+    outputSeries.valuesSource = `'${sheetName}'!$AE$2:$AE$${outputTimes.length + 1}`;
+  }
   eventChart.setPosition("A1", "N13");
 
   const trace = item.trace ?? [];
@@ -109,7 +105,7 @@ for (const item of payload.trials ?? []) {
     const traceData = [
       ["time_ms", "Soma min", "Soma max", "LTZone min", "LTZone max"],
       ...trace.map((sample) => [
-        Number(sample.time_ms),
+        Number(Number(sample.time_ms).toFixed(1)),
         sample.soma_min == null ? null : Number(sample.soma_min),
         sample.soma_max == null ? null : Number(sample.soma_max),
         sample.ltz_min == null ? null : Number(sample.ltz_min),
@@ -129,7 +125,7 @@ for (const item of payload.trials ?? []) {
     const ltzData = [
       ["time_ms", "LTZone min", "LTZone max"],
       ...trace.map((sample) => [
-        Number(sample.time_ms),
+        Number(Number(sample.time_ms).toFixed(1)),
         sample.ltz_min == null ? null : Number(sample.ltz_min),
         sample.ltz_max == null ? null : Number(sample.ltz_max),
       ]),

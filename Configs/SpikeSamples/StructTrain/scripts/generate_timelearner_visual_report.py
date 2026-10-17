@@ -380,6 +380,7 @@ def add_run(
     )
     finish_source = "C++ run provenance" if exact_finished else "provenance.json filesystem timestamp"
     converged = provenance.get("training_convergence") or result.get("training_convergence") or "unknown"
+    trace_capture = provenance.get("trace_capture") or {}
     config_rows = config_entries(run_root, provenance)
     commands = provenance.get("script_execution") or {}
     train_exec = commands.get("training") or {}
@@ -391,6 +392,12 @@ def add_run(
         worker_log.read_text(encoding="utf-8", errors="replace").splitlines()
         if worker_log.is_file() else []
     )
+    train_return_code = train_exec.get("return_code", result.get("child_rc", "n/a"))
+    train_status_text = f"{train_exec.get('status', converged)} / {train_return_code}"
+    if converged == "converged_need0" and any(
+        "post-flag grace expired" in line and "terminate NM" in line for line in worker_lines
+    ):
+        train_status_text += " (wrapper stopped Console after the Need=0 exit grace period)"
     run_provenance = provenance.get("run_provenance") or {}
     effective_work_root = (
         provenance.get("work_root")
@@ -436,7 +443,26 @@ def add_run(
     psi = result.get("presynaptic_inhibition", factors.get("presynaptic_inhibition", provenance.get("presynaptic_inhibition", "не записано")))
     acc = f"{metrics.get('acc_legacy', 0)}/{metrics.get('n', 0)} ({(100 * metrics.get('acc_legacy', 0) / metrics.get('n', 1)):.1f}%)" if metrics.get("n") else "недоступна"
     acc_strict = f"{metrics.get('acc_strict', 0)}/{metrics.get('n', 0)} ({(100 * metrics.get('acc_strict', 0) / metrics.get('n', 1)):.1f}%)" if metrics.get("n") else "недоступна"
-    detected = "да" if metrics.get("target_hit_strict") else "нет/не подтверждено"
+    detected = (
+        ("да" if metrics.get("target_hit_strict") else "нет")
+        if "target_hit_strict" in metrics else "не подтверждено"
+    )
+    if trace_capture:
+        replay_csv_match = (
+            "CSV replay побайтно совпал с исходным Test/results.csv"
+            if trace_capture.get("result_csv_identical_to_original") else "совпадение CSV с исходным Test не подтверждено"
+        )
+        trace_capture_text = (
+            f"{trace_capture.get('kind', 'повторный Test для трассы')}; "
+            f"начало={trace_capture.get('started_utc', 'не записано')}; "
+            f"основной Test={trace_capture.get('test_gate_started_utc', 'не записано')}; "
+            f"завершение={trace_capture.get('finished_utc', 'не записано')}; "
+            f"обучение повторно не запускалось; {replay_csv_match}; "
+            f"trace SHA-256={trace_capture.get('trace_sha256', 'не записан')}; "
+            f"Console SHA-256={trace_capture.get('console_sha256', 'не записан')}"
+        )
+    else:
+        trace_capture_text = "отдельный повтор Test для записи трассы не зафиксирован"
     script_acc = gate_metrics.get("acc_legacy", gate_metrics.get("acc"))
     script_n = gate_metrics.get("n", metrics.get("n", 0))
     script_acc_text = (
@@ -465,8 +491,9 @@ def add_run(
         ("Console SHA-256", str(provenance.get("binary_sha256_at_launch") or provenance.get("binary_sha256") or "не записан")),
         ("Git SHA", f"root={provenance.get('root_git_at_launch') or provenance.get('root_git')}; PulseLib={(provenance.get('gitlinks_at_launch') or provenance.get('gitlinks') or {}).get('Libraries/Nmsdk-PulseLib')}; Bin={(provenance.get('gitlinks_at_launch') or provenance.get('gitlinks') or {}).get('Bin')}"),
         ("Трасса потенциала", f"{trace_path} ({sum(v['count'] for v in trace_data.values())} samples)" if trace_path and trace_data else "не сохранена в исходном запуске; график ниже показывает только события, это не осциллограмма"),
+        ("Происхождение трассы", trace_capture_text),
         ("Train C++ команда", " ".join(str(v) for v in train_command) or "см. worker.log; Console command не сохранена"),
-        ("Train status / rc", f"{train_exec.get('status', converged)} / {train_exec.get('return_code', result.get('child_rc', 'n/a'))}"),
+        ("Train status / rc", train_status_text),
         ("Test gate команды", "\n".join(" ".join(map(str, cmd)) if isinstance(cmd, (list, tuple)) else str(cmd) for cmd in gate_commands) or "не записаны"),
         ("Test gate результат", f"evaluated={gate_exec.get('evaluated', result.get('gate_evaluated', 'n/a'))}; rc={gate_exec.get('return_code', result.get('gate_rc', 'n/a'))}; ok={gate_exec.get('ok', result.get('gate_ok', 'n/a'))}; error={gate_exec.get('fail_reason', '')}"),
         ("Метрики и вывод gate-скрипта", f"metrics_line: {gate_exec.get('metrics_line', result.get('metrics', 'не сохранена'))}\nТочность: legacy={script_acc_text}; strict={script_acc_strict_text}; fires={gate_metrics.get('fires', 'не записано')}; matches={gate_metrics.get('matches', 'не записано')}; target_hit_strict={gate_metrics.get('target_hit_strict', 'не записано')}; false positives strict={gate_metrics.get('fa_strict', gate_metrics.get('fa_strict_v2', 'не записано'))}; ok_audit={gate_metrics.get('ok_audit', 'не записано')}; response_quality={gate_metrics.get('response_quality', 'не записано')}; metrics_version={gate_metrics.get('metrics_version', 'не записана')}"),
@@ -480,7 +507,7 @@ def add_run(
             config_items.append((f"{item['side']}/{item['filename']}", f"{item['source']}\n{item['path']}\nSHA-256: {item['sha256']}"))
     else:
         config_items.append(("Конфиги", "Конфиг-снимки и хеши отсутствуют в историческом bundle."))
-    add_metadata_table(document, config_items, font_size=8.0)
+    add_metadata_table(document, config_items, font_size=7.5)
 
     document.add_heading("Скрипты и происхождение результата", level=2)
     script_lines = [
@@ -504,11 +531,13 @@ def add_run(
         script_lines.append(f"worker.log: {worker_log} | SHA-256={hashlib.sha256(worker_log.read_bytes()).hexdigest()}")
         script_lines.extend(
             line.strip() for line in worker_lines
-            if line.lstrip().startswith(("gate rc", "post-flag:", "  C++_TRAINING_FAILURE", "  ABORT"))
+            if line.lstrip().startswith(("gate rc", "post-flag:", "post-flag grace expired", "  C++_TRAINING_FAILURE", "  ABORT"))
         )
     paragraph = document.add_paragraph()
-    paragraph.paragraph_format.space_after = Pt(3)
-    paragraph.add_run("\n".join(script_lines) if script_lines else "Сведения о запущенных скриптах не сохранены.").font.size = Pt(8)
+    paragraph.paragraph_format.space_before = Pt(0)
+    paragraph.paragraph_format.space_after = Pt(0)
+    paragraph.paragraph_format.line_spacing = 0.9
+    paragraph.add_run("\n".join(script_lines) if script_lines else "Сведения о запущенных скриптах не сохранены.").font.size = Pt(7.5)
 
     document.add_heading("Реакции по тестовым примерам", level=2)
     table = document.add_table(rows=1, cols=6)
@@ -518,6 +547,7 @@ def add_run(
         cell.text = heading
         for run in cell.paragraphs[0].runs:
             run.bold = True
+            run.font.size = Pt(8)
     for row in rows:
         stim = ", ".join(f"{value * 1000:.2f}" for value in stimulus_times_s(row))
         cells = table.add_row().cells
@@ -527,6 +557,13 @@ def add_run(
         )
         for cell, value in zip(cells, values):
             cell.text = value
+            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+            for paragraph in cell.paragraphs:
+                paragraph.paragraph_format.space_before = Pt(0)
+                paragraph.paragraph_format.space_after = Pt(0)
+                paragraph.paragraph_format.line_spacing = 1.0
+                for run in paragraph.runs:
+                    run.font.size = Pt(8)
 
     if rows:
         document.add_page_break()
