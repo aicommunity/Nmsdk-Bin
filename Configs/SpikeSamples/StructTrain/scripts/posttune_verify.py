@@ -40,6 +40,8 @@ PROVENANCE_SOURCE_REL = (
     "Rdk/GUI/Qt/UModernDiagramLinkRouter.cpp",
     "App/NeuroModelerConsole/main.cpp",
     "Bin/Configs/SpikeSamples/StructTrain/scripts/posttune_verify.py",
+    "Bin/Configs/SpikeSamples/StructTrain/scripts/run_timelearner_matrix_queue.py",
+    "Bin/Configs/SpikeSamples/StructTrain/scripts/timelearner_matrix.py",
     "Bin/Configs/SpikeSamples/StructTrain/scripts/repro_cold_lib.py",
     "Bin/Configs/SpikeSamples/StructTrain/scripts/selectivity_metrics.py",
     "Bin/Configs/SpikeSamples/StructTrain/SelectivityBranch/scripts/phase8_tiprmin_gate.py",
@@ -268,6 +270,7 @@ class GateResult:
     test_mid_gap: str = ""
     test_mid_result: str = ""
     diagnostic_evaluations: dict[str, Any] = field(default_factory=dict)
+    commands: list[list[str]] = field(default_factory=list)
 
 
 @dataclass
@@ -649,9 +652,31 @@ def build_provenance(
     train = work / "Train"
     source_sha = sha256_paths(source_paths)
     binary_sha = sha256_file(NM)
+    runner_scripts = []
+    for role, path in (
+        ("train_runner", Path(__file__).resolve()),
+        ("matrix_queue_runner", ROOT / "scripts" / "run_timelearner_matrix_queue.py"),
+        ("matrix_runner", ROOT / "scripts" / "timelearner_matrix.py"),
+        ("branch_test_gate", PHASE8),
+        ("classic_test_gate", PHASE9),
+        ("selectivity_metrics", METRICS),
+    ):
+        if path.is_file():
+            try:
+                relpath = path.resolve().relative_to(NMSDK_ROOT.resolve()).as_posix()
+            except ValueError:
+                relpath = str(path.resolve())
+            runner_scripts.append({
+                "role": role,
+                "path": relpath,
+                "sha256": sha256_file(path),
+            })
+    started_utc = datetime.now(timezone.utc).isoformat()
     return {
         "case": case,
         "run_id": run_id,
+        "started_utc": started_utc,
+        "experiment_started_utc": started_utc,
         "work_root": str(work),
         "nm": str(NM),
         "nm_mtime": NM.stat().st_mtime if Path(NM).exists() else None,
@@ -663,6 +688,7 @@ def build_provenance(
         "gitlinks_at_launch": gitlinks,
         "source_sha256": source_sha,
         "source_sha256_at_launch": source_sha,
+        "runner_scripts": runner_scripts,
         "config_sha256_before": config_sha_before or {},
         "weights_identity": tipr_weights_identity(train, params_source=params_source),
     }
@@ -1860,6 +1886,7 @@ def _run_gate_once(
             test_mid_quality=test_mid_quality,
             test_mid_gap=test_mid_gap,
             test_mid_result=test_mid_result,
+            commands=[cmd],
         )
     ok = rc == 0
     fail_reason = ""
@@ -1903,6 +1930,7 @@ def _run_gate_once(
         test_mid_quality=test_mid_quality,
         test_mid_gap=test_mid_gap,
         test_mid_result=test_mid_result,
+        commands=[cmd],
     )
 
 
@@ -2083,6 +2111,10 @@ def run_gate(case: dict, *, run_dir: Path | None = None) -> GateResult:
         )
         diagnostics["cpp_test_threshold"] = cpp_detail
         cpp_gate.diagnostic_evaluations = diagnostics
+        cpp_gate.commands = (
+            (candidate_gate.commands if candidate_gate is not None else [])
+            + cpp_gate.commands
+        )
         return cpp_gate
 
 
@@ -2158,10 +2190,17 @@ def snapshot_prelaunch_train_configs(
         int(segment): float(resistance)
         for segment, resistance in (branch_rm_profile or {}).items()
     }
-    for filename in ("Model_00.xml", "Parameters_00.xml"):
+    for filename in ("Model_00.xml", "Parameters_00.xml", "Project.ini", "Interface.xml"):
         source = train / filename
-        if not source.is_file():
+        if not source.is_file() and filename in ("Model_00.xml", "Parameters_00.xml"):
             raise FileNotFoundError(source)
+        if not source.is_file():
+            continue
+        destination = snapshot_dir / filename
+        shutil.copy2(source, destination)
+        if filename not in ("Model_00.xml", "Parameters_00.xml"):
+            files[filename] = {"sha256": sha256_file(destination)}
+            continue
         text = source.read_text(encoding="utf-8")
         modes = [value.strip() for value in re.findall(
             r"<StructureBuildMode\b[^>]*>(.*?)</StructureBuildMode>", text, re.S
@@ -2216,8 +2255,6 @@ def snapshot_prelaunch_train_configs(
                     values[field_name] = actual
                 channel_values[channel_name] = values
             profile_values[str(segment)] = channel_values
-        destination = snapshot_dir / filename
-        shutil.copy2(source, destination)
         files[filename] = {
             "sha256": sha256_file(destination),
             "structure_build_mode": modes,
@@ -2229,6 +2266,26 @@ def snapshot_prelaunch_train_configs(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     return manifest
+
+
+def snapshot_test_configs(
+    test: Path, run_dir: Path, *, label: str = "post-gate"
+) -> dict[str, Any]:
+    """Save exact Test XML for one point in the evaluation lifecycle."""
+    snapshot_dir = run_dir / "effective-inputs" / "Test" / label
+    snapshot_dir.mkdir(parents=True, exist_ok=True)
+    files: dict[str, Any] = {}
+    for filename in ("Model_00.xml", "Parameters_00.xml", "Project.ini", "Interface.xml"):
+        source = test / filename
+        if not source.is_file():
+            continue
+        destination = snapshot_dir / filename
+        shutil.copy2(source, destination)
+        files[filename] = {
+            "path": f"effective-inputs/Test/{label}/{filename}",
+            "sha256": sha256_file(destination),
+        }
+    return {"files": files, "snapshot_dir": str(snapshot_dir)}
 
 
 def run_case(
@@ -2311,6 +2368,12 @@ def run_case(
     params_source = "nm_save"
     provenance_at_launch: dict[str, Any] | None = None
     prepared_train_config_snapshot: dict[str, Any] | None = None
+    train_execution: dict[str, Any] = {
+        "status": "skipped" if skip_train else "not_started",
+        "command": [],
+        "cwd": str(train),
+        "log": "Train/run_posttune_verify.log",
+    }
     tip_mode = str(case.get("posttrain_tip_resistance_mode", {
         "br25_on": "1",
         "br25_off": "0",
@@ -2513,12 +2576,11 @@ def run_case(
             "Test/Model_00.xml": sha256_file(root / "Test" / "Model_00.xml"),
         }
         config_sha256 = config_sha_before["Train/Parameters_00.xml"]
-        if case.get("branch_segment_rm_profile"):
-            prepared_train_config_snapshot = snapshot_prelaunch_train_configs(
-                train,
-                run_dir,
-                case.get("branch_segment_rm_profile"),
-            )
+        prepared_train_config_snapshot = snapshot_prelaunch_train_configs(
+            train,
+            run_dir,
+            case.get("branch_segment_rm_profile"),
+        )
         # Capture executable, source, gitlinks, and effective XML immediately
         # before launching C++. Computing these only after the run would hide
         # source or binary changes that happened during a long experiment.
@@ -2544,6 +2606,22 @@ def run_case(
             if slog_abort_gib is not None
             else (8.0 if no_prune else 3.0)
         )
+        train_execution.update(
+            {
+                "command": [
+                    str(NM), "-c", str(train / "Project.ini"), "-s", "-t",
+                    str(case["train_t"]), "-x", "-S",
+                ],
+                "cwd": str(train),
+                "started_utc": datetime.now(timezone.utc).isoformat(),
+                "time_limit_sim_s": float(case["train_t"]),
+                "max_polls": polls,
+                "poll_interval_s": 30,
+                "statistic_log_abort_gib": abort_gib,
+                "autosave_model_s": autosave_model_s,
+                "stall_autosave_n": stall_autosave_n,
+            }
+        )
         status, child_rc = wait_need0(
             train,
             case["train_t"],
@@ -2555,6 +2633,13 @@ def run_case(
             slog_abort_gib=abort_gib,
             early_stop_autosave=autosave_model_s > 0,
             stall_autosave_n=stall_autosave_n,
+        )
+        train_execution.update(
+            {
+                "finished_utc": datetime.now(timezone.utc).isoformat(),
+                "status": status,
+                "return_code": child_rc,
+            }
         )
         if status.startswith("cpp_training_failure_"):
             training_failure = runtime_training_failure_from_audit(train)
@@ -2573,8 +2658,21 @@ def run_case(
             params_source = "nm_save"
     else:
         status = "skip_train"
+        train_execution.update(
+            {
+                "finished_utc": datetime.now(timezone.utc).isoformat(),
+                "reason": "--skip-train",
+            }
+        )
         config_sha256 = sha256_file(train / "Parameters_00.xml")
         config_sha_before = {"Train/Parameters_00.xml": config_sha256}
+
+    if prepared_train_config_snapshot is None:
+        prepared_train_config_snapshot = snapshot_prelaunch_train_configs(
+            train,
+            run_dir,
+            case.get("branch_segment_rm_profile"),
+        )
 
     initial_tip_reset_check = None
     if not skip_train and tip_synapse_resistance_values_ohm is not None:
@@ -2610,6 +2708,10 @@ def run_case(
     )
     if initial_tip_reset_check is not None and not initial_tip_reset_check.get("passed"):
         training_convergence = "initial_resistance_reset_mismatch"
+    test_pre_gate_snapshot = snapshot_test_configs(
+        root / "Test", run_dir, label="pre-gate"
+    )
+    test_gate_invoked_utc = datetime.now(timezone.utc).isoformat()
     if should_run_quality_gate(training_convergence):
         gate = run_gate(case, run_dir=run_dir)
     else:
@@ -2635,6 +2737,10 @@ def run_case(
             f"  SKIP_GATE training_convergence={training_convergence}; "
             "model is not in a terminal training state"
         )
+    test_gate_finished_utc = datetime.now(timezone.utc).isoformat()
+    test_post_gate_snapshot = snapshot_test_configs(
+        root / "Test", run_dir, label="post-gate"
+    )
     phase = load_phase_meta(train_flag, test_flag)
     if phase.test.get("mid"):
         after["FixedLTZThreshold"] = phase.test["mid"].split()[0]
@@ -2724,6 +2830,31 @@ def run_case(
     _copy_if_exists(csv_src, run_dir / "Test" / "results.csv")
     (run_dir / "Train").mkdir(parents=True, exist_ok=True)
     (run_dir / "Test").mkdir(parents=True, exist_ok=True)
+    test_trace_src = root / "Test" / "SelectivityLog" / "test_trace.csv"
+    test_trace_dst = run_dir / "Test" / "test_trace.csv"
+    _copy_if_exists(test_trace_src, test_trace_dst)
+    test_model_snapshot = run_dir / "effective-inputs" / "Test" / "post-gate" / "Model_00.xml"
+    trace_enabled_in_test_config = (
+        get_tag(test_model_snapshot.read_text(encoding="utf-8"), "TraceLogEnabled") == "1"
+        if test_model_snapshot.is_file() else False
+    )
+    execution_logs: list[dict[str, Any]] = []
+    for source in (
+        train / "run_posttune_verify.log",
+        *sorted((root / "Test").glob("run_*.log")),
+    ):
+        if not source.is_file():
+            continue
+        phase_name = "Train" if source.parent == train else "Test"
+        destination = run_dir / phase_name / "script-logs" / source.name
+        _copy_if_exists(source, destination)
+        execution_logs.append(
+            {
+                "path": destination.relative_to(run_dir).as_posix(),
+                "source_path": str(source),
+                "sha256": sha256_file(destination),
+            }
+        )
     if tipr_snapshot:
         (run_dir / "Train" / "tipr_snapshot.txt").write_text(
             tipr_snapshot + "\n", encoding="utf-8"
@@ -2772,6 +2903,15 @@ def run_case(
             "weights_identity": tipr_weights_identity(train, params_source=params_source),
 
             "train_status": status,
+            "trainer": case.get("kind"),
+            "experiment_spec": {
+                "trainer": case.get("kind"),
+                "span_ms": case.get("span_ms"),
+                "normalization_mode": case.get("normalization_mode"),
+                "presynaptic_inhibition": case.get("presynaptic_inhibition"),
+                "presynaptic_coefficient": case.get("presynaptic_coefficient"),
+                "enable_posttrain_tuning": enable if not skip_train else None,
+            },
             "training_convergence": training_convergence,
             "training_failure_phase": (
                 training_failure[0]
@@ -2828,6 +2968,76 @@ def run_case(
             ],
         }
     )
+    provenance.update(
+        {
+            "experiment_started_utc": provenance.get("started_utc"),
+            "test_gate_started_utc": test_gate_invoked_utc,
+            "test_gate_finished_utc": test_gate_finished_utc,
+            "experiment_finished_utc": datetime.now(timezone.utc).isoformat(),
+            "test_config_snapshots": {
+                "pre_gate": test_pre_gate_snapshot,
+                "post_gate": test_post_gate_snapshot,
+            },
+            "script_execution": {
+                "orchestrator": {
+                    "script": str(Path(__file__).resolve()),
+                    "interpreter": sys.executable,
+                    "argv": list(sys.argv),
+                    "cwd": os.getcwd(),
+                },
+                "training": train_execution,
+                "test_gate": {
+                    "commands": gate.commands,
+                    "started_utc": test_gate_invoked_utc,
+                    "finished_utc": test_gate_finished_utc,
+                    "evaluated": gate.evaluated,
+                    "return_code": gate.rc,
+                    "ok": gate.ok,
+                    "fail_reason": gate.fail_reason,
+                    "classifier_evaluated": gate.external_classifier_evaluated,
+                    "metrics_line": gate.metrics_line,
+                    "metrics": gate.quality_metrics,
+                },
+                "logs": execution_logs,
+            },
+            "test_trace": {
+                "enabled_in_test_config": trace_enabled_in_test_config,
+                "path": "Test/test_trace.csv" if test_trace_dst.is_file() else None,
+                "rows": max(0, sum(1 for _ in test_trace_dst.open(encoding="utf-8", errors="replace")) - 1)
+                if test_trace_dst.is_file() else 0,
+                "sha256": sha256_file(test_trace_dst),
+                "missing_reason": None if test_trace_dst.is_file() else "trace_not_emitted_by_test_console",
+            },
+        }
+    )
+    if test_trace_dst.is_file():
+        provenance.setdefault("artifacts", []).append(
+            {
+                "path": "Test/test_trace.csv",
+                "sha256": sha256_file(test_trace_dst),
+                "run_id": run_id,
+                "phase": "test-waveform",
+            }
+        )
+    provenance.setdefault("artifacts", []).extend(
+        {
+            "path": item["path"],
+            "sha256": item["sha256"],
+            "run_id": run_id,
+            "phase": "script-log",
+        }
+        for item in execution_logs
+    )
+    for snapshot in (test_pre_gate_snapshot, test_post_gate_snapshot):
+        for item in snapshot.get("files", {}).values():
+            provenance.setdefault("artifacts", []).append(
+                {
+                    "path": item["path"],
+                    "sha256": item["sha256"],
+                    "run_id": run_id,
+                    "phase": "test-config",
+                }
+            )
     copy_training_audit(train, run_dir, provenance, run_id)
     # Placeholder; overwritten after accept_run with failure_class.
     provenance["failure_class"] = "pending"
@@ -2851,6 +3061,14 @@ def run_case(
     need = after.get("IsNeedToTrain", "0")
     row = {
         "case": name,
+        "trainer": case.get("kind"),
+        "experiment_spec": {
+            "trainer": case.get("kind"),
+            "span_ms": case.get("span_ms"),
+            "normalization_mode": case.get("normalization_mode"),
+            "presynaptic_inhibition": case.get("presynaptic_inhibition"),
+            "presynaptic_coefficient": case.get("presynaptic_coefficient"),
+        },
         "normalization_mode": case.get("normalization_mode"),
         "enable_posttrain_tuning": enable if not skip_train else None,
         "posttrain_tip_resistance_mode": tip_mode,

@@ -30,6 +30,8 @@ NM = Path(
 )
 SCRIPTS = ROOT / "SelectivityLtzCalibrate" / "scripts"
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
+sys.path.insert(0, str(ROOT / "scripts"))
+from repro_cold_lib import enable_pattern_response_trace  # noqa: E402
 ASYM = ROOT / "SelectivityAsymRm"
 TIPRMIN = "20000000 20000000 20000000 86000000"
 RMIN = "20000000"
@@ -222,6 +224,8 @@ def set_fixed_thr(path: Path, thr: str) -> None:
 def run_nm(ini: Path, tsec: float, log: Path, save: bool = False, *, span_ms: int | None = None) -> int:
     """Run NM; SIGTERM when SelectivityLog has ≥8 rows and wall > max(tsec, 100)."""
     import time
+
+    enable_pattern_response_trace(ini.parent / "Model_00.xml")
 
     # Drop prior StatisticLog to avoid balloon hang.
     slog = ini.parent / "StatisticLog"

@@ -102,6 +102,38 @@ def get_tag(text: str, tag: str) -> str | None:
     return m.group(1).strip() if m else None
 
 
+def enable_pattern_response_trace(model_path: Path) -> None:
+    """Enable the read-only C++ soma trace for this Test model only."""
+    text = model_path.read_text(encoding="utf-8")
+    component = re.search(
+        r"<PatternResponseAnalyzer\b[^>]*>.*?</PatternResponseAnalyzer\s*>",
+        text,
+        re.S,
+    )
+    if not component:
+        raise ValueError(f"no PatternResponseAnalyzer in {model_path}")
+    block = component.group(0)
+    params = re.search(r"(<Parameters\b[^>]*>)(.*?)(</Parameters\s*>)", block, re.S)
+    if not params:
+        raise ValueError(f"PatternResponseAnalyzer has no Parameters block in {model_path}")
+    body = params.group(2)
+    values = (
+        ("TraceLogEnabled", "b", "1"),
+        ("TraceLogFileName", "std::string", "test_trace.csv"),
+    )
+    for name, type_name, value in values:
+        prop = re.compile(rf"(<{name}\b[^>]*>)(.*?)(</{name}\s*>)", re.S)
+        if prop.search(body):
+            body = prop.sub(lambda m: m.group(1) + value + m.group(3), body, count=1)
+        else:
+            attrs = ' Type="{}" PType="257" IoType="17"'.format(type_name)
+            body += f"\n\t\t\t\t<{name}{attrs}>{value}</{name}>"
+    updated_block = block[:params.start(2)] + body + block[params.end(2):]
+    updated = text[:component.start()] + updated_block + text[component.end():]
+    if updated != text:
+        model_path.write_text(updated, encoding="utf-8")
+
+
 def get_all_tags(text: str, tag: str) -> list[str]:
     return [
         m.group(1).strip()

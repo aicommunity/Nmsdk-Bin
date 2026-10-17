@@ -132,6 +132,24 @@ python3 scripts/run_timelearner_matrix_queue.py --run-id "$RUN_ID" \
 - `TimeLearnerMatrix/W07/inputs/W07_BR25_N1_PSI25_NEXT/Train/Project.ini`
 - `TimeLearnerMatrix/W07/inputs/W07_BR25_N1_PSI25_NEXT/Test/Project.ini`
 
+## Word-отчёт по серии
+
+После завершения серии сформируйте один Word-документ из всех полных `attempt-NNNN` каталогов. В документ войдут конфиги и их SHA-256, время запуска, команды и статусы runner/gate-скриптов, ссылки на их логи, C++-сходимость и показатели точности из `Test/results.csv`. Для новых результатов в отчёте также строятся графики входных стимулов, выходных импульсов, `SomaNeuronAmplitude` и LTZone potential.
+
+Пример на машине анализа (Python с `python-docx` и Pillow):
+
+```bash
+RUN_ROOT="$TIMELEARNER_MATRIX_RUNS_ROOT/$RUN_ID"
+mapfile -t ATTEMPTS < <(find "$RUN_ROOT" -type f -path '*/attempt-*/provenance.json' -printf '%h\n' | sort)
+REPORT_ARGS=()
+for attempt in "${ATTEMPTS[@]}"; do REPORT_ARGS+=(--run-root "$attempt"); done
+python3 scripts/generate_timelearner_visual_report.py \
+  "${REPORT_ARGS[@]}" \
+  --out "$RUN_ROOT/reports/$RUN_ID.docx"
+```
+
+Run bundles старого формата не содержат непрерывной трассы потенциала. Для них добавьте `--allow-missing-trace`: отчёт пометит осциллограмму как отсутствующую и покажет только сохранённые входные/выходные события, не восстанавливая волну из метрик.
+
 ## Остановка и возобновление
 
 Если нужно остановить активный запуск, отправьте `Ctrl-C` только нужной сессии и проверьте список процессов:

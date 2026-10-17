@@ -22,7 +22,13 @@ NM = Path(
 METRICS = ROOT / "scripts" / "selectivity_metrics.py"
 SILENT_THR = "1.0"
 sys.path.insert(0, str(ROOT / "scripts"))
-from repro_cold_lib import ensure_tag_after, get_tag, overlay_neuron, set_tag  # noqa: E402
+from repro_cold_lib import (  # noqa: E402
+    enable_pattern_response_trace,
+    ensure_tag_after,
+    get_tag,
+    overlay_neuron,
+    set_tag,
+)
 
 
 def set_fixed_thr(path: Path, thr: str) -> None:
@@ -135,6 +141,8 @@ def run_nm(ini: Path, tsec: float, log: Path, *, span_ms: int | None = None) -> 
     """Run NM; SIGTERM when SelectivityLog has ≥8 rows (avoids hang after CSV)."""
     import time
     import shutil
+
+    enable_pattern_response_trace(ini.parent / "Model_00.xml")
 
     # Drop prior StatisticLog to avoid balloon hang.
     slog = ini.parent / "StatisticLog"
