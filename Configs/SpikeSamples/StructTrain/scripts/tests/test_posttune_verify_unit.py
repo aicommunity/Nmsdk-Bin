@@ -319,6 +319,36 @@ class TestNonseparableTestMidGate(unittest.TestCase):
         )
         self.assertEqual(result.metrics_line, "not_run_nonseparable_test_mid")
 
+    def test_gate_does_not_reuse_a_stale_test_flag(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            test = root / "Test"
+            test.mkdir()
+            (test / "posttune_complete.flag").write_text(
+                "mid=1 gap=-0.00238999 landscape_ok=0 inference=1 result=2 FixedLTZ=1\n",
+                encoding="utf-8",
+            )
+
+            def run_gate_stub(_cmd, stdout=None, stderr=None):
+                stdout.write("inference mid still silent: 1\n")
+                stdout.flush()
+                return 1
+
+            with patch.object(pv.subprocess, "call", side_effect=run_gate_stub):
+                result = pv.run_gate(
+                    {
+                        "root": root,
+                        "kind": "asym",
+                        "span_ms": 480,
+                        "skip_tipr_mid": True,
+                    }
+                )
+
+        self.assertTrue(result.evaluated)
+        self.assertFalse(result.ok)
+        self.assertEqual(result.fail_reason, "gate_rc=1")
+        self.assertEqual(result.test_mid_quality, "not_available")
+
     def test_quality_labels_keep_mid_quality_separate_from_classifier_detection(self):
         convergence = "converged_posttune_finalized"
         self.assertEqual(

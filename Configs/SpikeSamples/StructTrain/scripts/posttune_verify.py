@@ -1769,6 +1769,11 @@ def _run_gate_once(
     test = root / "Test"
     span = int(case.get("span_ms", 25))
     csv_path = test / "SelectivityLog" / "results.csv"
+    test_flag = test / "posttune_complete.flag"
+    # Test can live on filesystems with one-second mtime granularity. Remove
+    # any prior flag first so a flag present after this invocation is fresh
+    # without relying on a sub-second timestamp comparison.
+    test_flag.unlink(missing_ok=True)
     gate_started = time.time()
     if case["kind"] == "branch":
         cmd = [
@@ -1816,9 +1821,8 @@ def _run_gate_once(
     gate_output = log.read_text(encoding="utf-8", errors="replace")
     csv_mtime = csv_path.stat().st_mtime if csv_path.exists() else None
     fires, metrics_line = fires_from_csv(csv_path)
-    test_flag = test / "posttune_complete.flag"
     test_meta = parse_flag_file(test_flag)
-    test_flag_fresh = test_flag.exists() and test_flag.stat().st_mtime >= gate_started
+    test_flag_fresh = test_flag.is_file()
     test_mid_quality = (
         test_mid_quality_of(test_meta) if test_flag_fresh else "not_available"
     )
