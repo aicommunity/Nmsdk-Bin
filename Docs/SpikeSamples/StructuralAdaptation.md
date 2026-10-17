@@ -154,17 +154,19 @@ flowchart TD
 - Влияет на максимальную задержку обработки сигнала
 - Рекомендуемые значения: от 10 до 100 сегментов в зависимости от задачи
 
-#### Максимальное количество синапсов
+#### Число синапсов и ограничение роста
 
-- Определяется структурой нейрона и параметрами мембраны
-- Влияет на способность нейрона интегрировать множественные входы
-- Обычно устанавливается равным количеству входных дендритов
+- В активных структурных ветках `CalculateMode=6` у `NNeuronTrainer` и в `NNeuronLearner` нет отдельного верхнего предела числа синапсов. `MaxDendriteLength` ограничивает длину дендрита, но не количество синапсов.
+- На шаге нормализации алгоритм добавляет или удаляет синапсы по одному, сопоставляя измеренную амплитуду с заданной целевой амплитудой. Он пытается вернуть потерянный из-за удлинения дендрита пик к исходному целевому уровню; это не отдельная формула, вычисляющая заранее нужное число синапсов.
+- Нормализация не считает фронты LTZone и не обещает ровно один выходной спайк. В контроле сохранённой структуры `NSPNeuron` увеличение числа активных синапсов с 12 до 16, 24 и полного вектора `[30,22,32,32,1]` изменило ответ соответственно с одного до двух, трёх и четырёх спайков. Это подтверждает причинный вклад числа активных синапсов для именно этой структуры и TTFS-паттерна; значения нельзя переносить на другие параметры и типы нейронов.
+- Расхождение `TrainingDendIndexes=[18,9,21,20,1]` и физического вектора `[35,17,41,39,1]` в использованном Trainer replay не локализовано, поэтому конкретные длины этой структуры требуют отдельного аудита. В сериях из других моделей причинность проверяйте по контролям с неизменной длиной, параметрами и входом.
+- Отдельного настраиваемого `MaxSynapseCount` у этих классов нет. Не вводите произвольный предел без подтверждённого сбоя и проверки его влияния на метод.
 
 #### Порог активации нейрона (`LTZThreshold`, `FixedLTZThreshold`)
 
-- Универсальное значение порога, не зависящее от размера входного паттерна
-- Критически важен для правильного распознавания паттернов
-- Может быть фиксированным или адаптивным в зависимости от режима обучения
+- Заданный порог низкопороговой зоны; поведение зависит от конкретного класса LTZone
+- При обучении классы временно используют `TrainingLTZThreshold`, а затем штатно возвращают `FixedLTZThreshold`
+- Порог не заменяет структурный критерий сходимости и сам по себе не гарантирует ровно один выходной фронт
 
 #### Параметры временного кодирования
 
@@ -188,16 +190,18 @@ sequenceDiagram
     Trainer->>Structure: Определение начальной структуры
     Structure->>Neuron: Создание нейрона
     Trainer->>Neuron: Предъявление паттерна
-    Neuron->>Trainer: Амплитуда потенциала
-    Trainer->>Trainer: Проверка генерации спайка
-    alt Спайк не генерируется
-        Trainer->>Structure: Корректировка структуры
-        Structure->>Neuron: Модификация нейрона
+    Neuron->>Trainer: Измеренная амплитуда потенциала
+    Trainer->>Trainer: Сравнение амплитуды с целевой
+    alt Структурный критерий текущего режима не достигнут
+        Trainer->>Structure: Изменение длины или синапсов
+        Structure->>Neuron: Обновление структуры
         Trainer->>Neuron: Повторное предъявление
-    else Спайк генерируется
-        Trainer->>Trainer: Обучение завершено
+    else Критерий текущего режима достигнут
+        Trainer->>Trainer: IsNeedToTrain = false
     end
 ```
+
+В режиме 6 критерий нормализации не считает выходные фронты LTZone и не проверяет, что их ровно один.
 
 ### Влияние параметров на результат адаптации
 
@@ -256,7 +260,7 @@ NNeuronTrainer* trainer = CreateComponent<NNeuronTrainer>("Trainer");
 // Настройка параметров
 trainer->NumInputDendrite = 3;  // 3 компонента в паттерне
 trainer->MaxDendriteLength = 50;
-trainer->LTZThreshold = 0.0117;  // Универсальный порог
+trainer->LTZThreshold = 0.0117;  // Пример порога; зависит от класса LTZone
 trainer->SpikesFrequency = 1.5;
 
 // Задание входного паттерна (временные задержки в секундах)
@@ -455,17 +459,19 @@ The following configurations demonstrate structural adaptation:
 - Affects maximum signal processing delay
 - Recommended values: 10 to 100 segments depending on task
 
-#### Maximum number of synapses
+#### Synapse count and growth limits
 
-- Determined by neuron structure and membrane parameters
-- Affects neuron's ability to integrate multiple inputs
-- Usually set equal to number of input dendrites
+- The active structural paths (`CalculateMode=6` in `NNeuronTrainer` and `NNeuronLearner`) have no separate hard upper bound on synapse count. `MaxDendriteLength` limits dendrite length, not synapse count.
+- During normalization, the algorithm adds or removes one synapse at a time by comparing the measured amplitude with its target. It tries to restore the peak lost when a dendrite is lengthened; it does not calculate the required synapse count in advance with a separate formula.
+- Normalization does not count LTZone edges and does not guarantee exactly one output spike. In a control using a saved `NSPNeuron` structure, increasing active synapses from 12 to 16, 24, and the full vector `[30,22,32,32,1]` changed the response from one to two, three, and four spikes. This establishes a causal contribution from active synapse count for that structure and TTFS pattern; the values do not transfer to other neuron types or parameters.
+- The replay's `TrainingDendIndexes=[18,9,21,20,1]` differed from its physical vector `[35,17,41,39,1]`; the source of this mismatch remains unresolved, so those exact dendrite lengths need a separate audit. For other models, use controls that hold length, parameters, and input constant before assigning causality.
+- Neither class exposes a configurable `MaxSynapseCount`. Do not introduce an arbitrary cap without a confirmed failure and a test of its effect on the method.
 
 #### Neuron activation threshold (`LTZThreshold`, `FixedLTZThreshold`)
 
-- Universal threshold value independent of input pattern size
-- Critically important for correct pattern recognition
-- May be fixed or adaptive depending on learning mode
+- Configured low-threshold-zone threshold; behavior depends on the selected LTZone class
+- During training the classes temporarily use `TrainingLTZThreshold`, then restore `FixedLTZThreshold`
+- This threshold is not the structural convergence criterion and does not guarantee exactly one output edge
 
 #### Temporal coding parameters
 
@@ -489,16 +495,18 @@ sequenceDiagram
     Trainer->>Structure: Определение начальной структуры
     Structure->>Neuron: Creation нейрона
     Trainer->>Neuron: Предъявление паттерна
-    Neuron->>Trainer: Амплитуда potentialа
-    Trainer->>Trainer: Проверка генерации спайка
-    alt Спайк не генерируется
-        Trainer->>Structure: Корректировка структуры
-        Structure->>Neuron: Модификация нейрона
+    Neuron->>Trainer: Измеренная амплитуда потенциала
+    Trainer->>Trainer: Сравнение амплитуды с целевой
+    alt Структурный критерий текущего режима не достигнут
+        Trainer->>Structure: Изменение длины или синапсов
+        Structure->>Neuron: Обновление структуры
         Trainer->>Neuron: Повторное предъявление
-    else Спайк генерируется
-        Trainer->>Trainer: Обучение завершено
+    else Критерий текущего режима достигнут
+        Trainer->>Trainer: IsNeedToTrain = false
     end
 ```
+
+Mode 6 normalization does not count LTZone edges or require exactly one output edge.
 
 ### Influence of parameters on adaptation result
 
@@ -557,7 +565,7 @@ NNeuronTrainer* trainer = CreateComponent<NNeuronTrainer>("Trainer");
 // Настройка параметров
 trainer->NumInputDendrite = 3;  // 3 компонента в паттерне
 trainer->MaxDendriteLength = 50;
-trainer->LTZThreshold = 0.0117;  // Универсальный порог
+trainer->LTZThreshold = 0.0117;  // Example threshold; depends on the selected LTZone class
 trainer->SpikesFrequency = 1.5;
 
 // Задание входного паттерна (временные задержки в секундах)

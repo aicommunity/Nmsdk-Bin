@@ -1,0 +1,87 @@
+<ClassDescription>
+	<ClassName>NClassifierDynamicsRecorder</ClassName>
+	<Header>Регистратор динамики классификатора</Header>
+	<Description>Пассивно записывает подключённые скалярные сигналы и модельное время в CSV.</Description>
+	<Properties>
+		<Signals>
+			<Header>Сигналы</Header>
+			<Description>Вектор подписанных скалярных входов в порядке подключения.</Description>
+			<Type>| ptPubInput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>264</PropertyType>
+		</Signals>
+		<SignalNamesCsv>
+			<Header>Названия столбцов CSV</Header>
+			<Description>Названия, разделённые запятыми, в том же порядке, что Signals.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</SignalNamesCsv>
+		<SavePath>
+			<Header>Каталог записи</Header>
+			<Description>Путь относительно каталога данных проекта.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</SavePath>
+		<FileName>
+			<Header>Файл CSV</Header>
+			<Description>Имя записываемого CSV файла.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</FileName>
+		<SampleInterval>
+			<Header>Интервал выборки</Header>
+			<Description>Минимальный интервал между строками в модельных секундах.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</SampleInterval>
+		<FlushInterval>
+			<Header>Интервал сброса CSV</Header>
+			<Description>Период сброса буфера файла в модельных секундах.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</FlushInterval>
+		<AppendMode>
+			<Header>Дополнять файл</Header>
+			<Description>Если включено, строки добавляются в существующий CSV.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</AppendMode>
+		<Enable>
+			<Header>Включить запись</Header>
+			<Description>По умолчанию запись выключена.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>1</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>257</PropertyType>
+		</Enable>
+		<LastError>
+			<Header>Ошибка записи</Header>
+			<Description>Последняя ошибка создания каталога или открытия CSV.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>265</PropertyType>
+		</LastError>
+		<SamplesWritten>
+			<Header>Записано строк</Header>
+			<Description>Количество строк с данными после сброса.</Description>
+			<Type>| ptPubOutput | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string"><elem Type="std::string"></elem><elem Type="std::string"></elem></ValueList>
+			<PropertyType>265</PropertyType>
+		</SamplesWritten>
+	</Properties>
+</ClassDescription>

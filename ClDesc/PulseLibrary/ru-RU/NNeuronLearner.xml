@@ -179,6 +179,17 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</IsNeedToTrain>
+		<UseAutoPreset>
+			<Header>Оценить начальные длины дендритов</Header>
+			<Description>При первом обучении свежей структуры оценить начальные длины дендритов с помощью Auto_Preset. Число синапсов и параметры модели не меняются; последний дендрит остаётся калибровочным. По умолчанию выключено.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</UseAutoPreset>
 		<LTZThreshold>
 			<Header>Порог LT-зоны</Header>
 			<Description>Порог активации низкопороговой зоны (LT-zone) нейрона.</Description>
@@ -382,6 +393,9 @@
 		<IsNeedToTrain>
 			<Path>{CompName}:IsNeedToTrain</Path>
 		</IsNeedToTrain>
+		<UseAutoPreset>
+			<Path>{CompName}:UseAutoPreset</Path>
+		</UseAutoPreset>
 		<InputPattern>
 			<Path>{CompName}:InputPattern</Path>
 		</InputPattern>

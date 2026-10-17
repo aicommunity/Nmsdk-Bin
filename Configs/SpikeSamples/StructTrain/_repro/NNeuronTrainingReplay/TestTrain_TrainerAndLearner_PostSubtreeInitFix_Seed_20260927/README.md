@@ -1,0 +1,1 @@
+Fresh clone of Bin/Configs/Bakhshiev/TestTrain for an isolated NNeuronTrainer mode-6 replay. NNeuronLearner Activity is disabled; Trainer, input patterns, neuron parameters, and TimeStep are preserved. Project CalculationMode=3 and model-time autosave interval=2 seconds.

@@ -1,0 +1,1 @@
+Fresh TestTrain clone for NNeuronTrainer mode-6 replay. NNeuronLearner IsNeedToTrain and Activity are disabled in Model_00.xml and Parameters_00.xml. Trainer, input pattern, neuron parameters, TimeStep=2000 and starting topology are preserved. Project CalculationMode=3 and model-time autosave interval=2 seconds.
