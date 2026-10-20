@@ -295,6 +295,11 @@ TRAIN_PARAM_WHITELIST: dict[str, str] = {
     "ResetNeuronBeforeTrainBurst": "b",
     "MarkRminLengthTolAsBestEffort": "b",
     "DisableMidbandWalkToRmin": "b",
+    "PreferConfiguredResistanceMinFloor": "b",
+    "ConfiguredResistanceMin": "d",
+    "UseRelativeAmpEps": "b",
+    "AmpNormEpsRel": "d",
+    "AmpOscillationBandRel": "d",
     "EstDelayPerSegInit": "d",
     "AutoEstimateAttenuationGamma": "b",
 }
