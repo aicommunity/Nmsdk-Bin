@@ -770,7 +770,7 @@ def main() -> int:
         print(f"Run ID: {run_id}", flush=True)
         print(f"Selected cases ({len(selected_ids)}): {', '.join(selected_ids)}", flush=True)
         print(f"=== {wave} prepare ===", flush=True)
-        run([sys.executable, str(RUNNER), "--prepare", wave], BASE)
+        run([sys.executable, str(RUNNER), "--prepare", wave, "--case-ids", *selected_ids], BASE)
         fingerprint = make_run_fingerprint(wave, specs, args)
         runs = RUNS_BASE / run_id
         manifest_path = runs / "run_manifest.json"
