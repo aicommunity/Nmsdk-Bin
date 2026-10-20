@@ -159,6 +159,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "skip_cpp_reset_to_untrained": args.branch_segment_rm_profile is not None,
         "skip_cpp_structure_rebuild": args.branch_segment_rm_profile is not None,
         "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
+        "force_posttrain_tuning": args.force_posttrain_tuning,
     }
     case_fingerprints = {}
     input_hashes = {}
@@ -226,6 +227,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
                 "skip_cpp_structure_rebuild"
             ],
             "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
+            "force_posttrain_tuning": args.force_posttrain_tuning,
             "no_commit": bool(args.no_commit),
         },
     }
@@ -327,6 +329,9 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         ),
                         "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
                             "train_time_limit_override_seconds"
+                        ),
+                        "force_posttrain_tuning": (result.get("runtime_execution_options") or {}).get(
+                            "force_posttrain_tuning"
                         ),
                     } == fingerprint.get("condition_runtime")
                     and provenance.get("binary_sha256") == fingerprint["console_sha256"]
@@ -596,6 +601,16 @@ def main() -> int:
         "--train-time-limit-override-seconds",
         type=float,
         help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
+    )
+    parser.add_argument(
+        "--force-posttrain-tuning",
+        type=int,
+        choices=(0, 1),
+        default=None,
+        help=(
+            "attempt-local PostTune ON(1)/OFF(0) override via runtime overlay + worker_config; "
+            "does not rewrite shared TimeLearnerMatrix/.../inputs or matrix.json"
+        ),
     )
     parser.add_argument(
         "--no-commit",

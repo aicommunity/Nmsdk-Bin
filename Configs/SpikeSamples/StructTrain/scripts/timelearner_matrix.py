@@ -345,6 +345,7 @@ def make_runtime_input_overlay(
     accept_quantized_amp_under_target: bool = False,
     branch_segment_rm_profile: dict[int, float] | None = None,
     branch_initial_lengths: list[int] | None = None,
+    force_posttrain_tuning: int | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Create an attempt-local input copy with recorded diagnostic overrides."""
     if branch_rs_rm_limit is not None and (
@@ -630,6 +631,27 @@ def make_runtime_input_overlay(
                     "SoftColdReset": "skipped to preserve the prebuilt diagnostic state",
                 },
             })
+    if force_posttrain_tuning is not None:
+        if force_posttrain_tuning not in (0, 1):
+            raise ValueError("force_posttrain_tuning must be 0 or 1")
+        enabled = str(force_posttrain_tuning)
+        for filename in ("Model_00.xml", "Parameters_00.xml"):
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = _set_or_insert_runtime_tag(
+                original, "EnablePostTrainTuning", enabled, "IsNeedToTrain", value_type="b"
+            )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": {"EnablePostTrainTuning": enabled},
+            })
     record = {
         "mode": "runtime_input_overlay",
         "source_input": str(input_root),
@@ -641,6 +663,7 @@ def make_runtime_input_overlay(
         "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
+        "force_posttrain_tuning": force_posttrain_tuning,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "branch_segment_rm_profile_application": (
@@ -1232,10 +1255,21 @@ def execute_worker(command: list[str], *, cwd: Path, env: dict[str, str], log_pa
     return int(proc.returncode)
 
 
-def prepare_wave(wave: str, *, refresh: bool = False) -> None:
+def prepare_wave(
+    wave: str,
+    *,
+    refresh: bool = False,
+    case_ids: list[str] | None = None,
+) -> None:
     pv = load_pv()
     data = load_manifest()
     specs = [case for case in data["cases"] if case["wave"] == wave]
+    if case_ids is not None:
+        wanted = set(case_ids)
+        specs = [case for case in specs if case["id"] in wanted]
+        missing = wanted - {case["id"] for case in specs}
+        if missing:
+            raise ValueError(f"unknown prepare case ids for {wave}: {sorted(missing)}")
     if not specs:
         raise ValueError(f"no cases in manifest for {wave}")
     templates = data["templates"]
@@ -1293,6 +1327,11 @@ def worker(
     )
     branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
     branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
+    force_posttrain_tuning = run_manifest.get("runtime", {}).get("force_posttrain_tuning")
+    if force_posttrain_tuning is not None:
+        force_posttrain_tuning = int(force_posttrain_tuning)
+        if force_posttrain_tuning not in (0, 1):
+            raise ValueError("force_posttrain_tuning must be 0 or 1")
     if branch_gamma_mode is not None and spec.get("trainer") != "NNeuronTimeLearnerBranch":
         raise ValueError("Branch gamma diagnostic modes only apply to Branch trainer cases")
     if classic_gamma_mode is not None and (
@@ -1329,6 +1368,7 @@ def worker(
         or synapse_resistance_step is not None
         or accept_quantized_amp_under_target
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
+        or force_posttrain_tuning is not None
     ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
             input_root, attempt_dir, wave, case_id,
@@ -1341,6 +1381,7 @@ def worker(
             accept_quantized_amp_under_target=accept_quantized_amp_under_target,
             branch_segment_rm_profile=branch_segment_rm_profile,
             branch_initial_lengths=branch_initial_lengths,
+            force_posttrain_tuning=force_posttrain_tuning,
         )
     initial_rs_override = initial_rs_override_from_input(spec, runtime_input_root)
     initial_rs_scalar = (
@@ -1356,6 +1397,10 @@ def worker(
         "source_config", template.get("paired_source", template["preinh_source"])
     )
     internal_id = spec.get("worker_case", case_id)
+    if force_posttrain_tuning is not None:
+        enable_posttrain = str(force_posttrain_tuning)
+    else:
+        enable_posttrain = "1" if spec.get("posttrain_tuning", False) else "0"
     worker_config = {
         "root": runtime_input_root,
         "gold": gold,
@@ -1367,7 +1412,7 @@ def worker(
         "normalization_mode": int(spec["normalization_mode"]),
         "presynaptic_inhibition": bool(spec["presynaptic_inhibition"]),
         "presynaptic_coefficient": float(spec.get("presynaptic_coefficient", 2.5)),
-        "enable_posttrain_tuning": "1" if spec.get("posttrain_tuning", False) else "0",
+        "enable_posttrain_tuning": enable_posttrain,
         "posttrain_tip_resistance_mode": str(spec.get("tipr_mode", 1)),
         "disable_train_statistic_logs": True,
         "branch_segment_rm_profile": branch_segment_rm_profile,
@@ -1428,6 +1473,8 @@ def worker(
         "train_time_limit_override_seconds": run_manifest.get("runtime", {}).get(
             "train_time_limit_override_seconds"
         ),
+        "force_posttrain_tuning": force_posttrain_tuning,
+        "enable_posttrain_tuning_effective": enable_posttrain,
     }
     provenance_path = run_dir / "provenance.json"
     if not provenance_path.is_file():
@@ -1796,11 +1843,11 @@ def main() -> int:
         raise SystemExit("direct single-case launches are disabled; use run_timelearner_matrix_queue.py --case CASE --no-commit")
     if args.prepare:
         if os.environ.get("TIMELEARNER_MATRIX_QUEUE_LOCKED") == "1":
-            prepare_wave(args.prepare, refresh=args.refresh)
+            prepare_wave(args.prepare, refresh=args.refresh, case_ids=args.case_ids)
         else:
             queue_lock = BASE / "_repro" / ".timelearner_matrix_queue.lock"
             with exclusive_file_lock(queue_lock, purpose=f"prepare matrix inputs {args.prepare}"):
-                prepare_wave(args.prepare, refresh=args.refresh)
+                prepare_wave(args.prepare, refresh=args.refresh, case_ids=args.case_ids)
         return 0
     if args.run:
         if os.environ.get("TIMELEARNER_MATRIX_QUEUE_LOCKED") != "1":
