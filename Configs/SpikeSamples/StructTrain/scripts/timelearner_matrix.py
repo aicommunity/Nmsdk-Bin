@@ -294,6 +294,7 @@ TRAIN_PARAM_WHITELIST: dict[str, str] = {
     "PreferMeasuredDelay": "b",
     "ResetNeuronBeforeTrainBurst": "b",
     "MarkRminLengthTolAsBestEffort": "b",
+    "DisableMidbandWalkToRmin": "b",
     "EstDelayPerSegInit": "d",
     "AutoEstimateAttenuationGamma": "b",
 }
