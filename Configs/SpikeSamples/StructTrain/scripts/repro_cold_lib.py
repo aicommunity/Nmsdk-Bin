@@ -361,12 +361,89 @@ def strip_dendrite_segments_above_one(model_text: str) -> str:
     )
 
 
+# --- Link hygiene (A15 fix, 2026-10-20) -------------------------------------------------
+# The previous regex implementations rewrote EVERY "...DendriteK_N.(Exc|Inh)Synapse" string in the
+# model, including the <Item> of synapse->own-channel links.  That turned each tip synapse into a
+# fan-out over all segments of its dendrite (A15).  The functions below only touch
+# DatasetMatrix.Generator1 "Input" connectors and never rename link Items.
+_LINK_ELEM_RE = re.compile(r'<elem Type="ULink">(.*?)</elem>', re.S)
+_LINK_ITEM_RE = re.compile(r'<Item Type="ULinkSide" Index="[^"]*" Name="[^"]+">([^<]+)</Item>')
+_GEN_TAP_RE = re.compile(
+    r'(<Connector Type="ULinkSide" Index="[^"]*" Name="Input">'
+    r'(NeuronTimeLearner(?:Branch)?\.Neuron\.Dendrite)(\d+)_(\d+)(\.(?:Exc|Inh)Synapse\d+)</Connector>)'
+)
+_CONNECTOR_LINE_RE = re.compile(r'\n[ \t]*<Connector [^>]*>([^<]+)</Connector>')
+_MEMBRANE_REF_RE = re.compile(r'\.(Dendrite\d+_\d+)\.')
+
+
+def _rewrite_generator_taps(model_text: str, new_segment) -> str:
+    """Apply new_segment(dendrite, segment, ordinal) -> segment to Generator1 Input taps only.
+
+    Duplicate taps produced by the rewrite (same target) are dropped, so each target appears once
+    across all Generator1 link elements.
+    """
+    seen: set[str] = set()
+    ordinal = [0]
+
+    def fix_elem(m: re.Match[str]) -> str:
+        body = m.group(1)
+        im = _LINK_ITEM_RE.search(body)
+        if not im or not im.group(1).endswith("DatasetMatrix.Generator1"):
+            return m.group(0)
+
+        def fix_tap(t: re.Match[str]) -> str:
+            d, seg = int(t.group(3)), int(t.group(4))
+            ordinal[0] += 1
+            target = f"{t.group(2)}{d}_{new_segment(d, seg, ordinal[0] - 1)}{t.group(5)}"
+            if target in seen:
+                return "\x00DROP\x00"
+            seen.add(target)
+            return t.group(1).replace(t.group(2) + f"{d}_{seg}" + t.group(5), target)
+
+        body = _GEN_TAP_RE.sub(fix_tap, body)
+        body = re.sub(r'\n[ \t]*\x00DROP\x00', "", body)
+        return '<elem Type="ULink">' + body + "</elem>"
+
+    return _LINK_ELEM_RE.sub(fix_elem, model_text)
+
+
+def prune_links_to_missing_membranes(model_text: str) -> str:
+    """Drop link connectors/elements that reference DendriteX_Y components absent from the model."""
+    present = set(re.findall(r'<(Dendrite\d+_\d+) Class="', model_text))
+    removed = 0
+
+    def fix_elem(m: re.Match[str]) -> str:
+        nonlocal removed
+        body = m.group(1)
+        im = _LINK_ITEM_RE.search(body)
+        if im:
+            mm = _MEMBRANE_REF_RE.search(im.group(1) + ".")
+            if mm and mm.group(1) not in present:
+                removed += 1
+                return "\x00DROPELEM\x00"
+
+        def fix_conn(c: re.Match[str]) -> str:
+            cm = _MEMBRANE_REF_RE.search(c.group(1) + ".")
+            return "" if cm and cm.group(1) not in present else c.group(0)
+
+        new_body = _CONNECTOR_LINE_RE.sub(fix_conn, body)
+        if "<Connector" not in new_body:
+            removed += 1
+            return "\x00DROPELEM\x00"
+        return '<elem Type="ULink">' + new_body + "</elem>"
+
+    out = _LINK_ELEM_RE.sub(fix_elem, model_text)
+    out = re.sub(r'\s*\x00DROPELEM\x00', "", out)
+    if removed:
+        n = len(_LINK_ELEM_RE.findall(out))
+        out = re.sub(r'(<Links Type="ULinksList" Size=")\d+(")', rf"\g<1>{n}\2", out, count=1)
+    return out
+
+
 def rewrite_links_to_tip1(model_text: str) -> str:
-    return re.sub(
-        r"(NeuronTimeLearner(?:Branch)?\.Neuron\.Dendrite\d+)_\d+(\.(?:Exc|Inh)Synapse)",
-        r"\1_1\2",
-        model_text,
-    )
+    """After strip_dendrite_segments_above_one: generator taps -> DendriteK_1, drop dangling links."""
+    out = _rewrite_generator_taps(model_text, lambda d, seg, i: 1)
+    return prune_links_to_missing_membranes(out)
 
 
 def apply_branch_segment_rm_profile(model_text: str, profile: dict[int, float]) -> str:
@@ -745,31 +822,17 @@ def patch_tip_exc_r(text: str, tips: list[int], *, branch: bool) -> str:
 
 
 def fix_generator_tip_links(model_text: str, tips: list[int]) -> str:
-    out = model_text
-    for i, L in enumerate(tips, start=1):
-        out = re.sub(
-            rf"(NeuronTimeLearner\.Neuron\.Dendrite{i}_)\d+(\.(?:Exc|Inh)Synapse)",
-            rf"\g<1>{L}\2",
-            out,
-        )
-    return out
+    """Classic: point Generator1 taps of dendrite i at DendriteI_<tips[i-1]>; nothing else changes."""
+    return _rewrite_generator_taps(
+        model_text, lambda d, seg, i: tips[d - 1] if 1 <= d <= len(tips) else seg
+    )
 
 
 def fix_branch_tip_links(model_text: str, tips: list[int]) -> str:
-    it = iter(tips)
+    """Branch: Generator1 taps get segments tips[0], tips[1], ... in document order (last repeats)."""
     last = tips[-1] if tips else 1
-
-    def repl(m: re.Match[str]) -> str:
-        try:
-            L = next(it)
-        except StopIteration:
-            L = last
-        return f"{m.group(1)}{L}{m.group(3)}"
-
-    return re.sub(
-        r"(NeuronTimeLearnerBranch\.Neuron\.Dendrite1_)(\d+)(\.(?:Exc|Inh)Synapse)",
-        repl,
-        model_text,
+    return _rewrite_generator_taps(
+        model_text, lambda d, seg, i: tips[i] if i < len(tips) else last
     )
 
 
