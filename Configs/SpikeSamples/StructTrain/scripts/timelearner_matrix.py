@@ -291,6 +291,9 @@ TRAIN_PARAM_WHITELIST: dict[str, str] = {
     "UseSignedDelayEstimate": "b",
     "RminLengthTolFactor": "d",
     "FreezeSynapseResistanceBase": "b",
+    "PreferMeasuredDelay": "b",
+    "ResetNeuronBeforeTrainBurst": "b",
+    "MarkRminLengthTolAsBestEffort": "b",
     "EstDelayPerSegInit": "d",
     "AutoEstimateAttenuationGamma": "b",
 }
