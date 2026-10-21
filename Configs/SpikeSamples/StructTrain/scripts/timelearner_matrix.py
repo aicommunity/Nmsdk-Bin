@@ -298,6 +298,7 @@ TRAIN_PARAM_WHITELIST: dict[str, str] = {
     "PreferConfiguredResistanceMinFloor": "b",
     "ConfiguredResistanceMin": "d",
     "UseRelativeAmpEps": "b",
+    "CorrectAttenuationGammaForTipR": "b",
     "AmpNormEpsRel": "d",
     "AmpOscillationBandRel": "d",
     "EstDelayPerSegInit": "d",
