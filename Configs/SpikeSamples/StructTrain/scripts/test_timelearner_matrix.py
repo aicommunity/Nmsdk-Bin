@@ -547,6 +547,49 @@ class RuntimeStructuralSynapseStepOverlayTests(unittest.TestCase):
             self.assertFalse((attempt / "runtime-input-overrides").exists())
 
 
+class RuntimeTrainParamOverlayTests(unittest.TestCase):
+    def _source(self, base):
+        source = base / "source"
+        for side in ("Train", "Test"):
+            (source / side).mkdir(parents=True)
+        (source / "matrix_input_manifest.json").write_text("{}\n", encoding="utf-8")
+        xml = (
+            '<Params><NormalizationMode Type="i">1</NormalizationMode>'
+            '<EstDelayPerSeg Type="d">0.002</EstDelayPerSeg></Params>'
+        )
+        for side in ("Train", "Test"):
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                (source / side / filename).write_text(xml, encoding="utf-8")
+        return source, xml
+
+    def test_train_params_set_existing_and_insert_missing_in_train_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source, xml = self._source(base)
+            attempt = base / "runs" / "r10" / "W01" / "case" / "attempt-0001"
+            attempt.mkdir(parents=True)
+            params = dict([MODULE.parse_train_param("EstDelayPerSeg=0.01"),
+                           MODULE.parse_train_param("UseSignedDelayEstimate=1")])
+            overlay, record = MODULE.make_runtime_input_overlay(
+                source, attempt, "W01", "case",
+                quiet_debug_logs=False, branch_gamma_mode=None,
+                train_params=params,
+            )
+            for filename in ("Model_00.xml", "Parameters_00.xml"):
+                text = (overlay / "Train" / filename).read_text(encoding="utf-8")
+                self.assertIn('<EstDelayPerSeg Type="d">0.01</EstDelayPerSeg>', text)
+                self.assertIn(">1</UseSignedDelayEstimate>", text)
+                self.assertEqual((overlay / "Test" / filename).read_text(encoding="utf-8"), xml)
+                self.assertEqual((source / "Train" / filename).read_text(encoding="utf-8"), xml)
+            self.assertEqual(record["train_params"], params)
+            self.assertEqual(len(record["overrides"]), 2)
+
+    def test_unknown_or_invalid_train_params_are_rejected(self):
+        for raw in ("Foo=1", "EstDelayPerSeg", "EstDelayPerSeg=nan", "UseSignedDelayEstimate=2"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                MODULE.parse_train_param(raw)
+
+
 class RunProvenanceTests(unittest.TestCase):
     def test_console_resolution_uses_host_platform_and_respects_override(self):
         root = Path("/repo")

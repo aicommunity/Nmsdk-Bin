@@ -282,6 +282,50 @@ def _set_or_insert_runtime_tag(
     return set_all_tags(text, tag, value)
 
 
+# Diagnostic Train-only parameters accepted by --train-param (audit plan 2026-10-20).
+# name -> XML value type.  New C++ switches must exist in the Console being run;
+# an unknown property is silently ignored by the loader, so check the C++ audit line.
+TRAIN_PARAM_WHITELIST: dict[str, str] = {
+    "EstDelayPerSeg": "d",
+    "SyncTolerance": "d",
+    "UseSignedDelayEstimate": "b",
+    "RminLengthTolFactor": "d",
+    "FreezeSynapseResistanceBase": "b",
+    "PreferMeasuredDelay": "b",
+    "ResetNeuronBeforeTrainBurst": "b",
+    "MarkRminLengthTolAsBestEffort": "b",
+    "DisableMidbandWalkToRmin": "b",
+    "PreferConfiguredResistanceMinFloor": "b",
+    "ConfiguredResistanceMin": "d",
+    "UseRelativeAmpEps": "b",
+    "CorrectAttenuationGammaForTipR": "b",
+    "AmpNormEpsRel": "d",
+    "AmpOscillationBandRel": "d",
+    "EstDelayPerSegInit": "d",
+    "AutoEstimateAttenuationGamma": "b",
+    "EnableRmaxLengthEscape": "b",
+}
+
+
+def parse_train_param(raw: str) -> tuple[str, str]:
+    """Parse ``NAME=VALUE`` for a whitelisted numeric trainer parameter."""
+    name, separator, value = raw.partition("=")
+    name, value = name.strip(), value.strip()
+    if not separator or name not in TRAIN_PARAM_WHITELIST:
+        raise ValueError(
+            f"--train-param must be NAME=VALUE with NAME in {sorted(TRAIN_PARAM_WHITELIST)}"
+        )
+    if TRAIN_PARAM_WHITELIST[name] == "b":
+        if value not in ("0", "1"):
+            raise ValueError(f"{name} is boolean: use 0 or 1")
+    else:
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError(f"{name} must be finite")
+        value = format(number, ".17g")
+    return name, value
+
+
 def parse_branch_segment_rm_profile(raw: str | None) -> dict[int, float] | None:
     """Parse diagnostic ``segment=ohms,...`` pairs for attempt-local Branch inputs."""
     if raw is None:
@@ -346,8 +390,11 @@ def make_runtime_input_overlay(
     branch_segment_rm_profile: dict[int, float] | None = None,
     branch_initial_lengths: list[int] | None = None,
     force_posttrain_tuning: int | None = None,
+    train_params: dict[str, str] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Create an attempt-local input copy with recorded diagnostic overrides."""
+    for name, value in (train_params or {}).items():
+        parse_train_param(f"{name}={value}")
     if branch_rs_rm_limit is not None and (
         not math.isfinite(branch_rs_rm_limit) or branch_rs_rm_limit < 1.0
     ):
@@ -652,6 +699,27 @@ def make_runtime_input_overlay(
                 "sha256_after": sha256(path),
                 "parameters": {"EnablePostTrainTuning": enabled},
             })
+    if train_params:
+        for filename in XML_INPUTS:
+            path = overlay / "Train" / filename
+            if not path.is_file():
+                raise FileNotFoundError(path)
+            original = path.read_text(encoding="utf-8")
+            updated = original
+            for name, value in train_params.items():
+                updated = _set_or_insert_runtime_tag(
+                    updated, name, value, "NormalizationMode",
+                    value_type=TRAIN_PARAM_WHITELIST[name],
+                )
+            ET.fromstring(updated)
+            path.write_text(updated, encoding="utf-8", newline="")
+            changed.append({
+                "side": "Train",
+                "file": f"Train/{filename}",
+                "sha256_before": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+                "sha256_after": sha256(path),
+                "parameters": dict(train_params),
+            })
     record = {
         "mode": "runtime_input_overlay",
         "source_input": str(input_root),
@@ -664,6 +732,7 @@ def make_runtime_input_overlay(
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
         "force_posttrain_tuning": force_posttrain_tuning,
+        "train_params": train_params,
         "branch_segment_rm_profile": branch_segment_rm_profile,
         "branch_initial_lengths": branch_initial_lengths,
         "branch_segment_rm_profile_application": (
@@ -1328,6 +1397,12 @@ def worker(
     branch_segment_rm_profile = run_manifest.get("runtime", {}).get("branch_segment_rm_profile")
     branch_initial_lengths = run_manifest.get("runtime", {}).get("branch_initial_lengths")
     force_posttrain_tuning = run_manifest.get("runtime", {}).get("force_posttrain_tuning")
+    train_params = run_manifest.get("runtime", {}).get("train_params") or None
+    if train_params:
+        if spec.get("trainer") == "NNeuronTimeLearnerBranch" and "EstDelayPerSeg" in train_params:
+            raise ValueError("Branch EstDelayPerSeg is not an XML property; use EstDelayPerSegInit")
+        if spec.get("trainer") != "NNeuronTimeLearnerBranch" and "EstDelayPerSegInit" in train_params:
+            raise ValueError("EstDelayPerSegInit exists only in NNeuronTimeLearnerBranch; Classic uses EstDelayPerSeg")
     if force_posttrain_tuning is not None:
         force_posttrain_tuning = int(force_posttrain_tuning)
         if force_posttrain_tuning not in (0, 1):
@@ -1369,6 +1444,7 @@ def worker(
         or accept_quantized_amp_under_target
         or branch_segment_rm_profile is not None or branch_initial_lengths is not None
         or force_posttrain_tuning is not None
+        or train_params is not None
     ):
         runtime_input_root, runtime_input_overrides = make_runtime_input_overlay(
             input_root, attempt_dir, wave, case_id,
@@ -1382,6 +1458,7 @@ def worker(
             branch_segment_rm_profile=branch_segment_rm_profile,
             branch_initial_lengths=branch_initial_lengths,
             force_posttrain_tuning=force_posttrain_tuning,
+            train_params=train_params,
         )
     initial_rs_override = initial_rs_override_from_input(spec, runtime_input_root)
     initial_rs_scalar = (
@@ -1457,6 +1534,7 @@ def worker(
         "classic_rs_rm_limit": classic_rs_rm_limit,
         "synapse_resistance_step": synapse_resistance_step,
         "accept_quantized_amp_under_target": accept_quantized_amp_under_target,
+        "train_params": train_params,
         "initial_rs_post_softcold_override_ohm": initial_rs_scalar,
         "initial_trainable_tipr_vector_post_softcold_override_ohm": initial_rs_vector,
         "initial_trainable_tipr_rm_ratio": spec.get("initial_rs_trainable_to_rm"),
