@@ -1392,6 +1392,7 @@ def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float
         "delay_residue",
         "amp_over_target",
         "sync_exit",
+        "amp_be",
         "done_be",
         "done_best_effort",
         "sep_margin",
@@ -1399,7 +1400,7 @@ def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float
         "sep_tgt",
         "sep_max_foil",
     )
-    int_keys = ("sync_exit", "done_be", "done_best_effort")
+    int_keys = ("sync_exit", "amp_be", "done_be", "done_best_effort")
     try:
         for line in _training_audit_lines_reverse(audit):
             if "kind=done" not in line and (
@@ -3179,6 +3180,7 @@ def run_case(
             "delay_residue",
             "amp_over_target",
             "sync_exit",
+            "amp_be",
             "done_be",
             "sep_margin",
             "sep_gap",
