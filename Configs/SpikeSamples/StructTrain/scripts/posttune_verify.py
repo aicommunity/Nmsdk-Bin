@@ -1376,6 +1376,47 @@ def runtime_training_failure_from_audit(train: Path) -> tuple[int, int] | None:
     return None
 
 
+def _parse_audit_scalar(fields: dict[str, str], key: str) -> str | None:
+    raw = fields.get(key)
+    if raw in (None, ""):
+        return None
+    return raw
+
+
+def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float] | None:
+    """Stage0 scalars from newest kind=done or terminal need=0 iteration audit."""
+    audit = train / "TimeLearnerTrainingAudit.log"
+    if not audit.is_file():
+        return None
+    keys = ("delay_residue", "amp_over_target", "sync_exit", "done_be", "done_best_effort")
+    try:
+        for line in _training_audit_lines_reverse(audit):
+            if "kind=done" not in line and (
+                "kind=iteration" not in line or ";need=0" not in line
+            ):
+                continue
+            fields = dict(
+                item.split("=", 1) for item in line.strip().split(";") if "=" in item
+            )
+            if "delay_residue" not in fields:
+                continue
+            out: dict[str, str | int | float] = {"audit_kind": fields.get("kind", "")}
+            for key in keys:
+                raw = _parse_audit_scalar(fields, key)
+                if raw is None:
+                    continue
+                if key in ("sync_exit", "done_be", "done_best_effort"):
+                    out[key] = int(raw)
+                else:
+                    out[key] = float(raw.replace(",", "."))
+            if "done_be" not in out and "done_best_effort" in out:
+                out["done_be"] = out["done_best_effort"]
+            return out
+    except (OSError, ValueError):
+        return None
+    return None
+
+
 DEFAULT_STALL_AUTOSAVE_N = 8
 
 
@@ -2699,6 +2740,7 @@ def run_case(
         after["FixedLTZThreshold"] = phase.train["mid"].split()[0]
 
     gold_test = snap_params(gold / "Test" / "Parameters_00.xml")
+    stage0_audit = runtime_stage0_fields_from_audit(train)
     training_convergence = classify_training_convergence(
         after.get("IsNeedToTrain", ""),
         phase.train,
@@ -3121,6 +3163,11 @@ def run_case(
         "require_cpp_mid": name in ("asym50", "phase6_480", "br100_search"),
         "child_rc": child_rc,
     }
+    if stage0_audit:
+        for key in ("delay_residue", "amp_over_target", "sync_exit", "done_be"):
+            if key in stage0_audit:
+                row[key] = stage0_audit[key]
+        row["training_audit_stage0"] = stage0_audit
     ok, fail_notes = accept_run(
         row,
         expect_fires=expect_fires,
