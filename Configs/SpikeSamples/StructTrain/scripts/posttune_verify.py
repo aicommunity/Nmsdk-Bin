@@ -1388,7 +1388,18 @@ def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float
     audit = train / "TimeLearnerTrainingAudit.log"
     if not audit.is_file():
         return None
-    keys = ("delay_residue", "amp_over_target", "sync_exit", "done_be", "done_best_effort")
+    keys = (
+        "delay_residue",
+        "amp_over_target",
+        "sync_exit",
+        "done_be",
+        "done_best_effort",
+        "sep_margin",
+        "sep_gap",
+        "sep_tgt",
+        "sep_max_foil",
+    )
+    int_keys = ("sync_exit", "done_be", "done_best_effort")
     try:
         for line in _training_audit_lines_reverse(audit):
             if "kind=done" not in line and (
@@ -1405,7 +1416,7 @@ def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float
                 raw = _parse_audit_scalar(fields, key)
                 if raw is None:
                     continue
-                if key in ("sync_exit", "done_be", "done_best_effort"):
+                if key in int_keys:
                     out[key] = int(raw)
                 else:
                     out[key] = float(raw.replace(",", "."))
@@ -3164,7 +3175,16 @@ def run_case(
         "child_rc": child_rc,
     }
     if stage0_audit:
-        for key in ("delay_residue", "amp_over_target", "sync_exit", "done_be"):
+        for key in (
+            "delay_residue",
+            "amp_over_target",
+            "sync_exit",
+            "done_be",
+            "sep_margin",
+            "sep_gap",
+            "sep_tgt",
+            "sep_max_foil",
+        ):
             if key in stage0_audit:
                 row[key] = stage0_audit[key]
         row["training_audit_stage0"] = stage0_audit
