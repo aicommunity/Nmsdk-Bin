@@ -282,6 +282,41 @@ if _H0_MANIFEST.is_file():
             }
             CASES[_key] = _d
 
+# Classic/Branch inhibition grid (PSI × NextSeg × SegEI): SelectivityInhGrid.
+_INH_MANIFEST = ROOT / "SelectivityInhGrid" / "INH_EXP_MANIFEST.json"
+_INH_TRAIN_T = {25: 320.0, 50: 640.0, 100: 1280.0}
+if _INH_MANIFEST.is_file():
+    for _row in json.loads(_INH_MANIFEST.read_text(encoding="utf-8")):
+        _span = int(_row["span"])
+        _mod = str(_row["mod"])
+        _mode = str(_row["mode"]).lower()
+        _trainer = str(_row["trainer"])
+        _kind = "branch" if _trainer == "Branch" else "asym"
+        _root = ROOT / "SelectivityInhGrid" / str(_row["exp"])
+        if not _root.is_dir():
+            continue
+        _key = f"inh_{_trainer[0].lower()}{_span}_{_mod}_{_mode}_pton"
+        _d = _case(
+            _root,
+            train_t=_INH_TRAIN_T.get(_span, 640.0),
+            span_ms=_span,
+            kind=_kind,
+            expect_tipr="canon",
+            skip_tipr_mid=True,
+        )
+        _d["enable_posttrain_tuning"] = "1"
+        _d["inh_meta"] = {
+            "trainer": _trainer,
+            "span": _span,
+            "mod": _mod,
+            "mode": _mode,
+            "neuron": _row.get("neuron"),
+            "train": _row.get("train"),
+            "test": _row.get("test"),
+            "derived_from": _row.get("src"),
+        }
+        CASES[_key] = _d
+
 
 @dataclass
 class PostTuneSalvage:
