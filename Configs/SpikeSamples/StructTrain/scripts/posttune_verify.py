@@ -242,6 +242,46 @@ CASES.update(
     }
 )
 
+# H0 TauCm per Span (phase D): register SelectivityTauCm EXP×Mode×PostTune without
+# mutating HIST templates. Manifest written by SelectivityTauCm clone script.
+_H0_MANIFEST = ROOT / "SelectivityTauCm" / "H0_EXP_MANIFEST.json"
+_H0_TRAIN_T = {25: 320.0, 50: 640.0, 100: 1280.0, 200: 1600.0, 480: 3200.0}
+if _H0_MANIFEST.is_file():
+    for _row in json.loads(_H0_MANIFEST.read_text(encoding="utf-8")):
+        _span = int(_row["span"])
+        _mod = str(_row["mod"])
+        _mode = str(_row["mode"]).lower()
+        _trainer = str(_row["trainer"])
+        _kind = "branch" if _trainer == "Branch" else "asym"
+        _root = ROOT / "SelectivityTauCm" / str(_row["exp"])
+        if not _root.is_dir():
+            continue
+        for _pt, _pt_flag in (("pton", "1"), ("ptoff", "0")):
+            _key = (
+                f"h0_{_trainer[0].lower()}{_span}_{_mod}_{_mode}_{_pt}"
+            )
+            _d = _case(
+                _root,
+                train_t=_H0_TRAIN_T.get(_span, 640.0),
+                span_ms=_span,
+                kind=_kind,
+                expect_tipr="canon",
+                skip_tipr_mid=True,
+            )
+            _d["enable_posttrain_tuning"] = _pt_flag
+            _d["h0_meta"] = {
+                "trainer": _trainer,
+                "span": _span,
+                "mod": _mod,
+                "mode": _mode,
+                "posttune": _pt,
+                "neuron": _row.get("neuron"),
+                "train": _row.get("train"),
+                "test": _row.get("test"),
+                "derived_from": _row.get("src"),
+            }
+            CASES[_key] = _d
+
 
 @dataclass
 class PostTuneSalvage:
