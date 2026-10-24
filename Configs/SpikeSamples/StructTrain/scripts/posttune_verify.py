@@ -317,6 +317,11 @@ if _INH_MANIFEST.is_file():
         }
         CASES[_key] = _d
 
+# Diag §6.3: InhGrid S25 gen fan-out with AsymRm neuron (SymInh culpable-axis check).
+if "inh_c25_genasym_n0_pton" in CASES:
+    CASES["inh_c25_genasym_n0_pton"]["expect_tipr"] = "flat"
+    CASES["inh_c25_genasym_n0_pton"]["kind"] = "asym"
+
 
 @dataclass
 class PostTuneSalvage:
