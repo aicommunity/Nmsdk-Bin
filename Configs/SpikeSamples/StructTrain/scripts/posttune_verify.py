@@ -363,6 +363,11 @@ class PhaseMeta:
         return self.train.get("search_reverted") == "1"
 
 
+# PLAN 2026-10-25 F3: structural N0 hitting kMaxSynapsesPerDend is saturation,
+# not SoftCold convergence (see NNeuronTimeLearner.h kMaxSynapsesPerDend).
+K_MAX_SYNAPSES_PER_DEND = 128
+
+
 def snap_params(params: Path) -> dict[str, str]:
     t = params.read_text(encoding="utf-8") if params.exists() else ""
     keys = (
@@ -375,8 +380,23 @@ def snap_params(params: Path) -> dict[str, str]:
         "PostTrainTuneComplete",
         "TrainingPhase",
         "DendriteLength",
+        "NumSynapse",
+        "NormalizationMode",
     )
     return {k: (get_tag(t, k) or "") for k in keys}
+
+
+def num_synapse_saturated(num_synapse: str | None) -> bool:
+    """True if any dendrite NumSynapse reached kMaxSynapsesPerDend."""
+    if not num_synapse:
+        return False
+    for tok in str(num_synapse).replace(",", " ").split():
+        try:
+            if int(float(tok)) >= K_MAX_SYNAPSES_PER_DEND:
+                return True
+        except ValueError:
+            continue
+    return False
 
 
 def _latest_stat_dir(train: Path) -> Path | None:
@@ -978,6 +998,7 @@ def classify_training_convergence(
     skipped: bool = False,
     cpp_failure: tuple[int, int] | None = None,
     child_rc: int | None = None,
+    num_synapse: str | None = None,
 ) -> str:
     """Report trainer completion independently from post-train quality.
 
@@ -985,6 +1006,8 @@ def classify_training_convergence(
     before writing posttune_complete.flag, including result=NonSeparable. The
     flag therefore proves that the training phase reached its terminal path;
     it does not prove that the learned response is selective.
+
+    PLAN 2026-10-25 F3: Ns==kMaxSynapsesPerDend is saturation, not convergence.
     """
     if skipped:
         return "not_run"
@@ -999,11 +1022,19 @@ def classify_training_convergence(
     if execution_rc in (126, 127):
         return "execution_error"
     meta = train_meta or {}
+    ns = num_synapse if num_synapse is not None else meta.get("NumSynapse")
+    saturated = num_synapse_saturated(ns)
     if meta.get("result") not in (None, "", "0"):
+        if saturated:
+            return "not_converged_saturated"
         return "converged_posttune_finalized"
     if str(need).strip() == "0":
+        if saturated:
+            return "not_converged_saturated"
         return "converged_need0"
     if str(need).strip() == "1":
+        if saturated:
+            return "not_converged_saturated"
         return "not_converged_at_stop"
     return "insufficient_data"
 
@@ -1032,6 +1063,7 @@ def classify_detection_quality(
     """Summarize target detection independently of evaluator execution/quality."""
     if training_convergence in (
         "not_converged_at_stop",
+        "not_converged_saturated",
         "insufficient_data",
         "cpp_training_refusal",
         "initial_resistance_reset_mismatch",
@@ -1063,7 +1095,8 @@ def classify_separation_quality(
 ) -> str:
     """Metric outcome is separate from evaluator process success."""
     if training_convergence in (
-        "not_converged_at_stop", "insufficient_data", "cpp_training_refusal",
+        "not_converged_at_stop", "not_converged_saturated",
+        "insufficient_data", "cpp_training_refusal",
         "initial_resistance_reset_mismatch",
     ):
         return (
@@ -1090,6 +1123,7 @@ def should_run_quality_gate(training_convergence: str) -> bool:
     """Do not test a partial model after training stopped before a terminal state."""
     return training_convergence not in (
         "not_converged_at_stop",
+        "not_converged_saturated",
         "insufficient_data",
         "cpp_training_refusal",
         "execution_error",
@@ -2839,6 +2873,7 @@ def run_case(
         skipped=(status == "skip_train"),
         cpp_failure=training_failure,
         child_rc=child_rc,
+        num_synapse=after.get("NumSynapse"),
     )
     if initial_tip_reset_check is not None and not initial_tip_reset_check.get("passed"):
         training_convergence = "initial_resistance_reset_mismatch"
