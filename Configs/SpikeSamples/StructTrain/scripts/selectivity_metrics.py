@@ -185,6 +185,7 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
     seen: set[str] = set()
     sample_ids: set[str] = set()
     versions: set[str] = set()
+    contexts: set[tuple[str, str]] = set()
     for index, row in enumerate(rows):
         prefix = f"row[{index}]"
         trial = str(row.get("trial_id", row.get("trial", ""))).strip()
@@ -193,6 +194,8 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
         seen.add(trial)
         version = str(row.get("schema_version", ""))
         versions.add(version)
+        if "trial_id" in row and "trial" in row and str(row["trial_id"]) != str(row["trial"]):
+            errors.append(f"{prefix}:conflicting_trial_ids")
         if version not in {"3", "4"}:
             errors.append(f"{prefix}:unsupported_schema")
         for field in ("target_class", "neuron_fired", "late_fired", "complete", "censored"):
@@ -225,6 +228,12 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
                 raise ValueError("stimulus count")
             if any(not math.isfinite(t) for t in stims) or any(b <= a for a, b in zip(stims, stims[1:])):
                 raise ValueError("stimulus timestamps")
+            if str(row.get("isis") or "").strip():
+                isis = [float(value) for value in row["isis"].split(";")]
+                if len(isis) != n_stim - 1 or any(not math.isfinite(value) or value <= 0 for value in isis):
+                    raise ValueError("ISI list")
+                if any(abs(isi - (b - a)) > 1e-9 for isi, a, b in zip(isis, stims, stims[1:])):
+                    raise ValueError("conflicting stimulus fields")
             for field in ("neuron_t_rel", "late_t_rel", "actual_observe_end", "ltz_potential_max", "soma_amp_sum"):
                 if field in row and row[field] != "" and not math.isfinite(float(row[field])):
                     raise ValueError(field)
@@ -243,6 +252,7 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
                 for field in ("run_id", "trial_id", "sample_id", "pattern_hash", "model_revision"):
                     if not str(row.get(field, "")).strip():
                         raise ValueError(f"missing {field}")
+                contexts.add((row["run_id"], row["model_revision"]))
                 if row.get("measurement_valid") != "1":
                     raise ValueError("invalid measurement")
                 amplitudes = [float(v) for v in row["soma_amplitudes"].split(";")]
@@ -255,12 +265,16 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
                     raise ValueError("observation bounds")
                 if required_end < onset + stims[-1] or actual_end + 1e-9 < required_end:
                     raise ValueError("truncated observation")
+                if any(t > actual_end - onset + 1e-9 for t in times):
+                    raise ValueError("spike outside observation")
         except (KeyError, TypeError, ValueError, OverflowError):
             errors.append(f"{prefix}:invalid_measurement_data")
     if seen != expected_trial_ids:
         errors.append("unexpected_trial_set")
     if len(versions) != 1:
         errors.append("mixed_schemas")
+    if len(contexts) > 1:
+        errors.append("mixed_run_or_model")
     if not any(row.get("target_class") == "1" for row in rows):
         errors.append("missing_target")
     if not any(row.get("target_class") == "0" for row in rows):
@@ -305,6 +319,7 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "metrics_version": 4,
         "schema_ok": 0,
         "validation_errors": ["missing_observations"],
+        "verdict_reasons": ["missing_observations"],
         "ok_audit_legacy": 0,
         "ok_audit_strict_shape": 0,
         "ok_audit_v2": 0,
@@ -547,8 +562,15 @@ def evaluate_path(csv_path: Path, *, verbose: bool = False) -> tuple[dict[str, A
         q["mode"] = q["mode_legacy"] = "missing"
         return q, 2
     try:
-        rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
-    except OSError:
+        with csv_path.open(encoding="utf-8-sig", newline="") as stream:
+            reader = csv.DictReader(stream)
+            fields = reader.fieldnames or []
+            if not fields or len(fields) != len(set(fields)):
+                q = classify([])
+                q["validation_errors"] = q["verdict_reasons"] = ["missing_or_duplicate_csv_header"]
+                return q, 2
+            rows = list(reader)
+    except (OSError, UnicodeError, csv.Error):
         q = classify([])
         q["mode"] = q["mode_legacy"] = "missing"
         return q, 2

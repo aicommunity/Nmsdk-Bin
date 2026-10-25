@@ -1,5 +1,4 @@
 """Production scorer regressions. No simulator, network or experimental data writes."""
-import copy
 import sys
 import unittest
 from pathlib import Path
@@ -37,6 +36,7 @@ class ObservationContractTest(unittest.TestCase):
                              ("neuron_spike_times", ".1;bad"), ("neuron_spike_times", ""),
                              ("neuron_spike_count", "inf"), ("stim_times", "0;nan;.03;.06"),
                              ("stim_times", "0;bad;.03;.06"), ("censored", "1"),
+                             ("isis", ".01;bad;.03"), ("isis", ".01;.01;.04"),
                              ("actual_observe_end", "NaN"), ("ltz_potential_max", "inf")):
             with self.subTest(field=field, value=value):
                 rows = observations()
