@@ -162,6 +162,23 @@ def _legacy_mode(fires: list[int], matches: list[int], target_hit: int, fire_all
     return "miss_target"
 
 
+def last_pulse_ok(rows: list[dict[str, str]], *, dt_tol: float = 1e-9) -> str:
+    targets = [row for row in rows if _i(row.get("target_class")) != 0]
+    if not targets:
+        return "0"
+    try:
+        for row in targets:
+            stims = _stim_abs_times(row)
+            response = float(row.get("neuron_t_rel") or -1)
+            if not stims or not math.isfinite(response) or response + dt_tol < stims[-1]:
+                return "0"
+            if any(not math.isfinite(t) for t in stims):
+                return "0"
+    except (TypeError, ValueError, OverflowError):
+        return "0"
+    return "1"
+
+
 def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> list[str]:
     """Validate evidence before scoring. Historical fields cannot prove completeness."""
     errors: list[str] = []
@@ -189,7 +206,7 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
             errors.append(f"{prefix}:observation_error")
         if "sample_id" in row:
             sample = str(row["sample_id"]).strip()
-            if not sample or sample in sample_ids:
+            if not sample or sample == "-1" or sample in sample_ids:
                 errors.append(f"{prefix}:missing_or_duplicate_sample")
             sample_ids.add(sample)
         try:
@@ -447,19 +464,19 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     ok_audit = ok_audit_v2
 
     # Evaluate every labelled target, independently of CSV presentation order.
-    last_pulse = "0"
-    if targets:
-        try:
-            target_after_last = []
-            for target in targets:
-                stims = _stim_abs_times(rows[target])
-                target_after_last.append(bool(stims) and float(rows[target].get("neuron_t_rel", -1)) + 1e-9 >= stims[-1])
-            last_pulse = "1" if all(target_after_last) else "0"
-        except (TypeError, ValueError, OverflowError):
-            last_pulse = "0"
+    last_pulse = last_pulse_ok(rows)
     if last_pulse != "1" and ok_audit == 1:
         ok_audit = 0
     ok_audit_v2 = ok_audit
+    verdict_reasons = list(validation_errors)
+    if not target_hit_strict:
+        verdict_reasons.append("target_missed")
+    if fa_strict:
+        verdict_reasons.append("foil_response")
+    if response_quality != "ok_single":
+        verdict_reasons.append("response_morphology")
+    if last_pulse != "1":
+        verdict_reasons.append("target_before_last_stim_or_unknown")
 
     return {
         "ok": ok_legacy,  # backward compat
@@ -471,6 +488,7 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "ok_audit_v2": ok_audit_v2,
         "metrics_version": 4,
         "validation_errors": validation_errors,
+        "verdict_reasons": verdict_reasons,
         "schema_ok": schema_ok,
         "censored_any": censored_any,
         "last_pulse_ok": last_pulse,

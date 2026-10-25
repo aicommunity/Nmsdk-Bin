@@ -18,7 +18,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDE_TOP = {"XOR", "SpikeAnsTrainer", "SpikeTrainer", "RTlibs"}
 sys.path.insert(0, str(ROOT / "scripts"))
-from selectivity_metrics import classify  # noqa: E402
+from selectivity_metrics import classify, last_pulse_ok as canonical_last_pulse_ok  # noqa: E402
 
 
 def iter_campaign_dirs() -> list[Path]:
@@ -107,26 +107,7 @@ def recipe_flags(test_params: Path) -> tuple[str, str]:
 
 def last_pulse_ok(rows: list[dict[str, str]], *, dt_tol: float = 1e-9) -> str:
     """Target spike at/after last stim (sum of ISI), with discretization tolerance."""
-    if not rows:
-        return "0"
-    r0 = rows[0]
-    try:
-        trel = float(r0.get("neuron_t_rel") or -1)
-    except ValueError:
-        return "0"
-    isis = []
-    for k in ("isi0", "isi1", "isi2", "isi3"):
-        v = r0.get(k)
-        if v is None or v == "":
-            continue
-        try:
-            isis.append(float(v))
-        except ValueError:
-            pass
-    if not isis or trel < 0:
-        return "0"
-    last_stim = sum(isis)
-    return "1" if last_stim > 0 and trel + dt_tol >= last_stim else "0"
+    return canonical_last_pulse_ok(rows, dt_tol=dt_tol)
 
 
 def last_pulse_ok_legacy(rows: list[dict[str, str]]) -> str:
