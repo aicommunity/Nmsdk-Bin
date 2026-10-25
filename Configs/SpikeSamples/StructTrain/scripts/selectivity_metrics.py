@@ -21,7 +21,7 @@ def _i(v: str | None, default: int = 0) -> int:
         return default
     try:
         return int(float(v))
-    except ValueError:
+    except (ValueError, TypeError, OverflowError):
         return default
 
 
@@ -30,7 +30,7 @@ def _f(v: str | None, default: float = 0.0) -> float:
         return default
     try:
         return float(v)
-    except ValueError:
+    except (ValueError, TypeError, OverflowError):
         return default
 
 
@@ -56,7 +56,8 @@ def _parse_spike_times(row: dict[str, str]) -> list[float]:
         try:
             out.append(float(part))
         except ValueError:
-            continue
+            # Preserve corruption as invalid evidence; never silently drop it.
+            out.append(float("nan"))
     return out
 
 
@@ -65,6 +66,15 @@ def _stim_abs_times(row: dict[str, str]) -> list[float]:
     n = _i(row.get("stim_count"), 0)
     if n <= 0:
         return []
+    if str(row.get("stim_times") or "").strip():
+        return [float(part) if part.strip() else float("nan")
+                for part in row["stim_times"].split(";")]
+    if str(row.get("isis") or "").strip():
+        isis = [float(part) for part in row["isis"].split(";")]
+        times = [0.0]
+        for isi in isis:
+            times.append(times[-1] + isi)
+        return times
     times = [0.0]
     acc = 0.0
     for i in range(max(0, n - 1)):
@@ -141,7 +151,7 @@ def _legacy_mode(fires: list[int], matches: list[int], target_hit: int, fire_all
     silent = sum(fires) == 0
     if silent:
         return "silent"
-    if fires and fires[0] == 0:
+    if not target_hit:
         return "miss_target"
     if fire_all:
         return "fire_all"
@@ -152,7 +162,97 @@ def _legacy_mode(fires: list[int], matches: list[int], target_hit: int, fire_all
     return "miss_target"
 
 
-def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX) -> dict[str, Any]:
+def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> list[str]:
+    """Validate evidence before scoring. Historical fields cannot prove completeness."""
+    errors: list[str] = []
+    seen: set[str] = set()
+    sample_ids: set[str] = set()
+    versions: set[str] = set()
+    for index, row in enumerate(rows):
+        prefix = f"row[{index}]"
+        trial = str(row.get("trial_id", row.get("trial", ""))).strip()
+        if not trial or trial in seen:
+            errors.append(f"{prefix}:missing_or_duplicate_trial")
+        seen.add(trial)
+        version = str(row.get("schema_version", ""))
+        versions.add(version)
+        if version not in {"3", "4"}:
+            errors.append(f"{prefix}:unsupported_schema")
+        for field in ("target_class", "neuron_fired", "late_fired", "complete", "censored"):
+            if str(row.get(field, "")) not in {"0", "1"}:
+                errors.append(f"{prefix}:invalid_{field}")
+        if str(row.get("complete", "")) != "1":
+            errors.append(f"{prefix}:incomplete")
+        if str(row.get("censored", "")) != "0":
+            errors.append(f"{prefix}:censored_or_unknown")
+        if row.get("error_class") in {"incomplete", "censored", "nonfinite", "overflow"}:
+            errors.append(f"{prefix}:observation_error")
+        if "sample_id" in row:
+            sample = str(row["sample_id"]).strip()
+            if not sample or sample in sample_ids:
+                errors.append(f"{prefix}:missing_or_duplicate_sample")
+            sample_ids.add(sample)
+        try:
+            count = int(row["neuron_spike_count"])
+            raw_times = str(row["neuron_spike_times"] or "").strip()
+            times = [float(part) for part in raw_times.split(";")] if raw_times else []
+            if count < 0 or count != len(times) or any(not math.isfinite(t) or t < 0 for t in times):
+                raise ValueError("count/timestamps")
+            if any(b <= a for a, b in zip(times, times[1:])):
+                raise ValueError("unordered timestamps")
+            if (row.get("neuron_fired") == "1" or row.get("late_fired") == "1") and not times:
+                raise ValueError("fire without spike")
+            n_stim = int(row["stim_count"])
+            stims = _stim_abs_times(row)
+            if n_stim < 1 or len(stims) != n_stim or not stims or abs(stims[0]) > 1e-9:
+                raise ValueError("stimulus count")
+            if any(not math.isfinite(t) for t in stims) or any(b <= a for a, b in zip(stims, stims[1:])):
+                raise ValueError("stimulus timestamps")
+            for field in ("neuron_t_rel", "late_t_rel", "actual_observe_end", "ltz_potential_max", "soma_amp_sum"):
+                if field in row and row[field] != "" and not math.isfinite(float(row[field])):
+                    raise ValueError(field)
+            for field in ("neuron_t_rel", "late_t_rel"):
+                flag = "neuron_fired" if field == "neuron_t_rel" else "late_fired"
+                if row.get(flag) == "1":
+                    value = float(row[field])
+                    if not math.isfinite(value) or not any(abs(value - t) <= 1e-6 for t in times):
+                        raise ValueError("inconsistent fire time")
+            for field, value in row.items():
+                if not isinstance(field, str):
+                    raise ValueError("unexpected CSV columns")
+                if field.startswith("soma_amp_") and value != "" and not math.isfinite(float(value)):
+                    raise ValueError(field)
+            if version == "4":
+                for field in ("run_id", "trial_id", "sample_id", "pattern_hash", "model_revision"):
+                    if not str(row.get(field, "")).strip():
+                        raise ValueError(f"missing {field}")
+                if row.get("measurement_valid") != "1":
+                    raise ValueError("invalid measurement")
+                amplitudes = [float(v) for v in row["soma_amplitudes"].split(";")]
+                if not amplitudes or any(not math.isfinite(v) for v in amplitudes):
+                    raise ValueError("amplitudes")
+                onset = float(row["onset_abs"])
+                required_end = float(row["required_observe_end"])
+                actual_end = float(row["actual_observe_end"])
+                if not all(math.isfinite(v) for v in (onset, required_end, actual_end)):
+                    raise ValueError("observation bounds")
+                if required_end < onset + stims[-1] or actual_end + 1e-9 < required_end:
+                    raise ValueError("truncated observation")
+        except (KeyError, TypeError, ValueError, OverflowError):
+            errors.append(f"{prefix}:invalid_measurement_data")
+    if seen != expected_trial_ids:
+        errors.append("unexpected_trial_set")
+    if len(versions) != 1:
+        errors.append("mixed_schemas")
+    if not any(row.get("target_class") == "1" for row in rows):
+        errors.append("missing_target")
+    if not any(row.get("target_class") == "0" for row in rows):
+        errors.append("missing_foils")
+    return errors
+
+
+def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX,
+             expected_trial_ids: set[str] | None = None) -> dict[str, Any]:
     n = len(rows)
     empty = {
         "ok": 0,
@@ -185,8 +285,9 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "n_per_stim_trials": 0,
         "max_spike_count": 0,
         "median_spike_count": 0,
-        "metrics_version": 2,
-        "schema_ok": 1,
+        "metrics_version": 4,
+        "schema_ok": 0,
+        "validation_errors": ["missing_observations"],
         "ok_audit_legacy": 0,
         "ok_audit_strict_shape": 0,
         "ok_audit_v2": 0,
@@ -197,11 +298,16 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     if n == 0:
         return empty
 
+    expected_trial_ids = {str(v) for v in (expected_trial_ids if expected_trial_ids is not None else range(8))}
+    validation_errors = _validate_rows(rows, expected_trial_ids)
+    targets = [i for i, row in enumerate(rows) if _i(row.get("target_class")) != 0]
+    foils = [i for i in range(n) if i not in targets]
+
     fires_legacy = [1 if r.get("neuron_fired") == "1" else 0 for r in rows]
     matches_legacy = [1 if r.get("match") == "1" else 0 for r in rows]
     acc_legacy = sum(matches_legacy)
-    fa_legacy = sum(fires_legacy[1:]) if n > 1 else 0
-    target_hit_legacy = 1 if (fires_legacy[0] == 1 and matches_legacy[0] == 1) else 0
+    fa_legacy = sum(fires_legacy[i] for i in foils)
+    target_hit_legacy = int(bool(targets) and all(fires_legacy[i] and matches_legacy[i] for i in targets))
     fire_all_legacy = 1 if sum(fires_legacy) == n else 0
     mode_legacy = _legacy_mode(
         fires_legacy, matches_legacy, target_hit_legacy, fire_all_legacy, fa_legacy, acc_legacy
@@ -260,18 +366,23 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
             matches_strict.append(1 if not effective_fire else 0)
 
     acc_strict = sum(matches_strict)
-    fa_strict = sum(1 for i in range(1, n) if fires_eff[i] == 1) if n > 1 else 0
-    target_hit_strict = 1 if (fires_legacy[0] == 1 and matches_strict[0] == 1) else 0
+    fa_strict = sum(fires_eff[i] for i in foils)
+    target_hit_strict = int(bool(targets) and all(fires_legacy[i] and matches_strict[i] for i in targets))
     fire_all_strict = 1 if sum(fires_eff) == n and n > 0 else 0
     mode_strict = _legacy_mode(
         fires_eff, matches_strict, target_hit_strict, fire_all_strict, fa_strict, acc_strict
     )
     ok_strict = 1 if (
-        n == 8 and target_hit_strict == 1 and fire_all_strict == 0 and acc_strict >= 4
+        n == len(expected_trial_ids) and target_hit_strict == 1 and fire_all_strict == 0 and acc_strict >= min(4, n)
         and schema_ok == 1
     ) else 0
 
-    morphs = [classify_trial_morphology(r, burst_isi_max=burst_isi_max) for r in rows]
+    morphs = []
+    for row in rows:
+        try:
+            morphs.append(classify_trial_morphology(row, burst_isi_max=burst_isi_max))
+        except (TypeError, ValueError, OverflowError):
+            morphs.append({"unknown": True, "burst": False, "per_stim": False, "spike_count": 0})
     unknown = any(m["unknown"] for m in morphs)
     n_burst = sum(1 for m in morphs if m["burst"])
     n_per = sum(1 for m in morphs if m["per_stim"])
@@ -316,7 +427,9 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
             else:
                 response_quality = "ok_single"
 
-    complete = 1 if n == 8 else 0
+    complete = int(n == len(expected_trial_ids) and not validation_errors)
+    schema_ok = int(schema_ok == 1 and not validation_errors)
+    ok_strict = int(ok_strict == 1 and schema_ok == 1)
     # Renamed: NOT historical A05 scorer (uses strict shape). See metrics_version.
     ok_audit_strict_shape = 1 if (
         ok_strict == 1 and response_quality == "ok_single" and complete == 1
@@ -333,39 +446,20 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
     # Default ok_audit follows v2 (hidden foil spikes count as FP).
     ok_audit = ok_audit_v2
 
-    # last_pulse_ok on target row (shared contract with audit_structtrain).
+    # Evaluate every labelled target, independently of CSV presentation order.
     last_pulse = "0"
-    if rows:
-        r0 = rows[0]
+    if targets:
         try:
-            trel = float(r0.get("neuron_t_rel") or -1)
-        except ValueError:
-            trel = -1.0
-        isis = []
-        # Prefer variable isis column; fall back to isi0..isi3.
-        raw_isis = (r0.get("isis") or "").strip()
-        if raw_isis:
-            for part in raw_isis.split(";"):
-                if part == "":
-                    continue
-                try:
-                    isis.append(float(part))
-                except ValueError:
-                    pass
-        if not isis:
-            for k in ("isi0", "isi1", "isi2", "isi3"):
-                v = r0.get(k)
-                if v is None or v == "":
-                    continue
-                try:
-                    isis.append(float(v))
-                except ValueError:
-                    pass
-        if isis and trel >= 0:
-            last_stim = sum(isis)
-            last_pulse = "1" if last_stim > 0 and trel + 1e-9 >= last_stim else "0"
+            target_after_last = []
+            for target in targets:
+                stims = _stim_abs_times(rows[target])
+                target_after_last.append(bool(stims) and float(rows[target].get("neuron_t_rel", -1)) + 1e-9 >= stims[-1])
+            last_pulse = "1" if all(target_after_last) else "0"
+        except (TypeError, ValueError, OverflowError):
+            last_pulse = "0"
     if last_pulse != "1" and ok_audit == 1:
         ok_audit = 0
+    ok_audit_v2 = ok_audit
 
     return {
         "ok": ok_legacy,  # backward compat
@@ -375,7 +469,8 @@ def classify(rows: list[dict[str, str]], *, burst_isi_max: float = BURST_ISI_MAX
         "ok_audit_legacy": ok_audit_strict_shape,  # compat alias — NOT historical A05
         "ok_audit_strict_shape": ok_audit_strict_shape,
         "ok_audit_v2": ok_audit_v2,
-        "metrics_version": 3,
+        "metrics_version": 4,
+        "validation_errors": validation_errors,
         "schema_ok": schema_ok,
         "censored_any": censored_any,
         "last_pulse_ok": last_pulse,
