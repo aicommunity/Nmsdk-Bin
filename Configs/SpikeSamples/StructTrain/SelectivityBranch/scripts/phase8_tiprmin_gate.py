@@ -36,6 +36,24 @@ ASYM = ROOT / "SelectivityAsymRm"
 TIPRMIN = "20000000 20000000 20000000 86000000"
 RMIN = "20000000"
 SILENT_THR = "1.0"
+# Test integration step (NMSDK steps per second). Until 2026-10-25 the Test
+# Project.ini was forced to GlobalTimeStep 20000 (dt 0.05 ms) regardless of the
+# trained model's step. Now: --time-step, else the Train Project.ini step,
+# else DEFAULT_TIME_STEP (2000 = dt 0.5 ms). --time-step 20000 = old behaviour.
+DEFAULT_TIME_STEP = 2000
+
+
+def resolve_time_step(train: Path, cli: int | None = None) -> int:
+    if cli:
+        return int(cli)
+    ini = train / "Project.ini"
+    if ini.is_file():
+        txt = ini.read_text(encoding="utf-8", errors="replace")
+        for tag in ("GlobalTimeStep", "DefaultTimeStep"):
+            m = re.search(rf"<{tag}>([0-9]+)</{tag}>", txt)
+            if m and int(m.group(1)) > 0:
+                return int(m.group(1))
+    return DEFAULT_TIME_STEP
 
 
 def set_tag(text: str, tag: str, value: str, count: int = 0) -> str:
@@ -304,6 +322,7 @@ def prepare_test(
     *,
     keep_tipr: bool = False,
     skip_tipr_mid: bool = False,
+    time_step: int | None = None,
 ) -> None:
     train, test = root / "Train", root / "Test"
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
@@ -345,6 +364,10 @@ def prepare_test(
             "NeuronClassName",
             "MembraneCapacity",
             "DendriteLength",
+            "NumSynapse",
+            "NormalizationMode",
+            "NumDendriteMembranePartsVec",
+            "NumInputDendrite",
             "ResistanceMin",
             "ResistanceMax",
             "SynapseResistanceBase",
@@ -413,13 +436,12 @@ def prepare_test(
                 t = patch_tip_exc_r(t, tips)
         p.write_text(t, encoding="utf-8")
 
-    # GTS
+    # Time step: same as the trained model (see resolve_time_step), not a hardcoded 0.05 ms
+    step = resolve_time_step(train, time_step)
     ini = (test / "Project.ini").read_text(encoding="utf-8")
-    ini = re.sub(
-        r"<GlobalTimeStep>[0-9]+</GlobalTimeStep>",
-        "<GlobalTimeStep>20000</GlobalTimeStep>",
-        ini,
-    )
+    for tag in ("GlobalTimeStep", "DefaultTimeStep"):
+        ini = re.sub(rf"<{tag}>[0-9]+</{tag}>", f"<{tag}>{step}</{tag}>", ini)
+    print(f"Test time step={step} (dt {1000.0 / step:g} ms)")
     (test / "Project.ini").write_text(ini, encoding="utf-8")
 
     # TipR on Train: TipR@Rmin unless keep_tipr / skip_tipr_mid (C++ PostTune)
@@ -479,6 +501,12 @@ def main() -> None:
         action="store_true",
         help="Ignore --skip-tipr-mid (debug: always Python tiprmin+silent mid)",
     )
+    ap.add_argument(
+        "--time-step",
+        type=int,
+        default=None,
+        help="Test Global/DefaultTimeStep (steps/s). Default: Train Project.ini, else 2000 (dt 0.5 ms). 20000 = pre-2026-10-25 behaviour",
+    )
     args = ap.parse_args()
     print(f"CONSOLE={NM}")
     root = args.exp_root.resolve()
@@ -498,6 +526,7 @@ def main() -> None:
             pack=args.pack,
             keep_tipr=args.keep_tipr,
             skip_tipr_mid=skip_tipr_mid,
+            time_step=args.time_step,
         )
         print("prepared Test hygiene")
     elif args.matrix_only:

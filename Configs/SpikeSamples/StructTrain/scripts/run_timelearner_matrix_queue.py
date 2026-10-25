@@ -27,6 +27,7 @@ from timelearner_matrix import (
     case_attempt_result,
     parse_branch_initial_lengths,
     parse_branch_segment_rm_profile,
+    parse_train_param,
 )
 
 BASE = Path(__file__).resolve().parents[1]
@@ -146,6 +147,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "classic_rs_rm_limit": args.classic_rs_rm_limit,
         "synapse_resistance_step": args.synapse_resistance_step,
         "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
+        "train_params": args.train_params,
         "branch_segment_rm_profile": args.branch_segment_rm_profile,
         "branch_initial_lengths": args.branch_initial_lengths,
         "skip_softcold_reset": args.branch_initial_lengths is not None,
@@ -159,6 +161,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
         "skip_cpp_reset_to_untrained": args.branch_segment_rm_profile is not None,
         "skip_cpp_structure_rebuild": args.branch_segment_rm_profile is not None,
         "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
+        "force_posttrain_tuning": args.force_posttrain_tuning,
     }
     case_fingerprints = {}
     input_hashes = {}
@@ -214,6 +217,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
             "classic_rs_rm_limit": args.classic_rs_rm_limit,
             "synapse_resistance_step": args.synapse_resistance_step,
             "accept_quantized_amp_under_target": bool(args.accept_quantized_amp_under_target),
+            "train_params": args.train_params,
             "branch_segment_rm_profile": args.branch_segment_rm_profile,
             "branch_initial_lengths": args.branch_initial_lengths,
             "branch_segment_rm_profile_application": condition_runtime[
@@ -226,6 +230,7 @@ def make_run_fingerprint(wave: str, specs: list[dict], args: argparse.Namespace)
                 "skip_cpp_structure_rebuild"
             ],
             "train_time_limit_override_seconds": args.train_time_limit_override_seconds,
+            "force_posttrain_tuning": args.force_posttrain_tuning,
             "no_commit": bool(args.no_commit),
         },
     }
@@ -313,6 +318,7 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         "classic_rs_rm_limit": (result.get("runtime_execution_options") or {}).get("classic_rs_rm_limit"),
                         "synapse_resistance_step": (result.get("runtime_execution_options") or {}).get("synapse_resistance_step"),
                         "accept_quantized_amp_under_target": (result.get("runtime_execution_options") or {}).get("accept_quantized_amp_under_target"),
+                        "train_params": (result.get("runtime_execution_options") or {}).get("train_params"),
                         "branch_segment_rm_profile": (result.get("runtime_execution_options") or {}).get("branch_segment_rm_profile"),
                         "branch_initial_lengths": (result.get("runtime_execution_options") or {}).get("branch_initial_lengths"),
                         "skip_softcold_reset": (result.get("runtime_execution_options") or {}).get("skip_softcold_reset"),
@@ -327,6 +333,9 @@ def find_duplicate_result(wave: str, specs: list[dict], fingerprint: dict) -> di
                         ),
                         "train_time_limit_override_seconds": (result.get("runtime_execution_options") or {}).get(
                             "train_time_limit_override_seconds"
+                        ),
+                        "force_posttrain_tuning": (result.get("runtime_execution_options") or {}).get(
+                            "force_posttrain_tuning"
                         ),
                     } == fingerprint.get("condition_runtime")
                     and provenance.get("binary_sha256") == fingerprint["console_sha256"]
@@ -574,6 +583,15 @@ def main() -> int:
         help="diagnostic structural N0 option: accept a repeatedly verified lower member of a quantized amp bracket",
     )
     parser.add_argument(
+        "--train-param",
+        dest="train_params",
+        type=parse_train_param,
+        action="append",
+        metavar="NAME=VALUE",
+        help="diagnostic whitelisted NNeuronTimeLearner(Branch) parameter for the attempt-local Train XML only; "
+             "repeatable; recorded in the run fingerprint (see TRAIN_PARAM_WHITELIST)",
+    )
+    parser.add_argument(
         "--branch-segment-rm-profile",
         type=parse_branch_segment_rm_profile,
         metavar="SEGMENT=OHMS,...",
@@ -596,6 +614,16 @@ def main() -> int:
         "--train-time-limit-override-seconds",
         type=float,
         help="diagnostic C++ runtime limit override; recorded in the immutable run fingerprint",
+    )
+    parser.add_argument(
+        "--force-posttrain-tuning",
+        type=int,
+        choices=(0, 1),
+        default=None,
+        help=(
+            "attempt-local PostTune ON(1)/OFF(0) override via runtime overlay + worker_config; "
+            "does not rewrite shared TimeLearnerMatrix/.../inputs or matrix.json"
+        ),
     )
     parser.add_argument(
         "--no-commit",
@@ -635,6 +663,15 @@ def main() -> int:
         not math.isfinite(args.synapse_resistance_step) or args.synapse_resistance_step <= 0.0
     ):
         raise SystemExit("--synapse-resistance-step must be finite and positive")
+    if args.train_params:
+        merged: dict[str, str] = {}
+        for name, value in args.train_params:
+            if name in merged:
+                raise SystemExit(f"--train-param {name} given twice")
+            merged[name] = value
+        args.train_params = dict(sorted(merged.items()))
+    else:
+        args.train_params = None
     if args.resume and not args.run_id:
         raise SystemExit("--resume requires an explicit --run-id")
     if args.resume and args.allow_repeat:
@@ -733,7 +770,7 @@ def main() -> int:
         print(f"Run ID: {run_id}", flush=True)
         print(f"Selected cases ({len(selected_ids)}): {', '.join(selected_ids)}", flush=True)
         print(f"=== {wave} prepare ===", flush=True)
-        run([sys.executable, str(RUNNER), "--prepare", wave], BASE)
+        run([sys.executable, str(RUNNER), "--prepare", wave, "--case-ids", *selected_ids], BASE)
         fingerprint = make_run_fingerprint(wave, specs, args)
         runs = RUNS_BASE / run_id
         manifest_path = runs / "run_manifest.json"

@@ -40,11 +40,25 @@ def set_fixed_thr(path: Path, thr: str) -> None:
     path.write_text(t, encoding="utf-8")
 
 
+# Topology / structure fields that must match Train on Test (PLAN 2026-10-25 F3).
+_OVERLAY_TOPOLOGY_TAGS = (
+    "NumSynapse",
+    "NormalizationMode",
+    "NumDendriteMembranePartsVec",
+    "NumInputDendrite",
+    "TrainingPattern",
+    "TrainingDendIndexes",
+    "TrainingSynapsisNum",
+    "NeuronClassName",
+)
+
+
 def overlay_train_params(train: Path, test: Path) -> str:
-    """Copy TipR / mid / lengths / PostTune enables from Train onto Test.
+    """Copy TipR / mid / lengths / NumSynapse / PostTune enables from Train onto Test.
 
     Never reuse a pre-existing Test posttune_complete.flag mid (R06 stale cpp).
     Fresh inference mid is obtained only after this overlay when thr is silent.
+    PLAN 2026-10-25 F3: also copy NumSynapse + topology so N0 Test is not dead (Ns=1).
     """
     train_p = (train / "Parameters_00.xml").read_text(encoding="utf-8")
     tipr = get_tag(train_p, "TipSynapseResistance") or ""
@@ -67,6 +81,7 @@ def overlay_train_params(train: Path, test: Path) -> str:
     rmin = get_tag(train_p, "ResistanceMin") or "20000000"
     lens = get_tag(train_p, "DendriteLength") or ""
     mode = get_tag(train_p, "PostTrainTipResistanceMode") or "1"
+    topology = {k: (get_tag(train_p, k) or "") for k in _OVERLAY_TOPOLOGY_TAGS}
     if (train / "Model_00.xml").exists() and (test / "Model_00.xml").exists():
         overlay_neuron(train / "Model_00.xml", test / "Model_00.xml")
     for rel in ("Parameters_00.xml", "Model_00.xml"):
@@ -80,6 +95,9 @@ def overlay_train_params(train: Path, test: Path) -> str:
             t = set_tag(t, "ResistanceMin", rmin, 1)
         if lens:
             t = set_tag(t, "DendriteLength", lens, 1)
+        for tag, val in topology.items():
+            if val:
+                t = set_tag(t, tag, val, 1)
         t = set_tag(t, "FixedLTZThreshold", thr, 1)
         t = set_tag(t, "LTZThreshold", thr, 1)
         t = set_tag(t, "UseFixedLTZThreshold", "1", 1)

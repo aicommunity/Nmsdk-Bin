@@ -242,6 +242,86 @@ CASES.update(
     }
 )
 
+# H0 TauCm per Span (phase D): register SelectivityTauCm EXP×Mode×PostTune without
+# mutating HIST templates. Manifest written by SelectivityTauCm clone script.
+_H0_MANIFEST = ROOT / "SelectivityTauCm" / "H0_EXP_MANIFEST.json"
+_H0_TRAIN_T = {25: 320.0, 50: 640.0, 100: 1280.0, 200: 1600.0, 480: 3200.0}
+if _H0_MANIFEST.is_file():
+    for _row in json.loads(_H0_MANIFEST.read_text(encoding="utf-8")):
+        _span = int(_row["span"])
+        _mod = str(_row["mod"])
+        _mode = str(_row["mode"]).lower()
+        _trainer = str(_row["trainer"])
+        _kind = "branch" if _trainer == "Branch" else "asym"
+        _root = ROOT / "SelectivityTauCm" / str(_row["exp"])
+        if not _root.is_dir():
+            continue
+        for _pt, _pt_flag in (("pton", "1"), ("ptoff", "0")):
+            _key = (
+                f"h0_{_trainer[0].lower()}{_span}_{_mod}_{_mode}_{_pt}"
+            )
+            _d = _case(
+                _root,
+                train_t=_H0_TRAIN_T.get(_span, 640.0),
+                span_ms=_span,
+                kind=_kind,
+                expect_tipr="canon",
+                skip_tipr_mid=True,
+            )
+            _d["enable_posttrain_tuning"] = _pt_flag
+            _d["h0_meta"] = {
+                "trainer": _trainer,
+                "span": _span,
+                "mod": _mod,
+                "mode": _mode,
+                "posttune": _pt,
+                "neuron": _row.get("neuron"),
+                "train": _row.get("train"),
+                "test": _row.get("test"),
+                "derived_from": _row.get("src"),
+            }
+            CASES[_key] = _d
+
+# Classic/Branch inhibition grid (PSI × NextSeg × SegEI): SelectivityInhGrid.
+_INH_MANIFEST = ROOT / "SelectivityInhGrid" / "INH_EXP_MANIFEST.json"
+_INH_TRAIN_T = {25: 320.0, 50: 640.0, 100: 1280.0}
+if _INH_MANIFEST.is_file():
+    for _row in json.loads(_INH_MANIFEST.read_text(encoding="utf-8")):
+        _span = int(_row["span"])
+        _mod = str(_row["mod"])
+        _mode = str(_row["mode"]).lower()
+        _trainer = str(_row["trainer"])
+        _kind = "branch" if _trainer == "Branch" else "asym"
+        _root = ROOT / "SelectivityInhGrid" / str(_row["exp"])
+        if not _root.is_dir():
+            continue
+        _key = f"inh_{_trainer[0].lower()}{_span}_{_mod}_{_mode}_pton"
+        _d = _case(
+            _root,
+            train_t=_INH_TRAIN_T.get(_span, 640.0),
+            span_ms=_span,
+            kind=_kind,
+            expect_tipr="canon",
+            skip_tipr_mid=True,
+        )
+        _d["enable_posttrain_tuning"] = "1"
+        _d["inh_meta"] = {
+            "trainer": _trainer,
+            "span": _span,
+            "mod": _mod,
+            "mode": _mode,
+            "neuron": _row.get("neuron"),
+            "train": _row.get("train"),
+            "test": _row.get("test"),
+            "derived_from": _row.get("src"),
+        }
+        CASES[_key] = _d
+
+# Diag §6.3: InhGrid S25 gen fan-out with AsymRm neuron (SymInh culpable-axis check).
+if "inh_c25_genasym_n0_pton" in CASES:
+    CASES["inh_c25_genasym_n0_pton"]["expect_tipr"] = "flat"
+    CASES["inh_c25_genasym_n0_pton"]["kind"] = "asym"
+
 
 @dataclass
 class PostTuneSalvage:
@@ -283,6 +363,11 @@ class PhaseMeta:
         return self.train.get("search_reverted") == "1"
 
 
+# PLAN 2026-10-25 F3: structural N0 hitting kMaxSynapsesPerDend is saturation,
+# not SoftCold convergence (see NNeuronTimeLearner.h kMaxSynapsesPerDend).
+K_MAX_SYNAPSES_PER_DEND = 128
+
+
 def snap_params(params: Path) -> dict[str, str]:
     t = params.read_text(encoding="utf-8") if params.exists() else ""
     keys = (
@@ -295,8 +380,23 @@ def snap_params(params: Path) -> dict[str, str]:
         "PostTrainTuneComplete",
         "TrainingPhase",
         "DendriteLength",
+        "NumSynapse",
+        "NormalizationMode",
     )
     return {k: (get_tag(t, k) or "") for k in keys}
+
+
+def num_synapse_saturated(num_synapse: str | None) -> bool:
+    """True if any dendrite NumSynapse reached kMaxSynapsesPerDend."""
+    if not num_synapse:
+        return False
+    for tok in str(num_synapse).replace(",", " ").split():
+        try:
+            if int(float(tok)) >= K_MAX_SYNAPSES_PER_DEND:
+                return True
+        except ValueError:
+            continue
+    return False
 
 
 def _latest_stat_dir(train: Path) -> Path | None:
@@ -898,6 +998,7 @@ def classify_training_convergence(
     skipped: bool = False,
     cpp_failure: tuple[int, int] | None = None,
     child_rc: int | None = None,
+    num_synapse: str | None = None,
 ) -> str:
     """Report trainer completion independently from post-train quality.
 
@@ -905,6 +1006,8 @@ def classify_training_convergence(
     before writing posttune_complete.flag, including result=NonSeparable. The
     flag therefore proves that the training phase reached its terminal path;
     it does not prove that the learned response is selective.
+
+    PLAN 2026-10-25 F3: Ns==kMaxSynapsesPerDend is saturation, not convergence.
     """
     if skipped:
         return "not_run"
@@ -919,11 +1022,19 @@ def classify_training_convergence(
     if execution_rc in (126, 127):
         return "execution_error"
     meta = train_meta or {}
+    ns = num_synapse if num_synapse is not None else meta.get("NumSynapse")
+    saturated = num_synapse_saturated(ns)
     if meta.get("result") not in (None, "", "0"):
+        if saturated:
+            return "not_converged_saturated"
         return "converged_posttune_finalized"
     if str(need).strip() == "0":
+        if saturated:
+            return "not_converged_saturated"
         return "converged_need0"
     if str(need).strip() == "1":
+        if saturated:
+            return "not_converged_saturated"
         return "not_converged_at_stop"
     return "insufficient_data"
 
@@ -952,6 +1063,7 @@ def classify_detection_quality(
     """Summarize target detection independently of evaluator execution/quality."""
     if training_convergence in (
         "not_converged_at_stop",
+        "not_converged_saturated",
         "insufficient_data",
         "cpp_training_refusal",
         "initial_resistance_reset_mismatch",
@@ -983,7 +1095,8 @@ def classify_separation_quality(
 ) -> str:
     """Metric outcome is separate from evaluator process success."""
     if training_convergence in (
-        "not_converged_at_stop", "insufficient_data", "cpp_training_refusal",
+        "not_converged_at_stop", "not_converged_saturated",
+        "insufficient_data", "cpp_training_refusal",
         "initial_resistance_reset_mismatch",
     ):
         return (
@@ -1010,6 +1123,7 @@ def should_run_quality_gate(training_convergence: str) -> bool:
     """Do not test a partial model after training stopped before a terminal state."""
     return training_convergence not in (
         "not_converged_at_stop",
+        "not_converged_saturated",
         "insufficient_data",
         "cpp_training_refusal",
         "execution_error",
@@ -1371,6 +1485,59 @@ def runtime_training_failure_from_audit(train: Path) -> tuple[int, int] | None:
             reason = int(fields.get("failure_reason", "0"))
             phase = int(fields.get("phase", "0"))
             return (phase, reason) if reason > 0 else None
+    except (OSError, ValueError):
+        return None
+    return None
+
+
+def _parse_audit_scalar(fields: dict[str, str], key: str) -> str | None:
+    raw = fields.get(key)
+    if raw in (None, ""):
+        return None
+    return raw
+
+
+def runtime_stage0_fields_from_audit(train: Path) -> dict[str, str | int | float] | None:
+    """Stage0 scalars from newest kind=done or terminal need=0 iteration audit."""
+    audit = train / "TimeLearnerTrainingAudit.log"
+    if not audit.is_file():
+        return None
+    keys = (
+        "delay_residue",
+        "amp_over_target",
+        "sync_exit",
+        "amp_be",
+        "done_be",
+        "done_best_effort",
+        "sep_margin",
+        "sep_gap",
+        "sep_tgt",
+        "sep_max_foil",
+    )
+    int_keys = ("sync_exit", "amp_be", "done_be", "done_best_effort")
+    try:
+        for line in _training_audit_lines_reverse(audit):
+            if "kind=done" not in line and (
+                "kind=iteration" not in line or ";need=0" not in line
+            ):
+                continue
+            fields = dict(
+                item.split("=", 1) for item in line.strip().split(";") if "=" in item
+            )
+            if "delay_residue" not in fields:
+                continue
+            out: dict[str, str | int | float] = {"audit_kind": fields.get("kind", "")}
+            for key in keys:
+                raw = _parse_audit_scalar(fields, key)
+                if raw is None:
+                    continue
+                if key in int_keys:
+                    out[key] = int(raw)
+                else:
+                    out[key] = float(raw.replace(",", "."))
+            if "done_be" not in out and "done_best_effort" in out:
+                out["done_be"] = out["done_best_effort"]
+            return out
     except (OSError, ValueError):
         return None
     return None
@@ -2699,12 +2866,14 @@ def run_case(
         after["FixedLTZThreshold"] = phase.train["mid"].split()[0]
 
     gold_test = snap_params(gold / "Test" / "Parameters_00.xml")
+    stage0_audit = runtime_stage0_fields_from_audit(train)
     training_convergence = classify_training_convergence(
         after.get("IsNeedToTrain", ""),
         phase.train,
         skipped=(status == "skip_train"),
         cpp_failure=training_failure,
         child_rc=child_rc,
+        num_synapse=after.get("NumSynapse"),
     )
     if initial_tip_reset_check is not None and not initial_tip_reset_check.get("passed"):
         training_convergence = "initial_resistance_reset_mismatch"
@@ -3121,6 +3290,21 @@ def run_case(
         "require_cpp_mid": name in ("asym50", "phase6_480", "br100_search"),
         "child_rc": child_rc,
     }
+    if stage0_audit:
+        for key in (
+            "delay_residue",
+            "amp_over_target",
+            "sync_exit",
+            "amp_be",
+            "done_be",
+            "sep_margin",
+            "sep_gap",
+            "sep_tgt",
+            "sep_max_foil",
+        ):
+            if key in stage0_audit:
+                row[key] = stage0_audit[key]
+        row["training_audit_stage0"] = stage0_audit
     ok, fail_notes = accept_run(
         row,
         expect_fires=expect_fires,
