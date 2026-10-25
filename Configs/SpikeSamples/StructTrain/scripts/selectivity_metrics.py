@@ -202,7 +202,7 @@ def _validate_rows(rows: list[dict[str, str]], expected_trial_ids: set[str]) -> 
             errors.append(f"{prefix}:incomplete")
         if str(row.get("censored", "")) != "0":
             errors.append(f"{prefix}:censored_or_unknown")
-        if row.get("error_class") in {"incomplete", "censored", "nonfinite", "overflow"}:
+        if row.get("error_class") in {"incomplete", "censored", "nonfinite", "overflow", "invalid_measurement"}:
             errors.append(f"{prefix}:observation_error")
         if "sample_id" in row:
             sample = str(row["sample_id"]).strip()

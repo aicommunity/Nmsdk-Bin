@@ -124,6 +124,27 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</AppendMode>
+		<ObservationSchemaVersion>
+			<Header>Версия схемы наблюдений</Header>
+			<Description>3 сохраняет совместимость CSV; 4 добавляет происхождение, полное окно и массив амплитуд.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<PropertyType>257</PropertyType>
+		</ObservationSchemaVersion>
+		<RunId>
+			<Header>Идентификатор запуска</Header>
+			<Description>Идентификатор immutable run manifest; обязателен для валидного schema 4.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<PropertyType>257</PropertyType>
+		</RunId>
+		<ModelRevision>
+			<Header>Версия измеряемой модели</Header>
+			<Description>Fingerprint фактической замороженной модели; обязателен для schema 4.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<PropertyType>257</PropertyType>
+		</ModelRevision>
 		<Enable>
 			<Header>Включить запись</Header>
 			<Description>Если false, CSV не пишется.</Description>
