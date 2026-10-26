@@ -104,7 +104,7 @@
 		</DebugSysEventsMask>
 		<Delays>
 			<Header>Delays</Header>
-			<Description>Вектор задержек для различных каналов или генераторов.</Description>
+			<Description>Задержки независимых импульсов в секундах от ResetTime, матрица 1×PulseCount. Установка согласует PulseCount и вызывает штатную перестройку внутренних массивов на следующем Build.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -126,7 +126,7 @@
 		</Frequency>
 		<FrequencyDeviation>
 			<Header>Частота deviation</Header>
-			<Description>Отклонение частоты от среднего значения (используется для анализа стабильности).</Description>
+			<Description>Историческое свойство для совместимости. Случайная расчётная ветвь Multi не реализована; использовать 0. Ненулевое значение нельзя считать работающим экспериментальным фактором.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -203,7 +203,7 @@
 		</OutputPotential>
 		<OutputPulseTimes>
 			<Header>Времена выходных импульсов</Header>
-			<Description>Вектор моментов времени, когда были сгенерированы выходные импульсы.</Description>
+			<Description>Фактические emission timestamps в секундах, 1×N за AvgInterval; отсутствие событий — 1×0, а запись 0 — реальный импульс в t=0. Одновременные импульсы разных источников могут иметь равные timestamps.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -213,8 +213,8 @@
 			<PropertyType>274</PropertyType>
 		</OutputPulseTimes>
 		<PulseCount>
-			<Header>Импульсный count</Header>
-			<Description>Счётчик количества импульсов, сгенерированных компонентом.</Description>
+			<Header>Число независимых импульсов</Header>
+			<Description>Число независимых источников импульсов, по умолчанию 1; это не счётчик событий. Установка изменяет размер Delays и инициирует штатный Build внутренних массивов.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -225,7 +225,7 @@
 		</PulseCount>
 		<PulseCounters>
 			<Header>Импульсный counters</Header>
-			<Description>Счётчики импульсов для различных каналов или групп.</Description>
+			<Description>Знаковые счётчики шагов импульса или ожидания для независимых источников. Размер задаётся структурой Delays; это не накопленное число событий.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">

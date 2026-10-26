@@ -203,7 +203,7 @@
 		</OutputPotential>
 		<OutputPulseTimes>
 			<Header>Времена выходных импульсов</Header>
-			<Description>Вектор моментов времени, когда были сгенерированы выходные импульсы.</Description>
+			<Description>Фактические времена генерации импульсов в секундах, матрица 1×N за AvgInterval. При отсутствии событий, после Reset и при выключенной генерации матрица пуста (1×0). Запись 0 означает настоящий импульс в t=0.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -214,7 +214,7 @@
 		</OutputPulseTimes>
 		<PulseCounter>
 			<Header>Счётчик импульсов</Header>
-			<Description>Счётчик общего количества импульсов, сгенерированных компонентом.</Description>
+			<Description>Знаковый счётчик шагов текущего импульса или ожидания следующего. Сбрасывается при Reset; это не монотонное общее число предъявлений.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">

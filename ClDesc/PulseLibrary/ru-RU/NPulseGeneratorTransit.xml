@@ -214,7 +214,7 @@
 		</OutputPotential>
 		<OutputPulseTimes>
 			<Header>Времена выходных импульсов</Header>
-			<Description>Вектор моментов времени, когда были сгенерированы выходные импульсы.</Description>
+			<Description>В собственном generator-режиме: фактические времена импульсов, секунды, 1×N за AvgInterval; без событий матрица пуста (1×0), 0 является реальным t=0. При UseTransitSignal эта история не подтверждает события внешнего входного сигнала.</Description>
 			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -247,7 +247,7 @@
 		</PatternFrequency>
 		<PulseCounter>
 			<Header>Счётчик импульсов</Header>
-			<Description>Счётчик общего количества импульсов, сгенерированных компонентом.</Description>
+			<Description>Знаковый счётчик шагов импульса или ожидания. Dataset сбрасывает его перед каждым импульсом; это не монотонный счётчик предъявлений.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
