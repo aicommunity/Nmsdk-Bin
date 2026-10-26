@@ -133,3 +133,17 @@ Debug: `DampedResistance`, `ResistanceFloor` (шаг ниже `r_model`), `phase
 - При сильной attenuation даже 128 tip-синапсов могут не дотянуть amp до Initial → best-effort Done.
 - Fan-out на все дендриты даёт кросс-пики на других ISI; критерий H1 — отсутствие пары пиков sync с Δt≈0.08 (L0≈L1), а не отсутствие любых вторичных пиков.
 - Warning `PrepareDataset rejected data on Dataset` — файловый `NDataset`, не `DatasetMatrix` sample.
+
+## Уточнение реализации 2026-10-26
+
+Classic BuildStructure теперь инициализирует новый Neuron через штатный Init,
+в том числе при перестройке уже инициализированного learner после cold Reset.
+До этого корректно связанные дети могли находиться под корнем Init=false и не
+рассчитываться scheduler. Это исправление lifecycle, а не новый алгоритм или
+доказательство сходимости. [Диагностика и проверки](../../../../../../Docs/StructTrain/TimeLearner/LiveRebuildInit.ru.md).
+
+Model/controller clock=20000 в legacy-прогоне не гарантирует uniform tree:
+новые образы/growth могут иметь собственные 2000 Гц. Для нового проверенного
+контура нужны явные storage-профили и actual frequency readback каждого узла.
+Исторические визуально подтверждённые 4/8–6/8 сохраняют смысл своего протокола;
+этот дефект live replacement их не отменяет. Общий controller v2 ещё не принят.
