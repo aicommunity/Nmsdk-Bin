@@ -133,6 +133,7 @@ Debug: `DampedResistance`, `ResistanceFloor` (шаг ниже `r_model`), `phase
 - При сильной attenuation даже 128 tip-синапсов могут не дотянуть amp до Initial → best-effort Done.
 - Fan-out на все дендриты даёт кросс-пики на других ISI; критерий H1 — отсутствие пары пиков sync с Δt≈0.08 (L0≈L1), а не отсутствие любых вторичных пиков.
 - Warning `PrepareDataset rejected data on Dataset` — файловый `NDataset`, не `DatasetMatrix` sample.
+
 ## Уточнение реализации 2026-10-26
 
 Classic BuildStructure теперь инициализирует новый Neuron через штатный Init,
