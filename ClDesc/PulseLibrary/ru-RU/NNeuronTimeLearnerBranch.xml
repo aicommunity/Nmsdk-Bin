@@ -3,6 +3,39 @@
 	<Header>NNeuronTimeLearnerBranch</Header>
 	<Description>Обучение временному паттерну: NDatasetMatrix → один дендрит: импульсы на сегментах разного расстояния от сомы; обратная синхронизация и joint-нормализация.</Description>
 	<Properties>
+		<ControllerVersion>
+			<Header>Версия контроллера</Header>
+			<Description>1 — прежний алгоритм (default для существующих конфигураций); 2 — native cold configuration из ControllerConfiguration. Неподдерживаемые значения отклоняются.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ControllerVersion>
+		<ControllerConfiguration>
+			<Header>Декларация native-обучения</Header>
+			<Description>JSON schema 1, kind timelearner_native_cold_configuration: storage ModelSpec, профиль генератора, окна, допуски и бюджеты. Используется только при ControllerVersion=2; неизвестные поля и дубли ключей запрещены. После создания модели декларация фиксирована.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ControllerConfiguration>
+		<ConfiguredModelInitialized>
+			<Header>Защита от повторного cold build</Header>
+			<Description>Служебный сохраняемый marker созданной V2-модели. Передаётся также при Copy без состояния, чтобы Build не заменил граф исходным. Не является сертификатом обучения. Полный trained-state import пока требует отдельной реализации.</Description>
+			<Type>| ptPubParameter | | ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>259</PropertyType>
+		</ConfiguredModelInitialized>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
@@ -16,7 +49,7 @@
 		</Activity>
 		<AdditionalInputPattern>
 			<Header>Дополнительный входной шаблон</Header>
-			<Description>Дополнительные входные данные, используемые в расширенных сценариях обучения.</Description>
+			<Description>Reserved/no-op в TimeLearner: загружается для совместимости, но не включает обучение дополнительному паттерну.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -27,7 +60,7 @@
 		</AdditionalInputPattern>
 		<CalculateMode>
 			<Header>Режим расчёта</Header>
-			<Description>Выбирает алгоритм или сценарий расчёта (обучение, тестирование, комбинированный режим).</Description>
+			<Description>0 — автоматическое снятие IsNeedToTrain после завершения управления; 1 — внешнее управление. Снятие Need и завершение процесса не доказывают сходимость или качество распознавания.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
