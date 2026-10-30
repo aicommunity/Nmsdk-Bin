@@ -16,7 +16,7 @@
 		</ControllerVersion>
 		<ControllerConfiguration>
 			<Header>Декларация native-обучения</Header>
-			<Description>JSON schema 1, kind timelearner_native_cold_configuration: storage ModelSpec, профиль генератора, окна, допуски и бюджеты. Используется только при ControllerVersion=2; неизвестные поля и дубли ключей запрещены. После создания модели декларация фиксирована.</Description>
+			<Description>JSON schema 1 (прежний протокол N0, один замер кандидата) или 2 (только N0, обязательный search.n0_candidate_repeats от 2 до 128); N1 с фактором повторов отвергается. kind timelearner_native_cold_configuration: storage ModelSpec, профиль генератора, окна, допуски и бюджеты. Используется только при ControllerVersion=2; неизвестные поля и дубли ключей запрещены. После создания модели декларация фиксирована.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
