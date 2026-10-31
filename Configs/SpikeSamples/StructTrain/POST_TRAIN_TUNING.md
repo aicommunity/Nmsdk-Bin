@@ -36,3 +36,16 @@ explicitly disables PostTune/C-trim/auto-calibration before Build. Its normal/AS
 checks do not accept all legacy PostTune modes described here. Legacy launchers
 are not the new pipeline; their migration remains a separate stage.
 
+
+## Current inference observation erratum
+
+The findings above describe their historical SHA. Current code already checks
+finite/observed/finished samples, prevents threshold selection after timeout,
+resets Result in EnterPostTunePhase and separates Branch soma/LTZ accumulation.
+TL-037 remained in a fresh saved-matrix inference attempt: same-cardinality
+previous sample states and Success could survive. Six failures in eight native
+controls reproduce it on both workers. PulseLib 39810a7 resets attempt-scoped
+observations/status. Normal: 12/12 native and 5/5 primary audits; full ASan,
+visual and regression gates are tracked in the root
+Docs/StructTrain/TimeLearner/LegacyPostTuneObservation.ru.md. This does not
+accept all PostTune modes/models or establish a scientific recognition result.

@@ -27,7 +27,7 @@
 		</ControllerConfiguration>
 		<ConfiguredModelInitialized>
 			<Header>Защита от повторного cold build</Header>
-			<Description>Служебный сохраняемый marker созданной V2-модели. Передаётся также при Copy без состояния, чтобы Build не заменил граф исходным. Не является сертификатом обучения. Полный trained-state import пока требует отдельной реализации.</Description>
+			<Description>Служебный сохраняемый marker созданной V2-модели; Copy без состояния сохраняет его, чтобы Build не заменил обученный граф исходным. Не является сертификатом и не содержит всю модель. Полный импорт выполняется явным native package API/worker, а не этим marker.</Description>
 			<Type>| ptPubParameter | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -423,7 +423,7 @@
 		</SpikesFrequency>
 		<TrainingPhase>
 			<Header>Фаза обучения</Header>
-			<Description>0 — синхронизация, 1 — нормализация, 2 — завершено, 4 — отказ по пределу сопротивления.</Description>
+			<Description>0 — joint sync/normalization; 1 — зарезервировано; 2 — Done; 3 — legacy PostTune; 4 — отказ/неподтверждённое завершение. Фаза сама по себе не доказывает сходимость или распознавание.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -434,7 +434,7 @@
 		</TrainingPhase>
 		<TrainingFailureReason>
 			<Header>Причина отказа обучения</Header>
-			<Description>0 — нет отказа, 1 — амплитудная ошибка не устранена при ResistanceMax.</Description>
+			<Description>Legacy: 0 — нет отказа; 1 — ResistanceMax; 2 — не найдена область линейной устойчивости; 3 — не найден допустимый монотонный Rs floor; 4 — неверные параметры интегрирования. Для V2 результат и причины читать в native state/certificate/RunManifest.</Description>
 			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -652,6 +652,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</UseFixedLTZThreshold>
+		<PostTrainTuneComplete>
+			<Header>Завершение legacy PostTune</Header>
+			<Description>Завершение процедуры, а не quality PASS. Новая inference-попытка сбрасывает значение в false; завершение не заменяет проверку полных наблюдений, порога и распознавания.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</PostTrainTuneComplete>
+		<PostTuneResult>
+			<Header>Результат legacy PostTune</Header>
+			<Description>0 None, 1 Success, 2 NonSeparable, 3 SetupFailure, 4 Timeout, 5 InvalidMetrics, 6 BestEffort, 7 RevertedKeepDone. При начале новой inference-попытки None; старые sample states не подтверждают новые измерения. Это не TrainingCertificate и не общая точность Test.</Description>
+			<Type>| ptPubState |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</PostTuneResult>
 	</Properties>
 		<Favorites>
 		<IsNeedToTrain>

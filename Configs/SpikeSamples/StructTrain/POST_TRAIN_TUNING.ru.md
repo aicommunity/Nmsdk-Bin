@@ -75,3 +75,16 @@ soft_cold теперь сбрасывает FixedLTZ=1. Это полезная 
 проверки не принимают все legacy PostTune режимы этого документа. Старые
 запускатели не становятся новым pipeline; миграция остаётся отдельным этапом.
 
+
+## Уточнение текущего кода: inference observation scope
+
+Старые findings выше относятся к указанному историческому SHA. В текущем коде
+уже есть finite/observed/finished проверки, запрет mid после Timeout, сброс Result
+в EnterPostTunePhase и устранено смешение soma/LTZ Branch. Остаточный TL-037
+касается нового saved-matrix inference attempt: при равной размерности могли
+сохраниться предыдущие sample states и Success. На обоих серверах это
+воспроизведено шестью failures из восьми controls. PulseLib 39810a7 сбрасывает
+attempt-scoped observations/status. Normal: 12/12 native и 5/5 primary audits;
+полные ASan/visual/regression gates отслеживаются в корневом
+Docs/StructTrain/TimeLearner/LegacyPostTuneObservation.ru.md. Эти проверки
+не принимают весь PostTune, все модели и новые научные результаты.
