@@ -1,5 +1,17 @@
 # Post-train tuning in the teacher module
 
+> The dated text below is a legacy snapshot. The current native threshold-grid
+> driver and its scoped acceptance are documented in the root
+> [calibration contract](../../../../Docs/StructTrain/TimeLearner/NativeThresholdCalibration.ru.md)
+> and [status](../../../../Docs/StructTrain/TimeLearner/CurrentStatus-2026-10-31.ru.md).
+> Measured grid selection, fresh reconstruction/confirmation and native
+> commit/rollback are distinct from legacy automatic calibration flags.
+> All PostTune modes, production worker integration, complete mode/profile
+> acceptance and independent Test remain open. Calibration does not change
+> unresolved source-training status. New scoring uses labels/IDs and complete
+> observations; target position in CSV is not a criterion.
+
+
 [Russian contract and property table](POST_TRAIN_TUNING.ru.md) · [Review](../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md)
 
 Checked against PulseLib d4149190 / Bin 9733281, 2026-09-24. Both learners use phase 0 for joint synchronization/normalization and phase 2 for Done. TL PostTune is phase 3; Branch PostTune is phase 4, with legacy calibration in phase 3 when PostTune is off. Best-effort termination does not certify selectivity.

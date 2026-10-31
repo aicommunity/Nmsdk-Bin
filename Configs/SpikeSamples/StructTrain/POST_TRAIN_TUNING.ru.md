@@ -1,5 +1,18 @@
 # Пост-тюнинг в модуле-учителе (PostTune)
 
+> Снимок ниже описывает legacy-контур указанной даты, а не полную приёмку
+> ControllerVersion=2. Актуальный [native threshold/grid контракт](../../../../Docs/StructTrain/TimeLearner/NativeThresholdCalibration.ru.md)
+> и [статус](../../../../Docs/StructTrain/TimeLearner/CurrentStatus-2026-10-31.ru.md)
+> находятся в корневом репозитории. Общий outer-loop driver Classic/Branch
+> выполняет measured threshold grid, fresh rebuild/confirmation и commit/rollback
+> через native import/lifecycle. Он не включается старым AutoCalibrate флагом
+> и не означает готовность всех PostTune modes или production worker.
+> Source search_unresolved не превращается в сходимость после калибровки.
+> Новый scorer использует label/ID/hash и полные окна; target не определяется
+> первой строкой. Полные временные Soma/input графики хранятся M40 cache,
+> compact primary/модели/метрики и выбранные рисунки — в корневом Git.
+
+
 [English](POST_TRAIN_TUNING.md) · [Повторный аудит](../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md) · [Историческая карта рецептов](RELIABILITY_MAP.ru.md)
 
 Сверено с PulseLib d4149190 / Bin 9733281, 2026-09-24. Исправления после исходного аудита существенны, но полного закрытия A08–A10/A16 нет.
