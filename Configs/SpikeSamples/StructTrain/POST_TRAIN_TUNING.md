@@ -27,3 +27,12 @@ Branch Auto uses the shared soma, TL Auto uses LTZ. Explicit Branch LTZ is still
 Timing is gap=span+settle+slack and dataset delay=settle+slack. AutoScale=0 restores max(configured,physical); disabling PostTune alone does not reproduce an older binary. The 85/90 s wall measurements imply about 1.06×, while 6× is only the gap ratio.
 
 The [developer result summary](_repro/POSTTUNE_VERIFY_RESULT.md) reports two PASS among seven cold cases. Complete fresh run artifacts are unavailable here. The improved verifier still permits stale Test calibration and some incomplete Train/Search paths. A reverted Search PASS would establish fallback quality, not a search improvement. See the review and [verification contract](POST_TRAIN_VERIFY.ru.md). A12 remains deferred under the small-step assumption.
+# Production worker boundary
+
+The root native `train/export/evaluate` and `calibrate run` commands use explicit
+jobs and complete model packages; see the root
+`Docs/StructTrain/TimeLearner/NativePipelineWorker.ru.md`. The first cold worker
+explicitly disables PostTune/C-trim/auto-calibration before Build. Its normal/ASan
+checks do not accept all legacy PostTune modes described here. Legacy launchers
+are not the new pipeline; their migration remains a separate stage.
+

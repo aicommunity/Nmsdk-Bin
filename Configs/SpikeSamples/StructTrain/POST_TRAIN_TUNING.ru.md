@@ -66,3 +66,12 @@ Inference при silent FixedLTZ>=.9 проигрывает текущую Test 
 soft_cold теперь сбрасывает FixedLTZ=1. Это полезная правка, но не доказательство полной новой инициализации fat Model. Значение Search reverted означает возврат к собственному snapshot; успешный fallback не доказывает улучшение поиска.
 
 Замеры 85/90 секунд wall означают отношение около 1.06; 6× относится к gap 1.5/.25, а не доказанному ускорению всей программы. A12 отложен при достаточно малом шаге.
+# Граница нового production worker
+
+Корневые native `train/export/evaluate` и `calibrate run` используют отдельные
+декларативные jobs и полные model packages; см. корневой документ
+`Docs/StructTrain/TimeLearner/NativePipelineWorker.ru.md`. Первый cold worker
+явно выключает PostTune/C-trim/auto-calibration до Build. Его normal/ASan
+проверки не принимают все legacy PostTune режимы этого документа. Старые
+запускатели не становятся новым pipeline; миграция остаётся отдельным этапом.
+
