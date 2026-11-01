@@ -1,5 +1,18 @@
 # Проверка C++ PostTune — контракт и состояние
 
+> Снимок ниже описывает legacy-контур указанной даты, а не полную приёмку
+> ControllerVersion=2. Актуальный [native threshold/grid контракт](../../../../Docs/StructTrain/TimeLearner/NativeThresholdCalibration.ru.md)
+> и [статус](../../../../Docs/StructTrain/TimeLearner/CurrentStatus-2026-10-31.ru.md)
+> находятся в корневом репозитории. Общий outer-loop driver Classic/Branch
+> выполняет measured threshold grid, fresh rebuild/confirmation и commit/rollback
+> через native import/lifecycle. Он не включается старым AutoCalibrate флагом
+> и не означает готовность всех PostTune modes или production worker.
+> Source search_unresolved не превращается в сходимость после калибровки.
+> Новый scorer использует label/ID/hash и полные окна; target не определяется
+> первой строкой. Полные временные Soma/input графики хранятся M40 cache,
+> compact primary/модели/метрики и выбранные рисунки — в корневом Git.
+
+
 Сверено с PulseLib d4149190 / Bin 9733281, 2026-09-24. [Повторный аудит](../../../../Docs/Audit/TimeLearner-2026-09-24-review/README.md) и [план исправлений/контролей](../../../../Docs/Audit/TimeLearner-2026-09-24-review/PLAN.ru.md).
 
 Сводка разработчика сообщает 2/7 cold PASS: asym50 и br100_search. Пять FAIL: br25_on/off, asym25, br100_keep, phase6_480. [Результаты](_repro/POSTTUNE_VERIFY_RESULT.md) не сопровождаются доступным полным комплектом свежих run-артефактов. Повторный аудит не объявляет эти результаты ложными, но не принимает их как независимую проверку всего HEAD.
