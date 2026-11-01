@@ -1,10 +1,25 @@
+> Исторический раздел Phase12/soft-cold. Команды ниже описывают прежний
+> протокол и не являются текущим pipeline TimeLearner. Шесть wave shell launchers
+> удалены из текущего дерева; их исходники доступны только в Git snapshot
+> `6304b4a2bc4117c54c185a917850c7f65771c163` (ссылки ниже). Конфиги, модели,
+> первичные результаты и старые критерии сохранены. Современные эксперименты
+> запускаются корневым `Scripts/StructTrain/TimeLearner`; старая кампания
+> автоматически не возобновляется.
+
+- [phase12_wave1_run2.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave1_run2.sh)
+- [phase12_wave2_run.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave2_run.sh)
+- [phase12_wave3_run.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave3_run.sh)
+- [phase12_wave3_run_resume.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave3_run_resume.sh)
+- [phase12_wave5_run.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave5_run.sh)
+- [phase12_wave6_run.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave6_run.sh)
+
 # Cold Train reproducibility harness
 
 Canonical cold = **soft-cold** (links→tip-1, fat Model kept). Optional `--cold strip` for A/B.
 
 Stop Train on **`IsNeedToTrain=0`**. Post: TipR@Rmin (+ tip Exc); Branch uses full `phase8_tiprmin_gate` prepare.
 
-**PHASE12 multi-EXP:** [`scripts/phase12_validate.py`](../scripts/phase12_validate.py) — Wave1 packA cold; Wave2 `list-wave2` / `run-clones-wave2` / `run-br480-all`; Wave3 `list-wave3` / `run-fs` / `run-asym-packa-all` / `run-asym-clones` / `sync-ltzcal-all`; Wave4 `run-phase6-all`; Wave5 `list-tails` + [`scripts/phase12_wave5_run.sh`](../scripts/phase12_wave5_run.sh) (`--phase6-only|--ltzcal-only|--fs-only|--asym-only|--branch-fail-only`). Manifest: [`PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). Legacy harness stays for FS/Branch25 invest A/B.
+**PHASE12 multi-EXP:** [`scripts/phase12_validate.py`](../scripts/phase12_validate.py) — Wave1 packA cold; Wave2 `list-wave2` / `run-clones-wave2` / `run-br480-all`; Wave3 `list-wave3` / `run-fs` / `run-asym-packa-all` / `run-asym-clones` / `sync-ltzcal-all`; Wave4 `run-phase6-all`; Wave5 `list-tails` + [`scripts/phase12_wave5_run.sh`](https://github.com/aicommunity/Nmsdk-Bin/blob/6304b4a2bc4117c54c185a917850c7f65771c163/Configs/SpikeSamples/StructTrain/scripts/phase12_wave5_run.sh) (`--phase6-only|--ltzcal-only|--fs-only|--asym-only|--branch-fail-only`). Manifest: [`PHASE12_VALIDATION.md`](../PHASE12_VALIDATION.md). Legacy harness stays for FS/Branch25 invest A/B.
 
 ## Gold (do not overwrite)
 
