@@ -67,8 +67,8 @@ python -m Scripts.StructTrain.TimeLearner report RUN/run-manifest.json --format 
 
 Frozen evaluate вызывается отдельно с новым genuine source Solo и объявленным
 дизайном. Partial/cancelled Train не выдаётся за успешно завершённое обучение;
-SearchUnresolved и молчание target не означают PASS. Новая normal production
-приёмка охватывает14 операций, ASan/visual gate ещё выполняется.
+SearchUnresolved и молчание target не означают PASS. Текущая область
+normal/ASan/visual приёмки и полные SHA обновляются в корневом контракте ниже.
 Полные изображения кэшируются на M40 Data, Git хранит compressed primary,
 модели, метрики и selected images. Старые запускатели не становятся новым
 production-путём; полная миграция и их удаление ещё остаются в плане.
