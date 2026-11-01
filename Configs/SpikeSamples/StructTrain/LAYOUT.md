@@ -1,6 +1,10 @@
-# StructTrain layout canon
+# Legacy StructTrain layouts and production runs
 
-Every experiment unit has:
+The directories and HEAD tables below describe historical Project.ini campaigns.
+Their PASS criteria belong to their recorded snapshots; they do not certify the
+new V2 pipeline or replace the August visual observations.
+
+Each historical Project.ini experiment unit has:
 
 ```text
 <ExperimentRoot>/
@@ -9,7 +13,7 @@ Every experiment unit has:
   Test_<tag>/     # optional extra eval variants (do not replace Test/)
 ```
 
-## Rules
+## Historical directory rules
 
 - One experiment = one root folder (no sibling `*Test` roots).
 - Gate / `rerun_all_tests` / report links use `<root>/Test` by default.
@@ -45,3 +49,28 @@ Campaign EXP under `Selectivity*` already follow `EXP_*/{Train,Test}`.
 | [`PHASE10_COVERAGE.md`](PHASE10_COVERAGE.md) | PHASE10 S0 disk + tails T0–T2 + PSI/Fast |
 | [`PHASE11_COVERAGE.md`](PHASE11_COVERAGE.md) | PHASE11 re-audit RD–R4 + MATRIX |
 | [`AUDIT_MATRIX_20260915.csv`](AUDIT_MATRIX_20260915.csv) | trainer/recipe/gate/orphan matrix |
+
+## Current production TimeLearner jobs
+
+Новые инструменты находятся в корневом Scripts/StructTrain/TimeLearner.
+Schema2 cold Train содержит finalization_plan и создаёт собственный portable
+run directory с job/config/profile archives, native observations, source Solo,
+finalization report и разрешённой итоговой recognition-моделью. Наличие каталога
+Test или старого template не подтверждает перенос обученной модели.
+
+Из корневого репозитория:
+
+```text
+python -m Scripts.StructTrain.TimeLearner train JOB.json --runtime-manifest RUNTIME.json --wall-seconds 1800 --output NEW_RUN
+python -m Scripts.StructTrain.TimeLearner report RUN/run-manifest.json --format pipeline-run --output NEW_REPORT
+```
+
+Frozen evaluate вызывается отдельно с новым genuine source Solo и объявленным
+дизайном. Partial/cancelled Train не выдаётся за успешно завершённое обучение;
+SearchUnresolved и молчание target не означают PASS. Новая normal production
+приёмка охватывает14 операций, ASan/visual gate ещё выполняется.
+Полные изображения кэшируются на M40 Data, Git хранит compressed primary,
+модели, метрики и selected images. Старые запускатели не становятся новым
+production-путём; полная миграция и их удаление ещё остаются в плане.
+
+[Текущий контракт, область проверок и ограничения](../../../../Docs/StructTrain/TimeLearner/NativeLiveFinalization.ru.md).
