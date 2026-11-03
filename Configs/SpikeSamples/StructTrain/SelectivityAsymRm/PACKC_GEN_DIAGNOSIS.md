@@ -1,3 +1,5 @@
+> Исторический документ кампании AsymRm. Упомянутые pilot/finish/scale/sweep shell запускатели удалены из текущего дерева; их исходники доступны в [снимке Bin 14a88195](https://github.com/aicommunity/Nmsdk-Bin/tree/14a88195a8a5538d3a2f5c0657981488e38829b7/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts). Команды ниже описывают прежний протокол и не являются инструкцией запуска текущего pipeline. Сохранённые измерения не пересчитаны. [Миграция и ограничения](https://github.com/aicommunity/Nmsdk/blob/develop/Docs/StructTrain/TimeLearner/AsymRmLauncherRetirement.ru.md).
+
 # Pack C gen diagnosis (2026-09-08)
 
 Learner: **`NNeuronTimeLearner`** (not Branch). Done requires `AllDendritesSynced() ∧ AllSynapsesNormalized()` then CalibrateLtz (`NNeuronTimeLearner.cpp` `EndOfLearning`).
