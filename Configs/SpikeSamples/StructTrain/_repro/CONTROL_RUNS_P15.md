@@ -1,5 +1,8 @@
 # Control runs after R01–R07 fixes (PLAN P1.5)
 
+> Исторические SoftCold/OpenGaps/T2/T4 shell-запускатели удалены из текущего дерева. Их исходники доступны в Bin commit `39d811e5e0798eecf124f32356c9fc6edbe4538a`; см. `Configs/SpikeSamples/StructTrain/RETIRED_SOFTCOLD_LAUNCHERS.md` и корневой migration manifest. Приведённые ниже прежние команды относятся к исходной кампании; результаты сохранены.
+
+
 Protocol for Branch25 gold / soft_cold and Asym50 isolation. Use **one** Console build
 and `posttune_verify.prepare_clean_case` (default). Do not mutate EXP_* archives.
 

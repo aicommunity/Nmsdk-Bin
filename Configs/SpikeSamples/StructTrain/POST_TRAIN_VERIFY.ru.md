@@ -1,5 +1,8 @@
 # Проверка C++ PostTune — контракт и состояние
 
+> Исторические SoftCold/OpenGaps/T2/T4 shell-запускатели удалены из текущего дерева. Их исходники доступны в Bin commit `39d811e5e0798eecf124f32356c9fc6edbe4538a`; см. `Configs/SpikeSamples/StructTrain/RETIRED_SOFTCOLD_LAUNCHERS.md` и корневой migration manifest. Приведённые ниже прежние команды относятся к исходной кампании; результаты сохранены.
+
+
 > Снимок ниже описывает legacy-контур указанной даты, а не полную приёмку
 > ControllerVersion=2. Актуальный [native threshold/grid контракт](../../../../Docs/StructTrain/TimeLearner/NativeThresholdCalibration.ru.md)
 > и [статус](../../../../Docs/StructTrain/TimeLearner/CurrentStatus-2026-10-31.ru.md)
