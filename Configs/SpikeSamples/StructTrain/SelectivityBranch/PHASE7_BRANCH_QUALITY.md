@@ -1,3 +1,5 @@
+> Historical document: Phase9/Phase10 br480 Python retry launchers have been retired. Retrieve their exact source from Nmsdk-Bin commit `4af17aa240a7da0e30655a62c07cc4832e7253b9` under `Configs/SpikeSamples/StructTrain/SelectivityBranch/scripts/`. See root `Docs/StructTrain/TimeLearner/BranchRetryRetirement.ru.md` and its migration manifest. Commands below describe the historical campaign; no executable wrapper remains. Original observations and criteria are preserved and are not promoted to the current verdict.
+
 # PHASE7 — Branch trainer quality
 
 Исследование качества `NNeuronTimeLearnerBranch`: late_fp / per_stim demote на каноне @480 мс; short-span после починки Test wiring.
