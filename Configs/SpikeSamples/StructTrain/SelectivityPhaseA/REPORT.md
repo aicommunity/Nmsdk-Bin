@@ -1,3 +1,5 @@
+Примечание рефакторинга04.11.2026: исторические Phase A scripts удалены из текущего дерева; точный исходник доступен в Bin commit99f58da9296a794374cef679bbb878cb62af979a по прежнему пути. Упоминания scripts ниже описывают историческую процедуру. Таблицы и исходный текст отчёта сохранены;4/8–6/8 не переоценивались. Актуальная миграция описана в корневом Docs/StructTrain/TimeLearner/PhaseAToolRetirement.ru.md.
+
 # Selectivity Phase A — Config Experiments Report
 
 Date: 2026-08-13  
