@@ -4,7 +4,7 @@
 Поднятие порога LTZ отсечёт FP при сохранении trained response.
 
 ## Метод
-- Offline sweep по `ltz_potential_max` из EXP00 (`scripts/ltz_sweep_offline.py`)
+- Исторический offline sweep по `ltz_potential_max` EXP00: инструмент `ltz_sweep_offline.py` доступен в Bin commit `99f58da9296a794374cef679bbb878cb62af979a`, путь `Configs/SpikeSamples/StructTrain/SelectivityPhaseA/scripts/ltz_sweep_offline.py`. Пики зависят от фактически выбранного порога; offline оценка не заменяет confirm-прогон.
 - Confirm-прогоны: `Test_thr0115`, `Test_thr0120`, …
 
 ## Конфиги
