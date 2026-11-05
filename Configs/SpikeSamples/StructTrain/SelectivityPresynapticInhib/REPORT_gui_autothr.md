@@ -1,3 +1,5 @@
+> Историческая процедура PSI. Скрипты этого каталога удалены из текущего дерева при рефакторинге TimeLearner; их исходники доступны в Bin commit `525aafbafe72679b40332eeb7704a922c3c72eee`, прежний путь `Configs/SpikeSamples/StructTrain/SelectivityPresynapticInhib/scripts/`. Полный перечень и SHA — в корневом `Docs/StructTrain/TimeLearner/script_migration.json`; подробности — `PsiToolRetirement.ru.md` рядом с ним. Команды ниже относятся к исходному протоколу, не являются текущими инструкциями запуска. Конфиги, измерения и исходное тело отчёта сохранены; расширение допуска для получения Done не подтверждает сходимость при исходном допуске. Новые задания выполняются через корневой `Scripts/StructTrain/TimeLearner`.
+
 # PSI GUI-train + autothr — отчёт
 
 Date: 2026-08-14  
