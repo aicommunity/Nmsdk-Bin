@@ -22,12 +22,10 @@ Baseline reference: [`TimeNeuronTimeLearner/Test`](../TimeNeuronTimeLearner/Test
 
 Клоны рецепта (не перезаписывают EXP00–06): [`Phase6/`](Phase6/) · журнал [`PHASE6_480_RECIPE.md`](PHASE6_480_RECIPE.md). Best **7/8** selective last-pulse.
 
-## Команды
+## Текущий статус инструментов
 
-```bash
-./Bin/Platform/Linux/NeuroModelerConsole -c .../Test/Project.ini -s -t 20 -x
-./Bin/Platform/Linux/NeuroModelerConsole -c .../Train/Project.ini -s -t 160 -x -S
-scripts/copy_config.sh sync Train/ Test/
-```
+Восемь исторических Phase A scripts удалены из поддерживаемого дерева; wrappers не оставлены. Они доступны в Git commit `99f58da9296a794374cef679bbb878cb62af979a` по прежним путям `Configs/SpikeSamples/StructTrain/SelectivityPhaseA/scripts/`. Полный реестр retrieval SHA/blob/hash и причины — `Docs/StructTrain/TimeLearner/script_migration.json` корневого репозитория; пояснение — `Docs/StructTrain/TimeLearner/PhaseAToolRetirement.ru.md`.
 
-Скрипты: [scripts/](scripts/)
+Новые запуски и анализ выполняются корневым пакетом `Scripts/StructTrain/TimeLearner`; `python -m Scripts.StructTrain.TimeLearner --help` запускается из корня. Наличие этого CLI не означает завершение научного replay всей Phase A или всех режимов. Старые команды и assumptions сохраняются в Git history.
+
+Все таблицы выше, модели, конфиги, CSV и исходный REPORT сохранены. Визуально подтверждённые августовские4/8,5/8,6/8 относятся к исходному порядку/ITI; удаление инструментов не отменяет эти наблюдения. Offline sweep не заменяет реальный прогон с выбранным порогом.
