@@ -12,16 +12,10 @@
 
 Фон как EXP04: `SyncTolerance=0.01`, `ResistanceAdjustGain=0.4`, `Delay=1.5`, `FixedLTZThreshold=0.0115`, `TrainingLTZThreshold=100`, `UseAverageLTZonePotential=1`.
 
-## Команды
+## Текущий статус
 
-```bash
-./scripts/setup_grid.sh   # cold Parameters+Model (NeuronClassName в Model обязателен)
-./scripts/run_grid.sh     # Train 160 + sync + Test 20 → grid_summary.csv
-TRAIN_T=240 ./scripts/run_grid.sh
-```
+Исторические запускатели удалены. Для каждого из шести файлов точная версия доступна через `git -C Bin show 500764df8ae41604e03bdecdfd5531c7bc16f49b:Configs/SpikeSamples/StructTrain/SelectivityFastResponse/scripts/<имя>` из корня SDK; полный реестр с blob/SHA256 — `Docs/StructTrain/TimeLearner/script_migration.json`. Копии и wrappers на старом месте отсутствуют.
 
-## Gate
+Прежний `train_ok` проверял первую строку Test; это не свидетельство сходимости Train. Историческая сводка сохраняется со своим критерием. Новые оценки требуют ID/меток, полного окна и отдельного training outcome. Новые запуски — через корневой пакет `Scripts/StructTrain/TimeLearner`, после соответствующих проверок режима/physics/storage.
 
-`train_ok=1` только если trial0 (`target_class=1`) дал `neuron_fired=1`.
-
-Итоги: [REPORT.md](REPORT.md), сводка: `grid_summary.csv`.
+Итоги исходного протокола: [REPORT.md](REPORT.md), сохранённая сводка: `grid_summary.csv`.
