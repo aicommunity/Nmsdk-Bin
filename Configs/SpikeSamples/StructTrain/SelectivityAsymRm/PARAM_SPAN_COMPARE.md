@@ -1,3 +1,5 @@
+> Историческая процедура AsymRm. Оставшиеся10 shell-драйверов удалены из текущего дерева; исходники доступны в Bin commit `34387285116ee96bb09f99cb2ee95881fd3b9e0a`, путь `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. Полный retrieval manifest: корневой `Docs/StructTrain/TimeLearner/script_migration.json`; область и проверки: `AsymRmDriverRetirement.ru.md`. Старые команды ниже описывают прежнюю кампанию. Конфиги, модели, измерения и исходное тело отчёта сохранены; удаление скриптов не выполняет очистку логов и не пересматривает исторические результаты. Новые задания — через корневой `Scripts/StructTrain/TimeLearner`. Оставшиеся Python-анализаторы ещё требуют отдельного review.
+
 # AsymRm: параметры 25 vs 50 vs 100 мс
 
 Дата: 2026-09-08. Источник: Train `Parameters_00.xml` на диске.
