@@ -1,3 +1,5 @@
+> Historical AsymRm XML patch tools retired06.11.2026: cold_patch_dspan.py, warm_start_l.py, patch_test_model.py, inject_analyzer.py and merge_train_weights.py. Exact sources: Bin commit `f12f09ae1f7fc0a9af1d99be86d3a4002a3cf4aa`, `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. Commands in the original text below describe the old campaign only. New work uses root Scripts/StructTrain/TimeLearner native model export/import and explicit storage profiles. Original configurations, measurements and report body are preserved. See root Docs/StructTrain/TimeLearner/AsymRmOverlayRetirement.ru.md; migration metadata acceptance is pending.
+
 # PHASE5 — Span 50 / 100 ms recalculate (C1e9 recipe)
 
 Recipe base from span25: C1e9, EstDelayPerSeg=0.002, Rmin=2e7, per-exp thr, last-pulse gate.
