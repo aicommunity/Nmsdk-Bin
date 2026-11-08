@@ -1,3 +1,5 @@
+> Исторический отчёт: указанные ниже setup/scale операции относятся к исходной серии. Скрипты извлекаются из Git по ссылкам; новые запуски задают паттерны и допуски явно через корневой пакет. Конфиги, измерения и выводы исходного отчёта сохранены.
+
 > Историческая процедура AsymRm. Оставшиеся10 shell-драйверов удалены из текущего дерева; исходники доступны в Bin commit `34387285116ee96bb09f99cb2ee95881fd3b9e0a`, путь `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. Полный retrieval manifest: корневой `Docs/StructTrain/TimeLearner/script_migration.json`; область и проверки: `AsymRmDriverRetirement.ru.md`. Старые команды ниже описывают прежнюю кампанию. Конфиги, модели, измерения и исходное тело отчёта сохранены; удаление скриптов не выполняет очистку логов и не пересматривает исторические результаты. Новые задания — через корневой `Scripts/StructTrain/TimeLearner`. Оставшиеся Python-анализаторы ещё требуют отдельного review.
 
 # AsymRm: параметры 25 vs 50 vs 100 мс
@@ -36,7 +38,7 @@
 | `IsNeedToTrain` | 0 | **1** | **1** |
 | `InitialSomaPotential` d0–2 | ≈0.100 | ≈**0.042** | ≈**0.042** |
 
-Setup: [`scripts/setup_asymrm.sh`](scripts/setup_asymrm.sh) всегда пишет D=`0.001`. Scale ISI/Peak: [`scripts/patch_pattern_scale.py`](scripts/patch_pattern_scale.py).
+Setup: [исторический setup_asymrm.sh](https://github.com/aicommunity/Nmsdk-Bin/blob/34387285116ee96bb09f99cb2ee95881fd3b9e0a/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/setup_asymrm.sh) всегда пишет D=`0.001`. Scale ISI/Peak: [исторический patch_pattern_scale.py](https://github.com/aicommunity/Nmsdk-Bin/blob/3d5fc67c33f7be9ad3806db0b00b9d92588049bb/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/patch_pattern_scale.py).
 
 ## Пилоты (новые EXP, оригиналы не трогать)
 

@@ -1,11 +1,11 @@
 <ClassDescription>
 	<ClassName>NNeuronTimeLearnerBranch</ClassName>
 	<Header>NNeuronTimeLearnerBranch</Header>
-	<Description>Обучение временному паттерну: NDatasetMatrix → один дендрит: импульсы на сегментах разного расстояния от сомы; обратная синхронизация и joint-нормализация.</Description>
+	<Description>Branch: общий кабель, активная точка подключения выбирается mute при сохранении штатной пачки. ControllerVersion=1 сохраняет legacy-фазы; версия 2 использует общий measured bounded controller и свежую проверку всех входов. CapturedPerInput, reference N−1; качество распознавания оценивается отдельно от окончания обучения.</Description>
 	<Properties>
 		<ControllerVersion>
 			<Header>Версия контроллера</Header>
-			<Description>1 — прежний алгоритм (default для существующих конфигураций); 2 — native cold configuration из ControllerConfiguration. Неподдерживаемые значения отклоняются.</Description>
+			<Description>1 — legacy-контроллер, default при отсутствии свойства; 2 — configured native service из ControllerConfiguration. Штатный setter принимает только 1/2; это не гарантия проверки присваиваний в обход setter. Номер контроллера не равен schema_version JSON.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -16,7 +16,7 @@
 		</ControllerVersion>
 		<ControllerConfiguration>
 			<Header>Декларация native-обучения</Header>
-			<Description>JSON schema 1 (прежний протокол N0, один замер кандидата) или 2 (только N0, обязательный search.n0_candidate_repeats от 2 до 128); N1 с фактором повторов отвергается. kind timelearner_native_cold_configuration: storage ModelSpec, профиль генератора, окна, допуски и бюджеты. Используется только при ControllerVersion=2; неизвестные поля и дубли ключей запрещены. После создания модели декларация фиксирована.</Description>
+			<Description>JSON kind timelearner_native_cold_configuration: ModelSpec/storage, генератор, окна, допуски и конечные бюджеты. Для ControllerVersion=2. Базовый принятый срез поддерживает schema 1 (N0/N1, один замер N0-кандидата) и 2 (N0, n0_candidate_repeats от 2 до 128). В отдельном candidate SDK добавлены 3 (C0 history), 4 (bounded C-search), 5 (явная advance_unassigned_burst оболочка над base 1..4); доступность определяется точным PulseLib commit сборки. Неизвестные поля, дубли ключей и неподдержанная схема отвергаются. После создания модели штатный setter блокирует изменение декларации; JSON не заменяет полный learned-state import.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -137,7 +137,7 @@
 		</DendriteNeuronAmplitude>
 		<ExperimentMode>
 			<Header>Режим эксперимента</Header>
-			<Description>Включает/отключает специальные режимы работы компонента для экспериментов.</Description>
+			<Description>Совместимое legacy-свойство. Experiment() в обоих TimeLearner пуст: включение не запускает реализованный эксперимент. Setter true устанавливает ExperimentNum=1 и EpochCur=1; false закрывает legacy-файлы и разрешает изменение длины. Эти побочные эффекты не являются обучением дополнительному паттерну; свойство нельзя использовать как действующий научный фактор.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -159,7 +159,7 @@
 		</EnableNextSegmentInhibition>
 		<ExperimentNum>
 			<Header>Номер эксперимента</Header>
-			<Description>Идентификатор сценария эксперимента или этапа обучения.</Description>
+			<Description>Совместимый legacy-идентификатор без реализованного выбора сценария: Experiment() пуст. Штатное присваивание переводит CalculateMode в 1, устанавливает CountIteration=0 и IsFirstBeat=true через SetCalculateMode, устанавливает IsFirstFileStep. Поэтому свойство не является безвредной меткой и не должно задавать сценарий нового эксперимента.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -478,7 +478,7 @@
 		</StepDuration>
 		<StructureBuildMode>
 			<Header>Режим построения структуры</Header>
-			<Description>Определяет, как автоматически строится структура нейронов/синапсов в компоненте.</Description>
+			<Description>Режим learner: 0 — без legacy BuildStructure, 1 — вызвать BuildStructure в legacy ABuild (default 1). Не смешивать с режимами 0/1/2 вложенного нейрона. В configured V2 модель создаётся по ModelSpec либо полному native import; это свойство не заменяет декларацию, checkpoint или холодное обучение.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -532,8 +532,8 @@
 			<PropertyType>257</PropertyType>
 		</SynapseClassName>
 		<SynapseResistanceStep>
-			<Header>Шаг изменения сопротивления синапса</Header>
-			<Description>Величина, на которую изменяется сопротивление синапса при structural-обучении.</Description>
+			<Header>Сопротивление дополнительных синапсов (legacy N0)</Header>
+			<Description>Абсолютное сопротивление в Ом дополнительных возбуждающих синапсов, начиная со второго, при legacy N0-нормализации; это не приращение Rs. В legacy N1 свойство не применяется. После задания native-модели индивидуальными Rs управляет native editor: новое значение этого legacy-свойства отклоняется, прежнее принимается без перезаписи синапсов. Для изменения общей физики используйте соответствующий storage-профиль модели.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
