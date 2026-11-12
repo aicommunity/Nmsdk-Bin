@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>DataSimulatorSimple</ClassName>
-	<Header>Симулятор данных</Header>
-	<Description>Производит синтетические матрицы/данные для отладки цепочек обработки.</Description>
+	<Header>видеосимуляторы (Rdk-CvBasicLib)</Header>
+	<Description>`UBAVideoSimulator`, `UBAVideoSimulatorSimple`, `UBAVideoSimulatorSimpleBin`, `UBARotCameraSimulator`, `UBADataSimulator`, `UBADataSimulatorSimple` — генерация синтетических видеопотоков и данных для тестов/демо.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -17,7 +17,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -28,7 +28,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -61,7 +61,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -82,8 +82,8 @@
 		</Name>
 		<PlanePoints>
 			<Header>Точки на плоскости</Header>
-			<Description>Массив `MVector<double,3>` (x, y, 1), описывающий набор точек в плоскости объекта. Заполняется генератором и может переопределяться вручную.</Description>
-			<Type>| ptPubParameter | | ptPubOutput | </Type>
+			<Description>Массив `MVector</Description>
+			<Type>| ptPubParameter | | ptPubOutput |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -93,8 +93,8 @@
 		</PlanePoints>
 		<ScreenPoints>
 			<Header>Точки на экране</Header>
-			<Description>Двумерные координаты (`MVector<double,2>`) для проекции на экран. Используются при проверке алгоритмов сопоставления.</Description>
-			<Type>| ptPubParameter | | ptPubOutput | </Type>
+			<Description>Двумерные координаты (`MVector</Description>
+			<Type>| ptPubParameter | | ptPubOutput |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -104,8 +104,8 @@
 		</ScreenPoints>
 		<SpacePoints>
 			<Header>Точки в пространстве</Header>
-			<Description>Четырёхмерные однородные координаты (`MVector<double,4>`), задающие положение точек в 3D. Могут быть считаны следующими компонентами напрямую.</Description>
-			<Type>| ptPubParameter | | ptPubOutput | </Type>
+			<Description>Четырёхмерные однородные координаты (`MVector</Description>
+			<Type>| ptPubParameter | | ptPubOutput |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -116,7 +116,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

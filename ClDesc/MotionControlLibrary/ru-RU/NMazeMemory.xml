@@ -1,8 +1,19 @@
 <ClassDescription>
 	<ClassName>NMazeMemory</ClassName>
-	<Header>Память лабиринта</Header>
-	<Description>Компонент для моделирования памяти лабиринта. Создает группу нейронов для моделирования условного рефлекса и запоминания траекторий движения в лабиринте. Позволяет исследовать различные варианты действий в ситуациях с множественным выбором (перекрестки, развилки).</Description>
+	<Header>память лабиринта</Header>
+	<Description>компонент для создания и управления памятью лабиринта с использованием элементов траектории (NTrajectoryElement), блоков множественного контроля позиции (NMultiPositionControl) и нейронных тренеров (NNeuronTrainer).</Description>
 	<Properties>
+		<ActionNeuronsType>
+			<Header>Тип нейронов действия</Header>
+			<Description>Имя класса нейронов, используемых для генерации действий. По умолчанию используется NSPNeuronGen.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ActionNeuronsType>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
@@ -47,6 +58,17 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
+		<FeaturesNum>
+			<Header>Количество признаков</Header>
+			<Description>Количество признаков, описывающих запоминаемую ситуацию. По умолчанию равно 4 (x, y, alpha, где alpha - ориентация робота).</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</FeaturesNum>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -58,6 +80,28 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<InputActions>
+			<Header>Входные действия</Header>
+			<Description>Вектор возможных вариантов действий в ситуации (направлений движения). Количество элементов равно количеству возможных вариантов. Значения элементов вектора: 1 - есть возможность совершить это действие, 0 - нет возможности. [0] - поворот направо, [1] - поворот налево, [2] - ехать прямо, [3] - стоп.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InputActions>
+		<IsDone>
+			<Header>Завершено</Header>
+			<Description>Флаг завершения работы. Устанавливается в true, когда все возможные варианты исследованы.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</IsDone>
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
@@ -80,6 +124,39 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Name>
+		<PassedTEsNames>
+			<Header>Имена пройденных элементов траектории</Header>
+			<Description>Содержимое вектора PassedTEs - список имен пройденных элементов траектории. Используется для отслеживания уже исследованных участков лабиринта.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PassedTEsNames>
+		<Situation>
+			<Header>Ситуация</Header>
+			<Description>Флаг ситуации с множественным выбором (перекресток, развилка). При значении true компонент обрабатывает ситуацию с несколькими возможными вариантами действий.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Situation>
+		<SituationCoords>
+			<Header>Координаты ситуации</Header>
+			<Description>Вектор параметров ситуации. Сейчас содержит координаты {x, y, alpha}, где alpha - ориентация робота. Используется для запоминания и распознавания ситуаций.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</SituationCoords>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
@@ -102,84 +179,28 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</TimeStep>
-		<Situation>
-			<Header>Ситуация</Header>
-			<Description>Флаг ситуации с множественным выбором (перекресток, развилка). При значении true компонент обрабатывает ситуацию с несколькими возможными вариантами действий.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</Situation>
-		<InputActions>
-			<Header>Входные действия</Header>
-			<Description>Вектор возможных вариантов действий в ситуации (направлений движения). Количество элементов равно количеству возможных вариантов. Значения элементов вектора: 1 - есть возможность совершить это действие, 0 - нет возможности. [0] - поворот направо, [1] - поворот налево, [2] - ехать прямо, [3] - стоп.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</InputActions>
-		<ActionNeuronsType>
-			<Header>Тип нейронов действия</Header>
-			<Description>Имя класса нейронов, используемых для генерации действий. По умолчанию используется NSPNeuronGen.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</ActionNeuronsType>
-		<FeaturesNum>
-			<Header>Количество признаков</Header>
-			<Description>Количество признаков, описывающих запоминаемую ситуацию. По умолчанию равно 4 (x, y, alpha, где alpha - ориентация робота).</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</FeaturesNum>
-		<IsDone>
-			<Header>Завершено</Header>
-			<Description>Флаг завершения работы. Устанавливается в true, когда все возможные варианты исследованы.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</IsDone>
-		<SituationCoords>
-			<Header>Координаты ситуации</Header>
-			<Description>Вектор параметров ситуации. Сейчас содержит координаты {x, y, alpha}, где alpha - ориентация робота. Используется для запоминания и распознавания ситуаций.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</SituationCoords>
-		<PassedTEsNames>
-			<Header>Имена пройденных элементов траектории</Header>
-			<Description>Содержимое вектора PassedTEs - список имен пройденных элементов траектории. Используется для отслеживания уже исследованных участков лабиринта.</Description>
-			<Type>| ptPubParameter |</Type>
-			<DataSelectionType>0</DataSelectionType>
-			<ValueList Type="std::vector" Size="2" elemType="std::string">
-				<elem Type="std::string"></elem>
-				<elem Type="std::string"></elem>
-			</ValueList>
-			<PropertyType>257</PropertyType>
-		</PassedTEsNames>
 	</Properties>
-	<Favorites/>
+			<Favorites>
+		<FeaturesNum>
+			<Path>{CompName}:FeaturesNum</Path>
+		</FeaturesNum>
+		<ActionNeuronsType>
+			<Path>{CompName}:ActionNeuronsType</Path>
+		</ActionNeuronsType>
+		<InputActions>
+			<Path>{CompName}:InputActions</Path>
+		</InputActions>
+		<Situation>
+			<Path>{CompName}:Situation</Path>
+		</Situation>
+		<SituationCoords>
+			<Path>{CompName}:SituationCoords</Path>
+		</SituationCoords>
+		<IsDone>
+			<Path>{CompName}:IsDone</Path>
+		</IsDone>
+		<PassedTEsNames>
+			<Path>{CompName}:PassedTEsNames</Path>
+		</PassedTEsNames>
+	</Favorites>
 </ClassDescription>
-

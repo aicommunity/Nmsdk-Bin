@@ -1,159 +1,117 @@
-# Пример: Создание ClDesc для компонента
+# Пример: ClDesc (описание класса)
 
 ## RU
 
-### Описание задачи
+### Назначение
 
-Создать ClDesc (описание класса) для компонента, чтобы он отображался в GUI и имел правильные метаданные.
+XML-метаданные компонента для GUI NeuroModeler: заголовки, описания свойств, избранные свойства (Favorites) и алиасы вложенных портов.
 
-### Решение
+**Путь файла:** `Bin/ClDesc/<Library>/ru-RU/<ClassName>.xml`  
+**Загрузка:** `UStorage::LoadClassesDescription()`  
+**Методология DETAILED:** `Docs/ClDesc-Detailed-Methodology.md` (корень репозитория)
 
-#### Пример ClDesc файла
+### Реальная схема (фрагмент)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <ClassDescription>
-    <ClassName>UMultiplier</ClassName>
-    <DisplayName>Multiplier</DisplayName>
-    <Category>Basic</Category>
-    <Description>Компонент для умножения входного значения на параметр</Description>
-    
-    <Properties>
-        <Property>
-            <Name>Input</Name>
-            <Type>double</Type>
-            <Direction>Input</Direction>
-            <Description>Входное значение</Description>
-            <DefaultValue>0.0</DefaultValue>
-        </Property>
-        
-        <Property>
-            <Name>Output</Name>
-            <Type>double</Type>
-            <Direction>Output</Direction>
-            <Description>Результат умножения</Description>
-        </Property>
-        
-        <Property>
-            <Name>Multiplier</Name>
-            <Type>double</Type>
-            <Direction>Parameter</Direction>
-            <Description>Множитель</Description>
-            <DefaultValue>1.0</DefaultValue>
-            <MinValue>0.0</MinValue>
-            <MaxValue>100.0</MaxValue>
-        </Property>
-    </Properties>
-    
-    <Icon>multiplier.png</Icon>
-    <Color>#4CAF50</Color>
+	<ClassName>UNoiseGen</ClassName>
+	<Header>генераторы шума (Rdk-BasicLib)</Header>
+	<Description>Генератор аддитивного шума для матриц. Primary-параметры — уровень шума и I/O.</Description>
+	<Properties>
+		<NoiseLevel>
+			<Header>Уровень шума</Header>
+			<Description>Амплитуда добавляемого шума относительно входных данных.</Description>
+			<Type>| ptPubParameter |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</NoiseLevel>
+		<InputParams>
+			<Header>Входные данные</Header>
+			<Description>Матрица или вектор, к которому добавляется шум.</Description>
+			<Type>| ptPubInput |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>264</PropertyType>
+		</InputParams>
+		<OutputParams>
+			<Header>Выходные данные</Header>
+			<Description>Результат: вход + шум.</Description>
+			<Type>| ptPubOutput |</Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>272</PropertyType>
+		</OutputParams>
+		<!-- Activity, Coord, Name, TimeStep, … — secondary; в Favorites не включать -->
+	</Properties>
+	<Favorites>
+		<NoiseLevel>
+			<Path>{CompName}:NoiseLevel</Path>
+		</NoiseLevel>
+		<InputParams>
+			<Path>{CompName}:InputParams</Path>
+		</InputParams>
+		<OutputParams>
+			<Path>{CompName}:OutputParams</Path>
+		</OutputParams>
+	</Favorites>
 </ClassDescription>
 ```
 
-### Объяснение структуры
+### Поля
 
-1. **`<ClassName>`** - имя класса компонента в коде
-2. **`<DisplayName>`** - отображаемое имя в GUI
-3. **`<Category>`** - категория для группировки в библиотеке компонентов
-4. **`<Description>`** - описание компонента
-5. **`<Properties>`** - список свойств компонента
-   - `Name` - имя свойства
-   - `Type` - тип данных
-   - `Direction` - направление (Input, Output, Parameter, State)
-   - `Description` - описание свойства
-   - `DefaultValue` - значение по умолчанию
-   - `MinValue` / `MaxValue` - ограничения для параметров
+| Поле | Смысл |
+|------|--------|
+| `ClassName` | Имя класса в `UStorage` |
+| `Header` / `Description` | Заголовок и описание класса |
+| `Properties/<PropName>/…` | Имя узла = имя свойства |
+| `Header` / `Description` (свойства) | UI-заголовок и поведение |
+| `Type` | Текстовые флаги (`\| ptPubParameter \|` …) |
+| `PropertyType` | Числовая маска (257 = ptPubParameter, 264 = ptPubInput, 272 = ptPubOutput, …) |
+| `DataSelectionType` | Виджет редактора (0…4) |
+| `ValueList` / `Step` | Подсказки UI; `Step` при типе 4 |
+| `Favorites/<Name>/Path` | Direct: `{CompName}:Prop` или `Prop`; Alias: `Nested.Path.Prop` |
 
-### Размещение файла
+### Favorites: primary vs alias
 
-ClDesc файл должен быть размещен в `Bin/ClDesc/` с именем, соответствующим классу компонента:
-- `Bin/ClDesc/UMultiplier.xml`
+- **Direct (primary):** `Path` без точки — закладка на своё свойство; в GUI без пометки `[Alias]`.
+- **Alias:** `Path` содержит `.` — порт вложенного компонента; GUI помечает `[Alias]`.
 
-### Загрузка ClDesc
+```xml
+<Favorites>
+	<Frequency>
+		<Path>{CompName}:Frequency</Path>
+	</Frequency>
+	<LTZoneOutput>
+		<Path>LTZone.Output</Path>
+	</LTZoneOutput>
+</Favorites>
+```
 
-ClDesc файлы автоматически загружаются при инициализации библиотек через `UStorage::LoadClassesDescription()`.
+Не класть в Favorites: `Activity`, `Coord`, `Name`, `Id`, `TimeStep`, debug/duration, а также nested `*.Coord` / `*.Activity` / `*.Type`.
 
-### Связанная документация
+### Автоген vs DETAILED
 
-- [Configs-Structure.md](../Configs-Structure.md) - структура конфигураций
-- [Component System](../../../Rdk/Docs/Guides/Component-System.md) - компонентная система
+`NeuroModelerConsole --generate-cldesc` создаёт каркас и (для `UNet`) сырые aliases. Курация primary Favorites и смысловых Description — **вручную** (XML или ClDesc Editor). Не запускать массовый `-F` после ручной курации Favorites.
+
+### См. также
+
+- `Docs/ClDesc-Detailed-Methodology.md`
+- `Docs/PropertyAliasGeneration.md`
+- [Configs-Structure.md](../Configs-Structure.md)
 
 ---
 
 ## EN
 
-### Task Description
-
-Create ClDesc (class description) for a component so it appears in GUI and has correct metadata.
-
-### Solution
-
-#### Example ClDesc File
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<ClassDescription>
-    <ClassName>UMultiplier</ClassName>
-    <DisplayName>Multiplier</DisplayName>
-    <Category>Basic</Category>
-    <Description>Component for multiplying input value by parameter</Description>
-    
-    <Properties>
-        <Property>
-            <Name>Input</Name>
-            <Type>double</Type>
-            <Direction>Input</Direction>
-            <Description>Input value</Description>
-            <DefaultValue>0.0</DefaultValue>
-        </Property>
-        
-        <Property>
-            <Name>Output</Name>
-            <Type>double</Type>
-            <Direction>Output</Direction>
-            <Description>Multiplication result</Description>
-        </Property>
-        
-        <Property>
-            <Name>Multiplier</Name>
-            <Type>double</Type>
-            <Direction>Parameter</Direction>
-            <Description>Multiplier</Description>
-            <DefaultValue>1.0</DefaultValue>
-            <MinValue>0.0</MinValue>
-            <MaxValue>100.0</MaxValue>
-        </Property>
-    </Properties>
-    
-    <Icon>multiplier.png</Icon>
-    <Color>#4CAF50</Color>
-</ClassDescription>
-```
-
-### Structure Explanation
-
-1. **`<ClassName>`** - component class name in code
-2. **`<DisplayName>`** - display name in GUI
-3. **`<Category>`** - category for grouping in component library
-4. **`<Description>`** - component description
-5. **`<Properties>`** - list of component properties
-   - `Name` - property name
-   - `Type` - data type
-   - `Direction` - direction (Input, Output, Parameter, State)
-   - `Description` - property description
-   - `DefaultValue` - default value
-   - `MinValue` / `MaxValue` - constraints for parameters
-
-### File Placement
-
-ClDesc file should be placed in `Bin/ClDesc/` with name matching component class:
-- `Bin/ClDesc/UMultiplier.xml`
-
-### Loading ClDesc
-
-ClDesc files are automatically loaded when libraries are initialized via `UStorage::LoadClassesDescription()`.
-
-### Related Documentation
-
-- [Configs-Structure.md](../Configs-Structure.md) - configuration structure
-- [Docs/Components-And-Configuration/Component-System.md](../../../Docs/Components-And-Configuration/Component-System.md) - component system
+ClDesc XML lives at `Bin/ClDesc/<Library>/ru-RU/<Class>.xml`. Real schema uses `Header`/`Description`/`PropertyType`/`Favorites/Path` — not the old fictional `DisplayName`/`Category`/`Direction` fields. Direct Favorites use `{CompName}:Prop`; aliases use dotted nested paths. See RU section and `Docs/ClDesc-Detailed-Methodology.md`.

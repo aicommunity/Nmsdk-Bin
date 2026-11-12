@@ -1,7 +1,7 @@
 <ClassDescription>
 	<ClassName>NTrajectoryElement</ClassName>
-	<Header>NTrajectoryElement</Header>
-	<Description>Компонент NTrajectoryElement относится к библиотеке MotionControlLibrary. Описание сформировано автоматически.</Description>
+	<Header>элемент траектории</Header>
+	<Description>элемент траектории для построения и следования по траекториям движения, используется в системах навигации и памяти лабиринта.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
@@ -14,6 +14,28 @@
 			</ValueList>
 			<PropertyType>257</PropertyType>
 		</Activity>
+		<BackwardSynsNames>
+			<Header>Backward syns names</Header>
+			<Description>Backward syns names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BackwardSynsNames>
+		<BackwardsNames>
+			<Header>Backwards names</Header>
+			<Description>Backwards names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BackwardsNames>
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
@@ -47,6 +69,28 @@
 			</ValueList>
 			<PropertyType>769</PropertyType>
 		</DebugSysEventsMask>
+		<ForwardSynsNames>
+			<Header>Forward syns names</Header>
+			<Description>Forward syns names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ForwardSynsNames>
+		<ForwardsNames>
+			<Header>Forwards names</Header>
+			<Description>Forwards names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ForwardsNames>
 		<Id>
 			<Header>Идентификатор</Header>
 			<Description>Уникальный идентификатор экземпляра компонента в хранилище.</Description>
@@ -58,9 +102,31 @@
 			</ValueList>
 			<PropertyType>513</PropertyType>
 		</Id>
+		<LastUsedBackward>
+			<Header>Last used backward</Header>
+			<Description>Last used backward — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastUsedBackward>
+		<LastUsedForward>
+			<Header>Last used forward</Header>
+			<Description>Last used forward — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LastUsedForward>
 		<Layer>
 			<Header>Layer</Header>
-			<Description>Layer — свойство NTrajectoryElement.</Description>
+			<Description>Layer — свойство элемент траектории.</Description>
 			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
@@ -113,6 +179,17 @@
 			</ValueList>
 			<PropertyType>274</PropertyType>
 		</Output>
+		<PathsNames>
+			<Header>Paths names</Header>
+			<Description>Paths names — свойство элемент траектории.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</PathsNames>
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
@@ -136,5 +213,27 @@
 			<PropertyType>513</PropertyType>
 		</TimeStep>
 	</Properties>
-	<Favorites/>
+			<Favorites>
+		<Layer>
+			<Path>{CompName}:Layer</Path>
+		</Layer>
+		<NeuronClassName>
+			<Path>{CompName}:NeuronClassName</Path>
+		</NeuronClassName>
+		<Output>
+			<Path>{CompName}:Output</Path>
+		</Output>
+		<ForwardsNames>
+			<Path>{CompName}:ForwardsNames</Path>
+		</ForwardsNames>
+		<BackwardsNames>
+			<Path>{CompName}:BackwardsNames</Path>
+		</BackwardsNames>
+		<LastUsedForward>
+			<Path>{CompName}:LastUsedForward</Path>
+		</LastUsedForward>
+		<LastUsedBackward>
+			<Path>{CompName}:LastUsedBackward</Path>
+		</LastUsedBackward>
+	</Favorites>
 </ClassDescription>

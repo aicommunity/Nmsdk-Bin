@@ -1,0 +1,239 @@
+<ClassDescription>
+	<ClassName>ArduinoDeviceIO</ClassName>
+	<Header>Device IO через Firmata</Header>
+	<Description>Компонент `UArduinoDeviceIO`: датчик/актуатор через связанный `ArduinoFirmata` и Hardware Catalog.</Description>
+	<Properties>
+		<ApplyConfig>
+			<Header>Apply config</Header>
+			<Description>Edge: pin mode / report для модуля.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ApplyConfig>
+
+		<WriteOutput>
+			<Header>Write output</Header>
+			<Description>Edge: запись актуатора.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</WriteOutput>
+
+		<ReadInput>
+			<Header>Read input</Header>
+			<Description>Edge: one-shot чтение датчика.</Description>
+			<Type>| ptPubParameter | | ptInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ReadInput>
+
+		<LinkedFirmataName>
+			<Header>Linked Firmata</Header>
+			<Description>Имя узла `ArduinoFirmata`.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</LinkedFirmataName>
+
+		<ModuleId>
+			<Header>Module id</Header>
+			<Description>Id модуля Hardware Catalog.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</ModuleId>
+
+		<DeviceId>
+			<Header>Device id</Header>
+			<Description>Id устройства из Hardware Setup.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</DeviceId>
+
+		<Port>
+			<Header>Port</Header>
+			<Description>Метка пина (D2, A0) или пусто для channel.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Port>
+
+		<Channel>
+			<Header>Channel</Header>
+			<Description>Канал мотор-щита A/B.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Channel>
+
+		<Role>
+			<Header>Role</Header>
+			<Description>0=sensor, 1=actuator, 2=auto.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Role>
+
+		<BoardProfile>
+			<Header>Board profile</Header>
+			<Description>0=Uno, 1=Mega.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</BoardProfile>
+
+		<HardwareSetupPath>
+			<Header>Hardware setup path</Header>
+			<Description>Путь к setup JSON (опционально).</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</HardwareSetupPath>
+
+		<ValueIn>
+			<Header>Value in</Header>
+			<Description>Вход актуатора (0..1 или raw).</Description>
+			<Type>| ptPubParameter | | ptPubInput | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>265</PropertyType>
+		</ValueIn>
+
+		<InputMode>
+			<Header>Input mode</Header>
+			<Description>0=normalized, 1=raw.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</InputMode>
+
+		<Continuous>
+			<Header>Continuous</Header>
+			<Description>Непрерывный опрос samples.</Description>
+			<Type>| ptPubParameter | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>257</PropertyType>
+		</Continuous>
+
+		<Value>
+			<Header>Value</Header>
+			<Description>Выход (нормализованный).</Description>
+			<Type>| ptPubOutput | | ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>274</PropertyType>
+		</Value>
+
+		<ValueRaw>
+			<Header>Value raw</Header>
+			<Description>Выход raw (ADC/digital/pwm).</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</ValueRaw>
+
+		<IsOnline>
+			<Header>Is online</Header>
+			<Description>Firmata ready + pin resolved.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</IsOnline>
+
+		<LastError>
+			<Header>Last error</Header>
+			<Description>Ошибка resolve/unsupported.</Description>
+			<Type>| ptPubState | </Type>
+			<DataSelectionType>0</DataSelectionType>
+			<ValueList Type="std::vector" Size="2" elemType="std::string">
+				<elem Type="std::string"></elem>
+				<elem Type="std::string"></elem>
+			</ValueList>
+			<PropertyType>258</PropertyType>
+		</LastError>
+	</Properties>
+	<Favorites>
+		<LinkedFirmataName>
+			<Path>{CompName}:LinkedFirmataName</Path>
+		</LinkedFirmataName>
+		<ModuleId>
+			<Path>{CompName}:ModuleId</Path>
+		</ModuleId>
+		<Port>
+			<Path>{CompName}:Port</Path>
+		</Port>
+		<Value>
+			<Path>{CompName}:Value</Path>
+		</Value>
+		<ApplyConfig>
+			<Path>{CompName}:ApplyConfig</Path>
+		</ApplyConfig>
+	</Favorites>
+</ClassDescription>

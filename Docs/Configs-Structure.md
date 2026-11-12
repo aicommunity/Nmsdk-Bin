@@ -12,6 +12,12 @@
 - **INI** - конфигурационные файлы приложения
 - **JPEG/PNG** - изображения для конфигураций
 
+### Структура каталога Configs
+
+- **Configs/** — корень хранилища конфигураций.
+- **Configs/Users/&lt;UserName&gt;/** — папки конфигураций пользователей (создаются NeuroModeler автоматически по имени пользователя). Для каждого пользователя при первом обращении создаётся каталог `Configs/Users/<UserName>/`.
+- Остальные каталоги в Configs (например, SpikeSamples, TestValidation, !OldConfigs) — общие шаблоны и примеры.
+
 ### Структура конфигураций проектов
 
 Конфигурации проектов содержат:
@@ -60,7 +66,7 @@ sequenceDiagram
     participant FTP as FTP Server
     participant Temp as Temp Folder
     participant Project as UProject
-    
+
     App->>Deployer: StartProjectDeployment(task_id)
     Deployer->>FTP: DownloadTemplate.zip
     FTP-->>Deployer: Template files
@@ -78,7 +84,7 @@ sequenceDiagram
 
 - [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - детальная информация о работе с конфигурациями через классы Rdk (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - обзор конфигураций
-- [Component System](../../Rdk/Docs/Guides/Component-System.md) - компонентная система
+- [Component System](../../Docs/Components-And-Configuration/Component-System.md) - компонентная система
 
 ---
 
@@ -93,6 +99,12 @@ Configuration files in `Bin/Configs/` are used to configure projects, components
 - **XML** - main format for projects and components
 - **INI** - application configuration files
 - **JPEG/PNG** - images for configurations
+
+### Configs Directory Structure
+
+- **Configs/** — root of the configuration store.
+- **Configs/Users/&lt;UserName&gt;/** — per-user configuration folders (created automatically by NeuroModeler from the user name). For each user, the directory `Configs/Users/<UserName>/` is created on first use.
+- Other directories under Configs (e.g. SpikeSamples, TestValidation, !OldConfigs) — shared templates and examples.
 
 ### Project Configuration Structure
 
@@ -130,3 +142,24 @@ Project configurations contain:
 - [Rdk/Docs/Configuration-Management.md](../../Rdk/Docs/Configuration-Management.md) - detailed information about working with configurations through Rdk classes (UProject, UApplication, UXMLEnvSerialize, UProjectDeployer)
 - [Docs/Components-And-Configuration/Configuration-Files-Overview.md](../../Docs/Components-And-Configuration/Configuration-Files-Overview.md) - configuration overview
 - [Docs/Components-And-Configuration/Component-System.md](../../Docs/Components-And-Configuration/Component-System.md) - component system
+
+```mermaid
+sequenceDiagram
+    participant App as UApplication
+    participant Deployer as UProjectDeployer
+    participant FTP as FTP Server
+    participant Temp as Temp Folder
+    participant Project as UProject
+
+    App->>Deployer: StartProjectDeployment(task_id)
+    Deployer->>FTP: DownloadTemplate.zip
+    FTP-->>Deployer: Template files
+    Deployer->>Temp: UnpackTemplate
+    Deployer->>FTP: DownloadWeights.zip
+    FTP-->>Deployer: Model weights
+    Deployer->>Temp: UnpackWeights
+    Deployer->>App: PrepareProject()
+    App->>Project: OpenProjectMockMode()
+    Project->>Project: SetupMockParameters()
+    Project-->>App: Project ready
+```

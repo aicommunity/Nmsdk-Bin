@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>RotCameraSimulator</ClassName>
-	<Header>Симулятор вращающейся камеры</Header>
-	<Description>Генерирует последовательность изображений с виртуальной вращающейся камеры.</Description>
+	<Header>видеосимуляторы (Rdk-CvBasicLib)</Header>
+	<Description>`UBAVideoSimulator`, `UBAVideoSimulatorSimple`, `UBAVideoSimulatorSimpleBin`, `UBARotCameraSimulator`, `UBADataSimulator`, `UBADataSimulatorSimple` — генерация синтетических видеопотоков и данных для тестов/демо.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -16,8 +16,8 @@
 		</Activity>
 		<BgColor>
 			<Header>Bg color</Header>
-			<Description>Bg color — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Bg color — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -27,8 +27,8 @@
 		</BgColor>
 		<BgMode>
 			<Header>Bg mode</Header>
-			<Description>Bg mode — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Bg mode — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -38,8 +38,8 @@
 		</BgMode>
 		<BorderOutput>
 			<Header>Border output</Header>
-			<Description>Border output — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>Border output — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -61,7 +61,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -72,7 +72,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -82,8 +82,8 @@
 		</DebugSysEventsMask>
 		<HideAllFlag>
 			<Header>Hide all flag</Header>
-			<Description>Hide all flag — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Hide all flag — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -105,7 +105,7 @@
 		<Input>
 			<Header>Вход</Header>
 			<Description>Матрица или bitmap, который поступает на обработку.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -115,8 +115,8 @@
 		</Input>
 		<InputData>
 			<Header>Input data</Header>
-			<Description>Input data — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Input data — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -127,7 +127,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -137,8 +137,8 @@
 		</MaxCalculationDuration>
 		<MoveBottomSignal>
 			<Header>Move bottom сигнал</Header>
-			<Description>Move bottom сигнал — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Move bottom сигнал — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</MoveBottomSignal>
 		<MoveLeftSignal>
 			<Header>Move левый сигнал</Header>
-			<Description>Move левый сигнал — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Move левый сигнал — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -159,8 +159,8 @@
 		</MoveLeftSignal>
 		<MoveRightSignal>
 			<Header>Move правый сигнал</Header>
-			<Description>Move правый сигнал — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Move правый сигнал — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -170,8 +170,8 @@
 		</MoveRightSignal>
 		<MoveTopSignal>
 			<Header>Move top сигнал</Header>
-			<Description>Move top сигнал — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubInput | | ptPubState | </Type>
+			<Description>Move top сигнал — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubInput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -192,8 +192,8 @@
 		</Name>
 		<NumObjects>
 			<Header>Num objects</Header>
-			<Description>Num objects — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Num objects — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -203,8 +203,8 @@
 		</NumObjects>
 		<Objects>
 			<Header>Objects</Header>
-			<Description>Objects — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Objects — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -215,7 +215,7 @@
 		<Output>
 			<Header>Выход</Header>
 			<Description>Результат обработки, передаваемый следующему компоненту.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -225,8 +225,8 @@
 		</Output>
 		<PixelGridColor>
 			<Header>Pixel grid color</Header>
-			<Description>Pixel grid color — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Pixel grid color — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -236,8 +236,8 @@
 		</PixelGridColor>
 		<PixelGridStep>
 			<Header>Pixel grid step</Header>
-			<Description>Pixel grid step — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Pixel grid step — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -247,8 +247,8 @@
 		</PixelGridStep>
 		<PixelGridWidth>
 			<Header>Pixel grid width</Header>
-			<Description>Pixel grid width — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Pixel grid width — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -258,8 +258,8 @@
 		</PixelGridWidth>
 		<ShowGrid>
 			<Header>Show grid</Header>
-			<Description>Show grid — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Show grid — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -270,7 +270,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -291,8 +291,8 @@
 		</TimeStep>
 		<ViewOutput>
 			<Header>View output</Header>
-			<Description>View output — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubOutput | | ptPubState | </Type>
+			<Description>View output — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubOutput | | ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -302,8 +302,8 @@
 		</ViewOutput>
 		<ViewResizeCoef>
 			<Header>View resize coef</Header>
-			<Description>View resize coef — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>View resize coef — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -313,8 +313,8 @@
 		</ViewResizeCoef>
 		<WorkArea>
 			<Header>Work область</Header>
-			<Description>Work область — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Work область — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -324,8 +324,8 @@
 		</WorkArea>
 		<XSpeedCoef>
 			<Header>X speed coef</Header>
-			<Description>X speed coef — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>X speed coef — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -335,8 +335,8 @@
 		</XSpeedCoef>
 		<YSpeedCoef>
 			<Header>Y speed coef</Header>
-			<Description>Y speed coef — параметр компонента Симулятор вращающейся камеры.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Y speed coef — свойство видеосимуляторы (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>

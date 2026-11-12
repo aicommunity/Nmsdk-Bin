@@ -1,12 +1,12 @@
 <ClassDescription>
 	<ClassName>BackgroundSimpleAdaptive</ClassName>
-	<Header>Адаптивный фон</Header>
-	<Description>Адаптирует модель фона под изменения освещения и медленно изменяющиеся сцены.</Description>
+	<Header>фон, разность, бинаризация и разметка (Rdk-CvBasicLib)</Header>
+	<Description>Группа компонентов `UBABackground*`, `UBADifferenceFrame*`, `UBABinarization*`, `UBALabeling*`, `UBALooping*`, `UBAGuiSelection*`, `UBAShowObjects*` реализует этапы фоново‑разностной обработки, пороговой сегментации и визуализации/разметки в пайплайнах компьютерного зрения.</Description>
 	<Properties>
 		<Activity>
 			<Header>Активность</Header>
 			<Description>Включает участие компонента в расчёте. При значении false шаг моделирования для узла пропускается.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -16,8 +16,8 @@
 		</Activity>
 		<Background>
 			<Header>Background</Header>
-			<Description>Background — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Background — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -28,7 +28,7 @@
 		<CalculationDurationThreshold>
 			<Header>Порог времени расчёта</Header>
 			<Description>Контрольный порог длительности шага (мс). При превышении генерируется предупреждение.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -39,7 +39,7 @@
 		<Coord>
 			<Header>Координаты в редакторе</Header>
 			<Description>Позиция узла на диаграмме, используется только визуальным редактором.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -50,7 +50,7 @@
 		<DebugSysEventsMask>
 			<Header>Маска системных событий</Header>
 			<Description>Битовая маска событий, которые следует выводить в журнал для отладки.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -72,7 +72,7 @@
 		<Input>
 			<Header>Вход</Header>
 			<Description>Матрица или bitmap, который поступает на обработку.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -82,8 +82,8 @@
 		</Input>
 		<IsBGReady>
 			<Header>Is bg ready</Header>
-			<Description>Is bg ready — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Is bg ready — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -94,7 +94,7 @@
 		<MaxCalculationDuration>
 			<Header>Макс. длительность расчёта</Header>
 			<Description>Ограничение по времени (мс) для выполнения компонента на последовательности шагов.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -116,7 +116,7 @@
 		<StepDuration>
 			<Header>Время шага</Header>
 			<Description>Продолжительность последнего расчётного шага (мс).</Description>
-			<Type>| ptPubState | </Type>
+			<Type>| ptPubState |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -137,8 +137,8 @@
 		</TimeStep>
 		<countFirstCleanBgFrame>
 			<Header>Count first clean bg frame</Header>
-			<Description>Count first clean bg frame — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Count first clean bg frame — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -148,8 +148,8 @@
 		</countFirstCleanBgFrame>
 		<delay>
 			<Header>Задержка</Header>
-			<Description>Задержка — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Задержка — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -159,8 +159,8 @@
 		</delay>
 		<deltaFrames>
 			<Header>Delta frames</Header>
-			<Description>Delta frames — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Delta frames — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -170,8 +170,8 @@
 		</deltaFrames>
 		<lastBinarization>
 			<Header>Last binarization</Header>
-			<Description>Last binarization — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Last binarization — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -181,8 +181,8 @@
 		</lastBinarization>
 		<lastInput>
 			<Header>Last input</Header>
-			<Description>Last input — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Last input — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -192,8 +192,8 @@
 		</lastInput>
 		<modeTypes>
 			<Header>Mode types</Header>
-			<Description>Mode types — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Mode types — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -203,8 +203,8 @@
 		</modeTypes>
 		<output2>
 			<Header>Output2</Header>
-			<Description>Output2 — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Output2 — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -214,8 +214,8 @@
 		</output2>
 		<tempoUpdate>
 			<Header>Tempo update</Header>
-			<Description>Tempo update — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Tempo update — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -225,8 +225,8 @@
 		</tempoUpdate>
 		<tempoUpdateBG>
 			<Header>Tempo update bg</Header>
-			<Description>Tempo update bg — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Tempo update bg — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -236,8 +236,8 @@
 		</tempoUpdateBG>
 		<tempoUpdateFG>
 			<Header>Tempo update fg</Header>
-			<Description>Tempo update fg — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Tempo update fg — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -247,8 +247,8 @@
 		</tempoUpdateFG>
 		<updateFGFlag>
 			<Header>Update fg flag</Header>
-			<Description>Update fg flag — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Update fg flag — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
@@ -258,8 +258,8 @@
 		</updateFGFlag>
 		<zeroingUpdateFlag>
 			<Header>Zeroing update flag</Header>
-			<Description>Zeroing update flag — параметр компонента Адаптивный фон.</Description>
-			<Type>| ptPubParameter | </Type>
+			<Description>Zeroing update flag — свойство фон, разность, бинаризация и разметка (Rdk-CvBasicLib).</Description>
+			<Type>| ptPubParameter |</Type>
 			<DataSelectionType>0</DataSelectionType>
 			<ValueList Type="std::vector" Size="2" elemType="std::string">
 				<elem Type="std::string"></elem>
