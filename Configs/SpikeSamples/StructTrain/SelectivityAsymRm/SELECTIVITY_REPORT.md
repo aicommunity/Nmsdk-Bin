@@ -4,7 +4,9 @@
 
 First systematic 8-trial selectivity after train Done. Stuck Pack C gen (50/100) excluded.
 
-## Command
+## Historical command
+
+23.11.2026: `done_fingerprint.py` удалён из текущего дерева; [исторический исходник](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py). Сохранённые JSON и исходные ответы не менялись. Команды этого раздела относятся к прежнему протоколу; Need=0 и частичный hash не подменяют современную проверку всей модели.
 
 ```bash
 python3 scripts/done_fingerprint.py --write done_fingerprint_pre_selectivity16.json

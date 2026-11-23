@@ -1,5 +1,7 @@
 > Исторический документ кампании AsymRm. Упомянутые pilot/finish/scale/sweep shell запускатели удалены из текущего дерева; их исходники доступны в [снимке Bin 14a88195](https://github.com/aicommunity/Nmsdk-Bin/tree/14a88195a8a5538d3a2f5c0657981488e38829b7/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts). Команды ниже описывают прежний протокол и не являются инструкцией запуска текущего pipeline. Сохранённые измерения не пересчитаны. [Миграция и ограничения](https://github.com/aicommunity/Nmsdk/blob/develop/Docs/StructTrain/TimeLearner/AsymRmLauncherRetirement.ru.md).
 
+> Дополнение23.11.2026: исторический `done_fingerprint.py` удалён из текущего дерева; [полный исходник в Bin8cb6dba](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py). Команды и значения Done ниже сохраняют смысл своего протокола; они не являются сертификатом новой модели. JSON-снимки и результаты сохранены.
+
 # Next lever: Pack C gen pathological TipR reset (2026-09-08)
 
 ## Outcome: EXECUTED — FAIL (no Done regression)

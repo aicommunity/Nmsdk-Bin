@@ -50,9 +50,11 @@ Sync non-ref still OK; FixedLTZ never left cold. Initial≈0.042 from preinh app
 
 `finish_packC_gen_fast_amp.sh`: TipR←Pack B + `160 320 640` + renudge — also fail=1. See log `finish_packC_gen_fast_amp.log`.
 
-## Tooling
+## Historical tooling
 
-- `scripts/done_fingerprint.py` — Done EXP hash pre/post
+23.11.2026: `done_fingerprint.py` выведен из текущего дерева; [исходник](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py) и сохранённые JSON остаются источниками прежней процедуры. Команды ниже исторические; их исходы не пересчитаны.
+
+- [`scripts/done_fingerprint.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py) — historical Done EXP hash pre/post
 - [`scripts/seed_from_done_preinh.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/seed_from_done_preinh.py) — TipR+Initial from preinh, `--surgical`
 - [`scripts/seed_tipr_from_done_sibling.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/seed_tipr_from_done_sibling.py) — TipR Pack B→C (superseded for this lever)
 - `scripts/finish_packC_gen_preinh_amp.sh` / `finish_packC_gen_fast_amp.sh` / `finish_packC_gen_tip_reset_amp.sh`
