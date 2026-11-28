@@ -1,0 +1,94 @@
+{
+  "kind": "axone_component_initial_condition",
+  "schema_version": 1,
+  "protocol_id": "P1-component-baseline-v1",
+  "case_id": "delay_t10ms__f2000",
+  "status": "prepared_requires_native_validation",
+  "source_bin_commit": "402867ffcf2b9d6fc145bbe5e16f016e15269054",
+  "source_grid": {
+    "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/grid_cells.tsv",
+    "bytes": 914,
+    "sha256": "cd058fa9056ea1535de9468f87b7f01c5239af531defbf0060c141a12503f641"
+  },
+  "source_templates": [
+    {
+      "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/templates/delay/Model_00.xml",
+      "bytes": 5326,
+      "sha256": "a6ea4fb82e7b8659cea4763e4c21c2d4e37609dc184f472bd5e9481d95bf8186"
+    },
+    {
+      "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/templates/delay/Parameters_00.xml",
+      "bytes": 4699,
+      "sha256": "c96500f13b9381a414e458d8cc77c97bd61bf23408518201e24890137341f8fb"
+    },
+    {
+      "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/templates/delay/Interface.xml",
+      "bytes": 7099,
+      "sha256": "ca618681a7bc30ac12a79eeed8fa4b8077607c1b88c0b3cd41314737cbb3e7ed"
+    },
+    {
+      "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/templates/delay/History.xml",
+      "bytes": 821,
+      "sha256": "9e84cf9785b84bc13bcc7ffaeb77e0d85899bdeb4775e0731c1901417fc5470b"
+    },
+    {
+      "path": "Configs/SpikeSamples/NeuralElements/AxoneLengthDelayStudy/templates/delay/project.ini",
+      "bytes": 1776,
+      "sha256": "91d4dd709e3c9d60f9fa2587dc368fb63e54ce261ce6411cebaac2ba214d86f5"
+    }
+  ],
+  "generator": {
+    "image_class": "NPGenerator",
+    "cpp_class": "NPulseGenerator",
+    "frequency_hz": 10,
+    "pulse_length_s": 0.001,
+    "amplitude": 1,
+    "initial_delay_s": 0
+  },
+  "axon": {
+    "class": "NAxoneDelay",
+    "length_parameter": "DelayTime",
+    "length_value": 0.01,
+    "length_unit": "s",
+    "internode_delay_s": null
+  },
+  "frequency_hz": 2000,
+  "model_duration_s": 0.5,
+  "required_execution_host": "10.245.1.15",
+  "runtime_outputs": "outside_source_checkout",
+  "native_preflight": [
+    "verify_actual_frequency_and_derived_coefficients",
+    "verify_actual_segment_count_after_Build",
+    "verify_source_and_terminal_links",
+    "capture_actual_emissions_and_all_output_events",
+    "reserve_external_output_space"
+  ],
+  "input_files": [
+    {
+      "path": "History.xml",
+      "bytes": 821,
+      "sha256": "9e84cf9785b84bc13bcc7ffaeb77e0d85899bdeb4775e0731c1901417fc5470b"
+    },
+    {
+      "path": "Interface.xml",
+      "bytes": 7099,
+      "sha256": "ca618681a7bc30ac12a79eeed8fa4b8077607c1b88c0b3cd41314737cbb3e7ed"
+    },
+    {
+      "path": "Model_00.xml",
+      "bytes": 5355,
+      "sha256": "ded3bead1f2a6550c7c14989794a49587392e1ec3c661084bbe1283f6497bd23"
+    },
+    {
+      "path": "Parameters_00.xml",
+      "bytes": 4728,
+      "sha256": "9d34af4ce45ff2ddbbae6ca5b265d8e55e347ece7b4bca4cfa730cfb6d873936"
+    },
+    {
+      "path": "project.ini",
+      "bytes": 1767,
+      "sha256": "770ab1ff6710dcf2edecd9073f8e53bec7327e3570a62ca3ca76ce9239894d4e"
+    }
+  ],
+  "scientific_result": null
+}
