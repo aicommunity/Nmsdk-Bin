@@ -1,0 +1,633 @@
+{
+  "kind": "axone_native_contract_inputs",
+  "schema_version": 1,
+  "protocol_id": "P1-native-contracts-v2",
+  "status": "source_prepared",
+  "scientific_result": null,
+  "native_execution_performed": false,
+  "test_target": "Test_PulseLib_StorageComponents",
+  "test_source": {
+    "path": "Tests/Integration/Libraries/Test_PulseLib_AxoneLifecycle.cpp",
+    "bytes": 30980,
+    "sha256": "5987a991b618e0c6f9530ef08ca8afa89bd5f0e3ed55092b685b734901491b00"
+  },
+  "source": {
+    "image": "NPGenerator",
+    "cpp_class": "NPulseGenerator",
+    "frequency_hz": 10,
+    "pulse_width_s": 0.001,
+    "amplitude": 1,
+    "delay_s": 0.01,
+    "frequency_deviation": 0,
+    "stop_at_s": 0.5,
+    "observe_until_s": 0.55
+  },
+  "lifecycle_filters": [
+    "AxoneLifecycle.*",
+    "AxoneTreeTopology.*"
+  ],
+  "lifecycle_cases": [
+    "LayoutPreservesConfiguredThresholds",
+    "BuildAndResetPreserveConfiguredThresholds",
+    "ExplicitDefaultRestoresAxonFactoryThresholds",
+    "ChainGrowthPreservesExistingNodeParameters",
+    "ChainGrowthPreservesLoadedMembraneClassOverlay",
+    "RebuildPreservesHeterogeneousInternodeDelays",
+    "ExplicitInternodeAssignmentUpdatesExistingDelays",
+    "InvalidDelayIsRejectedWithoutChangingParameters",
+    "InvalidInternodeDelayIsRejectedBeforeChildChanges",
+    "InertialLinkRejectsNonfiniteParameters",
+    "MissingChildClassRecordsBuildFailureAndCanRecover",
+    "ElongationReportsNativeBuildFailure",
+    "TreeGrowthPreservesPhysicalSectionsAndNamedPorts",
+    "TreeCopyRefreshesPortsAndPreservesLearnedChildParameters"
+  ],
+  "cases": [
+    {
+      "id": "delay_t1ms_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.001,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t1ms_f2000"
+    },
+    {
+      "id": "delay_t2ms_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.002,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t2ms_f2000"
+    },
+    {
+      "id": "delay_t5ms_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.005,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t5ms_f2000"
+    },
+    {
+      "id": "delay_t10ms_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.01,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t10ms_f2000"
+    },
+    {
+      "id": "delay_t20ms_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.02,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t20ms_f2000"
+    },
+    {
+      "id": "chain_n1_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n1_f2000"
+    },
+    {
+      "id": "chain_n2_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n2_f2000"
+    },
+    {
+      "id": "chain_n3_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n3_f2000"
+    },
+    {
+      "id": "chain_n5_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n5_f2000"
+    },
+    {
+      "id": "chain_n7_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "segment_count": 7,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n7_f2000"
+    },
+    {
+      "id": "cad_n1_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n1_f2000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n2_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n2_f2000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n3_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n3_f2000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n4_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 4,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n4_f2000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n5_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n5_f2000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "tree_equivalence_NAxoneChain_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChain",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChain",
+            "segments": 3
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChain_f2000"
+    },
+    {
+      "id": "tree_equivalence_NAxoneChainAndDelay_f2000",
+      "model_frequency_hz": 2000,
+      "carrier": "NAxoneChainAndDelay",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 3,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChainAndDelay_f2000"
+    },
+    {
+      "id": "delay_t1ms_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.001,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t1ms_f20000"
+    },
+    {
+      "id": "delay_t2ms_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.002,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t2ms_f20000"
+    },
+    {
+      "id": "delay_t5ms_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.005,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t5ms_f20000"
+    },
+    {
+      "id": "delay_t10ms_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.01,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t10ms_f20000"
+    },
+    {
+      "id": "delay_t20ms_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.02,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t20ms_f20000"
+    },
+    {
+      "id": "chain_n1_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n1_f20000"
+    },
+    {
+      "id": "chain_n2_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n2_f20000"
+    },
+    {
+      "id": "chain_n3_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n3_f20000"
+    },
+    {
+      "id": "chain_n5_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n5_f20000"
+    },
+    {
+      "id": "chain_n7_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "segment_count": 7,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n7_f20000"
+    },
+    {
+      "id": "cad_n1_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n1_f20000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n2_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n2_f20000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n3_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n3_f20000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n4_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 4,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n4_f20000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n5_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n5_f20000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "tree_equivalence_NAxoneChain_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChain",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChain",
+            "segments": 3
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChain_f20000"
+    },
+    {
+      "id": "tree_equivalence_NAxoneChainAndDelay_f20000",
+      "model_frequency_hz": 20000,
+      "carrier": "NAxoneChainAndDelay",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 3,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChainAndDelay_f20000"
+    },
+    {
+      "id": "delay_t1ms_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.001,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t1ms_f40000"
+    },
+    {
+      "id": "delay_t2ms_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.002,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t2ms_f40000"
+    },
+    {
+      "id": "delay_t5ms_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.005,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t5ms_f40000"
+    },
+    {
+      "id": "delay_t10ms_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.01,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t10ms_f40000"
+    },
+    {
+      "id": "delay_t20ms_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneDelay",
+      "delay_s": 0.02,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/delay_t20ms_f40000"
+    },
+    {
+      "id": "chain_n1_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n1_f40000"
+    },
+    {
+      "id": "chain_n2_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n2_f40000"
+    },
+    {
+      "id": "chain_n3_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n3_f40000"
+    },
+    {
+      "id": "chain_n5_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n5_f40000"
+    },
+    {
+      "id": "chain_n7_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "segment_count": 7,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/chain_n7_f40000"
+    },
+    {
+      "id": "cad_n1_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 1,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n1_f40000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n2_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 2,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n2_f40000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n3_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 3,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n3_f40000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n4_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 4,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n4_f40000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "cad_n5_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "segment_count": 5,
+      "gtest_filter": "P1Baseline/AxonePropagation.PreservesAllSparseSpikesThroughNativeScheduler/cad_n5_f40000",
+      "internode_delay_s": 0.002
+    },
+    {
+      "id": "tree_equivalence_NAxoneChain_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChain",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChain",
+            "segments": 3
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChain",
+            "segments": 2
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChain_f40000"
+    },
+    {
+      "id": "tree_equivalence_NAxoneChainAndDelay_f40000",
+      "model_frequency_hz": 40000,
+      "carrier": "NAxoneChainAndDelay",
+      "topology": {
+        "schema_version": 1,
+        "sections": [
+          {
+            "id": "Left",
+            "parent": "Root",
+            "attach_segment": 1,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 3,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Right",
+            "parent": "Root",
+            "attach_segment": 2,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          },
+          {
+            "id": "Root",
+            "parent": "",
+            "attach_segment": 0,
+            "carrier": "NAxoneChainAndDelay",
+            "segments": 2,
+            "internode_delay_s": 0.002
+          }
+        ],
+        "ports": {
+          "main": "Left",
+          "left": "Left",
+          "right": "Right",
+          "trunk": "Root"
+        },
+        "output_port": "main"
+      },
+      "gtest_filter": "P1Tree/AxoneTreeEquivalence.MatchesExplicitTreeAtEveryNativeTick/NAxoneChainAndDelay_f40000"
+    }
+  ],
+  "artifact_env": "TIMELEARNER_EXECUTION_OUTPUT",
+  "artifact_subdirectory": "AxoneP1",
+  "repeat": {
+    "identical_initial_state_runs": 3,
+    "separate_fresh_output_per_run": true
+  },
+  "artifact_admission": {
+    "full_root_and_submodule_versions_required": true,
+    "frozen_native_runtime_and_actual_loaded_libraries_required": true,
+    "output_must_be_external_to_source_trees": true,
+    "engineering_assertions_are_not_full_P1_scientific_admission": true
+  },
+  "distinction": "Source Delay=10ms; historical serialized component-baseline uses Delay=0. Different fixtures, not duplicate execution of the same condition."
+}

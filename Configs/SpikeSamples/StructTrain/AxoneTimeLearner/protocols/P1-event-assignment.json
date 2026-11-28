@@ -1,0 +1,43 @@
+{
+  "kind": "axone_event_assignment_contract",
+  "schema_version": 1,
+  "protocol_id": "P1-event-assignment-v1",
+  "status": "source_prepared",
+  "test_target": "Test_PulseLib_StorageComponents",
+  "expected_test_ids": [
+    "AxoneConductionObservation.RetainsPeakThresholdWidthAndRightCensoring",
+    "AxoneConductionObservation.RejectsNonfiniteSignalsAndThreshold",
+    "AxoneConductionObservation.AssociatesExactDelayForEveryEvent",
+    "AxoneConductionObservation.MissingMiddleDoesNotShiftLaterEventOwnership",
+    "AxoneConductionObservation.AmbiguousSingleOutputIsNotAssignedGreedily",
+    "AxoneConductionObservation.PreservesCertainPairAndReportsExtraOutput",
+    "AxoneConductionObservation.EqualCountsDoNotProveConduction",
+    "AxoneConductionObservation.SilenceIsAnExplicitMissingResponse",
+    "AxoneConductionObservation.RejectsUnorderedEventsAndInvalidBounds",
+    "AxoneConductionObservation.BoundsAssignmentMemoryBeforeAllocatingTables"
+  ],
+  "source_records": [
+    {
+      "repository": "root",
+      "workspace_path": "Tests/Integration/Libraries/Test_PulseLib_AxoneConductionObservation.cpp",
+      "canonical_lf_bytes": 5101,
+      "canonical_lf_sha256": "75108024ac5b58cd14a0cd97204fe0838f74f73f9a8d659051fa1da10392aaf2"
+    },
+    {
+      "repository": "Nmsdk-PulseLib",
+      "workspace_path": "Libraries/Nmsdk-PulseLib/Core/TimeLearner/AxoneConductionObservation.h",
+      "canonical_lf_bytes": 1511,
+      "canonical_lf_sha256": "e887ac2d775d7ae1a4b3af14250f441c3cf4a6f90a419c8bb5415f9c126ee46e"
+    },
+    {
+      "repository": "Nmsdk-PulseLib",
+      "workspace_path": "Libraries/Nmsdk-PulseLib/Core/TimeLearner/AxoneConductionObservation.cpp",
+      "canonical_lf_bytes": 5469,
+      "canonical_lf_sha256": "e79d60275a7cd5519da63ba026d47e6bd9a95c342ee3d685918390b944e0dbab"
+    }
+  ],
+  "native_execution_performed": false,
+  "model_execution": false,
+  "scientific_result": null,
+  "claim_scope": "Engineering event extraction and temporal association only; no causal-conduction or learning certificate."
+}

@@ -43,3 +43,7 @@ python -I -S -B -X utf8 Scripts/StructTrain/AxoneTimeLearner/generate_stage_conf
 ```
 
 Эта команда не собирает и не запускает модель или тесты. Источники тестов должны соответствовать объявлению; разные существующие файлы без --overwrite не заменяются.
+
+`protocols/P1-event-assignment.json` описывает десять дополнительных инженерных сценариев извлечения/сопоставления событий и точные hashes исходников. Это отдельный контракт, не результат P1 и не доказательство причинного проведения. Генератор: Scripts/StructTrain/AxoneTimeLearner/generate_observation_contract.py.
+
+`protocols/P1-native-contracts-v2.json` и `stage-source-manifest-v2.json` закрепляют исправленный исходник тестового helper после ошибки компиляции первой попытки c8c431c6. Методика и матрица не изменены; v1 сохранён. Текущий generate_stage_configs.py формирует v2. Исполнение и приёмка требуют отдельного серверного результата.
