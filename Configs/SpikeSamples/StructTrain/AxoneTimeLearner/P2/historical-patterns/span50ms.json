@@ -1,0 +1,440 @@
+{
+  "kind": "axone_P2_historical_pattern_inputs",
+  "schema_version": 1,
+  "protocol_id": "P2-manual-delay-v1",
+  "status": "source_prepared_requires_native_materializer",
+  "scientific_result": null,
+  "training": false,
+  "nominal_span_ms": 50,
+  "source_bin_commit": "402867ffcf2b9d6fc145bbe5e16f016e15269054",
+  "historical_sources": {
+    "Train": [
+      {
+        "path": "Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W01/inputs/W01_CL50_N0_PSIoff/Train/Model_00.xml",
+        "bytes": 825567,
+        "sha256": "11eb78271a7358fbc36c5e3f516ae8724454e1e029a279c95aa0ff9f998ce14b"
+      },
+      {
+        "path": "Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W01/inputs/W01_CL50_N0_PSIoff/Train/Parameters_00.xml",
+        "bytes": 710295,
+        "sha256": "aab9da9e3f5b75a5d8683fdbfc38361847ce3d5e5d9fe3b6e4b9b7a506608fbb"
+      }
+    ],
+    "Test": [
+      {
+        "path": "Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W01/inputs/W01_CL50_N0_PSIoff/Test/Model_00.xml",
+        "bytes": 827342,
+        "sha256": "0a6c7fa2f8b772494ff210990c9c4bd70bb6030df1f68d2f01021671c8042276"
+      },
+      {
+        "path": "Configs/SpikeSamples/StructTrain/TimeLearnerMatrix/W01/inputs/W01_CL50_N0_PSIoff/Test/Parameters_00.xml",
+        "bytes": 710470,
+        "sha256": "ea2880613867c4d018d1005fcdc313f9b5d860a5d7807167cef332d9b83ed270"
+      }
+    ]
+  },
+  "historical_dataset_parameters": {
+    "Train": {
+      "Model_00.xml": {
+        "NumFeatures": 1,
+        "NumSamples": 1,
+        "MaxSpikesPerFeature": 4,
+        "stored_sample_blocks": 1,
+        "declared_dimensions_consistent": true,
+        "Delay": "1.5",
+        "LoopSamples": "1",
+        "AdvanceSampleAfterBurst": "0"
+      },
+      "Parameters_00.xml": {
+        "NumFeatures": 1,
+        "NumSamples": 1,
+        "MaxSpikesPerFeature": 4,
+        "stored_sample_blocks": 1,
+        "declared_dimensions_consistent": true,
+        "Delay": "1.5",
+        "LoopSamples": "1",
+        "AdvanceSampleAfterBurst": "0"
+      }
+    },
+    "Test": {
+      "Model_00.xml": {
+        "NumFeatures": 1,
+        "NumSamples": 1,
+        "MaxSpikesPerFeature": 4,
+        "stored_sample_blocks": 1,
+        "declared_dimensions_consistent": true,
+        "Delay": "1.5",
+        "LoopSamples": "1",
+        "AdvanceSampleAfterBurst": "0"
+      },
+      "Parameters_00.xml": {
+        "NumFeatures": 1,
+        "NumSamples": 8,
+        "MaxSpikesPerFeature": 4,
+        "stored_sample_blocks": 8,
+        "declared_dimensions_consistent": true,
+        "Delay": "1.5",
+        "LoopSamples": "0",
+        "AdvanceSampleAfterBurst": "1"
+      }
+    }
+  },
+  "target_matrix_index": 0,
+  "load_order": [
+    "Model_00.xml",
+    "Parameters_00.xml"
+  ],
+  "pattern_source": "Parameters_00.xml explicit dataset property overlay; native load still requires validation",
+  "target": {
+    "historical_isi_decimal_s": [
+      "0.00104167",
+      "0.00833333",
+      "0.0166667",
+      "0.025"
+    ],
+    "historical_scheduled_from_burst_s": [
+      0.00104167,
+      0.009375,
+      0.0260417,
+      0.0510417
+    ],
+    "relative_to_first_decimal_s": [
+      "0E-8",
+      "0.00833333",
+      "0.02500003",
+      "0.05000003"
+    ],
+    "relative_to_first_s": [
+      0.0,
+      0.00833333,
+      0.02500003,
+      0.05000003
+    ],
+    "actual_nominal_span_s": 0.05000003
+  },
+  "trials": [
+    {
+      "id": "matrix_0",
+      "role": "target",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.00833333",
+        "0.0166667",
+        "0.025"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.009375,
+        0.0260417,
+        0.0510417
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.00833333",
+        "0.02500003",
+        "0.05000003"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.00833333,
+        0.02500003,
+        0.05000003
+      ],
+      "actual_nominal_span_s": 0.05000003
+    },
+    {
+      "id": "matrix_1",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.025",
+        "0.0166667",
+        "0.00833333"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.02604167,
+        0.04270837,
+        0.0510417
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.02500000",
+        "0.04166670",
+        "0.05000003"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.025,
+        0.0416667,
+        0.05000003
+      ],
+      "actual_nominal_span_s": 0.05000003
+    },
+    {
+      "id": "matrix_2",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.0166667",
+        "0.00833333",
+        "0.025"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.01770837,
+        0.0260417,
+        0.0510417
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.01666670",
+        "0.02500003",
+        "0.05000003"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.0166667,
+        0.02500003,
+        0.05000003
+      ],
+      "actual_nominal_span_s": 0.05000003
+    },
+    {
+      "id": "matrix_3",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.0166667",
+        "0.0166667",
+        "0.0166667"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.01770837,
+        0.03437507,
+        0.05104177
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.01666670",
+        "0.03333340",
+        "0.05000010"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.0166667,
+        0.0333334,
+        0.0500001
+      ],
+      "actual_nominal_span_s": 0.0500001
+    },
+    {
+      "id": "matrix_4",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.00208333",
+        "0.0229167",
+        "0.025"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.003125,
+        0.0260417,
+        0.0510417
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.00208333",
+        "0.02500003",
+        "0.05000003"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.00208333,
+        0.02500003,
+        0.05000003
+      ],
+      "actual_nominal_span_s": 0.05000003
+    },
+    {
+      "id": "matrix_5",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.025",
+        "0.0229167",
+        "0.00208333"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.02604167,
+        0.04895837,
+        0.0510417
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.02500000",
+        "0.04791670",
+        "0.05000003"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.025,
+        0.0479167,
+        0.05000003
+      ],
+      "actual_nominal_span_s": 0.05000003
+    },
+    {
+      "id": "matrix_6",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.00416667",
+        "0.00416667",
+        "0.0416667"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.00520834,
+        0.00937501,
+        0.05104171
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.00416667",
+        "0.00833334",
+        "0.05000004"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.00416667,
+        0.00833334,
+        0.05000004
+      ],
+      "actual_nominal_span_s": 0.05000004
+    },
+    {
+      "id": "matrix_7",
+      "role": "legacy_foil",
+      "historical_isi_decimal_s": [
+        "0.00104167",
+        "0.0416667",
+        "0.00416667",
+        "0.00416667"
+      ],
+      "historical_scheduled_from_burst_s": [
+        0.00104167,
+        0.04270837,
+        0.04687504,
+        0.05104171
+      ],
+      "relative_to_first_decimal_s": [
+        "0E-8",
+        "0.04166670",
+        "0.04583337",
+        "0.05000004"
+      ],
+      "relative_to_first_s": [
+        0.0,
+        0.0416667,
+        0.04583337,
+        0.05000004
+      ],
+      "actual_nominal_span_s": 0.05000004
+    },
+    {
+      "id": "prefix_1",
+      "role": "prefix",
+      "relative_to_first_s": [
+        0.0
+      ]
+    },
+    {
+      "id": "prefix_2",
+      "role": "prefix",
+      "relative_to_first_s": [
+        0.0,
+        0.00833333
+      ]
+    },
+    {
+      "id": "prefix_3",
+      "role": "prefix",
+      "relative_to_first_s": [
+        0.0,
+        0.00833333,
+        0.02500003
+      ]
+    },
+    {
+      "id": "omission_0",
+      "role": "omission",
+      "omitted_ordinal": 0,
+      "relative_to_original_first_s": [
+        0.00833333,
+        0.02500003,
+        0.05000003
+      ]
+    },
+    {
+      "id": "omission_1",
+      "role": "omission",
+      "omitted_ordinal": 1,
+      "relative_to_original_first_s": [
+        0.0,
+        0.02500003,
+        0.05000003
+      ]
+    },
+    {
+      "id": "omission_2",
+      "role": "omission",
+      "omitted_ordinal": 2,
+      "relative_to_original_first_s": [
+        0.0,
+        0.00833333,
+        0.05000003
+      ]
+    },
+    {
+      "id": "omission_3",
+      "role": "omission",
+      "omitted_ordinal": 3,
+      "relative_to_original_first_s": [
+        0.0,
+        0.00833333,
+        0.02500003
+      ]
+    }
+  ],
+  "proposed_source": {
+    "image": "NDatasetMatrix",
+    "generator_image": "NPulseGeneratorTransit",
+    "feature_count": 1,
+    "pulse_width_s": 0.001,
+    "amplitude": 1,
+    "first_event_offset_s": 0.01
+  },
+  "time_semantics": "Every branch receives every pulse. Prefixes and omissions preserve original absolute relative times; do not compact ISIs or shift remaining pulses.",
+  "manual_delay_proposal": {
+    "rule": "D_b = D_min + target_last - target_b; proposal only",
+    "D_min_s": 0.001,
+    "path_delay_s": [
+      0.05100003,
+      0.0426667,
+      0.026000000000000002,
+      0.001
+    ],
+    "carrier": "NAxoneDelay",
+    "then_segmented_carrier_requires_P1": true
+  },
+  "pending_before_execution": [
+    "native model materializer and effective graph inspection",
+    "declare matched receiver profile and amplitude normalization",
+    "declare complete observation window and threshold calibration protocol",
+    "resolve actual grid-rounded source events and verify all output events"
+  ]
+}
