@@ -23,7 +23,7 @@ dend0 `last_abs_dt≈0.061` (~14× SyncTol≈0.00417). Blind `+5120` wastes wall
 
 1. **Do not** cold-reset — keep current L / Initial.
 2. Export L_ref: `python3 scripts/patch_l_reference.py --export l_reference.json`
-3. Seed `InitialSomaPotential` from LtzCal (`scripts/seed_initial_from_ltzcal.py`) before floor/amp.
+3. Seed `InitialSomaPotential` from LtzCal ([`scripts/seed_initial_from_ltzcal.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/seed_initial_from_ltzcal.py)) before floor/amp.
 4. **Primary path:** `L_REFERENCE=ltzcal` → `l_guard_floor` raises to `[20,17,10,1]` → amp (`AMP_TRAIN_STEPS=320 640 1280`). This bypasses hopeless LENGTH_STALL growth on dend0.
 5. Length schedule only if still below ref after floor attempt: `LENGTH_STEPS_SPAN100="80 160 320 640 1280 2560"`, `LENGTH_MAX_STEP=2560` — never 5120.
 6. If floor+amp leaves residual sync: raise `SyncTolerance` from measured `last_abs_dt` (span50 gen used **0.005**); then `AMP_ONLY=1`.
@@ -44,3 +44,6 @@ PILOT_EXPS="EXP_span100ms_packA_gen EXP_span100ms_packA_preinh" AMP_ONLY=1 \
 
 - Success: `verify_train_done.py --require-calibrated --require-sync-ok` + FixedLTZ ≠ 0.0115; L ≥ `[20,17,10,1]`.
 - Stop: guard abort / persistent TIMING_MISMATCH after SyncTol bump — document in `PILOT_SPAN100_REPORT.md`; do not block Pack B/C span25/50.
+
+
+Historical script retrieval (2026-11-08): the four AsymRm seed/reset tools were retired from the current tree. Their original source is preserved in Bin commit `b4f66eb137d3e1c19539890dbdee06faa3e1020b`, under `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. This changes availability of launch tools, not the historical observations or criteria. Full native model import/export replaces partial XML overlays for new work; numerical equivalence is not claimed.

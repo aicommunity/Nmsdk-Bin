@@ -48,7 +48,7 @@ Hypothesis ranking:
 
 **Reset pathological TipR only** on whitelist Pack C gen (TipR ≥ 0.99×ResistanceMax and/or `|amp_dt| > 1`), set that dend TipR to median of healthy non-ref tips (same EXP), **do not** full TipR/Initial transplant from preinh. Then short amp `80 160` + `AMP_ABORT_HARD_OSC=1`.
 
-Scripts: `scripts/reset_pathological_tip.py`, `scripts/finish_packC_gen_tip_reset_amp.sh`.
+Scripts: [`scripts/reset_pathological_tip.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/reset_pathological_tip.py), `scripts/finish_packC_gen_tip_reset_amp.sh`.
 
 ## Lever result (2026-09-08 evening) — FAIL
 
@@ -95,3 +95,6 @@ span100 copy: за T=80 до Done **0** строк `AmpDtAudit` (`|amp_dt|` в F
 ### Fix (always-safe)
 
 В `ChangeSynapseResistanceStatus`: если `|dt|>5` — **не** вызывать damped TipR update; `ResistanceStatus` не трогать; лог `AmpDtAudit skip TipR update`. Rebuild NeuroModelerConsole. Без TipR transplant.
+
+
+Historical script retrieval (2026-11-08): the four AsymRm seed/reset tools were retired from the current tree. Their original source is preserved in Bin commit `b4f66eb137d3e1c19539890dbdee06faa3e1020b`, under `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. This changes availability of launch tools, not the historical observations or criteria. Full native model import/export replaces partial XML overlays for new work; numerical equivalence is not claimed.

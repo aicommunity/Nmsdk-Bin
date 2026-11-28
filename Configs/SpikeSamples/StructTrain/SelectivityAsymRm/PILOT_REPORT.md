@@ -50,13 +50,15 @@ Sync non-ref still OK; FixedLTZ never left cold. Initial≈0.042 from preinh app
 
 `finish_packC_gen_fast_amp.sh`: TipR←Pack B + `160 320 640` + renudge — also fail=1. See log `finish_packC_gen_fast_amp.log`.
 
-## Tooling
+## Historical tooling
 
-- `scripts/done_fingerprint.py` — Done EXP hash pre/post
-- `scripts/seed_from_done_preinh.py` — TipR+Initial from preinh, `--surgical`
-- `scripts/seed_tipr_from_done_sibling.py` — TipR Pack B→C (superseded for this lever)
+23.11.2026: `done_fingerprint.py` выведен из текущего дерева; [исходник](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py) и сохранённые JSON остаются источниками прежней процедуры. Команды ниже исторические; их исходы не пересчитаны.
+
+- [`scripts/done_fingerprint.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/8cb6dba07b30432272984c8ce3136b48ad06f064/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/done_fingerprint.py) — historical Done EXP hash pre/post
+- [`scripts/seed_from_done_preinh.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/seed_from_done_preinh.py) — TipR+Initial from preinh, `--surgical`
+- [`scripts/seed_tipr_from_done_sibling.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/seed_tipr_from_done_sibling.py) — TipR Pack B→C (superseded for this lever)
 - `scripts/finish_packC_gen_preinh_amp.sh` / `finish_packC_gen_fast_amp.sh` / `finish_packC_gen_tip_reset_amp.sh`
-- `scripts/reset_pathological_tip.py` — H1 TipR reset (failed under amp)
+- [`scripts/reset_pathological_tip.py`](https://github.com/aicommunity/Nmsdk-Bin/blob/b4f66eb137d3e1c19539890dbdee06faa3e1020b/Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/reset_pathological_tip.py) — H1 TipR reset (failed under amp)
 - `run_asymrm.sh`: `AMP_ABORT_HARD_OSC` (default 0)
 
 ## Next (deferred)
@@ -69,3 +71,6 @@ python3 ../SelectivityLtzCalibrate/scripts/verify_train_done.py \
   --require-calibrated --require-sync-ok --L-reference l_reference.json \
   EXP_*/Train/Parameters_00.xml
 ```
+
+
+Historical script retrieval (2026-11-08): the four AsymRm seed/reset tools were retired from the current tree. Their original source is preserved in Bin commit `b4f66eb137d3e1c19539890dbdee06faa3e1020b`, under `Configs/SpikeSamples/StructTrain/SelectivityAsymRm/scripts/`. This changes availability of launch tools, not the historical observations or criteria. Full native model import/export replaces partial XML overlays for new work; numerical equivalence is not claimed.
